@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    توهج خلف الصورة الرمزية في رأس شاشة تفاصيل العضو (Dark Glassmorphism 2026):
+    تدرّج شعاعي (radial) بلون العلامة التجارية الخافت (brand_accent_soft، المُعَدّ
+    أصلاً في colors.xml لهذا النوع من الاستخدام) يتلاشى تدريجياً إلى شفاف بالكامل،
+    يعطي عمقاً بصرياً خلف الدائرة الرمزية المصمتة (bg_avatar_circle) دون أي مساس
+    بها — bg_avatar_circle نفسه يبقى بلا تغيير لأنه مستخدم أيضاً في شاشات أخرى
+    معتمدة (قائمة الأعضاء، لوحة التحكم، الأرشيف) خارج نطاق هذه المهمة.
+    ملف مستقل خاص بشاشة تفاصيل العضو فقط.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <gradient
+        android:type="radial"
+        android:gradientRadius="44dp"
+        android:startColor="@color/brand_accent_soft"
+        android:centerColor="@color/brand_accent_soft"
+        android:endColor="@color/transparent" />
+</shape>

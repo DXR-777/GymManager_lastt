@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    تدقيق الاتساق البصري (2026): كانت هذه الحالة تستخدم بناءً بطبقتين (طبقة "وهج"
+    خارجية بنصف قطر radius_lg + طبقة داخلية بنصف قطر radius_md مُزاحة 3dp) لا يوجد
+    له نظير في أي حالة "مختارة" أخرى بالتطبيق (قارن bg_payment_status_paid_selected/
+    partial_selected/unpaid_selected — جميعها شكل واحد فقط). هذا التفاوت بين نصفي
+    القطر (20dp مقابل 14dp) كان يجعل سماكة الحدّ تبدو أعرض عند الزوايا منها عند
+    الأضلاع، وأيضاً يجعل نصف قطر الشريحة "المختارة" مختلفاً عن نصف قطر نفس الشريحة
+    في حالة "غير مختارة" (bg_payment_method_chip_unselected: radius_md) فيبدو الشكل
+    الخارجي وكأنه "يقفز" عند التحديد. تمّت إعادته لطبقة واحدة بنفس radius_md
+    (مطابقاً لحالة عدم التحديد) وبنفس نمط سماكة الحدّ (1.5dp) المستخدم في كل حالات
+    "مختار" الأخرى بالتطبيق — بلا أي تغيير في الألوان المستخدمة.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/surface_elevated"/>
+    <corners android:radius="@dimen/radius_md"/>
+    <stroke android:width="1.5dp" android:color="@color/brand_accent"/>
+</shape>

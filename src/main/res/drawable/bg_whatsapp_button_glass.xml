@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    خلفية دائرية زجاجية لزر واتساب السريع (btnWhatsapp) — تعبئة خضراء شديدة النعومة
+    (status_success_bg موجود مسبقاً) + تموّج (ripple) عند الضغط، بدل الشفافية الكاملة
+    السابقة android:color/transparent، لإعطاء الزر إحساساً باللمس متوافقاً مع باقي
+    البطاقة الزجاجية.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/ripple_on_dark">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@color/status_success_bg" />
+        </shape>
+    </item>
+</ripple>

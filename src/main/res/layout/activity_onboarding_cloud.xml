@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شاشة "حفظ البيانات على السحابة + تسجيل الدخول" (Onboarding — شاشة 3 من 4):
+    الرسمة (سحابة + علامة صح + حلقة مدارية + 4 شارات صغيرة) هي عنصر واحد مُقصوص
+    بالكامل من الصورة المعزولة التي أرفقها المستخدم — لم تُفكَّك لأنها لوحة
+    ثلاثية الأبعاد متماسكة (إضاءة/انعكاسات متصلة)، فتفكيكها لعناصر Android منفصلة
+    كان سيفقدها الدقة بعكس الأيقونات المسطّحة البسيطة في الشاشتين السابقتين.
+    زر Google يتّبع هوية Google البصرية الثابتة (أبيض/رمادي فاتح) لا هوية التطبيق،
+    ويتمركز شعاره تلقائياً في جهة "البداية" (يمين الشاشة في العربية) دون أي إجبار
+    LTR، بعكس طبقة القطع الزخرفية في الشاشتين السابقتين.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootOnboardingCloud"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+    <ImageView
+        android:id="@+id/ivCloudIllustration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:layout_marginHorizontal="26dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/onboarding_cloud_illustration_description"
+        android:src="@drawable/img_onboarding_cloud_illustration"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvCloudTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingHorizontal="@dimen/spacing_md"
+        android:text="@string/onboarding_cloud_title"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_headline"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/ivCloudIllustration"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvCloudSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:paddingHorizontal="@dimen/spacing_lg"
+        android:text="@string/onboarding_cloud_subtitle"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body"
+        app:layout_constraintTop_toBottomOf="@id/tvCloudTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- مؤشر التقدّم: النقطة الثالثة نشطة (شاشة 3 من 4) -->
+    <LinearLayout
+        android:id="@+id/dotsRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:importantForAccessibility="no"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/shape_dot"
+            android:backgroundTint="@color/onboarding_dot_inactive" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_dot"
+            android:backgroundTint="@color/onboarding_dot_inactive" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_onboarding_dot_active" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_dot"
+            android:backgroundTint="@color/onboarding_dot_inactive" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvContinueAsGuest"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="@dimen/spacing_sm"
+        android:text="@string/onboarding_continue_as_guest"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body"
+        app:layout_constraintBottom_toTopOf="@id/dotsRow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- زر تسجيل الدخول بحساب Google: هوية Google البصرية الثابتة (أبيض)، لا
+         هوية brand_gradient الخاصة بالتطبيق -->
+    <FrameLayout
+        android:id="@+id/btnGoogleSignIn"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_height_cta"
+        android:layout_marginStart="@dimen/spacing_lg"
+        android:layout_marginEnd="@dimen/spacing_lg"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_onboarding_google_button"
+        android:clickable="true"
+        android:elevation="2dp"
+        android:focusable="true"
+        android:foreground="@drawable/ripple_onboarding_google"
+        app:layout_constraintBottom_toTopOf="@id/tvContinueAsGuest"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="22dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/img_onboarding_google_logo" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/onboarding_sign_in_google"
+                android:textColor="#1F1F1F"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

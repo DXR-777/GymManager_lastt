@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    حلقة تدرّج خلف دائرة الأحرف الأولى (tvInitial) — طبقتان: دائرة بتدرّج brand_gradient
+    كاملة، ثم دائرة أصغر بلون surface_card فوقها لتفريغ المنتصف، فينتج حلقة رفيعة ملوّنة
+    حول الأفاتار بدل حدّ مصمت واحد اللون. لا تُستخدم كخلفية لِـ tvInitial نفسه (يبقى
+    bg_avatar_circle كما هو دون تعديل) بل لِحاوية أكبر بمقدار 4dp تلفّه.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="oval">
+            <gradient
+                android:type="linear"
+                android:angle="45"
+                android:startColor="@color/brand_gradient_start"
+                android:endColor="@color/brand_gradient_end" />
+        </shape>
+    </item>
+
+    <item
+        android:top="2dp"
+        android:bottom="2dp"
+        android:start="2dp"
+        android:end="2dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/surface_card" />
+        </shape>
+    </item>
+
+</layer-list>

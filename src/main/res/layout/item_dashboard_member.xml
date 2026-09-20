@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    عنصر بطاقة عضو واحد، يُستخدم في كلا القائمتين الأفقيتين بشاشة Dashboard
+    ("ينتهي قريباً" و"غير مدفوع" — راجع DashboardMemberAdapter.kt). tvSubtitle
+    يحمل معنى مختلفاً حسب القائمة (أيام متبقية / مبلغ مستحق منسَّق عبر
+    CurrencyFormatter)، لذا يبقى تصميمه محايداً (لا لون دلالي مرتبط بقسم واحد)
+    كي يناسب كلا السياقين بلا تعارض بصري.
+
+    العرض الثابت (160dp) مقصود ومُبقى عمداً رغم توجيه "لا أبعاد ثابتة" العام:
+    tvName يعتمد على maxLines=1 + ellipsize لضمان ارتفاع بطاقة موحّد داخل قائمة
+    أفقية قابلة للتمرير؛ عرض wrap_content هنا كان سيُلغي فائدة الـ ellipsize
+    ويُنتج بطاقات متفاوتة العرض حسب طول الاسم.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="160dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="@dimen/spacing_sm"
+    android:background="@drawable/bg_card_glass"
+    android:elevation="@dimen/elevation_card_resting"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_md">
+
+    <TextView
+        android:id="@+id/tvInitial"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_avatar_circle"
+        android:gravity="center"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:includeFontPadding="false"
+        tools:text="م" />
+
+    <TextView
+        android:id="@+id/tvName"
+        style="@style/Text.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:textColor="@color/text_primary"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        tools:text="محمد أحمد" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        style="@style/Text.Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_xs"
+        android:background="@drawable/bg_pill_neutral"
+        android:paddingHorizontal="@dimen/spacing_sm"
+        android:paddingVertical="2dp"
+        tools:text="باقي 2 يوم" />
+
+</LinearLayout>

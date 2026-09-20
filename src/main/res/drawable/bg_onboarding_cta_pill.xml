@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شاشات الإعداد الأولي (Onboarding — 2026): نفس تدرّج bg_button_gradient.xml
+    (brand_gradient_start → brand_gradient_end) تماماً، لكن بزاوية دائرية كاملة
+    (radius_full) بدل radius_button_cta، لأن زر الإعداد الأولي في مرجع التصميم
+    "حبّة دواء" (pill) كاملة الاستدارة لا مستطيل بزوايا مدوَّرة فقط. ملف منفصل عن
+    bg_button_gradient.xml بدل تعديله مباشرة حتى لا يتغيّر شكل أزرار الحفظ الأخرى
+    في التطبيق التي تعتمد عليه بنصف قطرها الحالي.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="0"
+        android:startColor="@color/brand_gradient_start"
+        android:endColor="@color/brand_gradient_end" />
+    <corners android:radius="@dimen/radius_full" />
+</shape>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    زر الحفظ (Save CTA) — تدقيق حالة التعطيل (2026): نص الزر كان لوناً ثابتاً
+    (أبيض) بلا حالة تعطيل خاصة، معتمداً فقط على alpha برمجي مؤقت. أصبح الآن selector
+    يستخدم text_disabled الموجود مسبقاً في الهوية اللونية (نفس اللون المستخدم لحالة
+    التعطيل في بقية الشاشات).
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/text_disabled" android:state_enabled="false" />
+    <item android:color="@android:color/white" />
+</selector>

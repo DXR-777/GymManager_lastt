@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشات الإعداد الأولي (Onboarding — 2026): النقطة النشطة في مؤشر التقدّم (4 نقاط
+     أسفل الشاشة) — تدرّج بنفس ألوان brand_gradient الأفقي، بدل اللون المصمت
+     الموحَّد المستخدم في shape_dot.xml للنقاط غير النشطة. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <gradient
+        android:type="linear"
+        android:angle="0"
+        android:startColor="@color/brand_gradient_start"
+        android:endColor="@color/brand_gradient_end" />
+</shape>

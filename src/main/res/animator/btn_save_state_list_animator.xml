@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    زر الحفظ (Save CTA) — إضافة (2026): لم يكن هناك أي استجابة بصرية فورية للضغط
+    (touch-down) على الزر من قبل — الموجة اللونية (ripple) فقط، والنبضة البرمجية
+    (playSaveSuccessPulse) تحدث لاحقاً بعد نجاح الحفظ فقط. هذا الملف يضيف "ضغطة"
+    لحظية (تصغير خفيف + ارتفاع إضافي) عند لمس الزر فعلياً، منفصلة عن نبضة النجاح
+    ولا تتعارض معها.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <set>
+            <objectAnimator
+                android:propertyName="scaleX"
+                android:valueTo="0.97"
+                android:valueType="floatType"
+                android:duration="90" />
+            <objectAnimator
+                android:propertyName="scaleY"
+                android:valueTo="0.97"
+                android:valueType="floatType"
+                android:duration="90" />
+            <objectAnimator
+                android:propertyName="translationZ"
+                android:valueTo="@dimen/elevation_button_press_lift"
+                android:valueType="floatType"
+                android:duration="90" />
+        </set>
+    </item>
+    <item>
+        <set>
+            <objectAnimator
+                android:propertyName="scaleX"
+                android:valueTo="1"
+                android:valueType="floatType"
+                android:duration="120" />
+            <objectAnimator
+                android:propertyName="scaleY"
+                android:valueTo="1"
+                android:valueType="floatType"
+                android:duration="120" />
+            <objectAnimator
+                android:propertyName="translationZ"
+                android:valueTo="0"
+                android:valueType="floatType"
+                android:duration="120" />
+        </set>
+    </item>
+</selector>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- تم الدفع: أخضر النجاح، لا لبس فيه -->
+    <item android:color="@color/status_success" android:state_checked="true"/>
+    <!-- غير مدفوع = دَين سيُسجَّل فعلياً في تقارير الإيرادات.
+         يجب أن يكون بنفس درجة وضوح حالة "مدفوع"، وليس مموَّهاً في لون الخلفية،
+         لأن هذا الحقل يغذي SUM(price) WHERE isPaid=1/0 مباشرة. -->
+    <item android:color="@color/status_error"/>
+</selector>
+

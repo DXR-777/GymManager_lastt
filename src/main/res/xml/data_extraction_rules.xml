@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  البند 3 (خصوصية بيانات العملاء) — راجع الشرح الكامل في backup_rules.xml (الملف المكافئ
+  لهذا للإصدارات الأقدم من أندرويد 12). نفس المنطق هنا لكلا القناتين: النسخ الاحتياطي
+  السحابي لحساب Google (cloud-backup) ونقل الجهاز المباشر (device-transfer) — قاعدة
+  بيانات النادي (أسماء/هواتف الأعضاء، الأسعار، الديون، بيانات المُرسِلين) مُستبعَدة الآن
+  من كليهما، ويبقى نقلها الوحيد عبر ميزة النسخ الاحتياطي الصريحة التي يبدؤها المستخدم
+  بوعي (BackupManager) لا عبر آلية أندرويد الصامتة.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <include domain="sharedpref" path="." />
+    </cloud-backup>
+    <device-transfer>
+        <include domain="sharedpref" path="." />
+    </device-transfer>
+</data-extraction-rules>

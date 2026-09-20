@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    القائمة السفلية العائمة (تصميم 2026 Glassmorphism): 3 طبقات متراكبة تحاكي
+    زجاجاً شبه شفاف حقيقي بدل شريط داكن مصمت ملتصق بحافة الشاشة:
+      1) تعبئة داكنة شبه شفافة (bottom_nav_glass_fill، أخفّ من glass_fill_alt
+         العادي عمداً — كلما قلّت العتامة زاد إحساس "التفاعل مع الخلفية" خلفها).
+      2) توهج ضوئي علوي خافت جداً (تدرّج أبيض شفاف يتلاشى للأسفل) يحاكي انعكاس
+         الإضاءة على سطح زجاجي، بدل سطح مسطّح بلا عمق.
+      3) حدّ رفيع فاتح (glass_border_strong) يفصل حافة "الزجاج" عن الخلفية.
+    كامل الشكل دائري تماماً (radius_full) لا زوايا علوية فقط كما كان سابقاً في
+    bg_bottom_nav.xml — هذا الملف الجديد يحلّ محلّه لأن الشريط لم يعد ملاصقاً
+    لحواف الشاشة (راجع الهوامش المضافة في activity_main.xml).
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/bottom_nav_glass_fill" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="90"
+                android:startColor="@color/bottom_nav_glass_sheen"
+                android:centerColor="@color/transparent"
+                android:centerY="0.55"
+                android:endColor="@color/transparent" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transparent" />
+            <stroke android:width="1dp" android:color="@color/glass_border_strong" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+
+</layer-list>

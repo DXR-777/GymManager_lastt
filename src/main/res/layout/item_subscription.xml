@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_sm"
+    android:background="@drawable/bg_card_glass_history_item"
+    android:elevation="@dimen/elevation_card_resting"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_md">
+
+    <!-- الصف الرئيسي: نوع + تواريخ + السعر + شارة الحالة -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSubType"
+                style="@style/Text.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:includeFontPadding="false"
+                tools:text="أسبوعي" />
+
+            <TextView
+                android:id="@+id/tvSubDates"
+                style="@style/Text.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                tools:text="2 يوليو 2026 → 8 يوليو 2026" />
+
+            <TextView
+                android:id="@+id/tvSubPaymentMethod"
+                style="@style/Text.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                tools:text="مدفوع • بال باي" />
+
+            <!-- معلومات المُرسِل: تظهر فقط إذا كانت مُدخَلة فعلياً لهذا الاشتراك — راجع
+                 SubscriptionHistoryAdapter وSubscriptionDisplay.kt. -->
+            <TextView
+                android:id="@+id/tvSubSenderInfo"
+                style="@style/Text.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:visibility="gone"
+                tools:text="المُرسِل: أحمد • رقم التحويل: 0599999999"
+                tools:visibility="visible" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvSubPrice"
+                style="@style/Text.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_primary"
+                android:textStyle="bold"
+                android:includeFontPadding="false"
+                tools:text="20 ₪" />
+
+            <TextView
+                android:id="@+id/tvSubPaid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:background="@drawable/bg_pill_success"
+                android:paddingStart="8dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="2dp"
+                android:textColor="@color/status_success"
+                android:textSize="@dimen/text_caption"
+                android:includeFontPadding="false"
+                tools:text="مدفوع" />
+
+            <!-- المتبقي على هذا الاشتراك تحديداً: تظهر فقط عندما حالته "جزئي" —
+                 راجع SubscriptionHistoryAdapter.bind() وPaymentStatus.kt. -->
+            <TextView
+                android:id="@+id/tvSubRemaining"
+                style="@style/Text.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textColor="@color/status_partial"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:text="المتبقي: 80 ₪"
+                tools:visibility="visible" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!--
+        زر "تسديد": يظهر فقط للاشتراكات غير المدفوعة.
+        الـ visibility يُضبط في SubscriptionHistoryAdapter.bind() برمجياً.
+        مصمَّم صغيراً عمداً (chip-style) لأنه إجراء ثانوي لا أساسي،
+        ويقلل من احتمالية الضغط العرضي عليه أثناء التمرير.
+    -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSettleDebt"
+        style="@style/Widget.Material3.Button.TonalButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:minHeight="0dp"
+        android:paddingStart="@dimen/spacing_md"
+        android:paddingTop="@dimen/spacing_xs"
+        android:paddingEnd="@dimen/spacing_md"
+        android:paddingBottom="@dimen/spacing_xs"
+        android:text="@string/action_settle_debt"
+        android:textSize="@dimen/text_caption"
+        android:visibility="gone"
+        app:backgroundTint="@color/status_success"
+        app:cornerRadius="@dimen/radius_full"
+        app:icon="@drawable/ic_wallet"
+        app:iconGravity="textStart"
+        app:iconSize="14dp"
+        app:iconPadding="@dimen/spacing_xs"
+        app:iconTint="@color/white" />
+
+</LinearLayout>

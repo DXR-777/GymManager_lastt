@@ -1,0 +1,1220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <!--
+        رأس مخصَّص بدل Toolbar القياسي: زر رجوع + عنوان + شارة زخرفية فقط (بلا أي سلوك
+        نقر)، لمطابقة المرجع البصري المرفق. لا يُستخدم setSupportActionBar في هذه الشاشة
+        أصلاً (Theme.GymManager بلا ActionBar)، فاستبدال Toolbar بـ LinearLayout عادي آمن
+        تماماً هنا.
+    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/spacing_sm"
+        android:paddingEnd="@dimen/spacing_sm">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="@dimen/touch_target_min"
+            android:layout_height="@dimen/touch_target_min"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/action_back"
+            android:padding="12dp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/text_primary" />
+
+        <TextView
+            android:id="@+id/tvToolbarTitle"
+            style="@style/Text.Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:ellipsize="end"
+            tools:text="@string/add_member_title" />
+
+        <ImageView
+            android:importantForAccessibility="no"
+            android:id="@+id/imgToolbarBadge"
+            android:layout_width="@dimen/icon_badge_size"
+            android:layout_height="@dimen/icon_badge_size"
+            android:background="@drawable/bg_icon_badge"
+            android:backgroundTint="@color/brand_accent"
+            android:padding="7dp"
+            android:src="@drawable/ic_user_round_plus"
+            app:tint="@android:color/white" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/scrollContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/spacing_lg"
+            android:paddingTop="@dimen/spacing_lg"
+            android:paddingBottom="@dimen/spacing_sm">
+
+            <!-- ============================= القسم 1: معلومات العضو ============================= -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card_glass"
+                android:elevation="@dimen/elevation_card_resting"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_md">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.SectionTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/member_info_section_title" />
+
+                    <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="@dimen/icon_badge_size"
+                        android:layout_height="@dimen/icon_badge_size"
+                        android:background="@drawable/bg_icon_badge"
+                        android:backgroundTint="@color/brand_accent"
+                        android:padding="7dp"
+                        android:src="@drawable/ic_person_placeholder"
+                        app:tint="@android:color/white" />
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilName"
+                    style="@style/Widget.GymManager.TextInputLayout.Glass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_header_gap"
+                    android:hint="@string/member_name_label">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="start|center_vertical"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapWords"
+                        android:maxLength="60"
+                        android:maxLines="1"
+                        android:textColor="@color/text_primary" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPhone"
+                    style="@style/Widget.GymManager.TextInputLayout.Glass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_md"
+                    android:hint="@string/member_phone_label"
+                    app:counterEnabled="true"
+                    app:counterMaxLength="13"
+                    app:helperText="@string/member_phone_helper">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPhone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:digits="0123456789٠١٢٣٤٥٦٧٨٩ -()+"
+                        android:gravity="start|center_vertical"
+                        android:imeOptions="actionDone"
+                        android:inputType="phone"
+                        android:maxLength="20"
+                        android:maxLines="1"
+                        android:textColor="@color/text_primary"
+                        android:textDirection="ltr" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- ============================= القسم 2: نوع الاشتراك ============================= -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_section"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Text.SectionTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/member_subscription_type_label" />
+
+                <ImageView
+                    android:importantForAccessibility="no"
+                    android:layout_width="@dimen/icon_badge_size"
+                    android:layout_height="@dimen/icon_badge_size"
+                    android:background="@drawable/bg_icon_badge"
+                    android:backgroundTint="@color/brand_accent"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_badge_dollar_sign"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <!--
+                محدِّد نوع الاشتراك: 4 قطاعات مخصَّصة (ليست ChipGroup/Chip قياسية، لأن Chip
+                لا يدعم أيقونة أعلى النص كما في المرجع البصري). كل قطاع LinearLayout بعنصرين
+                فقط بالضبط (ImageView ثم TextView) — راجع
+                AddEditMemberActivity.applyTypeSegmentSelection() الذي يصل إليهما عبر
+                getChildAt(0)/(1) بدل مُعرِّفات مستقلة لكل عنصر.
+            -->
+            <LinearLayout
+                android:id="@+id/segmentedType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_header_gap"
+                android:background="@drawable/bg_segment_track"
+                android:orientation="horizontal"
+                android:padding="4dp">
+
+                <LinearLayout
+                    android:id="@+id/segDaily"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="@drawable/ripple_selectable_dark"
+                    android:contentDescription="@string/subscription_daily"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp">
+
+                    <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="@color/text_secondary" />
+
+                    <TextView
+                        style="@style/Text.MemberSegmentLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/subscription_daily" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/segWeekly"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="@drawable/ripple_selectable_dark"
+                    android:contentDescription="@string/subscription_weekly"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp">
+
+                    <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="@color/text_secondary" />
+
+                    <TextView
+                        style="@style/Text.MemberSegmentLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/subscription_weekly" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/segMonthly"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="@drawable/bg_segment_selected_type"
+                    android:foreground="@drawable/ripple_selectable_dark"
+                    android:contentDescription="@string/subscription_monthly"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp">
+
+                    <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_calendar"
+                        app:tint="@android:color/white" />
+
+                    <TextView
+                        style="@style/Text.MemberSegmentLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/subscription_monthly"
+                        android:textColor="@android:color/white"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/segCustom"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="@drawable/ripple_selectable_dark"
+                    android:contentDescription="@string/subscription_custom"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:minHeight="@dimen/touch_target_min"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp">
+
+                    <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:src="@drawable/ic_sliders"
+                        app:tint="@color/text_secondary" />
+
+                    <TextView
+                        style="@style/Text.MemberSegmentLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/subscription_custom" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCustomDays"
+                style="@style/Widget.GymManager.TextInputLayout.Glass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:hint="@string/member_custom_days_label"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCustomDays"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="4"
+                    android:textColor="@color/text_primary" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- ============================= القسم 3: سعر الاشتراك ============================= -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_section"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Text.SectionTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/member_price_section_title" />
+
+                <ImageView
+                    android:importantForAccessibility="no"
+                    android:layout_width="@dimen/icon_badge_size"
+                    android:layout_height="@dimen/icon_badge_size"
+                    android:background="@drawable/bg_icon_badge"
+                    android:backgroundTint="@color/brand_accent"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_tag"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/priceHeroCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_header_gap"
+                android:background="@drawable/bg_price_hero_card"
+                android:elevation="@dimen/elevation_card_selected"
+                android:gravity="center"
+                android:minHeight="88dp"
+                android:orientation="horizontal"
+                android:paddingStart="@dimen/spacing_lg"
+                android:paddingEnd="@dimen/spacing_lg"
+                android:paddingTop="@dimen/spacing_lg"
+                android:paddingBottom="@dimen/spacing_lg">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPrice"
+                    style="@style/Widget.GymManager.TextInputLayout.Hero"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    app:boxStrokeWidth="0dp"
+                    app:boxStrokeWidthFocused="0dp"
+                    app:suffixTextAppearance="@style/TextAppearance.GymManager.HeroSuffix">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPrice"
+                        style="@style/Text.HeroPrice"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:gravity="center"
+                        android:minWidth="64dp"
+                        android:minEms="2"
+                        android:includeFontPadding="false"
+                        android:inputType="numberDecimal"
+                        android:maxLength="10"
+                        android:textAlignment="center"
+                        android:paddingStart="0dp"
+                        android:paddingEnd="0dp"
+                        android:paddingTop="0dp"
+                        android:paddingBottom="0dp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- ============================= القسم 4: مدة الاشتراك ============================= -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_section"
+                android:background="@drawable/bg_card_glass"
+                android:elevation="@dimen/elevation_card_resting"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_md">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.SectionTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/member_dates_section_title" />
+
+                    <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="@dimen/icon_badge_size"
+                        android:layout_height="@dimen/icon_badge_size"
+                        android:background="@drawable/bg_icon_badge"
+                        android:backgroundTint="@color/brand_accent"
+                        android:padding="7dp"
+                        android:src="@drawable/ic_calendar_range"
+                        app:tint="@android:color/white" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_header_gap"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!--
+                        ترتيب البطاقتين: "تاريخ البدء" (القابلة للنقر) أولاً، تليها "تاريخ
+                        الانتهاء" (محسوبة تلقائياً). في تخطيط RTL هذا يضع "البدء" في أقصى
+                        اليمين (بداية القراءة) والسهم يتجه نحو "الانتهاء" على اليسار، فيطابق
+                        اتجاه السهم (ic_forward) اتجاه التدفق المنطقي فعلياً بدل عكسه.
+                    -->
+                    <LinearLayout
+                        android:id="@+id/boxStartDate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="56dp"
+                        android:background="@drawable/bg_date_box"
+                        android:foreground="@drawable/ripple_selectable_dark"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:importantForAccessibility="no"
+                                android:layout_width="12dp"
+                                android:layout_height="12dp"
+                                android:layout_marginEnd="4dp"
+                                android:src="@drawable/ic_calendar_plus2"
+                                app:tint="@color/text_secondary" />
+
+                            <TextView
+                                style="@style/Text.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="@string/member_start_date_label" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvStartDateValue"
+                            style="@style/Text.MemberValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            tools:text="25 مايو 2026" />
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:layout_marginEnd="@dimen/spacing_sm"
+                        android:background="@drawable/bg_icon_badge">
+
+                        <ImageView
+                            android:importantForAccessibility="no"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_forward"
+                            app:tint="@color/text_secondary" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:minHeight="56dp"
+                        android:background="@drawable/bg_date_box"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:importantForAccessibility="no"
+                                android:layout_width="12dp"
+                                android:layout_height="12dp"
+                                android:layout_marginEnd="4dp"
+                                android:src="@drawable/ic_calendar_check2"
+                                app:tint="@color/text_secondary" />
+
+                            <TextView
+                                style="@style/Text.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="@string/member_end_date_label" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvEndDateValue"
+                            style="@style/Text.MemberValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            tools:text="25 يونيو 2026" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvRenewalHint"
+                    style="@style/Text.MemberHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:background="@drawable/bg_pill_warning"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="10dp"
+                    android:textColor="@color/status_warning"
+                    android:visibility="gone"
+                    tools:text="للعضو 5 أيام متبقية..."
+                    tools:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/tvRenewUnpaidWarning"
+                    style="@style/Text.MemberHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:background="@drawable/bg_pill_error"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="10dp"
+                    android:text="@string/renew_unpaid_default_warning"
+                    android:textColor="@color/status_error"
+                    android:visibility="gone"
+                    tools:text="@string/renew_unpaid_default_warning"
+                    tools:visibility="visible" />
+
+                <!-- البند 29: تذكير مستقل بدَين سابق متراكم — راجع
+                     AddEditMemberActivity.updateOldDebtWarning(). لا علاقة له بحالة
+                     دفع هذا التجديد نفسه (يظهر حتى لو اختير "مدفوع بالكامل" هنا). -->
+                <TextView
+                    android:id="@+id/tvOldDebtWarning"
+                    style="@style/Text.MemberHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:background="@drawable/bg_pill_warning"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="10dp"
+                    android:text="@string/renew_old_debt_warning"
+                    android:textColor="@color/status_warning"
+                    android:visibility="gone"
+                    tools:text="@string/renew_old_debt_warning"
+                    tools:visibility="visible" />
+            </LinearLayout>
+
+            <!-- ============================= القسم 5: حالة الدفع (جديد) ============================= -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_section"
+                android:background="@drawable/bg_card_glass"
+                android:elevation="@dimen/elevation_card_resting"
+                android:orientation="vertical"
+                android:padding="@dimen/spacing_md">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.SectionTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/member_payment_status_section_title" />
+
+                    <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="@dimen/icon_badge_size"
+                        android:layout_height="@dimen/icon_badge_size"
+                        android:background="@drawable/bg_icon_badge"
+                        android:backgroundTint="@color/status_partial"
+                        android:padding="7dp"
+                        android:src="@drawable/ic_circle_dollar_sign"
+                        app:tint="@android:color/white" />
+                </LinearLayout>
+
+                <!--
+                    حالة الدفع الثلاثية: 3 قطاعات نصّية مخصَّصة (بلا أيقونات، بخلاف نوع
+                    الاشتراك أعلاه) — راجع AddEditMemberActivity.applyPaymentStatusSelection().
+                -->
+                <LinearLayout
+                    android:id="@+id/segmentedPaymentStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_header_gap"
+                    android:background="@drawable/bg_segment_track"
+                    android:orientation="horizontal"
+                    android:padding="4dp">
+
+                    <TextView
+                        android:id="@+id/segUnpaid"
+                        style="@style/Text.MemberSegmentLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:foreground="@drawable/ripple_selectable_dark"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/payment_status_unpaid" />
+
+                    <TextView
+                        android:id="@+id/segPartial"
+                        style="@style/Text.MemberSegmentLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:foreground="@drawable/ripple_selectable_dark"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/payment_status_partial" />
+
+                    <TextView
+                        android:id="@+id/segPaid"
+                        style="@style/Text.MemberSegmentLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:foreground="@drawable/ripple_selectable_dark"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:paddingStart="4dp"
+                        android:paddingEnd="4dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:text="@string/payment_status_paid" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvPaymentStatusHelper"
+                    style="@style/Text.MemberHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    tools:text="@string/member_payment_status_helper_unpaid" />
+
+                <!--
+                    حقل "المبلغ المدفوع" + صفّ إحصائي صغير (الإجمالي/المتبقي): يظهران فقط
+                    عند اختيار "جزئي" — راجع AddEditMemberActivity.updatePartialAmountVisibility().
+                    صفّ الإحصاء يُعيد استخدام نفس لغة bg_date_box البصرية (القسم 4) بدل
+                    اختراع نمط جديد، حفاظاً على اتساق التصميم عبر الشاشة كلها.
+                -->
+                <LinearLayout
+                    android:id="@+id/llPartialAmountGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_md"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPaidAmount"
+                        style="@style/Widget.GymManager.TextInputLayout.Glass"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/member_paid_amount_label">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPaidAmount"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:maxLength="10"
+                            android:textColor="@color/text_primary" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="@dimen/spacing_sm"
+                            android:minHeight="56dp"
+                            android:background="@drawable/bg_date_box"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Text.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="@string/member_total_amount_label" />
+
+                            <TextView
+                                android:id="@+id/tvTotalAmount"
+                                style="@style/Text.MemberValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textStyle="bold"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                tools:text="120 ₪" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:minHeight="56dp"
+                            android:background="@drawable/bg_date_box"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                style="@style/Text.Caption"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:text="@string/member_remaining_label" />
+
+                            <TextView
+                                android:id="@+id/tvRemainingAmount"
+                                style="@style/Text.MemberValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:textColor="@color/status_partial"
+                                android:textStyle="bold"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                tools:text="80 ₪" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--
+                القسمان 6 و7 معاً (طريقة الدفع + بيانات المحفظة/المرسل): يظهران فقط عندما
+                حالة الدفع ليست "غير مدفوع" — راجع
+                AddEditMemberActivity.updatePaymentSectionVisibility().
+            -->
+            <LinearLayout
+                android:id="@+id/llPaymentSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <!-- ============================= القسم 6: طريقة الدفع ============================= -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_section"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/Text.SectionTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/member_payment_method_section_title" />
+
+                    <ImageView
+                        android:importantForAccessibility="no"
+                        android:layout_width="@dimen/icon_badge_size"
+                        android:layout_height="@dimen/icon_badge_size"
+                        android:background="@drawable/bg_icon_badge"
+                        android:backgroundTint="@color/brand_accent"
+                        android:padding="7dp"
+                        android:src="@drawable/ic_credit_card"
+                        app:tint="@android:color/white" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_header_gap"
+                    android:clipToPadding="false"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/rowPaymentMethods"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:id="@+id/methodPalpay"
+                            android:layout_width="90dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/spacing_sm"
+                            android:background="@drawable/bg_payment_method_chip_unselected"
+                            android:foreground="@drawable/ripple_selectable_dark"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="@string/payment_method_palpay"
+                            android:minHeight="@dimen/touch_target_min"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
+                            android:paddingTop="@dimen/spacing_sm"
+                            android:paddingBottom="@dimen/spacing_sm">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_pay_palpay" />
+
+                            <TextView
+                                style="@style/Text.PaymentMethodLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="@string/payment_method_palpay" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/methodJawwal"
+                            android:layout_width="90dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/spacing_sm"
+                            android:background="@drawable/bg_payment_method_chip_unselected"
+                            android:foreground="@drawable/ripple_selectable_dark"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="@string/payment_method_jawwal_pay"
+                            android:minHeight="@dimen/touch_target_min"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
+                            android:paddingTop="@dimen/spacing_sm"
+                            android:paddingBottom="@dimen/spacing_sm">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_pay_jawwal" />
+
+                            <TextView
+                                style="@style/Text.PaymentMethodLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="@string/payment_method_jawwal_pay" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/methodBank"
+                            android:layout_width="90dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="@dimen/spacing_sm"
+                            android:background="@drawable/bg_payment_method_chip_unselected"
+                            android:foreground="@drawable/ripple_selectable_dark"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="@string/payment_method_bank_of_palestine"
+                            android:minHeight="@dimen/touch_target_min"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
+                            android:paddingTop="@dimen/spacing_sm"
+                            android:paddingBottom="@dimen/spacing_sm">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_pay_bank" />
+
+                            <TextView
+                                style="@style/Text.PaymentMethodLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="@string/payment_method_bank_of_palestine" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:id="@+id/methodCash"
+                            android:layout_width="90dp"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_payment_method_chip_unselected"
+                            android:foreground="@drawable/ripple_selectable_dark"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:contentDescription="@string/payment_method_cash"
+                            android:minHeight="@dimen/touch_target_min"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"
+                            android:paddingTop="@dimen/spacing_sm"
+                            android:paddingBottom="@dimen/spacing_sm">
+
+                            <ImageView
+                                android:layout_width="28dp"
+                                android:layout_height="28dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_pay_cash" />
+
+                            <TextView
+                                style="@style/Text.PaymentMethodLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:text="@string/payment_method_cash" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </HorizontalScrollView>
+
+                <!-- البند 28: طريقة الدفع لم تعد تُختار تلقائياً (PalPay) بلا انتباه المستخدم —
+                     راجع AddEditMemberActivity.setupPaymentMethodChips(). هذا النص يظهر فقط
+                     عند محاولة الحفظ بلا اختيار أي شريحة صراحةً. -->
+                <TextView
+                    android:id="@+id/tvPaymentMethodError"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:text="@string/member_payment_method_error_required"
+                    android:textColor="@color/status_error"
+                    android:textSize="@dimen/text_card_description"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <!-- ===================== القسم 7: بيانات المحفظة / المرسل ===================== -->
+                <LinearLayout
+                    android:id="@+id/llSenderGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_section"
+                    android:background="@drawable/bg_card_glass"
+                android:elevation="@dimen/elevation_card_resting"
+                    android:orientation="vertical"
+                    android:padding="@dimen/spacing_md"
+                    android:visibility="visible"
+                    tools:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            style="@style/Text.SectionTitle"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/member_transfer_section_title" />
+
+                        <ImageView
+                            android:importantForAccessibility="no"
+                            android:layout_width="@dimen/icon_badge_size"
+                            android:layout_height="@dimen/icon_badge_size"
+                            android:background="@drawable/bg_icon_badge"
+                            android:backgroundTint="@color/brand_accent"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_wallet_minimal"
+                            app:tint="@android:color/white" />
+                    </LinearLayout>
+
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/cbSenderSameAsMember"
+                        style="@style/Text.WalletCheckboxLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_header_gap"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:gravity="center_vertical"
+                        android:checked="true"
+                        android:text="@string/member_sender_same_as_member" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilSenderName"
+                        style="@style/Widget.GymManager.TextInputLayout.Glass"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:hint="@string/member_sender_name_label">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSenderName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:enabled="false"
+                            android:gravity="start|center_vertical"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords"
+                            android:maxLength="60"
+                            android:maxLines="1"
+                            android:textColor="@color/text_primary" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.checkbox.MaterialCheckBox
+                        android:id="@+id/cbSenderPhoneSameAsMember"
+                        style="@style/Text.WalletCheckboxLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_md"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:gravity="center_vertical"
+                        android:checked="true"
+                        android:text="@string/member_sender_phone_same_as_member" />
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilSenderPhone"
+                        style="@style/Widget.GymManager.TextInputLayout.Glass"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:hint="@string/member_sender_phone_label">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etSenderPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="0123456789٠١٢٣٤٥٦٧٨٩ -()+"
+                            android:enabled="false"
+                            android:gravity="start|center_vertical"
+                            android:imeOptions="actionDone"
+                            android:inputType="phone"
+                            android:maxLength="20"
+                            android:maxLines="1"
+                            android:textColor="@color/text_primary"
+                            android:textDirection="ltr" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ============================= ملاحظات ============================= -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilNotes"
+                style="@style/Widget.GymManager.TextInputLayout.Glass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_section"
+                android:hint="@string/member_notes_label">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:inputType="textMultiLine"
+                    android:maxLength="500"
+                    android:minLines="2"
+                    android:textColor="@color/text_primary" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- ============================= زر الحفظ ============================= -->
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_section"
+                android:layout_marginBottom="@dimen/spacing_lg">
+
+                <FrameLayout
+                    android:id="@+id/frameSaveGlow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_button_glow"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:id="@+id/btnSaveMember"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/button_height_cta"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:background="@drawable/bg_button_gradient"
+                        android:clickable="true"
+                        android:elevation="@dimen/elevation_fab"
+                        android:focusable="true"
+                        android:foreground="@drawable/ripple_button_save"
+                        android:gravity="center"
+                        android:paddingStart="@dimen/spacing_lg"
+                        android:paddingEnd="@dimen/spacing_lg"
+                        android:stateListAnimator="@animator/btn_save_state_list_animator"
+                        android:text="@string/action_save"
+                        android:maxLines="1"
+                        android:ellipsize="end"
+                        android:textAllCaps="false"
+                        android:textColor="@color/button_save_text_color"
+                        android:textSize="@dimen/text_subtitle"
+                        android:fontFamily="sans-serif-medium"
+                        android:includeFontPadding="false"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.01" />
+                </FrameLayout>
+
+                <ProgressBar
+                    android:id="@+id/progressSave"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:indeterminateTint="@color/white"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شاشات الإعداد الأولي (Onboarding — 2026): نفس فكرة bg_button_glow.xml (طبقتان
+    شفافتان متراكبتان تحاكي وهجاً ناعماً) لكن بنصف قطر كامل الاستدارة (radius_full)
+    ليطابق شكل bg_onboarding_cta_pill.xml بدلاً من الزوايا المدوَّرة الجزئية
+    المستخدمة في زر الحفظ الأصلي.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/glow_accent_softer" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+    <item
+        android:top="4dp"
+        android:bottom="4dp"
+        android:start="4dp"
+        android:end="4dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/glow_accent_soft" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+</layer-list>

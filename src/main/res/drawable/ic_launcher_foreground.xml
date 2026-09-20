@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">
+    <!-- Dumbbell mark, centered within the 66dp safe-zone -->
+    <path android:fillColor="#E94560"
+        android:pathData="M28,46 h6 v16 h-6 z"/>
+    <path android:fillColor="#E94560"
+        android:pathData="M22,42 h4 v24 h-4 z"/>
+    <path android:fillColor="#E94560"
+        android:pathData="M80,46 h-6 v16 h6 z"/>
+    <path android:fillColor="#E94560"
+        android:pathData="M86,42 h-4 v24 h4 z"/>
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M34,51 h40 v6 h-40 z"/>
+</vector>

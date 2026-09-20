@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.GymManager" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/brand_accent</item>
+        <item name="colorPrimaryVariant">@color/brand_accent_dark</item>
+        <item name="colorOnPrimary">@color/text_on_accent</item>
+
+        <item name="colorSecondary">@color/brand_secondary</item>
+        <item name="colorOnSecondary">@color/text_primary</item>
+        <item name="colorSecondaryContainer">@color/brand_accent</item>
+        <item name="colorOnSecondaryContainer">@color/text_on_accent</item>
+
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorSurface">@color/surface_card</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.GymManager.Dialog</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.GymManager.BottomSheet</item>
+    </style>
+
+    <style name="Theme.GymManager.Splash" parent="Theme.GymManager">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="ThemeOverlay.GymManager.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/surface_card_alt</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorPrimary">@color/brand_accent</item>
+    </style>
+
+    <style name="ThemeOverlay.GymManager.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.GymManager.BottomSheet</item>
+    </style>
+
+    <style name="Widget.GymManager.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/surface_card_alt</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.GymManager.BottomSheet</item>
+    </style>
+
+    <style name="ShapeAppearance.GymManager.BottomSheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <!-- Bottom navigation bar: قائمة عائمة زجاجية (2026 Glassmorphism) — راجع
+         bg_bottom_nav_glass.xml للخلفية. labelVisibilityMode="selected" يُبقي
+         التسمية النصية على العنصر النشط فقط (أيقونة مجرَّدة للباقي)، مطابقةً
+         لطلب "أيقونات ونصوص أبسط" بدل تسميات دائمة على الأربعة معاً. حشوة
+         أصغر (8dp بدل 10dp) لتناسب حجم الحبّة العائمة المدمج الجديد. -->
+    <style name="Widget.GymManager.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@style/Widget.GymManager.BottomNavigationView.ActiveIndicator</item>
+        <item name="itemPaddingTop">8dp</item>
+        <item name="itemPaddingBottom">8dp</item>
+        <item name="labelVisibilityMode">selected</item>
+    </style>
+
+    <style name="Widget.GymManager.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@color/brand_accent_soft</item>
+    </style>
+
+    <!-- Card style used across the app -->
+    <style name="Widget.GymManager.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/surface_card</item>
+        <item name="cardCornerRadius">@dimen/radius_md</item>
+        <item name="cardElevation">@dimen/elevation_card</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="Widget.GymManager.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/brand_accent</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:textColor">@color/text_on_accent</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+    </style>
+
+    <style name="Widget.GymManager.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/divider</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+    </style>
+
+    <style name="Widget.GymManager.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/radius_sm</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_sm</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_sm</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_sm</item>
+        <item name="boxStrokeColor">@color/text_input_stroke_color</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+    </style>
+
+    <!-- نفس تنسيق Widget.GymManager.TextInputLayout، لكن لقوائم Exposed Dropdown Menu
+         (مثل حقل "طريقة الدفع") التي تتطلب Parent مختلفاً من Material Components. -->
+    <style name="Widget.GymManager.TextInputLayout.ExposedDropdown" parent="Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+        <item name="boxCornerRadiusTopStart">@dimen/radius_sm</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_sm</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_sm</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_sm</item>
+        <item name="boxStrokeColor">@color/text_input_stroke_color</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+    </style>
+
+    <!-- تدقيق الطباعة (Typography QA — M5): إضافة includeFontPadding="false" لكل
+         أنماط النص المشتركة أدناه، بنفس المعالجة المطبَّقة سابقاً على أنماط شاشة
+         إضافة/تعديل عضو (Text.SectionTitle وText.MemberValue وغيرهما)، حتى يتطابق
+         خط الأساس (baseline) لهذه الأنماط عند استخدامها بجانب عناصر أخرى مضبوطة
+         بنفس الطريقة (شارات، أرقام كبيرة) في بقية شاشات التطبيق. لا تغيير على
+         الحجم/اللون/الوزن هنا إلا في Text.Subtitle أدناه. -->
+    <style name="Text.Headline" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_headline</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Text.Title" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- تدقيق الطباعة (Typography QA — M5): هذا النمط يُستخدم في التطبيق لغرضين
+         مختلفين فعلياً — كعنوان قسم (مثل "معلومات النادي" في الإعدادات، أو
+         "ينتهي اشتراكهم قريباً" في الرئيسية) وكـ"قيمة" رقمية بارزة (عدد الأشهر،
+         إجمالي المدفوع، إيراد اليوم في شاشتَي تفاصيل العضو والإيرادات). بوزنه
+         العادي السابق (بلا fontFamily مخصَّص) كان يقترب بصرياً من نص الجسم العادي
+         فلا يتصدَّر كعنوان قسم ولا يبرز كقيمة. تمّت ترقيته إلى sans-serif-medium
+         (نفس المعالجة المستخدمة سابقاً في Text.MemberValue وText.SectionTitle)
+         ليخدم كلا الدورين بثبات دون تغيير الحجم أو تخطيط الشاشات التي يظهر بها. -->
+    <style name="Text.Subtitle" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_subtitle</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Text.Body" parent="">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+    </style>
+
+    <style name="Text.Caption" parent="">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- إعادة تصميم شاشة إضافة/تعديل عضو (2026): Dark Premium Glassmorphism -->
+
+    <!-- حقول الإدخال الزجاجية: نفس Widget.GymManager.TextInputLayout تماماً (نفس ألوان
+         الحدود وسلوك التركيز/الخطأ) لكن بتعبئة شبه شفافة (boxBackgroundColor) بدل
+         outline فارغ، لتبدو كلوح زجاجي فوق خلفية البطاقة الداكنة. -->
+    <style name="Widget.GymManager.TextInputLayout.Glass" parent="Widget.GymManager.TextInputLayout">
+        <item name="boxBackgroundMode">outline</item>
+        <item name="boxBackgroundColor">@color/glass_fill_alt</item>
+    </style>
+
+    <!-- حقل السعر الكبير داخل بطاقة السعر المميّزة: بلا صندوق/تسمية عائمة خاصة به،
+         لأن بطاقة bg_price_hero_card نفسها هي الإطار البصري، وعنوان القسم أعلاها
+         يُغني عن الـ hint. -->
+    <style name="Widget.GymManager.TextInputLayout.Hero" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundMode">none</item>
+        <item name="hintEnabled">false</item>
+    </style>
+
+    <!-- تدقيق الطباعة (Typography QA — 2026): كان رمز العملة يساوي تقريباً حجم الرقم
+         نفسه (20sp مقابل 38sp للرقم، لكن بلا includeFontPadding=false)، ما يجعل خط
+         الأساس (baseline) للرمز يظهر مرتفعاً/غير متّزن بصرياً مقابل الرقم الكبير الذي
+         تمّت إزالة الحشو الداخلي منه صراحةً. تمّت مطابقة نفس المعالجة هنا + تصغير الرمز
+         نسبياً (17sp بدل 20sp) ليقرأ كوحدة قياس تابعة للرقم لا كعنصر مساوٍ له في الوزن. -->
+    <style name="TextAppearance.GymManager.HeroSuffix" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_member_hero_suffix</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- تدقيق الطباعة (Typography QA — 2026): سابقاً كانت تستخدم text_subtitle (17sp)
+         نفسها المستخدمة لعنوان الشاشة في الـ Toolbar (Text.Title مبني على قياس مختلف
+         لكنها كانت قريبة جداً من نص الجسم/القيم في هذه الشاشة تحديداً). تمّت ترقيتها
+         لقياس مخصَّص أكبر قليلاً (18sp) مع letterSpacing سلبي طفيف يلائم الخط العربي
+         العريض عند هذا الحجم، لتتصدَّر بوضوح كرأس بطاقة مستقل. -->
+    <style name="Text.SectionTitle" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_member_section_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">-0.005</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Text.HeroPrice" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_hero_price</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- تدقيق الطباعة (Typography QA — 2026): نمط موحَّد لكل "قيمة" ثانوية في هذه
+         الشاشة (تاريخ البداية/النهاية، الإجمالي، المتبقي) — كانت جميعها تُكرِّر نفس 4
+         أسطر (textColor/textSize/textStyle) يدوياً على كل TextView، بقياس text_body
+         (15sp) القريب جداً من نص الجسم العادي فلا يُقرأ كـ"قيمة" بارزة. تمّت ترقيتها
+         لقياس مخصَّص (16sp) + خط عربي متوسط الوزن بدل bold الكامل، ليكون التمايز عن
+         عنوان القسم بالحجم لا بثقل الوزن فقط. -->
+    <style name="Text.MemberValue" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_member_value</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <!-- تدقيق الطباعة (Typography QA — 2026): توحيد تسميات كل الشرائح القابلة للاختيار
+         في هذه الشاشة (نوع الاشتراك، حالة الدفع) على قياس واحد بدل التذبذب بين
+         text_caption (12sp تحت segmentedType) وtext_body (15sp تحت
+         segmentedPaymentStatus) لوظيفة متطابقة بصرياً (شرائح تبويب). -->
+    <style name="Text.MemberSegmentLabel" parent="">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_member_segment_label</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <!-- تدقيق الطباعة (Typography QA — 2026): نمط موحَّد لنصوص التنبيه/المساعدة الطويلة
+         (تنبيه التجديد، تحذير عدم الدفع، مساعد حالة الدفع) — كانت تشترك في
+         Text.Caption لكن باستخدام lineSpacingExtra مختلف يدوياً (2dp في اثنين من
+         الثلاثة، وبلا أي قيمة في الثالث). الخط العربي يحتاج ارتفاع سطر أسخى من
+         اللاتيني عند نفس الحجم لتفادي تراكب النقاط/التشكيل بين الأسطر، فتمّ توحيد
+         الارتفاع صراحةً بدل تركه للـ line-height الافتراضي لبعض العناصر فقط. -->
+    <style name="Text.MemberHint" parent="Text.Caption">
+        <item name="android:lineSpacingExtra">4dp</item>
+    </style>
+
+    <!-- تدقيق الطباعة (Typography QA — 2026): تسمية بطاقات "طريقة الدفع" الأربع كانت
+         تُكرِّر نفس 6 أسطر (textColor/textSize/fontFamily/includeFontPadding/maxLines/
+         ellipsize) حرفياً على كل بطاقة من الأربع بلا استثناء. نفس نمط توحيد
+         Text.MemberSegmentLabel أعلاه: مصدر واحد للحقيقة بدل 4 نسخ يمكن أن تتباعد مع
+         أي تعديل مستقبلي. -->
+    <style name="Text.PaymentMethodLabel" parent="Text.Caption">
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <!-- تدقيق المحاذاة (Alignment QA — 2026): نمط موحَّد لنص خانتَي الاختيار في قسم
+         "بيانات المحفظة / المرسل". كانتا تعتمدان على مظهر النص الافتراضي لـ Material3
+         (16sp تقريباً) بلا إزالة الحشو الداخلي، ما يكسر اتساق خط الأساس مقابل حقول
+         الإدخال المجاورة (15sp، بلا حشو). توحيد الحجم هنا مع بقية نصوص الشاشة. -->
+    <style name="Text.WalletCheckboxLabel" parent="Text.Body">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+</resources>

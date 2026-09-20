@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة "الانتهاء" (Onboarding 4.4): قطعة قصاصة احتفالية صغيرة واحدة، تُستخدم
+     عدّة مرات بدورانات وألوان وأحجام مختلفة (عبر android:rotation وbackgroundTint
+     في التخطيط) لمحاكاة تناثر القصاصات حول شارة النجاح في المرجع، بدل استيراد
+     صورة لكل قطعة على حدة. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@android:color/white" />
+    <corners android:radius="2dp" />
+</shape>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    زر الحفظ (Save CTA) — تدقيق حالة التعطيل (2026): كانت هذه الخلفية شكلاً واحداً
+    ثابتاً (تدرّج لوني) بلا أي تمييز بصري لحالة enabled=false؛ الاعتماد كان فقط على
+    alpha برمجي مؤقت في الكود (يُطفئ الزر لكن يترك الوهج خلفه بلونه الكامل، فيظهر
+    تعارض بصري بين هالة زاهية وزر خافت). أصبحت الآن selector: حالة معطّلة = تعبئة
+    مسطّحة هادئة (بلا تدرّج)، وحالة مفعّلة = نفس التدرّج الأصلي. نصف القطر تمت
+    مطابقته مع bg_button_glow (انظر radius_button_cta).
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_enabled="false">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/surface_card_alt" />
+            <corners android:radius="@dimen/radius_button_cta" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="0"
+                android:startColor="@color/brand_gradient_start"
+                android:endColor="@color/brand_gradient_end" />
+            <corners android:radius="@dimen/radius_button_cta" />
+        </shape>
+    </item>
+</selector>

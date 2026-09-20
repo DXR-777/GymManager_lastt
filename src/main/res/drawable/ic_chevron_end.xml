@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة "فكرة التطبيق" (Onboarding 2 من 4): سهم صغير ">" في نهاية كل بطاقة ميزة،
+     يوحي بإمكانية التفاصيل لاحقاً. نفس أسلوب ic_forward.xml (fillColor + autoMirrored)
+     حتى ينعكس تلقائياً في واجهة RTL العربية. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24"
+    android:autoMirrored="true">
+    <path android:fillColor="@color/text_secondary"
+        android:pathData="M8.59,16.59L13.17,12L8.59,7.41L10,6l6,6l-6,6z"/>
+</vector>

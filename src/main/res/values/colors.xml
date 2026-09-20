@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand -->
+    <color name="brand_primary">#1A1A2E</color>
+    <color name="brand_primary_dark">#12121F</color>
+    <color name="brand_secondary">#16213E</color>
+    <color name="brand_accent">#E94560</color>
+    <color name="brand_accent_dark">#C13550</color>
+    <!-- Soft tonal tint for the bottom nav active pill: keeps the checked icon/label
+         (brand_accent) visible on top instead of red-on-red. -->
+    <color name="brand_accent_soft">#33E94560</color>
+
+    <!-- Text input field borders: kept separate from brand_accent (which is red/pink and
+         reads as an error state) so a focused field never looks like a validation error.
+         See Widget.GymManager.TextInputLayout + color/text_input_stroke_color.xml. -->
+    <color name="input_stroke_normal">#3A3A5E</color>
+    <color name="input_stroke_focused">#8A7FBF</color>
+
+    <!-- Status -->
+    <color name="status_success">#0F9B58</color>
+    <color name="status_success_bg">#220F9B58</color>
+    <color name="status_warning">#F5A623</color>
+    <color name="status_warning_bg">#22F5A623</color>
+    <color name="status_error">#DC2626</color>
+    <color name="status_error_bg">#22DC2626</color>
+    <color name="status_neutral">#8892B0</color>
+
+    <!-- Surfaces -->
+    <color name="background">#0F0F23</color>
+    <color name="surface_card">#1E1E3A</color>
+    <color name="surface_card_alt">#252548</color>
+    <color name="surface_elevated">#2A2A52</color>
+    <color name="divider">#33335A</color>
+
+    <!-- Payment switch track: OFF must read as an unmistakable financial warning,
+         not blend into the surrounding card surface. See switch_track_color.xml. -->
+    <color name="switch_track_unpaid">#DC2626</color>
+    <color name="switch_track_unpaid_bg">#22DC2626</color>
+
+    <!-- Text -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#8892B0</color>
+    <color name="text_disabled">#5A6079</color>
+    <color name="text_on_accent">#FFFFFF</color>
+
+    <!-- Chart palette -->
+    <color name="chart_daily">#4DA1FF</color>
+    <color name="chart_weekly">#F5A623</color>
+    <color name="chart_monthly">#0F9B58</color>
+    <color name="chart_custom">#B15DE0</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- إعادة تصميم شاشة إضافة/تعديل عضو (2026): Dark Premium Glassmorphism -->
+    <!-- "جزئي" (Partial Payment): حالة دفع ثالثة جديدة، بنفسجي مميّز عن أخضر
+         status_success (مدفوع) وأحمر status_error (غير مدفوع). -->
+    <color name="status_partial">#8B5CF6</color>
+    <color name="status_partial_bg">#228B5CF6</color>
+
+    <!-- تدرّج العناصر البارزة (زر الحفظ، حدود بطاقة السعر، شريحة النوع المختار):
+         من brand_accent الحالي إلى بنفسجي دافئ، بنفس روح المرجع البصري المرفق. -->
+    <color name="brand_gradient_start">#F2545B</color>
+    <color name="brand_gradient_end">#8B5CF6</color>
+
+    <!-- سطوح "الزجاج" (Glassmorphism): تعبئة شبه شفافة + حد علوي خفيف يوحيان بلوح
+         زجاجي فوق الخلفية الداكنة، بدل بطاقات solid المستخدمة في بقية الشاشات. -->
+    <color name="glass_fill">#CC1E1E3A</color>
+    <color name="glass_fill_alt">#CC252548</color>
+    <color name="glass_border">#26FFFFFF</color>
+    <color name="glass_border_strong">#40FFFFFF</color>
+
+    <!-- القائمة السفلية العائمة (2026 Glassmorphism): تعبئة أخفّ عتامة عمداً من
+         glass_fill_alt العادي (70% بدل 80%) — الهدف "تفاعل مع الخلفية" لا سطح
+         شبه مصمت، فكلما قلّت العتامة ظهر أكثر من محتوى الشاشة خلف الشريط
+         العائم. sheen: توهج علوي أبيض خافت جداً (12% فقط) يحاكي انعكاس ضوء
+         خفيف على سطح زجاجي، يتلاشى بالكامل عند 55% من ارتفاع الشريط. -->
+    <color name="bottom_nav_glass_fill">#B3252548</color>
+    <color name="bottom_nav_glass_sheen">#1FFFFFFF</color>
+
+    <!-- وهج ناعم (Glow) خلف زر الحفظ وبطاقة السعر — طبقات شفافة متراكبة تحاكي وهجاً
+         بلا الحاجة لتمويه صورة حقيقي. -->
+    <color name="glow_accent_soft">#33F2545B</color>
+    <color name="glow_accent_softer">#1AF2545B</color>
+
+    <!-- ألوان تمثيلية لأيقونات طرق الدفع (وليست بالضرورة الهوية اللونية الرسمية
+         الدقيقة لكل مزوّد — يُستحسن مطابقتها لاحقاً مع دليل العلامة الرسمي لكل شركة). -->
+    <color name="pay_palpay">#7C3AED</color>
+    <color name="pay_jawwal">#F97316</color>
+    <color name="pay_bank">#059669</color>
+    <color name="pay_cash">#22C55E</color>
+
+    <!-- تنقيح التفاعلات الدقيقة (2026): موجة لمس (ripple) بيضاء شفافة موحَّدة تُلفّ
+         برمجياً حول أي خلفية "مختارة" (شريحة نوع/حالة دفع/طريقة دفع)، حتى لا يفقد
+         العنصر تغذيته الراجعة اللمسية بعد اختياره — راجع
+         AddEditMemberActivity.rippleWrap(). -->
+    <color name="ripple_on_dark">#33FFFFFF</color>
+
+    <!-- شاشات الإعداد الأولي (Onboarding — 2026): نظير بنفسجي لـ glow_accent_soft/softer
+         الحالي (اللذين بلون brand_accent الأحمر فقط)، يُستخدم في التوهج المزدوج اللون
+         خلف شارة الشعار الزجاجية (أحمر من جهة اليمين + بنفسجي من جهة اليسار)، بنفس
+         شفافية النظير الأحمر تماماً لتطابق الشدة البصرية بين الجهتين. -->
+    <color name="glow_purple_soft">#338B5CF6</color>
+    <color name="glow_purple_softer">#1A8B5CF6</color>
+
+    <!-- نقاط تقدّم شاشات الإعداد الأولي: النقطة النشطة تستخدم brand_gradient مباشرة،
+         وهذا لون النقاط غير النشطة — مأخوذ بالمعايَنة المباشرة من مرجع التصميم
+         المرفق (لون بنفسجي رمادي مكتوم، لا يطابق أي رمز نص/حدود موجود مسبقاً). -->
+    <color name="onboarding_dot_inactive">#4A4478</color>
+
+    <!-- شاشة "فكرة التطبيق" (Onboarding 2 من 4): لون سهم ">" الصغير داخل كل بطاقة
+         ميزة — أخفت من text_secondary العادي (معايَنة مباشرة من المرجع: أزرق-بنفسجي
+         مكتوم شبه شفاف)، ليقرأ كتفصيل ثانوي لا كعنصر تفاعلي بارز. -->
+    <color name="onboarding_chevron_tint">#8C8CB8</color>
+</resources>

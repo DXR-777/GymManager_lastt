@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    منتقي العملة المخصّص (خطوة "العملة والأسعار" — Onboarding 4.2): يُعرض داخل
+    BottomSheetDialog بخلفية شفافة (راجع GymSetupActivity.showCurrencyPicker)
+    فلا يظهر خلفه أي إطار أبيض من النظام. 3 عملات ثابتة (₪/$/د.أ) + صفّ رابع
+    "عملة أخرى" يفتح حوار إدخال حر (راجع البند 23: سابقاً كانت هذه الشاشة
+    تقتصر على 3 عملات فقط بلا أي مخرج لعملة أخرى) — بنفس درجات
+    bg_onboarding_feature_card/bg_onboarding_selectable_card_unselected
+    المستخدمتين أصلاً لبطاقات مقدّمة واتساب — نفس نمط الاختيار الفردي
+    (radio-like) الذي رآه المستخدم بالفعل في خطوة سابقة، لا نمط تفاعل جديد.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_currency_sheet"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/spacing_lg"
+    android:paddingTop="@dimen/spacing_md"
+    android:paddingBottom="@dimen/spacing_xl">
+
+    <!-- مقبض سحب علوي، النمط القياسي لأي Bottom Sheet -->
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/shape_dot"
+        android:backgroundTint="@color/glass_border_strong" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/spacing_md"
+        android:layout_marginBottom="@dimen/spacing_md"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/onboarding_currency_picker_title"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_subtitle"
+        android:textStyle="bold" />
+
+    <!-- ILS -->
+    <LinearLayout
+        android:id="@+id/rowCurrencyIls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_onboarding_selectable_card_unselected"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_md">
+
+        <FrameLayout android:layout_width="48dp" android:layout_height="48dp">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_onboarding_dot_active" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:text="₪"
+                android:textColor="@color/text_on_accent"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/currency_name_ils"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="₪ ILS"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_card_description" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- USD -->
+    <LinearLayout
+        android:id="@+id/rowCurrencyUsd"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:background="@drawable/bg_onboarding_selectable_card_unselected"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_md">
+
+        <FrameLayout android:layout_width="48dp" android:layout_height="48dp">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_onboarding_dot_active" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:text="$"
+                android:textColor="@color/text_on_accent"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/currency_name_usd"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="$ USD"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_card_description" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- JOD -->
+    <LinearLayout
+        android:id="@+id/rowCurrencyJod"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:background="@drawable/bg_onboarding_selectable_card_unselected"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_md">
+
+        <FrameLayout android:layout_width="48dp" android:layout_height="48dp">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_onboarding_dot_active" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:text="د.أ"
+                android:textColor="@color/text_on_accent"
+                android:textSize="@dimen/text_card_description"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/currency_name_jod"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="د.أ JOD"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_card_description" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- عملة أخرى (مخصّصة): تحل البند 23 — سابقاً كانت العملة مقصورة على هذه
+         الثلاث فقط بلا أي خيار حر، فأي نادٍ بعملة مختلفة (جنيه مصري، ريال
+         سعودي...) لا يستطيع استخدام عملته الحقيقية إطلاقاً. يفتح النقر عليها
+         حواراً لإدخال رمز حر (راجع showCustomCurrencyDialog). -->
+    <LinearLayout
+        android:id="@+id/rowCurrencyCustom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:background="@drawable/bg_onboarding_selectable_card_unselected"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_md">
+
+        <FrameLayout android:layout_width="48dp" android:layout_height="48dp">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_onboarding_dot_active" />
+
+            <TextView
+                android:id="@+id/tvCurrencyCustomSymbol"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="sans-serif-medium"
+                android:text="+"
+                android:textColor="@color/text_on_accent"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/currency_name_custom"
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_subtitle"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCurrencyCustomSubtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/onboarding_currency_custom_subtitle"
+                android:textColor="@color/text_secondary"
+                android:textSize="@dimen/text_card_description" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>
