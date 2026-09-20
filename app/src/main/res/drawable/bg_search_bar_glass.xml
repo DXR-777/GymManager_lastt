@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    صندوق البحث (Dark Glassmorphism 2026): يحلّ محلّ MaterialCardView المسطّح
+    السابق (تعبئة صلبة فقط)، بنفس نمط الطبقات الثلاث المتّبع في هذا المشروع
+    (راجع bg_bottom_nav_glass.xml):
+      1) تعبئة داكنة شبه شفافة (glass_fill_alt) — نفس تعبئة الحالة السابقة، محفوظة.
+      2) توهج ضوئي علوي خافت جداً (bottom_nav_glass_sheen، نفس شدّة الشفافية
+         المستخدمة في القائمة السفلية) يحاكي انعكاس ضوء على سطح زجاجي.
+      3) حدّ رفيع تفاعلي (search_bar_stroke_color) يقوى تلقائياً عند تركيز
+         etSearch بفضل android:addStatesFromChildren على الحاوية.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/glass_fill_alt" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="90"
+                android:startColor="@color/bottom_nav_glass_sheen"
+                android:centerColor="@color/transparent"
+                android:centerY="0.55"
+                android:endColor="@color/transparent" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transparent" />
+            <stroke android:width="1dp" android:color="@color/search_bar_stroke_color" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+
+</layer-list>

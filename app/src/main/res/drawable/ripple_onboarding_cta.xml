@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- نفس فكرة ripple_button_save.xml (قناع بنفس شكل الخلفية حتى لا يتموّج التموّج
+     خارج حدود الزر المستدير)، بنصف قطر كامل الاستدارة ليطابق bg_onboarding_cta_pill.xml. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/ripple_on_dark">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+</ripple>

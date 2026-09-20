@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شاشة "فكرة التطبيق" (Onboarding 2 من 4): بطاقة الميزة بحدّ متدرّج اللون
+    (مرجاني أعلى-يسار إلى بنفسجي أسفل-يمين)، مطابقة لمرجع التصميم. XML الأصلي
+    (<stroke>) لا يدعم تدرّجاً مباشرة، لذلك تُبنى الحيلة المعتادة بطبقتين:
+    الطبقة الخلفية شكل بتدرّج brand_gradient كامل يمثّل "الحدّ"، والطبقة الأمامية
+    شكل بلون glass_fill الصلب مُزاح للداخل بمقدار عرض الحدّ (1.5dp) فيغطّي كل
+    الوسط ولا يُبقي مرئياً من الطبقة الخلفية إلا الإطار الرفيع الملوَّن.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="315"
+                android:startColor="@color/brand_gradient_start"
+                android:endColor="@color/brand_gradient_end" />
+            <corners android:radius="@dimen/radius_lg" />
+        </shape>
+    </item>
+    <item
+        android:top="1.5dp"
+        android:bottom="1.5dp"
+        android:start="1.5dp"
+        android:end="1.5dp">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/glass_fill" />
+            <corners android:radius="@dimen/radius_lg" />
+        </shape>
+    </item>
+</layer-list>

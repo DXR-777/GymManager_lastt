@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    fabAddMember فقط — ColorStateList معزول.
+    FloatingActionButton لا يدعم تدرّجاً حقيقياً عبر backgroundTint (ColorStateList
+    يقبل لوناً مصمتاً واحداً لكل حالة فقط)، لذا هذا الملف يحاكي هوية التدرّج
+    (brand_gradient_start → brand_gradient_end) عبر تبديل اللون المصمت بين حالتي
+    الضغط والافتراضي، بدل استخدام brand_accent وحده.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/brand_gradient_start" android:state_pressed="true"/>
+    <item android:color="@color/brand_gradient_end"/>
+</selector>

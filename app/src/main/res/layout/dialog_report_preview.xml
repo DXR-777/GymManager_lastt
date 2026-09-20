@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    البند 31: كانت مشاركة تقرير الإيرادات (نص أو Excel) تُنشئ المحتوى وتفتح شيت
+    المشاركة مباشرة بلا أي معاينة — فقد يُرسَل التقرير لجهة خاطئة (رقم واتساب/محادثة
+    غير مقصودة) دون أن يرى صاحب النادي أرقامه أولاً. هذا الـ layout يُستخدم كمعاينة
+    مشتركة بين مسار النص ومسار Excel (RevenueFragment.showReportPreview) قبل استدعاء
+    intent المشاركة الفعلي، بنفس أسلوب البطاقات الزجاجية الداكنة المستخدم في باقي
+    التطبيق (bg_card_glass) بدل نافذة AlertDialog البيضاء الافتراضية.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/spacing_lg"
+    android:paddingTop="@dimen/spacing_sm">
+
+    <TextView
+        android:id="@+id/tvReportPreviewHint"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/spacing_sm"
+        android:text="@string/revenue_report_preview_hint"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_card_description" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="360dp"
+        android:background="@drawable/bg_card_glass_compact"
+        android:padding="@dimen/spacing_md">
+
+        <TextView
+            android:id="@+id/tvReportPreviewContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="monospace"
+            android:lineSpacingExtra="2dp"
+            android:textColor="@color/text_primary"
+            android:textIsSelectable="true"
+            android:textSize="13sp"
+            tools:text="نادي المثال — الإيرادات والأرباح" />
+
+    </androidx.core.widget.NestedScrollView>
+
+</LinearLayout>

@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">إدارة الجيم</string>
+
+    <!-- عام -->
+    <string name="action_save">حفظ</string>
+    <string name="action_cancel">إلغاء</string>
+    <string name="action_delete">حذف</string>
+    <string name="action_edit">تعديل</string>
+    <string name="action_confirm">تأكيد</string>
+    <string name="action_next">التالي</string>
+    <string name="action_back">رجوع</string>
+    <string name="action_done">إنهاء</string>
+    <string name="action_share">مشاركة</string>
+    <string name="action_restore">استعادة</string>
+    <string name="action_retry">إعادة المحاولة</string>
+    <string name="action_search">بحث</string>
+    <!-- البند 28: زر "مسح البحث" في شاشة الأعضاء كان يستخدم content description الزر
+         العام "إلغاء" (action_cancel) بدل وصف دقيق لما يفعله الزر فعلياً (مسح نص
+         الحقل، لا إلغاء عملية) — مربك لمستخدمي TalkBack الذين يسمعون "إلغاء" فيتوقعون
+         زر رفض/تراجع بدل زر تفريغ حقل بحث. نفس النص المستخدم أصلاً في زر مسح بحث
+         الأرشيف (archive_clear_search) ليتوحّد الوصف بين الشاشتين المتشابهتين. -->
+    <string name="action_clear_search_text">مسح نص البحث</string>
+    <string name="currency_default">₪</string>
+
+    <!-- شاشات الإعداد الأولي (Onboarding) — الترحيب -->
+    <string name="onboarding_welcome_title">مرحباً بك</string>
+    <string name="onboarding_welcome_subtitle">إدارة ذكية لناديك الرياضي، بكل بساطة.</string>
+    <string name="onboarding_logo_content_description">شعار التطبيق</string>
+    <string name="onboarding_next">التالي</string>
+    <string name="onboarding_step_indicator">الخطوة %1$d من %2$d</string>
+
+    <!-- شاشات الإعداد الأولي (Onboarding) — فكرة التطبيق -->
+    <string name="onboarding_concept_title">مصمَّم لأصحاب الأندية مثلك</string>
+    <string name="onboarding_concept_subtitle">كل ما تحتاجه لإدارة ناديك، في تطبيق واحد قوي.</string>
+    <string name="onboarding_feature_members_title">إدارة الأعضاء</string>
+    <string name="onboarding_feature_members_desc">أضف وتابع وأدر جميع أعضائك بسهولة.</string>
+    <string name="onboarding_feature_subscriptions_title">الاشتراكات والخطط</string>
+    <string name="onboarding_feature_subscriptions_desc">أنشئ خططاً، وتابع التجديدات، ونظّم المدفوعات.</string>
+    <string name="onboarding_feature_connect_title">ابقَ على تواصل</string>
+    <string name="onboarding_feature_connect_desc">تواصل مع أعضائك وابنِ علاقات أقوى.</string>
+    <string name="onboarding_next_label">التالي</string>
+
+    <!-- شاشات الإعداد الأولي (Onboarding) — حفظ البيانات على السحابة + تسجيل الدخول -->
+    <string name="onboarding_cloud_title">بياناتك، محمية دائماً</string>
+    <string name="onboarding_cloud_subtitle">نسخ احتياطي آمن على السحابة يحافظ على بيانات ناديك سليمة ومتاحة دائماً.</string>
+    <string name="onboarding_cloud_illustration_description">توضيح الحفظ على السحابة</string>
+    <string name="onboarding_sign_in_google">تسجيل الدخول عبر Google</string>
+    <string name="onboarding_continue_as_guest">المتابعة كضيف</string>
+    <string name="onboarding_google_sign_in_failed">تعذّر تسجيل الدخول عبر Google. حاول مرة أخرى أو تابع كضيف.</string>
+    <string name="onboarding_google_account_save_failed">تعذّر حفظ بيانات حساب Google، لكن يمكنك المتابعة.</string>
+    <string name="onboarding_setup_save_failed">تعذّر حفظ إعداد النادي. تحقّق من مساحة التخزين وحاول مرة أخرى.</string>
+
+    <!-- شاشات الإعداد الأولي (Onboarding) — معالج إعداد النادي (4 من 4) -->
+    <string name="onboarding_gymname_title">اسم النادي</string>
+    <string name="onboarding_gymname_subtitle">لنبدأ بإعداد هوية ناديك.</string>
+    <string name="onboarding_gym_name_hint">أدخل اسم النادي</string>
+    <string name="onboarding_gym_illustration_description">توضيح لمبنى النادي</string>
+    <string name="onboarding_step4_title">كل شيء جاهز!</string>
+    <string name="onboarding_step4_subtitle_line1">ناديك جاهز للانطلاق.</string>
+    <string name="onboarding_step4_subtitle_line2">لنحقّق العظمة معاً!</string>
+    <string name="onboarding_success_badge_description">تم إكمال الإعداد بنجاح</string>
+
+    <!-- شاشات الإعداد الأولي (Onboarding) — معالج إعداد النادي: العملة والأسعار (4.2) -->
+    <string name="onboarding_pricing_title">العملة والأسعار</string>
+    <string name="onboarding_pricing_subtitle">اختر عملتك وحدّد أسعار الاشتراكات، ويمكنك تغييرها لاحقاً.</string>
+    <string name="onboarding_price_monthly_title">شهري</string>
+    <string name="onboarding_price_monthly_desc">اشتراك شهري</string>
+    <string name="onboarding_price_weekly_title">أسبوعي</string>
+    <string name="onboarding_price_weekly_desc">اشتراك أسبوعي</string>
+    <string name="onboarding_price_daily_title">يومي</string>
+    <string name="onboarding_price_daily_desc">اشتراك يومي</string>
+    <string name="onboarding_price_hint">أدخل السعر</string>
+    <string name="onboarding_price_error_monthly">يرجى إدخال سعر الاشتراك الشهري</string>
+    <string name="onboarding_price_error_weekly">يرجى إدخال سعر الاشتراك الأسبوعي</string>
+    <string name="onboarding_price_error_daily">يرجى إدخال سعر الاشتراك اليومي</string>
+    <string name="onboarding_price_error_monthly_positive">يجب أن يكون سعر الاشتراك الشهري أكبر من صفر</string>
+    <string name="onboarding_price_error_weekly_positive">يجب أن يكون سعر الاشتراك الأسبوعي أكبر من صفر</string>
+    <string name="onboarding_price_error_daily_positive">يجب أن يكون سعر الاشتراك اليومي أكبر من صفر</string>
+    <string name="onboarding_price_info_note">يمكنك تحديث هذه الأسعار لاحقاً من إعدادات النادي.</string>
+    <string name="onboarding_currency_picker_title">اختر العملة</string>
+    <string name="currency_name_ils">شيكل — ILS</string>
+    <string name="currency_name_usd">دولار — USD</string>
+    <string name="currency_name_jod">دينار أردني — JOD</string>
+    <!-- البند 23: خيار عملة حرّة بدل الاقتصار على الثلاث أعلاه فقط -->
+    <string name="currency_name_custom">عملة أخرى</string>
+    <string name="onboarding_currency_custom_subtitle">اكتب رمز عملتك الخاص</string>
+    <string name="currency_custom_dialog_title">أدخل رمز العملة</string>
+    <string name="currency_custom_dialog_hint">مثال: ج.م، ر.س، €</string>
+    <string name="currency_custom_dialog_error_empty">الرجاء إدخال رمز للعملة</string>
+    <string name="onboarding_back_content_description">رجوع للخطوة السابقة</string>
+
+    <!-- شاشات الإعداد الأولي (Onboarding) — معالج إعداد النادي: واتساب (4.3) -->
+    <string name="onboarding_whatsapp_title">إعداد واتساب</string>
+    <string name="onboarding_whatsapp_subtitle">اربط رقم واتساب الخاص بك للتواصل بسهولة مع أعضائك.</string>
+    <string name="onboarding_whatsapp_icon_description">شعار واتساب</string>
+    <string name="onboarding_prefix_israel_code">+972</string>
+    <string name="onboarding_prefix_israel_label">إسرائيل</string>
+    <string name="onboarding_prefix_auto_label">تلقائي</string>
+    <string name="onboarding_prefix_auto_desc">اكتشاف تلقائي</string>
+    <string name="onboarding_prefix_palestine_code">+970</string>
+    <string name="onboarding_prefix_palestine_label">فلسطين</string>
+    <string name="onboarding_whatsapp_info_note">سنكتشف مقدّمة الدولة الصحيحة تلقائياً بناءً على رقم هاتفك.</string>
+
+    <!-- شاشة الإعداد الأولي -->
+    <string name="setup_title">مرحباً بك 👋</string>
+    <string name="setup_subtitle">لنجهّز نادي تطبيقك خلال دقيقة واحدة</string>
+    <string name="setup_gym_name_label">اسم النادي / الجيم</string>
+    <string name="setup_gym_name_hint">مثال: نادي القوة الرياضي</string>
+    <string name="setup_currency_label">رمز العملة</string>
+    <string name="setup_prices_title">أسعار الاشتراكات</string>
+    <string name="setup_price_daily">سعر الاشتراك اليومي</string>
+    <string name="setup_price_weekly">سعر الاشتراك الأسبوعي</string>
+    <string name="setup_price_monthly">سعر الاشتراك الشهري</string>
+    <string name="setup_whatsapp_title">مقدمة رقم واتساب</string>
+    <string name="setup_whatsapp_desc">عند إرسال الفاتورة سيحاول التطبيق فتح واتساب بهذه المقدمة أولاً. اختر \"تلقائي\" لتجربة 970+ ثم 972+ تلقائياً.</string>
+    <string name="setup_finish">ابدأ</string>
+    <string name="setup_error_gym_name">يرجى إدخال اسم النادي</string>
+    <string name="setup_error_prices">يرجى إدخال جميع الأسعار بشكل صحيح</string>
+    <string name="setup_error_price_field">أدخل سعراً صحيحاً</string>
+    <string name="setup_error_price_must_be_positive">يجب أن يكون السعر أكبر من صفر</string>
+
+    <!-- التنقل السفلي -->
+    <string name="nav_dashboard">الرئيسية</string>
+    <string name="nav_members">الأعضاء</string>
+    <string name="nav_revenue">الإيرادات</string>
+    <string name="nav_settings">الإعدادات</string>
+
+    <!-- لوحة التحكم -->
+    <string name="dashboard_greeting_morning">صباح الخير ☀️</string>
+    <string name="dashboard_greeting_evening">مساء الخير 🌙</string>
+    <string name="dashboard_greeting_night">أهلاً بك 👋</string>
+    <string name="dashboard_active_members">الأعضاء النشطون</string>
+    <string name="dashboard_today_revenue">إيرادات اليوم</string>
+    <string name="dashboard_unpaid_count">اشتراكات غير مدفوعة</string>
+    <string name="dashboard_expiring_soon">تنتهي قريباً</string>
+    <!-- البند 7: وصف Accessibility مُجمَّع للبطاقات الثلاث القابلة للنقر في لوحة التحكم
+         (نشطون/غير مدفوعين/قريبو الانتهاء). دون هذا كان قارئ الشاشة يقرأ عناصر البطاقة
+         الفرعية بترتيب الشجرة (الرقم ثم التسمية، مثلاً "24، الأعضاء النشطون") بلا أي
+         إشارة أنها قابلة للنقر أو ماذا سيحدث عند النقر؛ الوصف هنا يجمعهما بترتيب طبيعي
+         (تسمية ثم قيمة) ويضيف تلميح الإجراء. -->
+    <string name="dashboard_card_content_description">%1$s: %2$s. اضغط لعرض القائمة</string>
+    <string name="dashboard_expiring_section">⏳ ينتهي اشتراكهم قريباً</string>
+    <string name="dashboard_unpaid_section">💰 لم يدفعوا بعد</string>
+    <string name="dashboard_empty_expiring">لا يوجد أعضاء قريبون من انتهاء الاشتراك 👍</string>
+    <string name="dashboard_empty_unpaid">جميع الأعضاء سدّدوا اشتراكاتهم ✅</string>
+
+    <!-- الأعضاء -->
+    <string name="members_title">الأعضاء</string>
+    <string name="members_search_hint">ابحث بالاسم أو رقم الجوال</string>
+    <string name="members_filter_all">الكل</string>
+    <string name="members_filter_active">نشط</string>
+    <string name="members_filter_expired">منتهي</string>
+    <string name="members_filter_unpaid">غير مدفوع</string>
+    <string name="members_filter_expiring">ينتهي قريباً</string>
+    <string name="members_empty">لا يوجد أعضاء بعد.\nاضغط + لإضافة أول عضو</string>
+    <string name="members_no_results">لا نتائج مطابقة للبحث أو الفلتر الحالي</string>
+    <string name="members_archive_action">الأرشيف 🗑️</string>
+    <string name="members_sort_action">ترتيب</string>
+    <string name="members_sort_name">الاسم (أ-ي)</string>
+    <string name="members_sort_expiry_soonest">الأقرب لانتهاء الاشتراك</string>
+    <string name="members_sort_newest">الأحدث تسجيلاً</string>
+    <string name="days_remaining_format">باقي %1$d يوم</string>
+    <string name="days_remaining_today">ينتهي اليوم</string>
+    <string name="days_remaining_expired">منتهي منذ %1$d يوم</string>
+    <string name="days_remaining_not_started">لم يبدأ بعد</string>
+    <string name="action_settle_debt">تسديد</string>
+    <string name="settle_debt_success">تم تسجيل الدفع بنجاح ✅</string>
+    <string name="settle_debt_confirm_title">تأكيد استلام الدفع</string>
+    <string name="settle_debt_confirm_message">تأكيد استلام %1$s من %2$s؟\n\nسيُسجَّل المبلغ في إيرادات اليوم.</string>
+    <string name="about_message">تطبيق إدارة اشتراكات الجيم\nالإصدار %1$s\n\nجميع بياناتك مخزّنة محلياً على هاتفك فقط ولا تُرسَل لأي خادم خارجي.</string>
+    <string name="status_paid">مدفوع</string>
+    <string name="status_unpaid">غير مدفوع</string>
+
+    <!-- إضافة / تعديل عضو -->
+    <string name="add_member_title">إضافة عضو جديد</string>
+    <string name="edit_member_title">تعديل بيانات العضو</string>
+    <string name="renew_member_title">تجديد الاشتراك</string>
+    <string name="member_name_label">الاسم الكامل</string>
+    <string name="member_name_hint">مثال: محمد أحمد</string>
+    <string name="member_phone_label">رقم الجوال</string>
+    <string name="member_phone_hint">مثال: 0599999999</string>
+    <string name="member_phone_error_digits">رقم الجوال يجب أن يحتوي على أرقام فقط</string>
+    <string name="member_phone_error_length">رقم الجوال غير مكتمل</string>
+    <string name="member_subscription_type_label">نوع الاشتراك</string>
+    <string name="member_price_label">السعر</string>
+    <string name="member_start_date_label">تاريخ البدء</string>
+    <string name="member_end_date_label">تاريخ الانتهاء</string>
+    <string name="member_paid_label">تم الدفع؟</string>
+    <string name="renew_unpaid_default_warning">تنبيه: هذا التجديد سيُحفَظ افتراضياً كـ"غير مدفوع". إن كان العميل قد دفع الآن، اختر "مدفوع" أو "جزئي" أدناه قبل الحفظ.</string>
+    <!-- البند 29: تذكير منفصل بدَين سابق متراكم من دورات قبل هذا التجديد -->
+    <string name="renew_old_debt_warning">تنبيه: على هذا العضو دَين سابق (%1$s) من اشتراكات قبل هذا التجديد، لم يُسدَّد بعد بغض النظر عن حالة دفع هذا التجديد.</string>
+    <string name="member_payment_section_title">بيانات الدفع</string>
+    <string name="member_payment_method_label">طريقة الدفع</string>
+    <string name="payment_method_palpay">بال باي</string>
+    <string name="payment_method_jawwal_pay">جوال باي</string>
+    <string name="payment_method_bank_of_palestine">بنك فلسطين</string>
+    <string name="payment_method_cash">نقدًا</string>
+    <string name="member_sender_same_as_member">نفس اسم العضو</string>
+    <string name="member_sender_name_label">اسم صاحب المحفظة</string>
+    <string name="member_sender_phone_same_as_member">نفس رقم جوال العضو</string>
+    <string name="member_sender_phone_label">رقم محفظة المرسل</string>
+    <string name="member_sender_name_error_invalid">اسم المُرسِل قصير جداً</string>
+    <string name="member_notes_label">ملاحظات (اختياري)</string>
+    <string name="member_notes_hint">أي تفاصيل إضافية عن العضو…</string>
+    <string name="subscription_daily">يومي</string>
+    <string name="subscription_weekly">أسبوعي</string>
+    <string name="subscription_monthly">شهري</string>
+    <string name="subscription_custom">مدة مخصصة</string>
+    <string name="member_custom_days_label">عدد الأيام</string>
+    <string name="member_custom_days_error">يرجى إدخال عدد أيام صحيح أكبر من صفر</string>
+    <!-- البند 5: حد أقصى منطقي لعدد الأيام المخصصة (1825 يوم ≈ 5 سنوات) — يمنع إدخال
+         قيم غير واقعية (مثل 99999) تُنتج تاريخ انتهاء بعيد جداً بلا أي تحذير سابقاً. -->
+    <string name="member_custom_days_error_too_large">الحد الأقصى لعدد الأيام هو %1$d يوماً (نحو 5 سنوات)</string>
+    <string name="member_save_success">تم حفظ بيانات العضو بنجاح ✅</string>
+    <string name="member_error_name_required">يرجى إدخال اسم العضو</string>
+    <!-- نافذة تحذير التكرار: تظهر قبل الحفظ إن كان الاسم أو رقم الجوال يطابق عضواً نشطاً آخر بالفعل -->
+    <string name="member_duplicate_warning_title">تنبيه: بيانات مكرَّرة</string>
+    <string name="member_duplicate_phone_message">رقم الجوال هذا مسجَّل بالفعل لعضو آخر باسم \"%1$s\". هل تريد المتابعة رغم ذلك؟</string>
+    <string name="member_duplicate_name_message">يوجد عضو آخر بنفس الاسم \"%1$s\" بالفعل. هل تريد المتابعة رغم ذلك؟</string>
+    <string name="member_duplicate_continue">متابعة الحفظ</string>
+    <!-- البند 1: حوار تأكيد الخروج عند وجود بيانات مكتوبة لم تُحفَظ بعد (رجوع بالضغط
+         على السهم أو زر النظام)، بدل إغلاق الشاشة وفقدان البيانات فوراً وبصمت. -->
+    <string name="member_discard_changes_title">تجاهل التغييرات؟</string>
+    <string name="member_discard_changes_message">لديك بيانات لم تُحفَظ بعد. إذا رجعت الآن ستُفقد جميع البيانات المُدخَلة.</string>
+    <string name="member_discard_changes_discard">تجاهل والخروج</string>
+    <string name="member_discard_changes_keep_editing">متابعة التعديل</string>
+    <string name="renewal_hint_remaining_days">للعضو %1$d يوم متبقٍ من اشتراكه الحالي. سيبدأ هذا التجديد تلقائياً بعده مباشرة (بتاريخ %2$s) — يمكنك تغيير التاريخ يدوياً إن رغبت.</string>
+
+    <!-- إعادة تصميم شاشة إضافة/تعديل عضو (2026): عناوين الأقسام -->
+    <string name="member_info_section_title">معلومات العضو</string>
+    <string name="member_price_section_title">سعر الاشتراك</string>
+    <string name="member_dates_section_title">مدة الاشتراك</string>
+    <string name="member_payment_status_section_title">حالة الدفع</string>
+    <string name="member_payment_method_section_title">طريقة الدفع</string>
+    <!-- البند 28: يمنع حفظ "PalPay" كطريقة دفع افتراضية بلا اختيار واعٍ من المستخدم -->
+    <string name="member_payment_method_error_required">الرجاء اختيار طريقة الدفع</string>
+    <string name="member_transfer_section_title">بيانات المحفظة / المرسل</string>
+    <string name="member_phone_helper">أرقام فقط، 9 أرقام على الأقل</string>
+
+    <!-- ميزة "الدفع الجزئي" الجديدة: الحالة الثلاثية (مدفوع/جزئي/غير مدفوع) -->
+    <string name="payment_status_paid">مدفوع</string>
+    <string name="payment_status_partial">جزئي</string>
+    <string name="payment_status_unpaid">غير مدفوع</string>
+    <string name="member_payment_status_helper_paid">مدفوع — سيُسجَّل كإيراد محصَّل</string>
+    <string name="member_payment_status_helper_partial">دفعة جزئية — الباقي يُسجَّل كدَين على العضو</string>
+    <string name="member_payment_status_helper_unpaid">غير مدفوع — سيُسجَّل كدَين على العضو</string>
+    <string name="member_paid_amount_label">المبلغ المدفوع</string>
+    <string name="member_remaining_amount_format">المتبقي: %1$s</string>
+    <string name="member_paid_amount_error_required">أدخل مبلغاً صحيحاً أكبر من صفر</string>
+    <string name="member_paid_amount_error_exceeds">لا يمكن أن يتجاوز المبلغ المدفوع سعر الاشتراك</string>
+    <string name="member_total_amount_label">الإجمالي</string>
+    <string name="member_remaining_label">المتبقي</string>
+
+    <!-- تفاصيل العضو -->
+    <string name="detail_subscription_status">حالة الاشتراك</string>
+    <string name="detail_total_months">عدد أشهر الاشتراك</string>
+    <string name="detail_total_paid">إجمالي ما تم دفعه</string>
+    <string name="detail_outstanding">المتبقي غير المدفوع</string>
+    <string name="detail_outstanding_banner_sentence">⚠ هذا العضو عليه %1$s ديون سابقة (%2$s)</string>
+    <string name="detail_outstanding_banner_cta">عرض التفاصيل</string>
+    <plurals name="detail_outstanding_banner_count">
+        <item quantity="zero">لا اشتراكات غير مدفوعة</item>
+        <item quantity="one">اشتراك واحد غير مدفوع</item>
+        <item quantity="two">اشتراكان غير مدفوعين</item>
+        <item quantity="few">%d اشتراكات غير مدفوعة</item>
+        <item quantity="many">%d اشتراكًا غير مدفوع</item>
+        <item quantity="other">%d اشتراك غير مدفوع</item>
+    </plurals>
+    <string name="detail_history_title">سجل الاشتراكات السابقة</string>
+    <string name="detail_history_empty">لا يوجد اشتراكات سابقة</string>
+    <!-- البند 30: يظهر بدل detail_history_empty عندما يكون السجل الكامل غير فارغ فعلياً
+         لكن الفلتر الحالي (حالة الدفع) أخفى كل النتائج — بنفس مبدأ members_no_results. -->
+    <string name="detail_history_no_results">لا اشتراكات مطابقة لهذا الفلتر</string>
+    <string name="detail_history_sort_newest">الأحدث أولاً</string>
+    <string name="detail_history_sort_oldest">الأقدم أولاً</string>
+    <!-- تفاصيل العضو: الاشتراك الحالي مدفوع فعلاً — عرض مختصر بأيقونة بدل "طريقة الدفع:". -->
+    <string name="detail_payment_method_paid">💳 %1$s</string>
+    <!-- تفاصيل العضو: الاشتراك الحالي غير مدفوع بعد — صياغة استشرافية بدل "طريقة الدفع:". -->
+    <string name="detail_payment_method_pending">سيتم الدفع عبر: %1$s</string>
+    <!-- تفاصيل العضو: اسم صاحب المحفظة/رقم المحفظة، كل منهما بسطر مستقل وتظهر فقط إن وُجدت بيانات. -->
+    <string name="detail_sender_name">👤 %1$s</string>
+    <string name="detail_sender_phone">📱 %1$s</string>
+    <!-- سجل الاشتراكات: صيغة مختصرة "الحالة • طريقة الدفع" في سطر واحد. -->
+    <string name="subscription_payment_method_compact">%1$s • %2$s</string>
+    <!-- معلومات المُرسِل (اسم و/أو رقم جوال التحويل) — تُعرض فقط عند توفّر أحدهما على
+         الأقل، في تفاصيل الاشتراك الحالي وسجل الاشتراكات معاً. -->
+    <string name="subscription_sender_name_only">المُرسِل: %1$s</string>
+    <string name="subscription_sender_phone_only">رقم التحويل: %1$s</string>
+    <string name="subscription_sender_both">المُرسِل: %1$s • رقم التحويل: %2$s</string>
+    <string name="detail_action_whatsapp">إرسال للواتساب</string>
+    <string name="detail_action_call">اتصال</string>
+    <string name="detail_action_renew">تجديد</string>
+    <string name="detail_action_edit">تعديل</string>
+    <string name="detail_action_delete">حذف العضو</string>
+    <string name="detail_member_since">عضو منذ %1$s</string>
+
+    <!-- حوار الحذف -->
+    <string name="delete_dialog_title">حذف العضو؟</string>
+    <string name="delete_dialog_message">سيتم نقل %1$s إلى الأرشيف. يمكنك استعادته خلال 30 يوماً.</string>
+    <string name="delete_dialog_balance_warning">⚠️ تنبيه: على هذا العضو مبلغ غير مدفوع وقدره %1$s</string>
+    <string name="delete_dialog_days_warning">⚠️ تنبيه: لا يزال للعضو %1$d يوم متبقي من اشتراكه الحالي</string>
+    <string name="delete_dialog_confirm">نعم، حذف العضو</string>
+    <string name="delete_success">تم حذف العضو ونقله إلى الأرشيف</string>
+    <!-- البند 27: زر التراجع في Snackbar الحذف — راجع MemberDetailActivity.showDeleteUndoSnackbar -->
+    <string name="action_undo">تراجع</string>
+
+    <!-- الأرشيف -->
+    <string name="archive_title">الأعضاء المحذوفون</string>
+    <string name="archive_empty">الأرشيف فارغ</string>
+    <string name="archive_no_search_results">لا يوجد أعضاء محذوفون مطابقون للبحث</string>
+    <string name="archive_clear_search">مسح نص البحث</string>
+    <string name="archive_deleted_on">حُذف في %1$s</string>
+    <!-- تُعرض بجانب archive_deleted_on طالما بقيت للعضو أيام قبل الحذف النهائي التلقائي (راجع ArchivePurgeWorker) -->
+    <string name="archive_purge_countdown">يُحذف نهائياً خلال %1$d يوم</string>
+    <string name="archive_purge_countdown_today">يُحذف نهائياً اليوم</string>
+    <string name="archive_restore_success">تمت استعادة العضو بنجاح</string>
+    <string name="archive_permanent_delete_title">حذف نهائي؟</string>
+    <string name="archive_permanent_delete_message">سيتم حذف %1$s نهائياً مع جميع سجلاته. لا يمكن التراجع عن هذا الإجراء.</string>
+    <!-- يظهر فقط عندما outstandingBalance > 0 لعضو مؤرشف، حتى لا يغيب الدَّين عن صاحب النادي أثناء وجود العضو في الأرشيف -->
+    <string name="archive_debt_badge">⚠️ دَين مستحق: %1$s</string>
+
+    <!-- واتساب -->
+    <string name="whatsapp_not_installed">تطبيق واتساب غير مثبت على الجهاز</string>
+    <string name="whatsapp_invalid_phone">رقم الجوال غير صالح للإرسال — تحقّق منه في بطاقة العضو</string>
+    <string name="whatsapp_try_other_prefix">لم تُفتح المحادثة؟ جرّب المقدمة الأخرى</string>
+    <string name="whatsapp_sending_to">إرسال إلى %1$s</string>
+    <!-- البند 20: تُعرض بدل whatsapp_sending_to عندما لا يكون تطبيق واتساب مثبَّتاً
+         وفُتح رابط في المتصفح كحل أخير فقط — النجاح هنا غير مضمون إطلاقاً (بخلاف فتح
+         التطبيق الفعلي)، فالرسالة يجب أن تعكس ذلك بوضوح بدل الإيحاء بنجاح مؤكَّد. -->
+    <string name="whatsapp_sending_browser_fallback">واتساب غير مثبت — فُتح رابط %1$s في المتصفح، تأكد من إرسال الرسالة يدوياً من هناك</string>
+    <string name="whatsapp_message_template">🏋️ %1$s\n────────────\n👤 الاسم: %2$s\n📅 نوع الاشتراك: %3$s\n✅ من: %4$s  إلى: %5$s\n💰 المبلغ: %6$s\n📊 حالة الدفع: %7$s\n⏳ الأيام المتبقية: %8$s\n%9$s\n────────────\nشكراً لاختيارك نادينا 💪</string>
+    <string name="whatsapp_debt_line">⚠️ ديون سابقة غير مسدَّدة: %1$s</string>
+
+    <!-- الإيرادات -->
+    <string name="revenue_title">الإيرادات والأرباح</string>
+    <string name="revenue_today">اليوم</string>
+    <string name="revenue_week">هذا الأسبوع</string>
+    <string name="revenue_month">هذا الشهر</string>
+    <string name="revenue_year">هذا العام</string>
+    <string name="revenue_chart_last7days">آخر 7 أيام</string>
+    <string name="revenue_by_type">الإيرادات حسب نوع الاشتراك (هذا الشهر)</string>
+    <string name="revenue_compare_last_month">مقارنة بالشهر الماضي</string>
+    <string name="revenue_compare_no_data">لا توجد بيانات كافية من الشهر الماضي للمقارنة بعد</string>
+    <string name="revenue_custom_range_action">عرض شهر سابق أو فترة مخصصة</string>
+    <string name="revenue_custom_range_label">%1$s – %2$s</string>
+    <!-- البند 28: نفس الفجوة — زر إغلاق نتيجة النطاق المخصص كان يستخدم action_cancel
+         ("إلغاء") رغم أنه لا يُلغي شيئاً، فقط يُخفي بطاقة النتيجة المعروضة. -->
+    <string name="revenue_custom_range_dismiss">إغلاق نتيجة الفترة المخصصة</string>
+    <string name="revenue_export_pdf">تصدير تقرير PDF</string>
+    <string name="revenue_share_report">مشاركة ملخص الإيرادات</string>
+    <string name="revenue_share_choose_format">اختر طريقة المشاركة</string>
+    <string name="revenue_share_as_text">مشاركة كنص (واتساب/رسالة)</string>
+    <string name="revenue_share_as_excel">مشاركة كملف Excel</string>
+    <string name="revenue_report_generated_on">تاريخ إصدار التقرير</string>
+    <string name="revenue_report_sheet_title">تقرير الإيرادات</string>
+    <string name="revenue_report_section_summary">ملخص الإيرادات</string>
+    <string name="revenue_report_section_by_type">الإيرادات حسب نوع الاشتراك (هذا الشهر)</string>
+    <string name="revenue_report_section_last7days">إيرادات آخر 7 أيام</string>
+    <string name="revenue_report_column_period">الفترة</string>
+    <string name="revenue_report_column_amount">المبلغ</string>
+    <string name="revenue_excel_export_error">تعذّر إنشاء ملف Excel</string>
+    <!-- البند 31: معاينة التقرير قبل المشاركة الفعلية (نص أو Excel) -->
+    <string name="revenue_report_preview_title">معاينة التقرير قبل المشاركة</string>
+    <string name="revenue_report_preview_hint">راجع الأرقام قبل الإرسال:</string>
+    <string name="revenue_report_preview_hint_excel">راجع محتوى الملف قبل إنشائه ومشاركته:</string>
+    <string name="revenue_report_preview_action_share">مشاركة</string>
+    <string name="revenue_report_preview_action_cancel">إلغاء</string>
+    <string name="revenue_no_data">لا توجد بيانات كافية لعرض الرسم البياني بعد</string>
+
+    <!-- الإعدادات -->
+    <string name="settings_title">الإعدادات</string>
+    <string name="settings_gym_info">معلومات النادي</string>
+    <string name="settings_pricing">الأسعار</string>
+    <string name="settings_whatsapp">إعدادات واتساب</string>
+    <string name="settings_notifications">الإشعارات</string>
+    <string name="settings_notify_expiry">تنبيه قبل انتهاء الاشتراك</string>
+    <string name="settings_notify_unpaid">تنبيه يومي للمدفوعات المتأخرة</string>
+    <string name="settings_notifications_disabled_warning">الإشعارات معطّلة على مستوى النظام لهذا التطبيق — لن تصلك أي تنبيهات حتى لو فعّلت المفاتيح أدناه</string>
+    <string name="settings_open_notification_settings">فتح إعدادات الإشعارات</string>
+    <string name="settings_data">البيانات والنسخ الاحتياطي</string>
+    <string name="settings_backup_now">إنشاء نسخة احتياطية الآن</string>
+    <string name="settings_restore_backup">استعادة من نسخة احتياطية</string>
+    <string name="settings_export_excel">تصدير قائمة الأعضاء (CSV)</string>
+    <string name="settings_export_include_archived">تضمين الأعضاء المؤرشفين/المحذوفين في الملف؟</string>
+    <string name="settings_export_active_only">النشطون فقط</string>
+    <string name="settings_export_include_archived_action">تضمين الجميع</string>
+    <string name="settings_archive">سلة المحذوفين</string>
+    <string name="settings_about">عن التطبيق</string>
+    <string name="settings_save_success">تم حفظ الإعدادات بنجاح ✅</string>
+    <string name="settings_backup_success">تم إنشاء نسخة احتياطية بنجاح 📦</string>
+    <string name="settings_backup_success_with_size">تم إنشاء نسخة احتياطية بنجاح 📦 (الحجم: %1$s)</string>
+    <string name="settings_progress_detail">%1$d%% — %2$d من %3$d</string>
+    <string name="settings_restore_success">تم استرجاع البيانات بنجاح</string>
+    <string name="settings_restore_error">تعذّرت عملية الاستعادة. تأكد من أن الملف المختار نسخة احتياطية صالحة.</string>
+    <!-- البند 32: exportCsv() لم يكن يملك أي try/catch — أي فشل (تخزين ممتلئ، صلاحيات...)
+         كان يتسبب بانهيار صامت بدل رسالة واضحة، بخلاف الاستعادة التي تُعالَج بوضوح أعلاه. -->
+    <string name="settings_export_csv_error">تعذّر تصدير الملف. تأكد من توفر مساحة تخزين كافية وأعد المحاولة.</string>
+    <string name="settings_restore_confirm_title">استعادة النسخة الاحتياطية؟</string>
+    <string name="settings_restore_confirm_message">سيتم استبدال البيانات الحالية بالكامل بالبيانات الموجودة في النسخة الاحتياطية المختارة.</string>
+    <string name="whatsapp_prefix_auto">تلقائي (970+ ثم 972+)</string>
+
+    <!-- الإشعارات -->
+    <string name="notif_channel_name">تنبيهات الاشتراكات</string>
+    <string name="notif_channel_desc">تنبيهات انتهاء الاشتراك والمدفوعات المتأخرة</string>
+    <string name="notif_expiry_title">⚠️ اشتراك على وشك الانتهاء</string>
+    <string name="notif_expiry_body">اشتراك %1$s ينتهي بعد %2$d يوم</string>
+    <string name="notif_expired_title">🔴 انتهى الاشتراك</string>
+    <string name="notif_expired_body">انتهى اشتراك %1$s اليوم</string>
+    <string name="notif_unpaid_title">💰 تذكير بالدفع</string>
+    <string name="notif_unpaid_body">يوجد %1$d عضو لم يسددوا اشتراكهم بعد</string>
+    <string name="notif_archive_purge_title">🗑️ حذف نهائي قريب</string>
+    <string name="notif_archive_purge_body">سيُحذف %1$s نهائياً خلال %2$d يوم ولن تتمكن من استعادته — اضغط هنا لاستعادته الآن</string>
+
+    <!-- حوار شرح إذن الإشعارات (Rationale) — راجع البند 19 -->
+    <string name="notification_rationale_title">تفعيل التنبيهات؟</string>
+    <string name="notification_rationale_message">فعّل الإشعارات لتصلك تنبيهات فورية عند اقتراب انتهاء اشتراك أحد الأعضاء أو عند وجود أعضاء لم يسددوا بعد — حتى لا يفوتك متابعتهم.</string>
+    <string name="notification_rationale_allow">تفعيل</string>
+    <string name="notification_rationale_later">ليس الآن</string>
+
+    <!-- البند 19: أسماء الأيام المختصرة لعمود الرسم البياني (RevenueFragment.lastSevenDayLabels)
+         كانت مصفوفة Kotlin ثابتة داخل الكود، فلا يمكن ترجمتها أو تعديلها مركزياً مثل
+         بقية نصوص التطبيق. الترتيب هنا يطابق تماماً Calendar.DAY_OF_WEEK (1=الأحد
+         حتى 7=السبت)، ويُقرأ عبر الفهرس (DAY_OF_WEEK - 1) بلا تغيير في المنطق. -->
+    <string-array name="weekday_labels_short">
+        <item>أحد</item>
+        <item>إثنين</item>
+        <item>ثلاثاء</item>
+        <item>أربعاء</item>
+        <item>خميس</item>
+        <item>جمعة</item>
+        <item>سبت</item>
+    </string-array>
+</resources>

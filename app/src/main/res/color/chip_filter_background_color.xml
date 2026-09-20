@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    رقائق فلترة الأعضاء (Glassmorphism): الرقاقة المحدَّدة تُبرَز بلون العلامة
+    الصريح (brand_accent) بدل التلوّن الزجاجي الخافت، بينما تبقى الرقاقة غير
+    المحدَّدة زجاجية شبه شفافة (glass_fill_alt) لتطابق بطاقة البحث في نفس الشاشة.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/brand_accent" android:state_checked="true" />
+    <item android:color="@color/glass_fill_alt" />
+</selector>

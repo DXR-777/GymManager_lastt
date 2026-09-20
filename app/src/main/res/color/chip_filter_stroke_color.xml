@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    حدود رقائق الفلترة: حدّ أقوى شبه شفاف (glass_border_strong) حول الرقاقة
+    المحدَّدة لتمييزها إضافياً عن تعبئة brand_accent الصلبة، وحدّ زجاجي ناعم
+    (glass_border) حول بقية الرقائق غير المحدَّدة.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/glass_border_strong" android:state_checked="true" />
+    <item android:color="@color/glass_border" />
+</selector>

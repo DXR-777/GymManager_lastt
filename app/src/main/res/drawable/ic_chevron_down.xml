@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة "العملة والأسعار": سهم صغير للأسفل يدلّ على أن صف العملة قابل للفتح
+     (منتقي العملة). لا autoMirrored هنا لأن الاتجاه رأسي، لا علاقة له بـ RTL. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path android:fillColor="@color/text_secondary"
+        android:pathData="M7.41,8.59L12,13.17L16.59,8.59L18,10l-6,6l-6,-6z"/>
+</vector>

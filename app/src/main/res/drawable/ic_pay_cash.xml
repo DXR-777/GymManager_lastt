@@ -1,0 +1,12 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <!--
+        أيقونة "نقدًا" — لا مشكلة علامة تجارية هنا. بطاقة مربعة الشكل بزوايا دائرية (نفس نصف
+        القطر ونفس نسبة الحواف المستخدمة في شعارات PalPay وJawwal Pay وبنك فلسطين، بحيث
+        تبدو الأيقونات الأربع كطقم واحد متطابق البصمة والوزن)، بلون العلامة الحالي
+        (@color/pay_cash دون أي تغيير)، مع رمز ورقة نقدية أبيض بأسلوب Material Symbols
+        (payments) في المنتصف.
+    -->
+    <path android:fillColor="@color/pay_cash" android:pathData="M5,0 L19,0 A5,5 0 0 1 24,5 L24,19 A5,5 0 0 1 19,24 L5,24 A5,5 0 0 1 0,19 L0,5 A5,5 0 0 1 5,0 Z"/>
+    <path android:fillColor="#FFFFFF" android:fillType="evenOdd" android:pathData="M6.5,8 L17.5,8 A1.5,1.5 0 0 1 19,9.5 L19,14.5 A1.5,1.5 0 0 1 17.5,16 L6.5,16 A1.5,1.5 0 0 1 5,14.5 L5,9.5 A1.5,1.5 0 0 1 6.5,8 Z M9.7,12 A2.3,2.3 0 1 1 14.3,12 A2.3,2.3 0 1 1 9.7,12 Z"/>
+</vector>

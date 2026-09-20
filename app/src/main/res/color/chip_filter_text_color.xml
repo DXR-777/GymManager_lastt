@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    نص رقائق الفلترة: أبيض كامل التباين (text_on_accent) فوق تعبئة brand_accent
+    الصلبة للرقاقة المحدَّدة، ورمادي ثانوي (text_secondary) فوق التعبئة الزجاجية
+    الخافتة للرقائق غير المحدَّدة.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/text_on_accent" android:state_checked="true" />
+    <item android:color="@color/text_secondary" />
+</selector>

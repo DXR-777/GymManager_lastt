@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    تلميح تمرير أفقي لصفّ رقائق الفلترة (chipGroupFilter): تعبئة متدرّجة من لون
+    الخلفية (background، معتم عند الحافة) إلى شفاف تماماً (نحو الداخل)، توضَع فوق
+    طرفي HorizontalScrollView كتلميح بصري ناعم بأن هناك رقائق إضافية قابلة
+    للتمرير، بدل قصّ حاد مفاجئ لحواف الرقائق عند حافة الشاشة.
+    هذا الملف يمثّل حافة واحدة فقط (معتم في اليسار الفيزيائي ← شفاف نحو اليمين)؛
+    يُستخدم كما هو للحافة اليسرى (end في RTL)، ويُعكَس أفقياً (android:scaleX="-1"
+    على الـView المضيف في fragment_members.xml) لإنتاج نفس التأثير على الحافة
+    اليمنى (start في RTL) دون الحاجة لملف مكرَّر.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:type="linear"
+        android:angle="0"
+        android:startColor="@color/background"
+        android:endColor="@color/transparent" />
+</shape>

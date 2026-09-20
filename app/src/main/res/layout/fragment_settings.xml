@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_lg">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_lg"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Text.Title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/settings_title" />
+
+            <ProgressBar
+                android:id="@+id/progressSettings"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- معلومات النادي -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_glass"
+            android:elevation="@dimen/elevation_card_resting"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Text.SectionTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_gym_info" />
+
+                <ImageView
+                    android:importantForAccessibility="no"
+                    android:layout_width="@dimen/icon_badge_size"
+                    android:layout_height="@dimen/icon_badge_size"
+                    android:background="@drawable/bg_icon_badge"
+                    android:backgroundTint="@color/brand_accent"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_home"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilGymName" style="@style/Widget.GymManager.TextInputLayout.Glass"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_header_gap"
+                android:hint="@string/setup_gym_name_label">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etGymName" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:inputType="textCapWords" android:maxLength="60" android:textColor="@color/text_primary" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- عملة: حقل غير قابل للكتابة المباشرة عمداً — يفتح منتقي العملة (3 عملات
+                 جاهزة ILS/USD/JOD + خيار "عملة أخرى" حرّ عبر حوار مخصّص، راجع البند 23)
+                 بدل السماح بطباعة حرّة داخل هذا الحقل نفسه قد تكسر تنسيق الأسعار لاحقاً.
+                 راجع showCurrencyPicker() و showCustomCurrencyDialog(). -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilCurrency" style="@style/Widget.GymManager.TextInputLayout.Glass"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md"
+                android:hint="@string/setup_currency_label"
+                app:endIconMode="custom"
+                app:endIconDrawable="@drawable/ic_chevron_down"
+                app:endIconTint="@color/text_secondary">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etCurrency" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:focusable="false" android:clickable="true" android:cursorVisible="false"
+                    android:inputType="none" android:textColor="@color/text_primary" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- الأسعار -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@drawable/bg_card_glass"
+            android:elevation="@dimen/elevation_card_resting"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Text.SectionTitle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/settings_pricing" />
+
+                <ImageView
+                    android:importantForAccessibility="no"
+                    android:layout_width="@dimen/icon_badge_size"
+                    android:layout_height="@dimen/icon_badge_size"
+                    android:background="@drawable/bg_icon_badge"
+                    android:backgroundTint="@color/brand_accent"
+                    android:padding="7dp"
+                    android:src="@drawable/ic_money"
+                    app:tint="@android:color/white" />
+            </LinearLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDailyPrice" style="@style/Widget.GymManager.TextInputLayout.Glass"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_header_gap"
+                android:hint="@string/setup_price_daily">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDailyPrice" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" android:maxLength="10" android:textColor="@color/text_primary" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilWeeklyPrice" style="@style/Widget.GymManager.TextInputLayout.Glass"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md"
+                android:hint="@string/setup_price_weekly">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etWeeklyPrice" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" android:maxLength="10" android:textColor="@color/text_primary" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilMonthlyPrice" style="@style/Widget.GymManager.TextInputLayout.Glass"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_md"
+                android:hint="@string/setup_price_monthly">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etMonthlyPrice" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:inputType="numberDecimal" android:maxLength="10" android:textColor="@color/text_primary" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <!-- ===================== نطاق التعديل (Settings Part — واتساب/الإشعارات/حفظ): بداية =====================
+             Dark Glassmorphism 2026: الحاويتان تحوَّلتا من bg_card (سطح مصمت) إلى
+             bg_card_glass (نفس الخلفية الزجاجية شبه الشفافة + الحد العلوي الناعم
+             المستخدمة أعلاه في بطاقتَي "معلومات النادي"/"الأسعار")، لتتوحّد الهوية
+             البصرية عبر الشاشة كاملة. لا تغيير على rgWhatsappPrefix ولا أي RadioButton/
+             Switch من حيث النوع أو المعرّف — تحسين بصري بحت (لون نص أساسي بدل ثانوي
+             لقراءة أوضح على الزجاج الداكن + مساحة لمس مريحة 44dp + تباعد أنيق بين
+             الخيارات). -->
+
+        <!-- واتساب -->
+        <TextView style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_lg" android:layout_marginBottom="@dimen/spacing_sm" android:text="@string/settings_whatsapp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_glass"
+            android:elevation="@dimen/elevation_card_resting"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <RadioGroup android:id="@+id/rgWhatsappPrefix" android:layout_width="match_parent" android:layout_height="wrap_content">
+                <RadioButton android:id="@+id/rbPrefixAuto" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="44dp" android:paddingStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:buttonTint="@color/brand_accent" android:text="@string/whatsapp_prefix_auto" />
+                <RadioButton android:id="@+id/rbPrefix970" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:minHeight="44dp" android:paddingStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:buttonTint="@color/brand_accent" android:text="فلسطين +970" />
+                <RadioButton android:id="@+id/rbPrefix972" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:minHeight="44dp" android:paddingStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:buttonTint="@color/brand_accent" android:text="إسرائيل +972" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <!-- الإشعارات -->
+        <TextView style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_lg" android:layout_marginBottom="@dimen/spacing_sm" android:text="@string/settings_notifications" />
+
+        <!-- البند 20: لو رفض المستخدم إذن الإشعارات (أو عطّلها لاحقاً من إعدادات النظام)،
+             كانت مفاتيح "تنبيه الانتهاء/غير المدفوع" تبقى قابلة للتفعيل دون أي مؤشر بأن
+             الإشعارات معطّلة فعلياً على مستوى النظام، فيظن صاحب النادي أن التنبيهات ستصله
+             بينما هي مكتومة بالكامل. يظهر هذا الشريط فقط عند التعطيل الفعلي (مرئي/مخفي من
+             الكود في SettingsFragment). -->
+        <LinearLayout
+            android:id="@+id/containerNotificationsDisabledWarning"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:background="@drawable/bg_warning_banner"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_warning" />
+
+                <TextView
+                    style="@style/Text.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginStart="@dimen/spacing_sm"
+                    android:textColor="@color/text_primary"
+                    android:text="@string/settings_notifications_disabled_warning" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOpenNotificationSettings"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="@string/settings_open_notification_settings"
+                android:textColor="@color/status_warning" />
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_card_glass"
+        android:elevation="@dimen/elevation_card_resting" android:gravity="center_vertical" android:orientation="horizontal" android:padding="@dimen/spacing_md">
+            <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textColor="@color/text_primary" android:text="@string/settings_notify_expiry" />
+            <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchNotifyExpiry" android:layout_width="wrap_content" android:layout_height="wrap_content" app:thumbTint="@color/white" app:trackTint="@color/switch_track_color" />
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm" android:background="@drawable/bg_card_glass"
+        android:elevation="@dimen/elevation_card_resting" android:gravity="center_vertical" android:orientation="horizontal" android:padding="@dimen/spacing_md">
+            <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textColor="@color/text_primary" android:text="@string/settings_notify_unpaid" />
+            <com.google.android.material.materialswitch.MaterialSwitch android:id="@+id/switchNotifyUnpaid" android:layout_width="wrap_content" android:layout_height="wrap_content" app:thumbTint="@color/white" app:trackTint="@color/switch_track_color" />
+        </LinearLayout>
+
+        <!-- زر الحفظ: من لون مصمت واحد (brand_accent) إلى نفس تدرّج bg_button_gradient
+             المعتمَد فعلياً في الشاشات الأخرى (fragment_revenue.xml / activity_add_edit_member.xml)
+             لإبراز أكبر كإجراء أساسي — لا تبعية جديدة ولا Drawable جديد، إعادة استخدام
+             لِما هو موجود بالفعل بنفس النمط الحرفي. -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSaveSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:background="@drawable/bg_button_gradient"
+            android:paddingTop="14dp"
+            android:paddingBottom="14dp"
+            android:textAllCaps="false"
+            android:textColor="@color/text_on_accent"
+            app:backgroundTint="@null"
+            app:rippleColor="@color/glass_border_strong"
+            app:strokeWidth="0dp"
+            android:text="@string/action_save" />
+
+        <!-- ===================== نطاق التعديل (Settings Part — واتساب/الإشعارات/حفظ): نهاية ===================== -->
+
+        <!-- ===================== نطاق التعديل (Settings Part — البيانات والنسخ الاحتياطي): بداية =====================
+             Dark Glassmorphism 2026: الحاويتان تحوَّلتا من bg_card (سطح مصمت) إلى
+             bg_card_glass (نفس الخلفية الزجاجية شبه الشفافة المستخدمة في بطاقتَي
+             "معلومات النادي"/"الأسعار" وقسم واتساب/الإشعارات أعلاه)، لتتوحّد الهوية
+             البصرية عبر الشاشة كاملة. الأزرار الخمسة أبقت على Widget.GymManager.Button.Outlined
+             نفسه (مشترك مع بطاقة تأكيد الحذف خارج نطاقي، فلم أعدّل الـ style العام)، مع
+             تخصيص محلي على كل زر: app:strokeColor إلى glass_border_strong بدل divider
+             المصمت كي يتماشى الحد مع سطح الزجاج الداكن. لا تغيير على المعرّفات أو
+             ترتيب/منطق الأزرار (btnBackupNow, btnRestoreBackup, btnExportCsv,
+             btnOpenArchive, btnAbout). -->
+
+        <!-- البيانات والنسخ الاحتياطي -->
+        <TextView style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_lg" android:layout_marginBottom="@dimen/spacing_sm" android:text="@string/settings_data" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_glass"
+            android:elevation="@dimen/elevation_card_resting"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBackupNow" style="@style/Widget.GymManager.Button.Outlined"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:icon="@drawable/ic_backup" app:iconTint="@color/text_primary"
+                app:strokeColor="@color/glass_border_strong"
+                android:text="@string/settings_backup_now" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnRestoreBackup" style="@style/Widget.GymManager.Button.Outlined"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm"
+                android:icon="@drawable/ic_restore" app:iconTint="@color/text_primary"
+                app:strokeColor="@color/glass_border_strong"
+                android:text="@string/settings_restore_backup" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnExportCsv" style="@style/Widget.GymManager.Button.Outlined"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm"
+                android:icon="@drawable/ic_export" app:iconTint="@color/text_primary"
+                app:strokeColor="@color/glass_border_strong"
+                android:text="@string/settings_export_excel" />
+
+            <!-- البند 26: لم يكن يوجد أي شريط تقدّم فعلي أثناء النسخ الاحتياطي/الاستعادة
+                 لملفات كبيرة — فقط progressSettings عام (دوّار 22dp) بلا نسبة أو حجم،
+                 فيبقى صاحب النادي بلا أي فكرة هل العملية عالقة أم تتقدّم فعلاً مع
+                 مئات الأعضاء/الاشتراكات. الآن شريط تقدّم حقيقي (نسبة مئوية محددة، لا
+                 دوّار غير محدد) + نص "المعالَج/الإجمالي" + حجم الملف الناتج بعد
+                 الانتهاء. مخفي افتراضياً، يظهر فقط أثناء النسخ الاحتياطي/الاستعادة/
+                 التصدير تحديداً (لا عند حفظ الإعدادات البسيط الذي يبقى يستخدم
+                 progressSettings الدوّار الصغير كما هو). -->
+            <LinearLayout
+                android:id="@+id/containerBackupProgress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:id="@+id/progressBackupDeterminate"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="@color/brand_accent"
+                    android:progressBackgroundTint="@color/glass_border_strong" />
+
+                <TextView
+                    android:id="@+id/tvBackupProgressDetail"
+                    style="@style/Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_xs"
+                    android:gravity="center"
+                    android:textColor="@color/text_secondary"
+                    tools:text="45% — 120 من 265" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_card_glass"
+            android:elevation="@dimen/elevation_card_resting"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnOpenArchive" style="@style/Widget.GymManager.Button.Outlined"
+                android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:icon="@drawable/ic_archive" app:iconTint="@color/text_primary"
+                app:strokeColor="@color/glass_border_strong"
+                android:text="@string/settings_archive" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAbout" style="@style/Widget.GymManager.Button.Outlined"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm"
+                android:icon="@drawable/ic_info" app:iconTint="@color/text_primary"
+                app:strokeColor="@color/glass_border_strong"
+                android:text="@string/settings_about" />
+        </LinearLayout>
+
+        <!-- ===================== نطاق التعديل (Settings Part — البيانات والنسخ الاحتياطي): نهاية ===================== -->
+
+        <View android:layout_width="match_parent" android:layout_height="@dimen/spacing_xl" />
+
+    </LinearLayout>
+</ScrollView>

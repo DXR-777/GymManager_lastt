@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    حالة التركيز (Focused): بنفسجي هادئ مائل للرمادي - يوصل "الحقل نشط" دون
+    التباس مع الأحمر (حالة الخطأ) أو الأزرق الفاتح.
+    حالة الخطأ تُدار تلقائياً عبر boxStrokeErrorColor/colorError في TextInputLayout
+    ولا تحتاج item هنا.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/input_stroke_focused" android:state_focused="true" />
+    <item android:color="@color/input_stroke_normal" />
+</selector>

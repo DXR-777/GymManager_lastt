@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شاشة الترحيب (Onboarding — 2026): توهج محيطي ثنائي اللون خلف شارة الشعار
+    الزجاجية، يطابق مرجع التصميم المرفق (توهج أحمر مرجاني من جهة اليمين وبنفسجي
+    من جهة اليسار للشعار، بما أن الشعار نفسه يحمل تدرّجاً من اليمين للأحمر إلى
+    اليسار للبنفسجي). طبقتان بيضاويتان بتدرّج شعاعي (radial) متداخلتان، كل واحدة
+    مُزاحة عن المركز باتجاه إحدى الحافتين، فوق طبقة أساس أوسع وأخفت لتوهج محيطي
+    عام يمتد نحو القطع الزجاجية المتناثرة في الخلفية.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- توهج قاعدي أوسع وأخفت، يمتد للخارج -->
+    <item android:width="260dp" android:height="260dp" android:gravity="center">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="130dp"
+                android:centerColor="@color/glow_accent_softer"
+                android:startColor="@color/glow_accent_softer"
+                android:endColor="@color/transparent" />
+        </shape>
+    </item>
+    <!-- التوهج المرجاني الأحمر: مُزاح نحو اليسار الفعلي للشاشة (left ثابت، غير
+         مرتبط باتجاه RTL، لأن هذه زخرفة بصرية مطابقة للمرجع لا محتوى نصّي). -->
+    <item android:width="190dp" android:height="190dp" android:gravity="center" android:left="0dp" android:right="120dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="95dp"
+                android:startColor="@color/glow_accent_soft"
+                android:endColor="@color/transparent" />
+        </shape>
+    </item>
+    <!-- التوهج البنفسجي: مُزاح نحو اليمين الفعلي للشاشة -->
+    <item android:width="190dp" android:height="190dp" android:gravity="center" android:left="120dp" android:right="0dp">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="95dp"
+                android:startColor="@color/glow_purple_soft"
+                android:endColor="@color/transparent" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شاشة "الانتهاء" (Onboarding 4.4): توهج شعاعي كبير خلف شارة الصح، تقريب
+    لأشعة الانفجار الضوئي في مرجع التصميم (بدون رسم كل شعاع خط على حدة) —
+    طبقتان شعاعيتان متداخلتان بلوني brand_gradient، أوسع بكثير من توهج شعار
+    شاشة الترحيب (bg_onboarding_logo_glow) لأن هذا العنصر احتفالي مركزي هنا.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="340dp" android:height="340dp" android:gravity="center">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="170dp"
+                android:centerColor="@color/glow_purple_softer"
+                android:startColor="@color/glow_purple_softer"
+                android:endColor="@color/transparent" />
+        </shape>
+    </item>
+    <item android:width="240dp" android:height="240dp" android:gravity="center">
+        <shape android:shape="oval">
+            <gradient
+                android:type="radial"
+                android:gradientRadius="120dp"
+                android:startColor="@color/glow_accent_soft"
+                android:endColor="@color/transparent" />
+        </shape>
+    </item>
+</layer-list>

@@ -1,0 +1,1073 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    معالج إعداد النادي (Onboarding — شاشة 4 من 4، معالج داخلي بأربع خطوات ضمن
+    نشاط واحد لا أربعة أنشطة منفصلة، لأن التصميم المرجعي يُظهرها كشاشة واحدة
+    "تتغيّر" محتواها مع مؤشر خطوات مشترك ثابت).
+
+    الخطوة 1 (اسم النادي) مبنية بدقّة على مرجع التصميم المرفق: نفس القطع
+    (شارة الأيقونة + مبنى النادي) مقصوصة من الصورة المعزولة، ونفس حقل الإدخال
+    المتوهّج. الخطوات 2 و3 و4 تحافظ على الحقول والمنطق الحاليين (لم تُصمَّم
+    مرجعياً بعد) — أُعيد تنظيمها فقط ضمن حاويات خطوات، بانتظار مرجع تصميم مطابق
+    لكل واحدة منها لاحقاً.
+
+    كل الحقول (خطوة 1 إلى 4) موجودة دائماً في هذا التخطيط نفسه؛ التنقّل بين
+    الخطوات يُظهر/يُخفي حاويتها فقط (GymSetupActivity.renderStep()) بدل تبديل
+    شاشات فعلية، بحيث لا تُفقد أي بيانات أدخلها المستخدم عند الرجوع خطوة للخلف.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootGymSetup"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+    <ImageView
+        android:id="@+id/ivStepBack"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginStart="@dimen/spacing_lg"
+        android:background="@drawable/ripple_onboarding_back"
+        android:clickable="true"
+        android:contentDescription="@string/onboarding_back_content_description"
+        android:focusable="true"
+        android:padding="2dp"
+        android:src="@drawable/img_onboarding_back_button"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvStepIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="الخطوة 1 من 4" />
+
+    <!-- مؤشر التقدّم: 4 شرائح متساوية العرض، كل واحدة داخل FrameLayout كي تحمل
+         شارة "✓" اختيارية فوقها عند اكتمال خطوتها -->
+    <LinearLayout
+        android:id="@+id/segmentsRow"
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="@dimen/spacing_lg"
+        android:gravity="center_vertical"
+        android:importantForAccessibility="no"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/tvStepIndicator"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <View
+                android:id="@+id/segment1"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bg_step_segment_active" />
+
+            <ImageView
+                android:id="@+id/checkSegment1"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_step_complete_badge"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1">
+
+            <View
+                android:id="@+id/segment2"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bg_step_segment_inactive" />
+
+            <ImageView
+                android:id="@+id/checkSegment2"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_step_complete_badge"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1">
+
+            <View
+                android:id="@+id/segment3"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bg_step_segment_inactive" />
+
+            <ImageView
+                android:id="@+id/checkSegment3"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_step_complete_badge"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1">
+
+            <View
+                android:id="@+id/segment4"
+                android:layout_width="match_parent"
+                android:layout_height="6dp"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/bg_step_segment_inactive" />
+
+            <ImageView
+                android:id="@+id/checkSegment4"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_step_complete_badge"
+                android:visibility="gone" />
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <!-- زر المتابعة المشترك بين كل الخطوات: "التالي" للخطوات 1-3، ونص
+         setup_finish في الخطوة 4 (نفس نمط bg_onboarding_cta_pill/glow المستخدم
+         في شاشات الإعداد الأولي 1-3) -->
+    <FrameLayout
+        android:id="@+id/frameStepNextGlow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_lg"
+        android:layout_marginEnd="@dimen/spacing_lg"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_onboarding_cta_glow"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:id="@+id/btnStepNext"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height_cta"
+            android:background="@drawable/bg_onboarding_cta_pill"
+            android:clickable="true"
+            android:elevation="@dimen/elevation_fab"
+            android:focusable="true"
+            android:foreground="@drawable/ripple_onboarding_cta">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvStepNextLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/text_on_accent"
+                    android:textSize="@dimen/text_subtitle"
+                    android:textStyle="bold"
+                    tools:text="@string/onboarding_next_label" />
+
+                <ImageView
+                    android:id="@+id/ivStepNextArrow"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="8dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_forward"
+                    android:tint="@color/text_on_accent" />
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressFinishSetup"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/text_on_accent"
+                android:visibility="gone" />
+        </FrameLayout>
+    </FrameLayout>
+
+    <ScrollView
+        android:id="@+id/scrollSetupContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/segmentsRow"
+        app:layout_constraintBottom_toTopOf="@id/frameStepNextGlow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- ═══════ الخطوة 1: اسم النادي ═══════ -->
+            <LinearLayout
+                android:id="@+id/layoutStep1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/spacing_lg"
+                android:paddingTop="28dp">
+
+                <TextView
+                    android:id="@+id/tvGymNameTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false"
+                    android:text="@string/onboarding_gymname_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_onboarding_hero"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:text="@string/onboarding_gymname_subtitle"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_body" />
+
+                <!-- حقل اسم النادي: توهج + شارة أيقونة + إدخال -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/bg_onboarding_input_glow"
+                    android:padding="6dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_onboarding_input_field"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="10dp">
+
+                        <ImageView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/img_onboarding_gym_icon_badge" />
+
+                        <EditText
+                            android:id="@+id/etGymName"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="14dp"
+                            android:layout_weight="1"
+                            android:background="@null"
+                            android:cursorVisible="true"
+                            android:hint="@string/onboarding_gym_name_hint"
+                            android:importantForAutofill="no"
+                            android:inputType="textCapWords"
+                            android:maxLength="60"
+                            android:textColor="@color/text_primary"
+                            android:textColorHint="@color/text_secondary"
+                            android:textCursorDrawable="@null"
+                            android:textSize="@dimen/text_subtitle" />
+
+                    </LinearLayout>
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvGymNameError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/setup_error_gym_name"
+                    android:textColor="@color/status_error"
+                    android:textSize="@dimen/text_caption"
+                    android:visibility="gone" />
+
+                <!-- توضيح مبنى النادي: زخرفة خلفية خافتة، ليست عنصراً بارزاً -->
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
+                    android:adjustViewBounds="true"
+                    android:alpha="0.32"
+                    android:contentDescription="@string/onboarding_gym_illustration_description"
+                    android:src="@drawable/img_onboarding_gym_illustration" />
+
+            </LinearLayout>
+
+            <!-- ═══════ الخطوة 2: العملة والأسعار ═══════ -->
+            <LinearLayout
+                android:id="@+id/layoutStep2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/spacing_lg"
+                android:paddingTop="28dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvPricingTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false"
+                    android:text="@string/onboarding_pricing_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_headline"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:text="@string/onboarding_pricing_subtitle"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_body" />
+
+                <!-- صف اختيار العملة (قابل للنقر: يفتح منتقي العملة) -->
+                <LinearLayout
+                    android:id="@+id/rowCurrencyPicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:background="@drawable/bg_onboarding_feature_card"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing_md">
+
+                    <FrameLayout
+                        android:layout_width="56dp"
+                        android:layout_height="56dp">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_onboarding_dot_active" />
+
+                        <TextView
+                            android:id="@+id/tvCurrencyBadgeSymbol"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/text_on_accent"
+                            android:textSize="@dimen/text_headline"
+                            android:textStyle="bold"
+                            tools:text="₪" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_md"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvCurrencyName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_subtitle"
+                            android:textStyle="bold"
+                            tools:text="شيكل — ILS" />
+
+                        <TextView
+                            android:id="@+id/tvCurrencyCode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_card_description"
+                            tools:text="₪ ILS" />
+
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_chevron_down" />
+
+                </LinearLayout>
+
+                <!-- بطاقة السعر الشهري -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_lg"
+                    android:background="@drawable/bg_onboarding_feature_card"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_md">
+
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="@string/onboarding_price_monthly_title"
+                            android:src="@drawable/img_onboarding_icon_calendar_badge" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="@string/onboarding_price_monthly_title"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/text_subtitle"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/onboarding_price_monthly_desc"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_card_description" />
+
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="128dp"
+                            android:layout_height="52dp"
+                            android:layout_marginStart="@dimen/spacing_sm"
+                            android:background="@drawable/bg_onboarding_price_input">
+
+                            <EditText
+                                android:id="@+id/etMonthlyPrice"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="30dp"
+                                android:background="@null"
+                                android:gravity="center_vertical"
+                                android:hint="@string/onboarding_price_hint"
+                                android:importantForAutofill="no"
+                                android:inputType="numberDecimal"
+                                android:maxLength="10"
+                                android:paddingHorizontal="@dimen/spacing_sm"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_secondary"
+                                android:textSize="@dimen/text_body" />
+
+                            <TextView
+                                android:id="@+id/tvMonthlySuffix"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical|end"
+                                android:layout_marginEnd="@dimen/spacing_sm"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_subtitle"
+                                tools:text="₪" />
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvMonthlyPriceError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/spacing_md"
+                        android:paddingBottom="@dimen/spacing_sm"
+                        android:text="@string/onboarding_price_error_monthly"
+                        android:textColor="@color/status_error"
+                        android:textSize="@dimen/text_caption"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <!-- بطاقة السعر الأسبوعي -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_header_gap"
+                    android:background="@drawable/bg_onboarding_feature_card"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_md">
+
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="@string/onboarding_price_weekly_title"
+                            android:src="@drawable/img_onboarding_icon_calendar_badge" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="@string/onboarding_price_weekly_title"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/text_subtitle"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/onboarding_price_weekly_desc"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_card_description" />
+
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="128dp"
+                            android:layout_height="52dp"
+                            android:layout_marginStart="@dimen/spacing_sm"
+                            android:background="@drawable/bg_onboarding_price_input">
+
+                            <EditText
+                                android:id="@+id/etWeeklyPrice"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="30dp"
+                                android:background="@null"
+                                android:gravity="center_vertical"
+                                android:hint="@string/onboarding_price_hint"
+                                android:importantForAutofill="no"
+                                android:inputType="numberDecimal"
+                                android:maxLength="10"
+                                android:paddingHorizontal="@dimen/spacing_sm"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_secondary"
+                                android:textSize="@dimen/text_body" />
+
+                            <TextView
+                                android:id="@+id/tvWeeklySuffix"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical|end"
+                                android:layout_marginEnd="@dimen/spacing_sm"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_subtitle"
+                                tools:text="₪" />
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvWeeklyPriceError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/spacing_md"
+                        android:paddingBottom="@dimen/spacing_sm"
+                        android:text="@string/onboarding_price_error_weekly"
+                        android:textColor="@color/status_error"
+                        android:textSize="@dimen/text_caption"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <!-- بطاقة السعر اليومي -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_header_gap"
+                    android:background="@drawable/bg_onboarding_feature_card"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="@dimen/spacing_md">
+
+                        <ImageView
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:contentDescription="@string/onboarding_price_daily_title"
+                            android:src="@drawable/img_onboarding_icon_stopwatch_badge" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_md"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="sans-serif-medium"
+                                android:text="@string/onboarding_price_daily_title"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/text_subtitle"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="@string/onboarding_price_daily_desc"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_card_description" />
+
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="128dp"
+                            android:layout_height="52dp"
+                            android:layout_marginStart="@dimen/spacing_sm"
+                            android:background="@drawable/bg_onboarding_price_input">
+
+                            <EditText
+                                android:id="@+id/etDailyPrice"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginEnd="30dp"
+                                android:background="@null"
+                                android:gravity="center_vertical"
+                                android:hint="@string/onboarding_price_hint"
+                                android:importantForAutofill="no"
+                                android:inputType="numberDecimal"
+                                android:maxLength="10"
+                                android:paddingHorizontal="@dimen/spacing_sm"
+                                android:textColor="@color/text_primary"
+                                android:textColorHint="@color/text_secondary"
+                                android:textSize="@dimen/text_body" />
+
+                            <TextView
+                                android:id="@+id/tvDailySuffix"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical|end"
+                                android:layout_marginEnd="@dimen/spacing_sm"
+                                android:textColor="@color/text_secondary"
+                                android:textSize="@dimen/text_subtitle"
+                                tools:text="₪" />
+                        </FrameLayout>
+
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvDailyPriceError"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="@dimen/spacing_md"
+                        android:paddingBottom="@dimen/spacing_sm"
+                        android:text="@string/onboarding_price_error_daily"
+                        android:textColor="@color/status_error"
+                        android:textSize="@dimen/text_caption"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <!-- شريط ملاحظة سفلي -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_lg"
+                    android:background="@drawable/bg_onboarding_info_banner"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/img_onboarding_icon_info_badge" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_md"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/onboarding_price_info_note"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_card_description" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ═══════ الخطوة 3: إعداد واتساب ═══════ -->
+            <LinearLayout
+                android:id="@+id/layoutStep3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/spacing_lg"
+                android:paddingTop="28dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/tvWhatsappTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false"
+                    android:text="@string/onboarding_whatsapp_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_headline"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:text="@string/onboarding_whatsapp_subtitle"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_body" />
+
+                <!-- شعار واتساب: عنصر بارز رئيسي، بعكس رسمة مبنى النادي الخافتة
+                     في الخطوة 1 -->
+                <ImageView
+                    android:layout_width="190dp"
+                    android:layout_height="190dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="32dp"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/onboarding_whatsapp_icon_description"
+                    android:src="@drawable/img_onboarding_whatsapp_icon" />
+
+                <!-- 3 بطاقات اختيار مقدّمة الرقم (تلقائي مختار افتراضياً) -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/cardPrefix972"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_onboarding_selectable_card_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingVertical="@dimen/spacing_md">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/onboarding_prefix_israel_code"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_headline"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/onboarding_prefix_israel_label"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_card_description" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardPrefixAuto"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_onboarding_feature_card"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingVertical="@dimen/spacing_md">
+
+                        <ImageView
+                            android:layout_width="22dp"
+                            android:layout_height="22dp"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/img_onboarding_sparkles" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/onboarding_prefix_auto_label"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_headline"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/onboarding_prefix_auto_desc"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_card_description" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardPrefix970"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_onboarding_selectable_card_unselected"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:paddingVertical="@dimen/spacing_md">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/onboarding_prefix_palestine_code"
+                            android:textColor="@color/text_primary"
+                            android:textSize="@dimen/text_headline"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="@string/onboarding_prefix_palestine_label"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="@dimen/text_card_description" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- شريط ملاحظة سفلي -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_lg"
+                    android:background="@drawable/bg_onboarding_info_banner"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing_md">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_shield_check" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_md"
+                        android:layout_weight="1"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/onboarding_whatsapp_info_note"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_card_description" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ═══════ الخطوة 4: الإنهاء ═══════ -->
+            <LinearLayout
+                android:id="@+id/layoutStep4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="40dp"
+                android:visibility="gone">
+
+                <!-- شارة النجاح: توهج شعاعي + قصاصات احتفالية متناثرة + الشارة نفسها -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp">
+
+                    <ImageView
+                        android:layout_width="300dp"
+                        android:layout_height="300dp"
+                        android:layout_gravity="center"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/bg_onboarding_success_glow" />
+
+                    <!-- قصاصات احتفالية متناثرة، بأحجام وألوان ودورانات متفاوتة -->
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="top|start"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginTop="20dp"
+                        android:background="@drawable/shape_confetti_piece"
+                        android:backgroundTint="@color/brand_gradient_start"
+                        android:rotation="25" />
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="55dp"
+                        android:layout_marginEnd="40dp"
+                        android:background="@drawable/shape_confetti_piece"
+                        android:backgroundTint="@color/brand_gradient_end" />
+
+                    <View
+                        android:layout_width="9dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginEnd="90dp"
+                        android:background="@drawable/shape_confetti_piece"
+                        android:backgroundTint="@color/brand_gradient_end"
+                        android:rotation="-20" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="bottom|start"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginBottom="50dp"
+                        android:background="@drawable/shape_confetti_piece"
+                        android:backgroundTint="@color/brand_gradient_end"
+                        android:rotation="15" />
+
+                    <View
+                        android:layout_width="9dp"
+                        android:layout_height="14dp"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginBottom="70dp"
+                        android:layout_marginEnd="35dp"
+                        android:background="@drawable/shape_confetti_piece"
+                        android:backgroundTint="@color/brand_gradient_start"
+                        android:rotation="-25" />
+
+                    <View
+                        android:layout_width="7dp"
+                        android:layout_height="7dp"
+                        android:layout_gravity="bottom|start"
+                        android:layout_marginStart="55dp"
+                        android:layout_marginBottom="15dp"
+                        android:background="@drawable/shape_confetti_piece"
+                        android:backgroundTint="@color/brand_gradient_start" />
+
+                    <ImageView
+                        android:layout_width="180dp"
+                        android:layout_height="180dp"
+                        android:layout_gravity="center"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/onboarding_success_badge_description"
+                        android:src="@drawable/img_onboarding_success_badge" />
+
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/tvStep4Title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:includeFontPadding="false"
+                    android:paddingHorizontal="@dimen/spacing_lg"
+                    android:text="@string/onboarding_step4_title"
+                    android:textColor="@color/text_primary"
+                    android:textSize="@dimen/text_onboarding_hero"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center"
+                    android:lineSpacingExtra="6dp"
+                    android:paddingHorizontal="@dimen/spacing_lg"
+                    android:text="@string/onboarding_step4_subtitle_line1"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_body" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingHorizontal="@dimen/spacing_lg"
+                    android:text="@string/onboarding_step4_subtitle_line2"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="@dimen/text_body" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

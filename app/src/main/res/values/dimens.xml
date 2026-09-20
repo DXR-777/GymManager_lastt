@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+
+    <dimen name="radius_sm">8dp</dimen>
+    <dimen name="radius_md">14dp</dimen>
+    <dimen name="radius_lg">20dp</dimen>
+    <dimen name="radius_xl">24dp</dimen>
+    <dimen name="radius_full">100dp</dimen>
+
+    <!-- زر الحفظ (Save CTA) — تدقيق محاذاة (2026): نصف قطر الزر نفسه يجب أن يتناقص
+         بمقدار الحشو عن الطبقة الوسطى للوهج خلفه (bg_button_glow: 20dp) حتى لا تظهر
+         زاوية الوهج بانحناء مختلف عن زاوية الزر (كان 14dp سابقاً، غير متّسق هندسياً). -->
+    <dimen name="radius_button_cta">16dp</dimen>
+    <!-- ارتفاع ثابت للزر بدل الاعتماد على padding + قياس الخط (الذي كان يتغيّر مع
+         اللغة/حجم الخط)، لضمان ارتفاع "زر تنفيذي" موحّد ومتوقّع. -->
+    <dimen name="button_height_cta">56dp</dimen>
+    <!-- إزاحة الارتفاع (translationZ) المضافة عند الضغط، فوق elevation_fab الثابت. -->
+    <dimen name="elevation_button_press_lift">6dp</dimen>
+
+    <!-- إعادة تصميم شاشة إضافة/تعديل عضو (2026) -->
+    <dimen name="icon_badge_size">34dp</dimen>
+    <dimen name="text_hero_price">38sp</dimen>
+    <!-- تنقيح التباعد (2026): فاصل أقصر وموحَّد بين الأقسام الرئيسية بدل spacing_lg
+         (24dp) المستخدم لأغراض أخرى أيضاً — يُقصِّر طول التمرير دون أن يشعر المستخدم
+         بالازدحام، لأن العنوان + الشارة الملوّنة أعلى كل قسم يكفيان لفصله بصرياً عمّا
+         قبله حتى بفاصل أصغر. -->
+    <dimen name="spacing_section">18dp</dimen>
+    <!-- تدقيق التباعد البصري (2026): فجوة موحَّدة بين عنوان القسم (العنوان + الشارة)
+         ومحتواه مباشرة، تحلّ محل القيم المتفرقة (8dp/16dp) التي كانت تُستخدم بالتبادل
+         لنفس الغرض في شاشة إضافة/تعديل عضو، فتُوحِّد الإيقاع الرأسي عبر كل الأقسام. -->
+    <dimen name="spacing_header_gap">12dp</dimen>
+    <!-- الحد الأدنى الموصى به من Material للهدف اللمسي (touch target) — تُستخدم في كل
+         عنصر قابل للنقر في شاشة إضافة/تعديل عضو (قطاعات النوع/حالة الدفع، شرائح طريقة
+         الدفع) بدل قيم متفرقة (44dp سابقاً). -->
+    <dimen name="touch_target_min">48dp</dimen>
+    <dimen name="elevation_card_resting">2dp</dimen>
+    <dimen name="elevation_card_selected">6dp</dimen>
+
+    <dimen name="text_caption">12sp</dimen>
+    <dimen name="text_body">15sp</dimen>
+    <dimen name="text_subtitle">17sp</dimen>
+    <dimen name="text_title">22sp</dimen>
+    <dimen name="text_headline">28sp</dimen>
+    <!-- شاشات الإعداد الأولي (Onboarding — 2026): حجم عنوان "الترحيب" الكبير، بنفس
+         قياس text_hero_price (38sp) الحالي حتى يبقى ضمن سلّم الأحجام المعتمَد في
+         التطبيق بدل استحداث قياس جديد غير مرتبط، لكن باسم دلالي واضح لسياقه. -->
+    <dimen name="text_onboarding_hero">38sp</dimen>
+    <!-- شاشة "فكرة التطبيق" (Onboarding 2 من 4): وصف بطاقة الميزة — لا يوجد قياس
+         مطابق ضمن السلّم الحالي بين text_caption (12sp) و text_body (15sp).
+         عنوان الشاشة نفسه يعيد استخدام text_headline (28sp) الموجود مسبقاً. -->
+    <dimen name="text_card_description">13sp</dimen>
+
+    <dimen name="elevation_card">2dp</dimen>
+    <dimen name="elevation_fab">6dp</dimen>
+
+    <!-- تدقيق الطباعة (Typography QA — 2026): مقياس نصّي مخصَّص لشاشة إضافة/تعديل عضو
+         فقط (بدون أي تغيير على القيم المشتركة أعلاه المستخدمة في شاشات أخرى)، لسدّ
+         الفجوة بين النصوص الفرعية (labels) والقيم (values) وتقوية التسلسل الهرمي. -->
+    <dimen name="text_member_segment_label">13sp</dimen>
+    <dimen name="text_member_value">16sp</dimen>
+    <dimen name="text_member_section_title">18sp</dimen>
+    <dimen name="text_member_hero_suffix">17sp</dimen>
+</resources>

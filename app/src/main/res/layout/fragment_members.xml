@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/spacing_lg"
+    android:paddingTop="@dimen/spacing_md">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:addStatesFromChildren="true"
+        android:background="@drawable/bg_search_bar_glass"
+        android:elevation="@dimen/elevation_card_resting"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/spacing_md"
+        android:paddingVertical="@dimen/spacing_sm">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_search"
+            app:tint="@color/text_secondary" />
+
+        <!-- البند 2: كانت خانة البحث الوحيدة في التطبيق بلا maxLength — يمكن لصق نص
+             طويل جداً بلا أي حد، رغم أنه استعلام بحث لا يحتاج لأكثر من بضع كلمات. -->
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="@dimen/spacing_sm"
+            android:background="@android:color/transparent"
+            android:hint="@string/members_search_hint"
+            android:paddingVertical="@dimen/spacing_sm"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_secondary"
+            android:textSize="@dimen/text_body"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLength="60"
+            android:maxLines="1" />
+
+        <ImageButton
+            android:id="@+id/btnClearSearch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ripple_selectable_dark"
+            android:contentDescription="@string/action_clear_search_text"
+            android:padding="@dimen/spacing_sm"
+            android:src="@drawable/ic_close"
+            android:visibility="gone"
+            app:tint="@color/text_secondary" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm">
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingHorizontal="@dimen/spacing_xs"
+            android:scrollbars="none">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:chipSpacingHorizontal="@dimen/spacing_sm"
+                app:singleLine="true"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipAll"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:text="@string/members_filter_all"
+                    app:chipBackgroundColor="@color/chip_filter_background_color"
+                    app:chipCornerRadius="@dimen/radius_full"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:checkedIconVisible="false"
+                    app:rippleColor="@color/ripple_on_dark" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipActive"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:text="@string/members_filter_active"
+                    app:chipBackgroundColor="@color/chip_filter_background_color"
+                    app:chipCornerRadius="@dimen/radius_full"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:checkedIconVisible="false"
+                    app:rippleColor="@color/ripple_on_dark" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipExpiring"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:text="@string/members_filter_expiring"
+                    app:chipBackgroundColor="@color/chip_filter_background_color"
+                    app:chipCornerRadius="@dimen/radius_full"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:checkedIconVisible="false"
+                    app:rippleColor="@color/ripple_on_dark" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipExpired"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:text="@string/members_filter_expired"
+                    app:chipBackgroundColor="@color/chip_filter_background_color"
+                    app:chipCornerRadius="@dimen/radius_full"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:checkedIconVisible="false"
+                    app:rippleColor="@color/ripple_on_dark" />
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipUnpaid"
+                    style="@style/Widget.Material3.Chip.Filter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/chip_filter_text_color"
+                    android:text="@string/members_filter_unpaid"
+                    app:chipBackgroundColor="@color/chip_filter_background_color"
+                    app:chipCornerRadius="@dimen/radius_full"
+                    app:chipStrokeColor="@color/chip_filter_stroke_color"
+                    app:chipStrokeWidth="1dp"
+                    app:checkedIconVisible="false"
+                    app:rippleColor="@color/ripple_on_dark" />
+
+            </com.google.android.material.chip.ChipGroup>
+        </HorizontalScrollView>
+
+        <!-- تلميح تمرير عند الحافة اليمنى (start في RTL): نفس درجة bg_chip_row_fade_edge
+             لكن معكوسة أفقياً (scaleX=-1) بدل تكرار ملف الدرجة اللونية. -->
+        <View
+            android:layout_width="@dimen/spacing_lg"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@drawable/bg_chip_row_fade_edge"
+            android:importantForAccessibility="no"
+            android:scaleX="-1" />
+
+        <!-- تلميح تمرير عند الحافة اليسرى (end في RTL) -->
+        <View
+            android:layout_width="@dimen/spacing_lg"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="@drawable/bg_chip_row_fade_edge"
+            android:importantForAccessibility="no" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvMembers"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp" />
+
+    <!-- البند 15: تُعرض أثناء أول تحميل فقط (قبل أول انبعاث من Flow قائمة الأعضاء)،
+         بدل ترك القائمة فارغة للحظة ثم الظهور المفاجئ، أو الأسوأ: ظهور رسالة
+         "لا يوجد أعضاء بعد" بشكل خاطف قبل وصول البيانات الفعلية. -->
+    <ProgressBar
+        android:id="@+id/progressMembersLoading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/emptyMembersContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/spacing_xl"
+            android:background="@drawable/bg_card_glass"
+            android:elevation="@dimen/elevation_card_resting"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/spacing_lg"
+            android:paddingVertical="@dimen/spacing_xl">
+
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:alpha="0.35"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_people"
+            app:tint="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/tvMembersEmptyMessage"
+            style="@style/Text.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:gravity="center"
+            android:text="@string/members_empty" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

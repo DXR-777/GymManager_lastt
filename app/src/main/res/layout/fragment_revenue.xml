@@ -1,0 +1,383 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/spacing_lg">
+
+        <!-- ===================== نطاق التعديل (Part 2 — بطاقات الإيرادات): بداية ===================== -->
+        <!-- رأس القسم: شارة أيقونة زجاجية دائرية + العنوان، بدل عنوان نصي مجرّد -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/spacing_md"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/ivRevenueHeaderIcon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon_badge"
+                android:contentDescription="@null"
+                android:padding="9dp"
+                android:src="@drawable/ic_chart"
+                app:tint="@color/brand_accent" />
+
+            <TextView
+                style="@style/Text.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:text="@string/revenue_title" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="@dimen/spacing_xs" android:background="@drawable/bg_card_glass_compact"
+        android:elevation="@dimen/elevation_card_resting" android:orientation="vertical" android:padding="@dimen/spacing_md">
+                <ImageView android:layout_width="30dp" android:layout_height="30dp" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:contentDescription="@null" android:padding="6dp" android:src="@drawable/ic_calendar_range" app:tint="@color/brand_accent" />
+                <TextView android:id="@+id/tvRevenueToday" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:textColor="@color/status_success" tools:text="120 ₪" />
+                <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/revenue_today" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="@dimen/spacing_xs" android:background="@drawable/bg_card_glass_compact"
+        android:elevation="@dimen/elevation_card_resting" android:orientation="vertical" android:padding="@dimen/spacing_md">
+                <ImageView android:layout_width="30dp" android:layout_height="30dp" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:contentDescription="@null" android:padding="6dp" android:src="@drawable/ic_chart" app:tint="@color/brand_accent" />
+                <TextView android:id="@+id/tvRevenueWeek" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:textColor="@color/status_success" tools:text="640 ₪" />
+                <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/revenue_week" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_xs"
+            android:orientation="horizontal">
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="@dimen/spacing_xs" android:background="@drawable/bg_card_glass_compact"
+        android:elevation="@dimen/elevation_card_resting" android:orientation="vertical" android:padding="@dimen/spacing_md">
+                <ImageView android:layout_width="30dp" android:layout_height="30dp" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:contentDescription="@null" android:padding="6dp" android:src="@drawable/ic_circle_dollar_sign" app:tint="@color/brand_accent" />
+                <TextView android:id="@+id/tvRevenueMonth" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:textColor="@color/status_success" tools:text="2400 ₪" />
+                <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/revenue_month" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="@dimen/spacing_xs" android:background="@drawable/bg_card_glass_compact"
+        android:elevation="@dimen/elevation_card_resting" android:orientation="vertical" android:padding="@dimen/spacing_md">
+                <ImageView android:layout_width="30dp" android:layout_height="30dp" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:contentDescription="@null" android:padding="6dp" android:src="@drawable/ic_money" app:tint="@color/brand_accent" />
+                <TextView android:id="@+id/tvRevenueYear" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:textColor="@color/status_success" tools:text="18000 ₪" />
+                <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/revenue_year" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvCompareLastMonth"
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_card_glass_compact"
+            android:gravity="center"
+            android:paddingHorizontal="@dimen/spacing_md"
+            android:paddingVertical="@dimen/spacing_sm"
+            tools:text="📈 أعلى من الشهر الماضي بنسبة 12%" />
+
+        <!-- البند 23: سابقاً لا إمكانية لعرض إيراد شهر سابق محدد أو نطاق تاريخ مخصص —
+             فقط الفترات الثابتة أعلاه (اليوم/الأسبوع/الشهر/السنة) ومقارنة الشهر الماضي.
+             هذا الصف يفتح منتقي نطاق تاريخ (MaterialDatePicker) ويعرض النتيجة في
+             البطاقة التالية (containerCustomRangeResult). -->
+        <LinearLayout
+            android:id="@+id/rowCustomRange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_card_glass_compact"
+            android:elevation="@dimen/elevation_card_resting"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_md">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_calendar_range"
+                app:tint="@color/brand_accent" />
+
+            <TextView
+                style="@style/Text.Body"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:textColor="@color/text_primary"
+                android:text="@string/revenue_custom_range_action" />
+
+            <ImageView
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_chevron_end"
+                app:tint="@color/text_secondary" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/containerCustomRangeResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_card_glass_compact"
+            android:elevation="@dimen/elevation_card_resting"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_md"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvCustomRangeLabel"
+                    style="@style/Text.Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="1 – 15 أغسطس 2026" />
+
+                <TextView
+                    android:id="@+id/tvCustomRangeTotal"
+                    style="@style/Text.Subtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/status_success"
+                    tools:text="1250 ₪" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnClearCustomRange"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ripple_selectable_dark"
+                android:contentDescription="@string/revenue_custom_range_dismiss"
+                android:padding="@dimen/spacing_sm"
+                android:src="@drawable/ic_close"
+                app:tint="@color/text_secondary" />
+        </LinearLayout>
+        <!-- ===================== نطاق التعديل (Part 2 — بطاقات الإيرادات): نهاية ===================== -->
+        <!-- توقف هنا: كل ما يلي (رسم آخر 7 أيام فما بعد) خارج نطاقي — بلا أي تغيير -->
+
+        <!-- ===================== نطاق التعديل (Part 2 — الرسم البياني وتفصيل الأنواع): بداية ===================== -->
+
+        <!-- رسم بياني لآخر 7 أيام -->
+        <!-- QA: تصحيح ترميز نص التعليق العربي (كان محفوظاً بترميز معطوب Ø±Ø³Ù…...
+             في الملف الأصلي) — تعليق فقط، لا تأثير على الترجمة أو البناء. -->
+
+        <!-- رأس القسم بنفس نمط شارة الأيقونة الزجاجية الدائرية المعتمد في رأس
+             الشاشة (الجزء الأول) بدل عنوان نصي مجرّد، لتوحيد الهوية البصرية بين
+             كل أقسام الشاشة. -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_icon_badge"
+                android:contentDescription="@null"
+                android:padding="6dp"
+                android:src="@drawable/ic_chart"
+                app:tint="@color/brand_accent" />
+
+            <TextView
+                style="@style/Text.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:text="@string/revenue_chart_last7days" />
+        </LinearLayout>
+
+        <!-- الخلفية الزجاجية bg_card_glass (بدل bg_card الصلبة القديمة) لمطابقة
+             سطوح "الزجاج" المعتمدة في بقية الشاشة. layoutDirection="ltr" على هذا
+             الحاوي بالذات مقصود ووظيفي فقط: مكتبة MPAndroidChart (BarChart) لا
+             تدعم RTL بصرياً، فنجبر اتجاهها LTR ليتطابق ترتيب الأعمدة مع ترتيب
+             تسميات الأيام أسفلها (renderDayLabels في RevenueFragment.kt) — هذا لا
+             علاقة له بالتصميم البصري وليس خطأ RTL. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layoutDirection="ltr"
+            android:background="@drawable/bg_card_glass"
+            android:elevation="@dimen/elevation_card_resting"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChartLast7Days"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+
+            <LinearLayout
+                android:id="@+id/llDayLabels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="@dimen/spacing_xs" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvNoChartData"
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:gravity="center"
+            android:text="@string/revenue_no_data"
+            android:visibility="gone" />
+
+        <!-- التفصيل بحسب نوع الاشتراك -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:layout_marginBottom="@dimen/spacing_sm"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:background="@drawable/bg_icon_badge"
+                android:contentDescription="@null"
+                android:padding="6dp"
+                android:src="@drawable/ic_wallet"
+                app:tint="@color/brand_accent" />
+
+            <TextView
+                style="@style/Text.Subtitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_sm"
+                android:text="@string/revenue_by_type" />
+        </LinearLayout>
+
+        <!-- الخلفية الزجاجية bg_card_glass (بدل bg_card الصلبة القديمة) لمطابقة
+             سطوح "الزجاج" المعتمدة في بقية الشاشة. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card_glass"
+            android:elevation="@dimen/elevation_card_resting"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <!-- Typography QA (M5): each row's label and value below used the same
+                 plain Text.Body weight, so the amount didn't stand out from its own
+                 label. Added android:fontFamily="sans-serif-medium" +
+                 includeFontPadding="false" to the four value TextViews only
+                 (tvRevenueDaily/Weekly/Monthly/Custom) — no size or width change —
+                 so the figure reads as the primary value on each row.
+                 Typography QA follow-up (M5): the label TextView on each row kept
+                 includeFontPadding at its default (true) while its value sibling had
+                 it explicitly disabled, so the two texts in the same
+                 center_vertical row didn't share a baseline. Added
+                 includeFontPadding="false" to the four label TextViews too so label
+                 and value align on the same baseline. -->
+            <!-- يومي -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="@dimen/spacing_xs" android:gravity="center_vertical" android:orientation="horizontal">
+                <View android:id="@+id/dotDaily" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/shape_dot"/>
+                <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:includeFontPadding="false" android:text="@string/subscription_daily"/>
+                <TextView android:id="@+id/tvRevenueDaily" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="sans-serif-medium" android:includeFontPadding="false" tools:text="90 ₪"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="@dimen/spacing_sm" android:alpha="0.6" android:background="@color/glass_border_strong"/>
+
+            <!-- أسبوعي -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="@dimen/spacing_xs" android:gravity="center_vertical" android:orientation="horizontal">
+                <View android:id="@+id/dotWeekly" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/shape_dot"/>
+                <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:includeFontPadding="false" android:text="@string/subscription_weekly"/>
+                <TextView android:id="@+id/tvRevenueWeekly" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="sans-serif-medium" android:includeFontPadding="false" tools:text="140 ₪"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="@dimen/spacing_sm" android:alpha="0.6" android:background="@color/glass_border_strong"/>
+
+            <!-- شهري -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="@dimen/spacing_xs" android:gravity="center_vertical" android:orientation="horizontal">
+                <View android:id="@+id/dotMonthly" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/shape_dot"/>
+                <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:includeFontPadding="false" android:text="@string/subscription_monthly"/>
+                <TextView android:id="@+id/tvRevenueMonthly" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="sans-serif-medium" android:includeFontPadding="false" tools:text="2170 ₪"/>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="@dimen/spacing_sm" android:alpha="0.6" android:background="@color/glass_border_strong"/>
+
+            <!-- custom -->
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="@dimen/spacing_xs" android:gravity="center_vertical" android:orientation="horizontal">
+                <View android:id="@+id/dotCustom" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/shape_dot"/>
+                <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:includeFontPadding="false" android:text="@string/subscription_custom"/>
+                <TextView android:id="@+id/tvRevenueCustom" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="sans-serif-medium" android:includeFontPadding="false" tools:text="50 ₪"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- QA: أُزيل تعريف xmlns:app المكرَّر هنا (كان مُعرَّفاً بالفعل على جذر
+             ScrollView أعلى الملف) — لا تأثير وظيفي، تنظيف فقط.
+             app:strokeColor غُيِّر من @color/divider إلى @color/glass_border_strong
+             ليتماشى حد الزر مع حدود سطوح الزجاج (bg_card_glass) المستخدمة في بقية
+             نطاقي، بدل حدّ رمادي عادي غير متّسق مع الهوية الجديدة. -->
+        <!-- البند 13: كان الزر يُعطَّل فقط أثناء التصدير بلا أي مؤشر تحميل مرئي
+             (بخلاف زر الحفظ في AddEditMemberActivity الذي يملك ProgressBar فوقه) —
+             فيبدو التطبيق متجمّداً لثوانٍ خلال بناء ملف Excel لعدد أعضاء كبير، دون
+             أي إشارة أن العملية جارية فعلاً لا معلّقة. FrameLayout بنفس نمط
+             frameSaveGlow/progressSave تماماً. -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_lg"
+            android:layout_marginBottom="@dimen/spacing_xl">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnShareReport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_button_gradient"
+                android:paddingTop="14dp"
+                android:paddingBottom="14dp"
+                android:textAllCaps="false"
+                android:textColor="@color/text_on_accent"
+                app:backgroundTint="@null"
+                app:rippleColor="@color/glass_border_strong"
+                app:strokeWidth="0dp"
+                android:icon="@drawable/ic_share"
+                app:iconTint="@color/text_on_accent"
+                android:text="@string/revenue_share_report" />
+
+            <ProgressBar
+                android:id="@+id/progressShareReport"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/white"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <!-- ===================== نطاق التعديل (Part 2 — الرسم البياني وتفصيل الأنواع): نهاية ===================== -->
+
+    </LinearLayout>
+</ScrollView>

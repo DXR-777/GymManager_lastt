@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="@dimen/spacing_lg">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_marginBottom="@dimen/spacing_md"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/divider_line" />
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_warning"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:id="@+id/tvDeleteTitle"
+        style="@style/Text.Title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:gravity="center"
+        android:text="@string/delete_dialog_title" />
+
+    <TextView
+        android:id="@+id/tvDeleteMessage"
+        style="@style/Text.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        tools:text="سيتم نقل محمد أحمد إلى الأرشيف…" />
+
+    <TextView
+        android:id="@+id/tvBalanceWarning"
+        style="@style/Text.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_md"
+        android:background="@drawable/bg_pill_error"
+        android:gravity="center"
+        android:padding="@dimen/spacing_sm"
+        android:textColor="@color/status_error"
+        android:visibility="gone"
+        android:lineSpacingExtra="4dp"
+        tools:text="⚠️ تنبيه: على هذا العضو مبلغ غير مدفوع وقدره 60 ₪" />
+
+    <TextView
+        android:id="@+id/tvDaysWarning"
+        style="@style/Text.Body"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:background="@drawable/bg_pill_warning"
+        android:gravity="center"
+        android:padding="@dimen/spacing_sm"
+        android:textColor="@color/status_warning"
+        android:visibility="gone"
+        android:lineSpacingExtra="4dp"
+        tools:text="⚠️ تنبيه: لا يزال للعضو 12 يوم متبقي" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnConfirmDelete"
+        style="@style/Widget.GymManager.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:backgroundTint="@color/status_error"
+        android:text="@string/delete_dialog_confirm" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCancelDelete"
+        style="@style/Widget.GymManager.Button.Outlined"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:text="@string/action_cancel" />
+
+</LinearLayout>

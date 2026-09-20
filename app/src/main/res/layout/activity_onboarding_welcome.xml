@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شاشة الترحيب (Onboarding — شاشة 1 من 4): مبنية بدقّة على مرجع التصميم المرفق
+    من المستخدم (نفس القطع الزجاجية، نفس التوهج الثنائي اللون، نفس تدرّج العنوان
+    والزر). القطع الزجاجية زخرفية بحتة لذلك طبقتها (shardLayer) مثبَّتة الاتجاه
+    LTR دائماً بصرف النظر عن لغة الواجهة، بينما سهم "التالي" داخل الزر يستخدم
+    ic_forward الحالي (autoMirrored="true") ليعكس اتجاهه تلقائياً في RTL العربية
+    — وهو السلوك الصحيح فعلياً (سهم "التالي" يشير يساراً في واجهة عربية)، بعكس
+    القطع الزخرفية التي يجب أن تبقى كما صُمِّمت تماماً.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootOnboardingWelcome"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+    <!-- طبقة القطع الزجاجية المتناثرة: زخرفة بحتة، مثبّتة LTR دائماً -->
+    <FrameLayout
+        android:id="@+id/shardLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layoutDirection="ltr"
+        android:clipChildren="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="117dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/img_onboarding_shard_topleft" />
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginStart="249dp"
+            android:layout_marginTop="78dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/img_onboarding_shard_topright" />
+
+        <ImageView
+            android:layout_width="108dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginStart="308dp"
+            android:layout_marginTop="183dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/img_onboarding_shard_right" />
+
+        <ImageView
+            android:layout_width="68dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="291dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/img_onboarding_shard_bottomleft" />
+
+        <ImageView
+            android:layout_width="68dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginStart="312dp"
+            android:layout_marginTop="348dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/img_onboarding_shard_bottomright" />
+
+    </FrameLayout>
+
+    <!-- توهج ثنائي اللون + شارة الشعار الزجاجية -->
+    <FrameLayout
+        android:id="@+id/logoWrap"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="176dp"
+        android:background="@drawable/bg_onboarding_logo_glow"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ImageView
+            android:id="@+id/ivOnboardingLogo"
+            android:layout_width="176dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/onboarding_logo_content_description"
+            android:src="@drawable/img_onboarding_logo_badge" />
+
+    </FrameLayout>
+
+    <!-- عنوان "مرحباً بك" بتدرّج لوني يُطبَّق برمجياً في الـ Activity -->
+    <TextView
+        android:id="@+id/tvOnboardingTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:fontFamily="sans-serif-medium"
+        android:includeFontPadding="false"
+        android:text="@string/onboarding_welcome_title"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_onboarding_hero"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@id/logoWrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvOnboardingSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:paddingHorizontal="@dimen/spacing_lg"
+        android:text="@string/onboarding_welcome_subtitle"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body"
+        app:layout_constraintTop_toBottomOf="@id/tvOnboardingTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- مؤشر التقدّم: 4 نقاط، الأولى نشطة بتدرّج لوني -->
+    <LinearLayout
+        android:id="@+id/dotsRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:importantForAccessibility="no"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:background="@drawable/bg_onboarding_dot_active" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_dot"
+            android:backgroundTint="@color/onboarding_dot_inactive" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_dot"
+            android:backgroundTint="@color/onboarding_dot_inactive" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_dot"
+            android:backgroundTint="@color/onboarding_dot_inactive" />
+
+    </LinearLayout>
+
+    <!-- زر المتابعة: حبّة متدرّجة بتوهج خلفي، نفس نمط bg_button_glow + bg_button_gradient
+         المستخدم أصلاً في زر الحفظ (activity_add_edit_member.xml) -->
+    <FrameLayout
+        android:id="@+id/frameOnboardingCtaGlow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_lg"
+        android:layout_marginEnd="@dimen/spacing_lg"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_onboarding_cta_glow"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/dotsRow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:id="@+id/btnOnboardingNext"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height_cta"
+            android:background="@drawable/bg_onboarding_cta_pill"
+            android:clickable="true"
+            android:contentDescription="@string/onboarding_next"
+            android:elevation="@dimen/elevation_fab"
+            android:focusable="true"
+            android:foreground="@drawable/ripple_onboarding_cta">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_forward"
+                android:tint="@color/text_on_accent" />
+
+        </FrameLayout>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

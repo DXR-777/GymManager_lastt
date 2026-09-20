@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <style name="Theme.GymManager" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">@color/brand_accent</item>
+        <item name="colorPrimaryVariant">@color/brand_accent_dark</item>
+        <item name="colorOnPrimary">@color/text_on_accent</item>
+
+        <item name="colorSecondary">@color/brand_secondary</item>
+        <item name="colorOnSecondary">@color/text_primary</item>
+        <item name="colorSecondaryContainer">@color/brand_accent</item>
+        <item name="colorOnSecondaryContainer">@color/text_on_accent</item>
+
+        <item name="android:colorBackground">@color/background</item>
+        <item name="colorSurface">@color/surface_card</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorOnBackground">@color/text_primary</item>
+
+        <item name="android:statusBarColor">@color/background</item>
+        <item name="android:navigationBarColor">@color/background</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.GymManager.Dialog</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.GymManager.BottomSheet</item>
+    </style>
+
+    <style name="Theme.GymManager.Splash" parent="Theme.GymManager">
+        <item name="android:windowBackground">@drawable/bg_splash</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="ThemeOverlay.GymManager.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/surface_card_alt</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="colorPrimary">@color/brand_accent</item>
+    </style>
+
+    <style name="ThemeOverlay.GymManager.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.GymManager.BottomSheet</item>
+    </style>
+
+    <style name="Widget.GymManager.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/surface_card_alt</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.GymManager.BottomSheet</item>
+    </style>
+
+    <style name="ShapeAppearance.GymManager.BottomSheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">24dp</item>
+        <item name="cornerSizeTopRight">24dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <!-- Card style used across the app -->
+    <style name="Widget.GymManager.Card" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/surface_card</item>
+        <item name="cardCornerRadius">@dimen/radius_md</item>
+        <item name="cardElevation">@dimen/elevation_card</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <style name="Widget.GymManager.Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/brand_accent</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:textColor">@color/text_on_accent</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+    </style>
+
+    <style name="Widget.GymManager.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">@color/divider</item>
+        <item name="cornerRadius">@dimen/radius_md</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="Widget.GymManager.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/radius_sm</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/radius_sm</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/radius_sm</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/radius_sm</item>
+        <item name="boxStrokeColor">@color/brand_accent</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+        <item name="boxStrokeWidthFocused">2dp</item>
+    </style>
+
+    <!-- تدقيق الطباعة (Typography QA — M5): تمّت مزامنة هذه الأنماط مع نظيراتها في
+         values/themes.xml (نفس إضافة includeFontPadding="false" لضبط خط الأساس،
+         ونفس ترقية Text.Subtitle إلى sans-serif-medium). لا فرق ألوان بين النهارية
+         والليلية هنا أصلاً (لا يوجد values-night/colors.xml)، فإبقاء هذه النسخة
+         بلا مزامنة كان سيُلغي إصلاح الطباعة بصمت كلما استُخدم مؤهِّل night. -->
+    <style name="Text.Headline" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_headline</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Text.Title" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Text.Subtitle" parent="">
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:textSize">@dimen/text_subtitle</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="Text.Body" parent="">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_body</item>
+    </style>
+
+    <style name="Text.Caption" parent="">
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:textSize">@dimen/text_caption</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+</resources>

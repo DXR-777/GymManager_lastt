@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    حدّ صندوق البحث: حدّ زجاجي أقوى (glass_border_strong) عندما يكون حقل etSearch
+    نشطاً (مركَّزاً)، وحدّ زجاجي ناعم عادي (glass_border) في حالة الراحة — بنفس
+    منطق chip_filter_stroke_color.xml تماماً، لكن مفتاح الحالة هنا state_focused
+    بدل state_checked. يعتمد على android:addStatesFromChildren على الحاوية في
+    fragment_members.xml لنقل حالة تركيز etSearch إلى خلفية الحاوية نفسها.
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="@color/glass_border_strong" android:state_focused="true" />
+    <item android:color="@color/glass_border" />
+</selector>

@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شاشة "فكرة التطبيق" (Onboarding — شاشة 2 من 4): بنفس أسلوب شاشة الترحيب —
+    بطاقات الميزات بحدّ متدرّج اللون مأخوذ من مرجع التصميم المرفق (أيقونات
+    ثلاث الميزات مقصوصة من الصورة المعزولة)، وعنوان بتدرّج لوني برمجي.
+    قائمة البطاقات داخل ScrollView مستقل عن زر المتابعة والنقاط (يبقيان ثابتين
+    أسفل الشاشة) حتى لا يفيض المحتوى على الشاشات الأقصر ارتفاعاً.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootOnboardingConcept"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:fitsSystemWindows="true">
+
+    <!-- طبقة القطع الزجاجية المتناثرة: نفس أصول شاشة الترحيب، بمواقع أقل وأخفّ
+         مطابقةً لمرجع هذه الشاشة تحديداً (قطعتان فقط أعلى الشاشة) -->
+    <FrameLayout
+        android:id="@+id/shardLayer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layoutDirection="ltr"
+        android:clipChildren="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="95dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginStart="345dp"
+            android:layout_marginTop="0dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/img_onboarding_shard_right" />
+
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|left"
+            android:layout_marginStart="-24dp"
+            android:layout_marginTop="150dp"
+            android:adjustViewBounds="true"
+            android:importantForAccessibility="no"
+            android:src="@drawable/img_onboarding_shard_topleft" />
+
+    </FrameLayout>
+
+    <!-- عنوان بتدرّج لوني، سطران — يُطبَّق التدرّج برمجياً في الـ Activity -->
+    <TextView
+        android:id="@+id/tvConceptTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="52dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:paddingHorizontal="@dimen/spacing_md"
+        android:text="@string/onboarding_concept_title"
+        android:textColor="@color/text_primary"
+        android:textSize="@dimen/text_headline"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tvConceptSubtitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:paddingHorizontal="@dimen/spacing_lg"
+        android:text="@string/onboarding_concept_subtitle"
+        android:textColor="@color/text_secondary"
+        android:textSize="@dimen/text_body"
+        app:layout_constraintTop_toBottomOf="@id/tvConceptTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- مؤشر التقدّم: النقطة الثانية نشطة (شاشة 2 من 4) -->
+    <LinearLayout
+        android:id="@+id/dotsRow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+        android:importantForAccessibility="no"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:background="@drawable/shape_dot"
+            android:backgroundTint="@color/onboarding_dot_inactive" />
+
+        <View
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_onboarding_dot_active" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_dot"
+            android:backgroundTint="@color/onboarding_dot_inactive" />
+
+        <View
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/shape_dot"
+            android:backgroundTint="@color/onboarding_dot_inactive" />
+
+    </LinearLayout>
+
+    <!-- زر المتابعة: نفس حبّة شاشة الترحيب، لكن بنص "التالي" + سهم -->
+    <FrameLayout
+        android:id="@+id/frameOnboardingCtaGlow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_lg"
+        android:layout_marginEnd="@dimen/spacing_lg"
+        android:layout_marginBottom="20dp"
+        android:background="@drawable/bg_onboarding_cta_glow"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/dotsRow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <FrameLayout
+            android:id="@+id/btnOnboardingNext"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_height_cta"
+            android:background="@drawable/bg_onboarding_cta_pill"
+            android:clickable="true"
+            android:elevation="@dimen/elevation_fab"
+            android:focusable="true"
+            android:foreground="@drawable/ripple_onboarding_cta">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/onboarding_next_label"
+                    android:textColor="@color/text_on_accent"
+                    android:textSize="@dimen/text_subtitle"
+                    android:textStyle="bold" />
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="8dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_forward"
+                    android:tint="@color/text_on_accent" />
+
+            </LinearLayout>
+        </FrameLayout>
+    </FrameLayout>
+
+    <!-- قائمة بطاقات الميزات: قابلة للتمرير باستقلال عن العنوان والزر -->
+    <ScrollView
+        android:id="@+id/scrollFeatures"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/spacing_xl"
+        android:clipToPadding="false"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/tvConceptSubtitle"
+        app:layout_constraintBottom_toTopOf="@id/frameOnboardingCtaGlow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/spacing_lg"
+            android:paddingBottom="@dimen/spacing_sm">
+
+            <!-- بطاقة 1: إدارة الأعضاء -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_onboarding_feature_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_md">
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/img_onboarding_icon_members" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_md"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/onboarding_feature_members_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_subtitle"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/onboarding_feature_members_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_card_description" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- بطاقة 2: الاشتراكات والخطط -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_header_gap"
+                android:background="@drawable/bg_onboarding_feature_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_md">
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/img_onboarding_icon_subscriptions" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_md"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/onboarding_feature_subscriptions_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_subtitle"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/onboarding_feature_subscriptions_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_card_description" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- بطاقة 3: ابقَ على تواصل -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_header_gap"
+                android:background="@drawable/bg_onboarding_feature_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_md">
+
+                <ImageView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/img_onboarding_icon_connect" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_md"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/onboarding_feature_connect_title"
+                        android:textColor="@color/text_primary"
+                        android:textSize="@dimen/text_subtitle"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:lineSpacingExtra="2dp"
+                        android:text="@string/onboarding_feature_connect_desc"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="@dimen/text_card_description" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

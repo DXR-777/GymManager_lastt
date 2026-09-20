@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة "اسم النادي" (Onboarding 4.1): خلفية حقل الإدخال — تعبئة زجاجية داكنة
+     وحدّ بنفسجي ساطع (brand_gradient_end نفسه، لا لون جديد) يعطي إحساس التوهج
+     النيوني في المرجع. التوهج الخارجي الأوسع مُضاف كطبقة منفصلة خلف هذا العنصر
+     (bg_onboarding_input_glow) بنفس نمط أزرار الإعداد الأولي. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/glass_fill_alt" />
+    <stroke android:width="1.5dp" android:color="@color/brand_gradient_end" />
+    <corners android:radius="@dimen/radius_lg" />
+</shape>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_sm"
+    android:background="@drawable/bg_card"
+    android:elevation="@dimen/elevation_card_resting"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/spacing_md">
+
+    <TextView
+        android:id="@+id/tvInitial"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:background="@drawable/bg_avatar_circle"
+        android:gravity="center"
+        android:textColor="@color/text_secondary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:includeFontPadding="false"
+        tools:text="م" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_md"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvName"
+            style="@style/Text.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:includeFontPadding="false"
+            tools:text="محمد أحمد" />
+
+        <TextView
+            android:id="@+id/tvDeletedOn"
+            style="@style/Text.Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            tools:text="حُذف في 15 يونيو 2026" />
+
+        <TextView
+            android:id="@+id/tvDebtBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/bg_pill_error"
+            android:paddingStart="@dimen/spacing_sm"
+            android:paddingTop="2dp"
+            android:paddingEnd="@dimen/spacing_sm"
+            android:paddingBottom="2dp"
+            android:textColor="@color/status_error"
+            android:textSize="@dimen/text_caption"
+            android:textStyle="bold"
+            android:includeFontPadding="false"
+            android:visibility="gone"
+            tools:text="⚠️ دَين مستحق: 150 ₪"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btnRestore"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/action_restore"
+        android:padding="8dp"
+        android:src="@drawable/ic_restore"
+        app:tint="@color/status_success" />
+
+    <ImageButton
+        android:id="@+id/btnPermanentDelete"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="4dp"
+        android:background="@android:color/transparent"
+        android:contentDescription="@string/action_delete"
+        android:padding="8dp"
+        android:src="@drawable/ic_delete"
+        app:tint="@color/status_error" />
+
+</LinearLayout>

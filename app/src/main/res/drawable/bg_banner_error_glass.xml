@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شريط تنبيه الدَّين المتراكم (Dark Glassmorphism 2026): يتّبع نفس نمط الطبقات
+    الثلاث المعتمد في المشروع (راجع bg_bottom_nav_glass.xml / bg_search_bar_glass.xml)
+    لكن بتلوين "خطر" بدل الحيادي:
+      1) تعبئة حمراء شبه شفافة (status_error_bg) — نفس لون الحالة السابق، محفوظ.
+      2) توهج ضوئي علوي خافت جداً (glass_border_strong كتدرّج) يحاكي انعكاس ضوء
+         على سطح زجاجي، بدل سطح مسطّح بلا عمق كما في bg_banner_error القديم.
+      3) حدّ رفيع بلون status_error (بدل الحدّ العادي) ليبقى الطابع التحذيري واضحاً.
+    ملف مستقل خاص بهذه الشاشة فقط — bg_banner_error الأصلي يبقى في المشروع بلا
+    تغيير حرفي (لم يعد مستخدَماً هنا بعد هذا التحديث، وحذف ملفات موارد مشتركة
+    خارج نطاق هذه المهمة، فتُرك كما هو تحوّطاً).
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/status_error_bg" />
+            <corners android:radius="@dimen/radius_lg" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="90"
+                android:startColor="@color/glass_border_strong"
+                android:centerColor="@color/transparent"
+                android:centerY="0.55"
+                android:endColor="@color/transparent" />
+            <corners android:radius="@dimen/radius_lg" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transparent" />
+            <stroke android:width="1dp" android:color="@color/status_error" />
+            <corners android:radius="@dimen/radius_lg" />
+        </shape>
+    </item>
+
+</layer-list>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    زر "عرض التفاصيل" داخل شريط تنبيه الدَّين (Dark Glassmorphism 2026): نسخة
+    بحدّ زجاجي من bg_pill_error المصمت الأصلي، مخصّصة لهذه الشاشة فقط —
+    bg_pill_error نفسه يبقى بلا أي تغيير لأنه مستخدم في شاشات أخرى معتمدة
+    (تعديل العضو، تأكيد الحذف، الأرشيف) خارج نطاق هذه المهمة.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/status_error_bg" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transparent" />
+            <stroke android:width="1dp" android:color="@color/status_error" />
+            <corners android:radius="@dimen/radius_full" />
+        </shape>
+    </item>
+
+</layer-list>

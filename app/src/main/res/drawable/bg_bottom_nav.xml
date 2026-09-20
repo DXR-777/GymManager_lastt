@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Bottom nav surface: rounded top corners so the bar reads as a distinct
+     floating card instead of a flat strip glued to the screen edge. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/surface_card" />
+    <corners
+        android:topLeftRadius="@dimen/radius_lg"
+        android:topRightRadius="@dimen/radius_lg" />
+</shape>
