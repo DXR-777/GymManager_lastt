@@ -1,0 +1,49 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+# لازمة لسماح GITHUB_TOKEN بإنشاء/تحديث Release — بدونها تفشل خطوة النشر أدناه بخطأ صلاحيات.
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.4'
+
+      - name: Build debug APK
+        run: gradle assembleDebug --no-daemon
+
+      # بديل actions/upload-artifact: تُرفَع نسخة الـ APK إلى GitHub Release بدل مساحة
+      # تخزين Artifacts (500MB مجاناً، تمتلئ بسرعة مع بناءات debug المتكررة وتُعيد حساب
+      # الاستهلاك كل 6-12 ساعة فقط — بالضبط سبب الخطأ المتكرر "Artifact storage quota
+      # has been hit"). مساحة تخزين Releases منفصلة تماماً ولا تخضع لهذه الحصة.
+      # نفس الوسم debug-latest يتحدَّث بكل بناء جديد (بدل إنشاء Release جديد كل مرة)،
+      # فيبقى رابط تحميل واحد ثابت لأحدث نسخة APK دائماً.
+      - name: Publish debug APK to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: debug-latest
+          name: "Debug build #${{ github.run_number }}"
+          body: "أحدث نسخة تصحيح (debug) تلقائية من فرع main — Commit ${{ github.sha }}"
+          prerelease: true
+          files: app/build/outputs/apk/debug/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
