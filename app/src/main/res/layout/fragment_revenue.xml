@@ -14,30 +14,32 @@
         android:padding="@dimen/spacing_lg">
 
         <!-- ===================== نطاق التعديل (Part 2 — بطاقات الإيرادات): بداية ===================== -->
-        <!-- رأس القسم: شارة أيقونة زجاجية دائرية + العنوان، بدل عنوان نصي مجرّد -->
+        <!-- رأس الشاشة: نفس نمط رأس الأقسام المرجعي (عنوان + شارة أيقونة accent بمقاس
+             icon_badge_size على الطرف المقابل) بدل شارة رمادية 40dp بأيقونة ملوّنة قبل العنوان -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/spacing_md"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/ivRevenueHeaderIcon"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/bg_icon_badge"
-                android:contentDescription="@null"
-                android:padding="9dp"
-                android:src="@drawable/ic_chart"
-                app:tint="@color/brand_accent" />
-
             <TextView
                 style="@style/Text.Title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_sm"
+                android:layout_weight="1"
                 android:text="@string/revenue_title" />
+
+            <ImageView
+                android:id="@+id/ivRevenueHeaderIcon"
+                android:layout_width="@dimen/icon_badge_size"
+                android:layout_height="@dimen/icon_badge_size"
+                android:background="@drawable/bg_icon_badge"
+                android:backgroundTint="@color/brand_accent"
+                android:contentDescription="@null"
+                android:padding="7dp"
+                android:src="@drawable/ic_chart"
+                app:tint="@android:color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -47,14 +49,14 @@
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="@dimen/spacing_xs" android:background="@drawable/bg_card_glass_compact"
         android:elevation="@dimen/elevation_card_resting" android:orientation="vertical" android:padding="@dimen/spacing_md">
-                <ImageView android:layout_width="30dp" android:layout_height="30dp" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:contentDescription="@null" android:padding="6dp" android:src="@drawable/ic_calendar_range" app:tint="@color/brand_accent" />
+                <ImageView android:layout_width="@dimen/icon_badge_size" android:layout_height="@dimen/icon_badge_size" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:backgroundTint="@color/brand_accent" android:contentDescription="@null" android:padding="7dp" android:src="@drawable/ic_calendar_range" app:tint="@android:color/white" />
                 <TextView android:id="@+id/tvRevenueToday" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:textColor="@color/status_success" tools:text="120 ₪" />
                 <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/revenue_today" />
             </LinearLayout>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="@dimen/spacing_xs" android:background="@drawable/bg_card_glass_compact"
         android:elevation="@dimen/elevation_card_resting" android:orientation="vertical" android:padding="@dimen/spacing_md">
-                <ImageView android:layout_width="30dp" android:layout_height="30dp" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:contentDescription="@null" android:padding="6dp" android:src="@drawable/ic_chart" app:tint="@color/brand_accent" />
+                <ImageView android:layout_width="@dimen/icon_badge_size" android:layout_height="@dimen/icon_badge_size" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:backgroundTint="@color/brand_accent" android:contentDescription="@null" android:padding="7dp" android:src="@drawable/ic_chart" app:tint="@android:color/white" />
                 <TextView android:id="@+id/tvRevenueWeek" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:textColor="@color/status_success" tools:text="640 ₪" />
                 <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/revenue_week" />
             </LinearLayout>
@@ -68,14 +70,14 @@
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="@dimen/spacing_xs" android:background="@drawable/bg_card_glass_compact"
         android:elevation="@dimen/elevation_card_resting" android:orientation="vertical" android:padding="@dimen/spacing_md">
-                <ImageView android:layout_width="30dp" android:layout_height="30dp" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:contentDescription="@null" android:padding="6dp" android:src="@drawable/ic_circle_dollar_sign" app:tint="@color/brand_accent" />
+                <ImageView android:layout_width="@dimen/icon_badge_size" android:layout_height="@dimen/icon_badge_size" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:backgroundTint="@color/brand_accent" android:contentDescription="@null" android:padding="7dp" android:src="@drawable/ic_circle_dollar_sign" app:tint="@android:color/white" />
                 <TextView android:id="@+id/tvRevenueMonth" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:textColor="@color/status_success" tools:text="2400 ₪" />
                 <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/revenue_month" />
             </LinearLayout>
 
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_margin="@dimen/spacing_xs" android:background="@drawable/bg_card_glass_compact"
         android:elevation="@dimen/elevation_card_resting" android:orientation="vertical" android:padding="@dimen/spacing_md">
-                <ImageView android:layout_width="30dp" android:layout_height="30dp" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:contentDescription="@null" android:padding="6dp" android:src="@drawable/ic_money" app:tint="@color/brand_accent" />
+                <ImageView android:layout_width="@dimen/icon_badge_size" android:layout_height="@dimen/icon_badge_size" android:layout_marginBottom="@dimen/spacing_xs" android:background="@drawable/bg_icon_badge" android:backgroundTint="@color/brand_accent" android:contentDescription="@null" android:padding="7dp" android:src="@drawable/ic_money" app:tint="@android:color/white" />
                 <TextView android:id="@+id/tvRevenueYear" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:includeFontPadding="false" android:textColor="@color/status_success" tools:text="18000 ₪" />
                 <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:text="@string/revenue_year" />
             </LinearLayout>
@@ -103,17 +105,23 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm"
             android:background="@drawable/bg_card_glass_compact"
+            android:clickable="true"
             android:elevation="@dimen/elevation_card_resting"
+            android:focusable="true"
+            android:foreground="@drawable/ripple_selectable_dark"
             android:gravity="center_vertical"
             android:orientation="horizontal"
             android:padding="@dimen/spacing_md">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="@dimen/icon_badge_size"
+                android:layout_height="@dimen/icon_badge_size"
+                android:background="@drawable/bg_icon_badge"
+                android:backgroundTint="@color/brand_accent"
                 android:contentDescription="@null"
+                android:padding="7dp"
                 android:src="@drawable/ic_calendar_range"
-                app:tint="@color/brand_accent" />
+                app:tint="@android:color/white" />
 
             <TextView
                 style="@style/Text.Body"
@@ -190,28 +198,29 @@
              الشاشة (الجزء الأول) بدل عنوان نصي مجرّد، لتوحيد الهوية البصرية بين
              كل أقسام الشاشة. -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_lg"
-            android:layout_marginBottom="@dimen/spacing_sm"
+            android:layout_marginBottom="@dimen/spacing_header_gap"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:background="@drawable/bg_icon_badge"
-                android:contentDescription="@null"
-                android:padding="6dp"
-                android:src="@drawable/ic_chart"
-                app:tint="@color/brand_accent" />
-
             <TextView
-                style="@style/Text.Subtitle"
-                android:layout_width="wrap_content"
+                style="@style/Text.SectionTitle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_sm"
+                android:layout_weight="1"
                 android:text="@string/revenue_chart_last7days" />
+
+            <ImageView
+                android:layout_width="@dimen/icon_badge_size"
+                android:layout_height="@dimen/icon_badge_size"
+                android:background="@drawable/bg_icon_badge"
+                android:backgroundTint="@color/brand_accent"
+                android:contentDescription="@null"
+                android:padding="7dp"
+                android:src="@drawable/ic_chart"
+                app:tint="@android:color/white" />
         </LinearLayout>
 
         <!-- الخلفية الزجاجية bg_card_glass (بدل bg_card الصلبة القديمة) لمطابقة
@@ -254,28 +263,29 @@
 
         <!-- التفصيل بحسب نوع الاشتراك -->
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_lg"
-            android:layout_marginBottom="@dimen/spacing_sm"
+            android:layout_marginBottom="@dimen/spacing_header_gap"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:background="@drawable/bg_icon_badge"
-                android:contentDescription="@null"
-                android:padding="6dp"
-                android:src="@drawable/ic_wallet"
-                app:tint="@color/brand_accent" />
-
             <TextView
-                style="@style/Text.Subtitle"
-                android:layout_width="wrap_content"
+                style="@style/Text.SectionTitle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_sm"
+                android:layout_weight="1"
                 android:text="@string/revenue_by_type" />
+
+            <ImageView
+                android:layout_width="@dimen/icon_badge_size"
+                android:layout_height="@dimen/icon_badge_size"
+                android:background="@drawable/bg_icon_badge"
+                android:backgroundTint="@color/brand_accent"
+                android:contentDescription="@null"
+                android:padding="7dp"
+                android:src="@drawable/ic_wallet"
+                app:tint="@android:color/white" />
         </LinearLayout>
 
         <!-- الخلفية الزجاجية bg_card_glass (بدل bg_card الصلبة القديمة) لمطابقة
@@ -349,24 +359,26 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:layout_marginBottom="@dimen/spacing_xl">
+            android:layout_marginTop="@dimen/spacing_section"
+            android:layout_marginBottom="@dimen/spacing_lg">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnShareReport"
+            <FrameLayout
+                android:id="@+id/frameShareGlow"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_button_gradient"
-                android:paddingTop="14dp"
-                android:paddingBottom="14dp"
-                android:textAllCaps="false"
-                android:textColor="@color/text_on_accent"
-                app:backgroundTint="@null"
-                app:rippleColor="@color/glass_border_strong"
-                app:strokeWidth="0dp"
-                android:icon="@drawable/ic_share"
-                app:iconTint="@color/text_on_accent"
-                android:text="@string/revenue_share_report" />
+                android:background="@drawable/bg_button_glow"
+                android:padding="8dp">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnShareReport"
+                    style="@style/Widget.GymManager.Button.CTA"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/button_height_cta"
+                    android:text="@string/revenue_share_report"
+                    app:icon="@drawable/ic_share"
+                    app:iconGravity="textStart"
+                    app:iconPadding="@dimen/spacing_sm" />
+            </FrameLayout>
 
             <ProgressBar
                 android:id="@+id/progressShareReport"

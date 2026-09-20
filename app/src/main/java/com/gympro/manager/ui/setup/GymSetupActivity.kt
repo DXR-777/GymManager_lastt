@@ -410,14 +410,29 @@ class GymSetupActivity : AppCompatActivity() {
             filters = arrayOf(InputFilter.LengthFilter(CUSTOM_CURRENCY_MAX_LENGTH))
             setText(selectedCurrency.symbol.takeIf { selectedCurrency.code == CUSTOM_CURRENCY_CODE })
             setSelection(text.length)
+            // حقل زجاجي بدل الخط السفلي الافتراضي (نفس ألوان Widget.GymManager.TextInputLayout.Glass)
+            setBackgroundResource(R.drawable.bg_input_glass)
+            setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+            setHintTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
         }
         val paddingH = resources.getDimensionPixelSize(R.dimen.spacing_lg)
         val paddingV = resources.getDimensionPixelSize(R.dimen.spacing_sm)
         input.setPadding(paddingH, paddingV, paddingH, paddingV)
+        // الحقل داخل حاوية بهوامش حتى لا يلتصق إطاره الزجاجي بحافتَي الحوار
+        val inputContainer = android.widget.FrameLayout(this).apply {
+            setPadding(paddingH, paddingV, paddingH, 0)
+            addView(
+                input,
+                android.widget.FrameLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+        }
 
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.currency_custom_dialog_title)
-            .setView(input)
+            .setView(inputContainer)
             .setNegativeButton(R.string.action_cancel, null)
             .setPositiveButton(R.string.action_confirm) { _, _ ->
                 val symbol = input.text?.toString()?.trim().orEmpty()

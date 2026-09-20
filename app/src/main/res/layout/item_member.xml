@@ -17,7 +17,7 @@
     android:elevation="@dimen/elevation_card_resting"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
+    android:foreground="@drawable/ripple_card_lg"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     android:padding="@dimen/spacing_md">

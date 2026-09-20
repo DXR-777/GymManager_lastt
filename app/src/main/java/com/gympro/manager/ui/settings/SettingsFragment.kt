@@ -191,14 +191,29 @@ class SettingsFragment : Fragment() {
             filters = arrayOf(InputFilter.LengthFilter(CUSTOM_CURRENCY_MAX_LENGTH))
             setText(currentSymbol.takeIf { isCurrentlyCustom })
             setSelection(text.length)
+            // حقل زجاجي بدل الخط السفلي الافتراضي (نفس ألوان Widget.GymManager.TextInputLayout.Glass)
+            setBackgroundResource(R.drawable.bg_input_glass)
+            setTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_primary))
+            setHintTextColor(androidx.core.content.ContextCompat.getColor(context, R.color.text_secondary))
         }
         val paddingH = resources.getDimensionPixelSize(R.dimen.spacing_lg)
         val paddingV = resources.getDimensionPixelSize(R.dimen.spacing_sm)
         input.setPadding(paddingH, paddingV, paddingH, paddingV)
+        // الحقل داخل حاوية بهوامش حتى لا يلتصق إطاره الزجاجي بحافتَي الحوار
+        val inputContainer = android.widget.FrameLayout(requireContext()).apply {
+            setPadding(paddingH, paddingV, paddingH, 0)
+            addView(
+                input,
+                android.widget.FrameLayout.LayoutParams(
+                    android.view.ViewGroup.LayoutParams.MATCH_PARENT,
+                    android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+        }
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle(R.string.currency_custom_dialog_title)
-            .setView(input)
+            .setView(inputContainer)
             .setNegativeButton(R.string.action_cancel, null)
             .setPositiveButton(R.string.action_confirm) { _, _ ->
                 val symbol = input.text?.toString()?.trim().orEmpty()
@@ -224,6 +239,8 @@ class SettingsFragment : Fragment() {
     private fun setBusy(isBusy: Boolean) {
         binding.progressSettings.visibleIf(isBusy)
         val enabled = !isBusy
+        // الوهج يتبع حالة التعطيل (نفس نمط frameSaveGlow في AddEditMemberActivity.setSaving()).
+        binding.frameSaveSettingsGlow.isEnabled = enabled
         binding.btnSaveSettings.isEnabled = enabled
         binding.btnBackupNow.isEnabled = enabled
         binding.btnRestoreBackup.isEnabled = enabled

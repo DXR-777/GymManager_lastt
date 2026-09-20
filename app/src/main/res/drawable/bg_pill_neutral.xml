@@ -1,4 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شارة محايدة (نوع الاشتراك/الأيام...) — Dark Glassmorphism 2026: تعبئة glass_fill_alt +
+     حدّ glass_border بدل السطح المصمت surface_elevated، بنفس مواصفات bg_type_badge_glass. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="@color/surface_elevated"/>
+    <solid android:color="@color/glass_fill_alt"/>
+    <stroke android:width="1dp" android:color="@color/glass_border"/>
     <corners android:radius="@dimen/radius_full"/>
 </shape>

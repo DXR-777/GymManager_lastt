@@ -1,13 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- منتقي العملة (خطوة "العملة والأسعار" — Onboarding 4.2): خلفية الورقة
-     السفلية (BottomSheet) المخصّصة — بطاقة داكنة بزوايا علوية مدوَّرة فقط
-     (النمط القياسي لأي Bottom Sheet)، بدل النافذة البيضاء الافتراضية
-     لـ AlertDialog النظامي، لتطابق طابع التطبيق الداكن الزجاجي. -->
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="@color/surface_card" />
-    <corners
-        android:topLeftRadius="@dimen/radius_xl"
-        android:topRightRadius="@dimen/radius_xl"
-        android:bottomLeftRadius="0dp"
-        android:bottomRightRadius="0dp" />
-</shape>
+<!-- منتقي العملة (خطوة "العملة والأسعار" + شاشة الإعدادات): خلفية الورقة السفلية — أصبحت
+     تشير إلى السطح الزجاجي الموحَّد bg_bottom_sheet_glass بدل البطاقة الصلبة surface_card
+     السابقة، لتتطابق مع ورقة تأكيد الحذف. الملف محفوظ باسمه لأن dialog_currency_picker.xml
+     يشير إليه. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/bg_bottom_sheet_glass" />
+</layer-list>

@@ -13,11 +13,22 @@
         app:elevation="0dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.Toolbar
+        <!--
+            رأس الشاشات الرئيسية: نفس مواصفات الرأس المرجعي في activity_add_edit_member.xml
+            (ارتفاع actionBarSize، عنوان Text.Title بالمنتصف على خلفية background) —
+            MaterialToolbar بدل androidx Toolbar لأن العنوان المتمركز (titleCentered) لا يتوفر إلا
+            فيه، وهو يبقى Toolbar فعلياً (setSupportActionBar وقائمة sort/archive في
+            MembersFragment تعتمدان على ذلك، فلا يمكن استبداله بـ LinearLayout كما في
+            الشاشات الثانوية).
+        -->
+        <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:background="@color/background"
             app:title="@string/app_name"
+            app:titleCentered="true"
+            app:titleTextAppearance="@style/Text.Title"
             app:titleTextColor="@color/text_primary" />
     </com.google.android.material.appbar.AppBarLayout>
 

@@ -306,6 +306,7 @@
     <string name="action_undo">تراجع</string>
 
     <!-- الأرشيف -->
+    <string name="detail_screen_title">تفاصيل العضو</string>
     <string name="archive_title">الأعضاء المحذوفون</string>
     <string name="archive_empty">الأرشيف فارغ</string>
     <string name="archive_no_search_results">لا يوجد أعضاء محذوفون مطابقون للبحث</string>

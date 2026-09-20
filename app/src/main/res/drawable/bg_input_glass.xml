@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- حقل إدخال عام — Dark Glassmorphism 2026: تعبئة زجاجية + حدّ input_stroke_normal (نفس ألوان
-     Widget.GymManager.TextInputLayout.Glass) بدل divider المصمت. -->
+<!-- حقل إدخال زجاجي للحوارات المبنيّة برمجياً (EditText داخل MaterialAlertDialog، كحوار "عملة
+     أخرى"): نفس تعبئة وحدود Widget.GymManager.TextInputLayout.Glass، بدل خط سفلي افتراضي. -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
     <solid android:color="@color/glass_fill_alt"/>
     <corners android:radius="@dimen/radius_sm"/>

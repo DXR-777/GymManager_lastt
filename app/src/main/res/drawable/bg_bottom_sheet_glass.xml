@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    سطح الورقة السفلية الزجاجي (Dark Glassmorphism 2026): نفس نمط الطبقات الثلاث المعتمد في
+    bg_bottom_nav_glass.xml / bg_member_card_glass.xml (تعبئة + توهج علوي خافت + حدّ رفيع)،
+    لكن بزوايا علوية فقط (radius_xl) لأن الورقة ملتصقة بحافة الشاشة السفلية. يُستخدم كخلفية
+    لجذر محتوى كل BottomSheet، بينما حاوية Material نفسها شفافة (Widget.GymManager.BottomSheet).
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/sheet_glass_fill" />
+            <corners
+                android:topLeftRadius="@dimen/radius_xl"
+                android:topRightRadius="@dimen/radius_xl"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="90"
+                android:startColor="@color/bottom_nav_glass_sheen"
+                android:centerColor="@color/transparent"
+                android:centerY="0.35"
+                android:endColor="@color/transparent" />
+            <corners
+                android:topLeftRadius="@dimen/radius_xl"
+                android:topRightRadius="@dimen/radius_xl"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp" />
+        </shape>
+    </item>
+
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/transparent" />
+            <stroke android:width="1dp" android:color="@color/glass_border_strong" />
+            <corners
+                android:topLeftRadius="@dimen/radius_xl"
+                android:topRightRadius="@dimen/radius_xl"
+                android:bottomLeftRadius="0dp"
+                android:bottomRightRadius="0dp" />
+        </shape>
+    </item>
+
+</layer-list>

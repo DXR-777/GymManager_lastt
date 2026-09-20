@@ -436,6 +436,9 @@ class RevenueFragment : Fragment() {
      * Bar دوّار يظهر مكانه).
      */
     private fun setShareReportBusy(isBusy: Boolean) {
+        // الوهج (frameShareGlow) يتبع حالة التعطيل بنفس نمط frameSaveGlow في AddEditMemberActivity.setSaving()،
+        // حتى لا تبقى هالة زاهية خلف زر معطَّل.
+        binding.frameShareGlow.isEnabled = !isBusy
         binding.btnShareReport.isEnabled = !isBusy
         binding.btnShareReport.text = if (isBusy) "" else getString(R.string.revenue_share_report)
         binding.progressShareReport.visibility = if (isBusy) View.VISIBLE else View.GONE

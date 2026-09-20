@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet_glass"
     android:orientation="vertical"
     android:padding="@dimen/spacing_lg">
 
@@ -14,18 +16,21 @@
         android:background="@drawable/divider_line" />
 
     <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
         android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_action_button_error_glass"
+        android:contentDescription="@null"
+        android:padding="14dp"
         android:src="@drawable/ic_warning"
-        android:contentDescription="@null" />
+        app:tint="@color/status_error" />
 
     <TextView
         android:id="@+id/tvDeleteTitle"
-        style="@style/Text.Title"
+        style="@style/Text.SectionTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
+        android:layout_marginTop="@dimen/spacing_md"
         android:gravity="center"
         android:text="@string/delete_dialog_title" />
 
@@ -45,9 +50,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_md"
-        android:background="@drawable/bg_pill_error"
+        android:background="@drawable/bg_banner_error_glass"
         android:gravity="center"
-        android:padding="@dimen/spacing_sm"
+        android:padding="@dimen/spacing_md"
         android:textColor="@color/status_error"
         android:visibility="gone"
         android:lineSpacingExtra="4dp"
@@ -59,9 +64,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_sm"
-        android:background="@drawable/bg_pill_warning"
+        android:background="@drawable/bg_warning_banner"
         android:gravity="center"
-        android:padding="@dimen/spacing_sm"
+        android:padding="@dimen/spacing_md"
         android:textColor="@color/status_warning"
         android:visibility="gone"
         android:lineSpacingExtra="4dp"
@@ -73,7 +78,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_lg"
-        android:backgroundTint="@color/status_error"
+        app:backgroundTint="@color/status_error"
         android:text="@string/delete_dialog_confirm" />
 
     <com.google.android.material.button.MaterialButton

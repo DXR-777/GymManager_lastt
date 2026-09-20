@@ -16,25 +16,34 @@
     android:layout_width="160dp"
     android:layout_height="wrap_content"
     android:layout_marginEnd="@dimen/spacing_sm"
-    android:background="@drawable/bg_card_glass"
+    android:background="@drawable/bg_member_card_glass"
     android:elevation="@dimen/elevation_card_resting"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
+    android:foreground="@drawable/ripple_card_lg"
     android:orientation="vertical"
     android:padding="@dimen/spacing_md">
 
-    <TextView
-        android:id="@+id/tvInitial"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:background="@drawable/bg_avatar_circle"
-        android:gravity="center"
-        android:textColor="@color/text_primary"
-        android:textStyle="bold"
-        android:textSize="18sp"
-        android:includeFontPadding="false"
-        tools:text="م" />
+    <!-- حلقة تدرّج حول الأفاتار: نفس بنية بطاقة العضو في قائمة الأعضاء (item_member.xml) -->
+    <FrameLayout
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:background="@drawable/bg_avatar_ring_gradient"
+        android:padding="4dp">
+
+        <TextView
+            android:id="@+id/tvInitial"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_avatar_circle"
+            android:gravity="center"
+            android:textColor="@color/text_primary"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:includeFontPadding="false"
+            tools:text="م" />
+    </FrameLayout>
 
     <TextView
         android:id="@+id/tvName"

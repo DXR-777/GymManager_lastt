@@ -73,7 +73,7 @@
                 android:padding="@dimen/spacing_md"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
+                android:foreground="@drawable/ripple_card_lg">
                 <ImageView
                     android:layout_width="@dimen/icon_badge_size"
                     android:layout_height="@dimen/icon_badge_size"
@@ -128,7 +128,7 @@
                 android:padding="@dimen/spacing_md"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
+                android:foreground="@drawable/ripple_card_lg">
                 <ImageView
                     android:layout_width="@dimen/icon_badge_size"
                     android:layout_height="@dimen/icon_badge_size"
@@ -154,7 +154,7 @@
                 android:padding="@dimen/spacing_md"
                 android:clickable="true"
                 android:focusable="true"
-                android:foreground="?attr/selectableItemBackground">
+                android:foreground="@drawable/ripple_card_lg">
                 <ImageView
                     android:layout_width="@dimen/icon_badge_size"
                     android:layout_height="@dimen/icon_badge_size"
@@ -179,22 +179,21 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/Text.Subtitle"
+                style="@style/Text.SectionTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/status_warning"
                 android:text="@string/dashboard_expiring_section" />
 
             <ImageView
                 android:layout_width="@dimen/icon_badge_size"
                 android:layout_height="@dimen/icon_badge_size"
                 android:background="@drawable/bg_icon_badge"
-                android:backgroundTint="@color/status_warning_bg"
+                android:backgroundTint="@color/status_warning"
                 android:padding="7dp"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_calendar_range"
-                app:tint="@color/status_warning" />
+                app:tint="@android:color/white" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -227,22 +226,21 @@
             android:orientation="horizontal">
 
             <TextView
-                style="@style/Text.Subtitle"
+                style="@style/Text.SectionTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textColor="@color/status_error"
                 android:text="@string/dashboard_unpaid_section" />
 
             <ImageView
                 android:layout_width="@dimen/icon_badge_size"
                 android:layout_height="@dimen/icon_badge_size"
                 android:background="@drawable/bg_icon_badge"
-                android:backgroundTint="@color/status_error_bg"
+                android:backgroundTint="@color/status_error"
                 android:padding="7dp"
                 android:importantForAccessibility="no"
                 android:src="@drawable/ic_wallet_minimal"
-                app:tint="@color/status_error" />
+                app:tint="@android:color/white" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -278,6 +276,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:indeterminate="true"
+        android:indeterminateTint="@color/brand_accent"
         android:visibility="gone" />
 
 </FrameLayout>

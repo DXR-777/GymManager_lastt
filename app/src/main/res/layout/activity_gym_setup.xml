@@ -376,7 +376,7 @@
                     android:background="@drawable/bg_onboarding_feature_card"
                     android:clickable="true"
                     android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
+                    android:foreground="@drawable/ripple_card_lg"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="@dimen/spacing_md">
@@ -812,7 +812,7 @@
                         android:background="@drawable/bg_onboarding_selectable_card_unselected"
                         android:clickable="true"
                         android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
+                        android:foreground="@drawable/ripple_card_lg"
                         android:gravity="center"
                         android:orientation="vertical"
                         android:paddingVertical="@dimen/spacing_md">
@@ -845,7 +845,7 @@
                         android:background="@drawable/bg_onboarding_feature_card"
                         android:clickable="true"
                         android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
+                        android:foreground="@drawable/ripple_card_lg"
                         android:gravity="center"
                         android:orientation="vertical"
                         android:paddingVertical="@dimen/spacing_md">
@@ -885,7 +885,7 @@
                         android:background="@drawable/bg_onboarding_selectable_card_unselected"
                         android:clickable="true"
                         android:focusable="true"
-                        android:foreground="?attr/selectableItemBackground"
+                        android:foreground="@drawable/ripple_card_lg"
                         android:gravity="center"
                         android:orientation="vertical"
                         android:paddingVertical="@dimen/spacing_md">

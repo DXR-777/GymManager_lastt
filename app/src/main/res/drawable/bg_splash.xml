@@ -1,12 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة البداية (Splash): نفس هوية التدرّج والتوهج المعتمدة في التطبيق — دائرة بتدرّج
+     brand_gradient (بدل brand_accent المصمت) يحيط بها توهج ثنائي الطبقة (glow_accent_*) كما
+     خلف زر الحفظ وشارة الشعار في شاشات الإعداد الأولي. -->
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
             <solid android:color="@color/background"/>
         </shape>
     </item>
+    <item android:gravity="center" android:width="216dp" android:height="216dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/glow_accent_softer"/>
+        </shape>
+    </item>
+    <item android:gravity="center" android:width="164dp" android:height="164dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/glow_purple_softer"/>
+        </shape>
+    </item>
     <item android:gravity="center" android:width="120dp" android:height="120dp">
         <shape android:shape="oval">
-            <solid android:color="@color/brand_accent"/>
+            <gradient
+                android:type="linear"
+                android:angle="45"
+                android:startColor="@color/brand_gradient_start"
+                android:endColor="@color/brand_gradient_end"/>
         </shape>
     </item>
 </layer-list>

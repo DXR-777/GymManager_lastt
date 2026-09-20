@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    تأثير الضغط (ripple) للبطاقات القابلة للنقر بزوايا radius_lg (20dp): ?attr/selectableItemBackground
+    القياسي بلا قناع (mask) فيرسم مستطيلاً حادّ الزوايا فوق الخلفية المدوّرة، فتظهر حواف مربعة عند
+    الضغط (بطاقات اختيار مقدّمة واتساب، بطاقات لوحة التحكم، بطاقة العضو...). القناع هنا بنفس نصف
+    القطر تماماً. نظير ripple_selectable_dark.xml (radius_md) وripple_button_save.xml (radius_button_cta).
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/ripple_on_dark">
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <solid android:color="@android:color/white" />
+            <corners android:radius="@dimen/radius_lg" />
+        </shape>
+    </item>
+</ripple>

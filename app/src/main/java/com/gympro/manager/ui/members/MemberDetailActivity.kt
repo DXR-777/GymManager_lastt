@@ -62,7 +62,7 @@ class MemberDetailActivity : AppCompatActivity() {
         memberId = intent.getLongExtra(EXTRA_MEMBER_ID, -1L)
         if (memberId == -1L) { finish(); return }
 
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        binding.btnBack.setOnClickListener { finish() }
         // LinearLayoutManager داخل ScrollView يقيس فقط العناصر المرئية على الشاشة
         // عند أول تحميل، مما يُحدّد الارتفاع بعدد العناصر الأولى فقط.
         // الحل: LayoutManager مخصص يُجبر على قياس كل العناصر دفعة واحدة.

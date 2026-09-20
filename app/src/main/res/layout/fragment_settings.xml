@@ -13,6 +13,8 @@
         android:orientation="vertical"
         android:padding="@dimen/spacing_lg">
 
+        <!-- رأس الشاشة: عنوان + شارة أيقونة accent بمقاس icon_badge_size (نفس نمط رأس
+             شاشة إضافة/تعديل عضو المرجعية)؛ مؤشر التحميل الصغير بينهما كما كان. -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +33,19 @@
                 android:id="@+id/progressSettings"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
+                android:layout_marginEnd="@dimen/spacing_sm"
+                android:indeterminateTint="@color/brand_accent"
                 android:visibility="gone" />
+
+            <ImageView
+                android:layout_width="@dimen/icon_badge_size"
+                android:layout_height="@dimen/icon_badge_size"
+                android:background="@drawable/bg_icon_badge"
+                android:backgroundTint="@color/brand_accent"
+                android:importantForAccessibility="no"
+                android:padding="7dp"
+                android:src="@drawable/ic_settings"
+                app:tint="@android:color/white" />
         </LinearLayout>
 
         <!-- معلومات النادي -->
@@ -99,7 +113,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
+            android:layout_marginTop="@dimen/spacing_section"
             android:background="@drawable/bg_card_glass"
             android:elevation="@dimen/elevation_card_resting"
             android:orientation="vertical"
@@ -168,7 +182,31 @@
              الخيارات). -->
 
         <!-- واتساب -->
-        <TextView style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_lg" android:layout_marginBottom="@dimen/spacing_sm" android:text="@string/settings_whatsapp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_section"
+            android:layout_marginBottom="@dimen/spacing_header_gap"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Text.SectionTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/settings_whatsapp" />
+
+            <ImageView
+                android:layout_width="@dimen/icon_badge_size"
+                android:layout_height="@dimen/icon_badge_size"
+                android:background="@drawable/bg_icon_badge"
+                android:backgroundTint="@color/brand_accent"
+                android:importantForAccessibility="no"
+                android:padding="7dp"
+                android:src="@drawable/ic_phone"
+                app:tint="@android:color/white" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -186,7 +224,31 @@
         </LinearLayout>
 
         <!-- الإشعارات -->
-        <TextView style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_lg" android:layout_marginBottom="@dimen/spacing_sm" android:text="@string/settings_notifications" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_section"
+            android:layout_marginBottom="@dimen/spacing_header_gap"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Text.SectionTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/settings_notifications" />
+
+            <ImageView
+                android:layout_width="@dimen/icon_badge_size"
+                android:layout_height="@dimen/icon_badge_size"
+                android:background="@drawable/bg_icon_badge"
+                android:backgroundTint="@color/brand_accent"
+                android:importantForAccessibility="no"
+                android:padding="7dp"
+                android:src="@drawable/ic_notification"
+                app:tint="@android:color/white" />
+        </LinearLayout>
 
         <!-- البند 20: لو رفض المستخدم إذن الإشعارات (أو عطّلها لاحقاً من إعدادات النظام)،
              كانت مفاتيح "تنبيه الانتهاء/غير المدفوع" تبقى قابلة للتفعيل دون أي مؤشر بأن
@@ -252,20 +314,21 @@
              المعتمَد فعلياً في الشاشات الأخرى (fragment_revenue.xml / activity_add_edit_member.xml)
              لإبراز أكبر كإجراء أساسي — لا تبعية جديدة ولا Drawable جديد، إعادة استخدام
              لِما هو موجود بالفعل بنفس النمط الحرفي. -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSaveSettings"
+        <FrameLayout
+            android:id="@+id/frameSaveSettingsGlow"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:background="@drawable/bg_button_gradient"
-            android:paddingTop="14dp"
-            android:paddingBottom="14dp"
-            android:textAllCaps="false"
-            android:textColor="@color/text_on_accent"
-            app:backgroundTint="@null"
-            app:rippleColor="@color/glass_border_strong"
-            app:strokeWidth="0dp"
-            android:text="@string/action_save" />
+            android:layout_marginTop="@dimen/spacing_section"
+            android:background="@drawable/bg_button_glow"
+            android:padding="8dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveSettings"
+                style="@style/Widget.GymManager.Button.CTA"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/button_height_cta"
+                android:text="@string/action_save" />
+        </FrameLayout>
 
         <!-- ===================== نطاق التعديل (Settings Part — واتساب/الإشعارات/حفظ): نهاية ===================== -->
 
@@ -281,7 +344,31 @@
              btnOpenArchive, btnAbout). -->
 
         <!-- البيانات والنسخ الاحتياطي -->
-        <TextView style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_lg" android:layout_marginBottom="@dimen/spacing_sm" android:text="@string/settings_data" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_section"
+            android:layout_marginBottom="@dimen/spacing_header_gap"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Text.SectionTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/settings_data" />
+
+            <ImageView
+                android:layout_width="@dimen/icon_badge_size"
+                android:layout_height="@dimen/icon_badge_size"
+                android:background="@drawable/bg_icon_badge"
+                android:backgroundTint="@color/brand_accent"
+                android:importantForAccessibility="no"
+                android:padding="7dp"
+                android:src="@drawable/ic_backup"
+                app:tint="@android:color/white" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -294,21 +381,21 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnBackupNow" style="@style/Widget.GymManager.Button.Outlined"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:icon="@drawable/ic_backup" app:iconTint="@color/text_primary"
+                app:icon="@drawable/ic_backup" app:iconGravity="textStart" app:iconPadding="@dimen/spacing_sm" app:iconTint="@color/text_primary"
                 app:strokeColor="@color/glass_border_strong"
                 android:text="@string/settings_backup_now" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnRestoreBackup" style="@style/Widget.GymManager.Button.Outlined"
                 android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm"
-                android:icon="@drawable/ic_restore" app:iconTint="@color/text_primary"
+                app:icon="@drawable/ic_restore" app:iconGravity="textStart" app:iconPadding="@dimen/spacing_sm" app:iconTint="@color/text_primary"
                 app:strokeColor="@color/glass_border_strong"
                 android:text="@string/settings_restore_backup" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnExportCsv" style="@style/Widget.GymManager.Button.Outlined"
                 android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm"
-                android:icon="@drawable/ic_export" app:iconTint="@color/text_primary"
+                app:icon="@drawable/ic_export" app:iconGravity="textStart" app:iconPadding="@dimen/spacing_sm" app:iconTint="@color/text_primary"
                 app:strokeColor="@color/glass_border_strong"
                 android:text="@string/settings_export_excel" />
 
@@ -332,11 +419,10 @@
                     android:id="@+id/progressBackupDeterminate"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="8dp"
                     android:max="100"
                     android:progress="0"
-                    android:progressTint="@color/brand_accent"
-                    android:progressBackgroundTint="@color/glass_border_strong" />
+                    android:progressDrawable="@drawable/progress_subscription_glass" />
 
                 <TextView
                     android:id="@+id/tvBackupProgressDetail"
@@ -362,14 +448,14 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnOpenArchive" style="@style/Widget.GymManager.Button.Outlined"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:icon="@drawable/ic_archive" app:iconTint="@color/text_primary"
+                app:icon="@drawable/ic_archive" app:iconGravity="textStart" app:iconPadding="@dimen/spacing_sm" app:iconTint="@color/text_primary"
                 app:strokeColor="@color/glass_border_strong"
                 android:text="@string/settings_archive" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAbout" style="@style/Widget.GymManager.Button.Outlined"
                 android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm"
-                android:icon="@drawable/ic_info" app:iconTint="@color/text_primary"
+                app:icon="@drawable/ic_info" app:iconGravity="textStart" app:iconPadding="@dimen/spacing_sm" app:iconTint="@color/text_primary"
                 app:strokeColor="@color/glass_border_strong"
                 android:text="@string/settings_about" />
         </LinearLayout>
