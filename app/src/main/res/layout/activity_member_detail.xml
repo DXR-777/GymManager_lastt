@@ -472,7 +472,7 @@
                 android:padding="@dimen/spacing_md">
 
                 <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_delete" app:tint="@color/status_error" android:contentDescription="@null"/>
-                <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="@dimen/spacing_xs" android:fontFamily="sans-serif-medium" android:textColor="@color/status_error" android:text="@string/detail_action_delete"/>
+                <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="@dimen/spacing_xs" android:fontFamily="@font/cairo_medium" android:textColor="@color/status_error" android:text="@string/detail_action_delete"/>
             </LinearLayout>
 
             <!-- سجل الاشتراكات: رأس القسم أُعيد بناؤه بصرياً فقط ليطابق نفس نمط رأس
@@ -611,6 +611,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />
+
+            <!-- سيناريو عضو "يومي" طويل الأمد: تُقيَّد الدفعة المعروضة دفعة تلو أخرى
+                 بدل رسم مئات السجلات دفعة واحدة — راجع تعليق detail_history_load_more
+                 وMemberDetailActivity.refreshHistoryList(). مخفي افتراضياً، يظهر فقط
+                 حين يتجاوز عدد السجلات (بعد الفلتر) الدفعة المعروضة حالياً. -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnHistoryLoadMore"
+                style="@style/Widget.GymManager.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:text="@string/detail_history_load_more"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/tvEmptyHistory"

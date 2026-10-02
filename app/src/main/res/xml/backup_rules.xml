@@ -12,4 +12,6 @@
 -->
 <full-backup-content>
     <include domain="sharedpref" path="." />
+    <!-- قفل التطبيق: راجع التعليق في data_extraction_rules.xml -->
+    <exclude domain="sharedpref" path="app_lock.xml" />
 </full-backup-content>

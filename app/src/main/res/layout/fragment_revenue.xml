@@ -4,8 +4,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/transparent"
+    android:tag="nav_inset_target"
+    android:clipToPadding="false"
     android:fillViewport="true">
+
+    <com.gympro.manager.ui.widgets.MaxWidthFrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -300,7 +307,7 @@
 
             <!-- Typography QA (M5): each row's label and value below used the same
                  plain Text.Body weight, so the amount didn't stand out from its own
-                 label. Added android:fontFamily="sans-serif-medium" +
+                 label. Added android:fontFamily="@font/cairo_medium" +
                  includeFontPadding="false" to the four value TextViews only
                  (tvRevenueDaily/Weekly/Monthly/Custom) — no size or width change —
                  so the figure reads as the primary value on each row.
@@ -314,7 +321,7 @@
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="@dimen/spacing_xs" android:gravity="center_vertical" android:orientation="horizontal">
                 <View android:id="@+id/dotDaily" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/shape_dot"/>
                 <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:includeFontPadding="false" android:text="@string/subscription_daily"/>
-                <TextView android:id="@+id/tvRevenueDaily" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="sans-serif-medium" android:includeFontPadding="false" tools:text="90 ₪"/>
+                <TextView android:id="@+id/tvRevenueDaily" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="@font/cairo_medium" android:includeFontPadding="false" tools:text="90 ₪"/>
             </LinearLayout>
 
             <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="@dimen/spacing_sm" android:alpha="0.6" android:background="@color/glass_border_strong"/>
@@ -323,7 +330,7 @@
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="@dimen/spacing_xs" android:gravity="center_vertical" android:orientation="horizontal">
                 <View android:id="@+id/dotWeekly" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/shape_dot"/>
                 <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:includeFontPadding="false" android:text="@string/subscription_weekly"/>
-                <TextView android:id="@+id/tvRevenueWeekly" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="sans-serif-medium" android:includeFontPadding="false" tools:text="140 ₪"/>
+                <TextView android:id="@+id/tvRevenueWeekly" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="@font/cairo_medium" android:includeFontPadding="false" tools:text="140 ₪"/>
             </LinearLayout>
 
             <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="@dimen/spacing_sm" android:alpha="0.6" android:background="@color/glass_border_strong"/>
@@ -332,7 +339,7 @@
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="@dimen/spacing_xs" android:gravity="center_vertical" android:orientation="horizontal">
                 <View android:id="@+id/dotMonthly" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/shape_dot"/>
                 <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:includeFontPadding="false" android:text="@string/subscription_monthly"/>
-                <TextView android:id="@+id/tvRevenueMonthly" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="sans-serif-medium" android:includeFontPadding="false" tools:text="2170 ₪"/>
+                <TextView android:id="@+id/tvRevenueMonthly" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="@font/cairo_medium" android:includeFontPadding="false" tools:text="2170 ₪"/>
             </LinearLayout>
 
             <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="@dimen/spacing_sm" android:alpha="0.6" android:background="@color/glass_border_strong"/>
@@ -341,7 +348,7 @@
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="@dimen/spacing_xs" android:gravity="center_vertical" android:orientation="horizontal">
                 <View android:id="@+id/dotCustom" android:layout_width="12dp" android:layout_height="12dp" android:background="@drawable/shape_dot"/>
                 <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:includeFontPadding="false" android:text="@string/subscription_custom"/>
-                <TextView android:id="@+id/tvRevenueCustom" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="sans-serif-medium" android:includeFontPadding="false" tools:text="50 ₪"/>
+                <TextView android:id="@+id/tvRevenueCustom" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/text_primary" android:fontFamily="@font/cairo_medium" android:includeFontPadding="false" tools:text="50 ₪"/>
             </LinearLayout>
 
         </LinearLayout>
@@ -392,4 +399,6 @@
         <!-- ===================== نطاق التعديل (Part 2 — الرسم البياني وتفصيل الأنواع): نهاية ===================== -->
 
     </LinearLayout>
+    </com.gympro.manager.ui.widgets.MaxWidthFrameLayout>
+
 </ScrollView>

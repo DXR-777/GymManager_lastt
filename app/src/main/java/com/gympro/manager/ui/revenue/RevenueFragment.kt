@@ -181,10 +181,10 @@ class RevenueFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    binding.tvRevenueToday.text = CurrencyFormatter.format(state.today, state.currency)
-                    binding.tvRevenueWeek.text = CurrencyFormatter.format(state.week, state.currency)
-                    binding.tvRevenueMonth.text = CurrencyFormatter.format(state.month, state.currency)
-                    binding.tvRevenueYear.text = CurrencyFormatter.format(state.year, state.currency)
+                    binding.tvRevenueToday.text = CurrencyFormatter.formatEmphasized(requireContext(), state.today, state.currency)
+                    binding.tvRevenueWeek.text = CurrencyFormatter.formatEmphasized(requireContext(), state.week, state.currency)
+                    binding.tvRevenueMonth.text = CurrencyFormatter.formatEmphasized(requireContext(), state.month, state.currency)
+                    binding.tvRevenueYear.text = CurrencyFormatter.formatEmphasized(requireContext(), state.year, state.currency)
 
                     binding.tvCompareLastMonth.text = buildCompareText(state.month, state.lastMonth)
 

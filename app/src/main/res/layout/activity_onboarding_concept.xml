@@ -54,7 +54,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="52dp"
-        android:fontFamily="sans-serif-medium"
+        android:fontFamily="@font/cairo_medium"
         android:gravity="center"
         android:includeFontPadding="false"
         android:paddingHorizontal="@dimen/spacing_md"
@@ -156,7 +156,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/cairo_medium"
                     android:text="@string/onboarding_next_label"
                     android:textColor="@color/text_on_accent"
                     android:textSize="@dimen/text_subtitle"
@@ -219,7 +219,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
+                        android:fontFamily="@font/cairo_medium"
                         android:text="@string/onboarding_feature_members_title"
                         android:textColor="@color/text_primary"
                         android:textSize="@dimen/text_subtitle"
@@ -264,7 +264,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
+                        android:fontFamily="@font/cairo_medium"
                         android:text="@string/onboarding_feature_subscriptions_title"
                         android:textColor="@color/text_primary"
                         android:textSize="@dimen/text_subtitle"
@@ -309,7 +309,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif-medium"
+                        android:fontFamily="@font/cairo_medium"
                         android:text="@string/onboarding_feature_connect_title"
                         android:textColor="@color/text_primary"
                         android:textSize="@dimen/text_subtitle"

@@ -4,9 +4,14 @@
     <dimen name="spacing_sm">8dp</dimen>
     <dimen name="spacing_md">16dp</dimen>
     <dimen name="spacing_lg">24dp</dimen>
+    <!-- سالب spacing_lg: يمدّد القوائم الأفقية لحافتي الشاشة (6.2) لإظهار بطاقة "مطلّة" جزئياً -->
+    <dimen name="spacing_lg_negative">-24dp</dimen>
     <dimen name="spacing_xl">32dp</dimen>
 
     <dimen name="radius_sm">8dp</dimen>
+
+    <!-- البند 8: عرض أقصى للمحتوى على الشاشات الكبيرة/الأفقي (MaxWidthFrameLayout) -->
+    <dimen name="content_max_width">600dp</dimen>
     <dimen name="radius_md">14dp</dimen>
     <dimen name="radius_lg">20dp</dimen>
     <dimen name="radius_xl">24dp</dimen>
@@ -24,6 +29,8 @@
 
     <!-- إعادة تصميم شاشة إضافة/تعديل عضو (2026) -->
     <dimen name="icon_badge_size">34dp</dimen>
+    <!-- شارة عنوان القسم (5.1): أصغر من شارة البطاقة وتلي العنوان مباشرة -->
+    <dimen name="icon_badge_section_size">28dp</dimen>
     <dimen name="text_hero_price">38sp</dimen>
     <!-- تنقيح التباعد (2026): فاصل أقصر وموحَّد بين الأقسام الرئيسية بدل spacing_lg
          (24dp) المستخدم لأغراض أخرى أيضاً — يُقصِّر طول التمرير دون أن يشعر المستخدم
@@ -65,4 +72,15 @@
     <dimen name="text_member_value">16sp</dimen>
     <dimen name="text_member_section_title">18sp</dimen>
     <dimen name="text_member_hero_suffix">17sp</dimen>
+
+    <!-- لوحة التحكم (Dashboard): سلّم أحجام لتمييز الأرقام عن التسميات.
+         الإيراد Hero أكبر من المؤشرات الثانوية، والتسميات 13sp (أوضح للعربية من 12sp). -->
+    <dimen name="text_hero_stat">34sp</dimen>
+    <dimen name="text_stat_value">26sp</dimen>
+    <dimen name="text_stat_label">13sp</dimen>
+    <dimen name="icon_badge_hero_size">48dp</dimen>
+
+    <!-- Dashboard: فجوة موحَّدة (أفقياً ورأسياً) بين البطاقات الرئيسية، بدل الجمع بين
+         هوامش 4dp على كل بطاقة وفجوات متفرقة أخرى؛ الحواف الخارجية تتطابق الآن مع حشوة الحاوية. -->
+    <dimen name="spacing_card_gap">12dp</dimen>
 </resources>

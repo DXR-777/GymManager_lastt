@@ -1200,7 +1200,7 @@
                         android:textAllCaps="false"
                         android:textColor="@color/button_save_text_color"
                         android:textSize="@dimen/text_subtitle"
-                        android:fontFamily="sans-serif-medium"
+                        android:fontFamily="@font/cairo_medium"
                         android:includeFontPadding="false"
                         android:textStyle="bold"
                         android:letterSpacing="0.01" />

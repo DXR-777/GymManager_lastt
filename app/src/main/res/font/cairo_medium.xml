@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 9.1: نسخة الوزن المتوسط (500) من Cairo، بديل sans-serif-medium (Roboto Medium) المستخدم
+     في 43 موضعاً عبر التطبيق للعناوين والأزرار وأسماء الأعضاء. -->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fontProviderAuthority="com.google.android.gms.fonts"
+    android:fontProviderPackage="com.google.android.gms"
+    android:fontProviderQuery="name=Cairo&amp;weight=500"
+    android:fontProviderCerts="@array/com_google_android_gms_fonts_certs">
+</font-family>

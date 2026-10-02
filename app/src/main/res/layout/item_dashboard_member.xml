@@ -3,8 +3,9 @@
     عنصر بطاقة عضو واحد، يُستخدم في كلا القائمتين الأفقيتين بشاشة Dashboard
     ("ينتهي قريباً" و"غير مدفوع" — راجع DashboardMemberAdapter.kt). tvSubtitle
     يحمل معنى مختلفاً حسب القائمة (أيام متبقية / مبلغ مستحق منسَّق عبر
-    CurrencyFormatter)، لذا يبقى تصميمه محايداً (لا لون دلالي مرتبط بقسم واحد)
-    كي يناسب كلا السياقين بلا تعارض بصري.
+    CurrencyFormatter). الخلفية المحايدة أدناه افتراضية فقط؛ يضبط
+    DashboardMemberAdapter خلفية ولون النص دلالياً (5.2): أحمر للمبلغ المستحق
+    ولليوم/غداً، وأصفر لبقية الأيام.
 
     العرض الثابت (160dp) مقصود ومُبقى عمداً رغم توجيه "لا أبعاد ثابتة" العام:
     tvName يعتمد على maxLines=1 + ellipsize لضمان ارتفاع بطاقة موحّد داخل قائمة
@@ -15,7 +16,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="160dp"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/spacing_sm"
+    android:layout_marginEnd="@dimen/spacing_card_gap"
     android:background="@drawable/bg_member_card_glass"
     android:elevation="@dimen/elevation_card_resting"
     android:clickable="true"

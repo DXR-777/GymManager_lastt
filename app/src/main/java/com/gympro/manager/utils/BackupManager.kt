@@ -82,11 +82,14 @@ object BackupManager {
     fun shareBackupFile(context: Context, file: File) = shareFile(context, file, "application/json")
 
     /** تنسيق حجم ملف مقروء للبشر (بايت/كيلوبايت/ميغابايت) — راجع البند 26: كان
-     *  حجم الملف الناتج غير معروض إطلاقاً أثناء أو بعد النسخ الاحتياطي/الاستعادة. */
+     *  حجم الملف الناتج غير معروض إطلاقاً أثناء أو بعد النسخ الاحتياطي/الاستعادة.
+     *  البند 6: Locale.US صريحة في استدعاءي format() أدناه — نفس Locale.US المستخدمة
+     *  بالفعل لتنسيق اسم الملف بـ SimpleDateFormat في هذا الملف تحديداً (انظر أسفل)؛
+     *  بدونها هنا أيضاً كانت الأرقام عرضة لنفس مشكلة locale الجهاز الافتراضي. */
     fun formatFileSize(bytes: Long): String = when {
         bytes < 1024 -> "$bytes بايت"
-        bytes < 1024 * 1024 -> "%.1f كيلوبايت".format(bytes / 1024.0)
-        else -> "%.2f ميغابايت".format(bytes / (1024.0 * 1024.0))
+        bytes < 1024 * 1024 -> "%.1f كيلوبايت".format(Locale.US, bytes / 1024.0)
+        else -> "%.2f ميغابايت".format(Locale.US, bytes / (1024.0 * 1024.0))
     }
 
     fun shareFile(context: Context, file: File, mimeType: String) {

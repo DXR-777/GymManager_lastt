@@ -23,6 +23,12 @@ object NotificationHelper {
     private const val EXPIRY_NOTIF_ID = 1000
     private const val UNPAID_NOTIF_ID = 9999
     private const val ARCHIVE_PURGE_NOTIF_ID = 2000
+    private const val EXPIRY_SUMMARY_NOTIF_ID = 1001
+
+    /** راجع تعليق notif_expiry_summary_title في strings.xml — يجمع Android (minSdk هنا
+     *  26، فوق حد دعم التجميع API 24) كل إشعار يحمل نفس المفتاح في حزمة واحدة قابلة
+     *  للتوسعة بدل بطاقات منفصلة تغرق الشريط في يوم مزدحم بعشرات الأعضاء. */
+    private const val EXPIRY_GROUP_KEY = "expiry_group"
 
     fun createChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -131,18 +137,76 @@ object NotificationHelper {
         if (!hasPermission(context)) return
         val title = context.getString(R.string.notif_expiry_title)
         val body = context.getString(R.string.notif_expiry_body, memberName, daysLeft)
-        notify(context, expiryTag(memberId), EXPIRY_NOTIF_ID, expiryRequestCode(memberId), title, body, memberId)
+        notify(context, expiryTag(memberId), EXPIRY_NOTIF_ID, expiryRequestCode(memberId), title, body, memberId, group = EXPIRY_GROUP_KEY)
     }
 
     fun showExpired(context: Context, memberId: Long, memberName: String) {
         if (!hasPermission(context)) return
         val title = context.getString(R.string.notif_expired_title)
         val body = context.getString(R.string.notif_expired_body, memberName)
-        notify(context, expiryTag(memberId), EXPIRY_NOTIF_ID, expiryRequestCode(memberId), title, body, memberId)
+        notify(context, expiryTag(memberId), EXPIRY_NOTIF_ID, expiryRequestCode(memberId), title, body, memberId, group = EXPIRY_GROUP_KEY)
+    }
+
+    /**
+     * إشعار ملخّص واحد فوق كل إشعارات showExpiring/showExpired الفردية بنفس الدورة —
+     * راجع تعليق notif_expiry_summary_title في strings.xml للسيناريو كاملاً. يُستدعى
+     * من ExpiryCheckWorker بعد نهاية حلقة الفحص بعدد الأعضاء الذين أُشعِر بهم فعلياً
+     * هذه الدورة (وليس كل الأعضاء): أقل من عضوين لا يحتاج تجميعاً (إشعار واحد يكفي
+     * ويُعرض بمفرده أصلاً)، فيُلغى أي ملخّص سابق قد يبقى معلَّقاً بعدد قديم خاطئ — نفس
+     * مبدأ إلغاء الإشعار الفارغ في showUnpaidSummary أعلاه.
+     */
+    fun showExpirySummary(context: Context, notifiedCount: Int) {
+        if (notifiedCount < 2) {
+            NotificationManagerCompat.from(context).cancel(EXPIRY_SUMMARY_NOTIF_ID)
+            return
+        }
+        if (!hasPermission(context)) return
+        val title = context.resources.getQuantityString(
+            R.plurals.notif_expiry_summary_title, notifiedCount, notifiedCount
+        )
+        val body = context.getString(R.string.notif_expiry_summary_body)
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setAutoCancel(true)
+            .setGroup(EXPIRY_GROUP_KEY)
+            .setGroupSummary(true)
+            // requestCode سالب عمداً: expiryRequestCode(memberId) = memberId.hashCode() موجب
+            // دائماً لمعرّفات Room التلقائية، فلا يمكن أن يتصادم معه أبداً (تصادم requestCode
+            // مع FLAG_UPDATE_CURRENT كان سيجعل PendingIntent الملخّص يستبدل PendingIntent عضو).
+            .setContentIntent(contentIntent(context, -EXPIRY_SUMMARY_NOTIF_ID, memberId = null))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+        try {
+            NotificationManagerCompat.from(context).notify(EXPIRY_SUMMARY_NOTIF_ID, notification)
+        } catch (e: SecurityException) {
+            // المستخدم رفض إذن الإشعارات؛ تجاهل بأمان
+        }
+    }
+
+    /**
+     * كانت لا تُستدعى من أي مكان في المشروع — الإشعار الفردي لعضو ("ينتهي خلال يومين"/
+     * "منتهٍ اليوم") كان يبقى معلَّقاً في شريط الإشعارات إلى الأبد حتى لو جدّد العضو
+     * اشتراكه فوراً في نفس اليوم، لأن ExpiryCheckWorker كان ببساطة لا يستدعي شيئاً على
+     * الإطلاق لهذا العضو في اليوم التالي بدل استدعاء إلغاء صريح (راجع ExpiryCheckWorker
+     * الآن: فرع else الجديد في حلقة members.forEach). tag+id مطابقان تماماً لما استخدمه
+     * showExpiring/showExpired عند إنشاء الإشعار، فيُزال نفس الإشعار بدقة لا غيره.
+     */
+    fun cancelExpiryReminder(context: Context, memberId: Long) {
+        NotificationManagerCompat.from(context).cancel(expiryTag(memberId), EXPIRY_NOTIF_ID)
     }
 
     fun showUnpaidSummary(context: Context, count: Int) {
-        if (!hasPermission(context) || count <= 0) return
+        if (count <= 0) {
+            // كان الاستدعاء يتجاهَل بصمت هنا فقط (return مباشرة)، فيبقى إشعار الأمس
+            // ("3 أعضاء غير مدفوعين" مثلاً) معلَّقاً بمعلومة خاطئة الآن رغم أن العدد صفر
+            // فعلياً اليوم. الإلغاء الصريح لا يحتاج تحقق hasPermission (cancel() آمن
+            // دائماً، خلافاً لـ notify() التي قد ترمي SecurityException بلا الإذن).
+            NotificationManagerCompat.from(context).cancel(UNPAID_NOTIF_ID)
+            return
+        }
+        if (!hasPermission(context)) return
         val title = context.getString(R.string.notif_unpaid_title)
         val body = context.getString(R.string.notif_unpaid_body, count)
         notify(context, tag = null, UNPAID_NOTIF_ID, UNPAID_NOTIF_ID, title, body, memberId = null)
@@ -182,7 +246,8 @@ object NotificationHelper {
         requestCode: Int,
         title: String,
         body: String,
-        memberId: Long?
+        memberId: Long?,
+        group: String? = null
     ) {
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
@@ -191,6 +256,7 @@ object NotificationHelper {
             .setAutoCancel(true)
             .setContentIntent(contentIntent(context, requestCode, memberId))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .apply { group?.let { setGroup(it) } }
             .build()
         try {
             // tag + id معاً هما مُعرِّف الإشعار الفعلي — راجع توثيق expiryTag أعلاه.

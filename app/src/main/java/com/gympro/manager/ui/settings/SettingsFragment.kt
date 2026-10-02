@@ -1,5 +1,6 @@
 package com.gympro.manager.ui.settings
 
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
@@ -21,6 +22,9 @@ import com.gympro.manager.R
 import com.gympro.manager.data.local.entities.GymSettingsEntity
 import com.gympro.manager.databinding.DialogCurrencyPickerBinding
 import com.gympro.manager.databinding.FragmentSettingsBinding
+import com.gympro.manager.security.AppLockManager
+import com.gympro.manager.security.AppLockUi
+import com.gympro.manager.security.LockActivity
 import com.gympro.manager.ui.archive.ArchiveActivity
 import com.gympro.manager.utils.BackupManager
 import com.gympro.manager.utils.limitDecimalPlaces
@@ -52,6 +56,29 @@ class SettingsFragment : Fragment() {
 
     private val restoreLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) confirmRestore(uri)
+    }
+
+    /** الإجراء الأمني الجاري تنفيذه عبر LockActivity — يحدد ما يحدث عند نجاحها. */
+    private enum class LockAction { ENABLE, DISABLE, CHANGE, NEW_RECOVERY }
+    private var pendingLockAction: LockAction? = null
+
+    private val lockLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        val action = pendingLockAction
+        pendingLockAction = null
+        if (result.resultCode == Activity.RESULT_OK) {
+            when (action) {
+                LockAction.ENABLE -> requireContext().toast(getString(R.string.lock_enabled_toast))
+                LockAction.DISABLE -> {
+                    AppLockManager.disable()
+                    requireContext().toast(getString(R.string.lock_disabled_toast))
+                }
+                LockAction.NEW_RECOVERY -> AppLockManager.generateRecoveryCode()?.let {
+                    AppLockUi.showRecoveryCodeDialog(requireContext(), it) {}
+                }
+                else -> Unit
+            }
+        }
+        if (_binding != null) refreshSecurityUi()
     }
 
     // نفس الترتيب والرموز الثلاثة بالضبط الموجودة في GymSetupActivity — أي تعديل
@@ -100,6 +127,115 @@ class SettingsFragment : Fragment() {
         binding.btnOpenArchive.setOnSingleClickListener { startActivity(Intent(requireContext(), ArchiveActivity::class.java)) }
         binding.btnAbout.setOnSingleClickListener { showAbout() }
         binding.btnOpenNotificationSettings.setOnSingleClickListener { openSystemNotificationSettings() }
+
+        applyWhatsappPrefixLabels()
+        setupSecuritySection()
+    }
+
+    /**
+     * البند 4: كانت تسميتا rbPrefix970/972 نصاً عربياً حرفياً ثابتاً في XML، مكرَّراً
+     * فعلياً لنفس المحتوى المستخدم في شاشة الإعداد الأولي (activity_gym_setup.xml،
+     * onboarding_prefix_palestine/israel_*) — الاستثناء الوحيد لهذا النمط في كل شجرة
+     * التخطيطات. إعادة استخدام نفس مورديّ الاسم والرمز هنا (بدل تكرارهما حرفياً) تضمن
+     * مصدراً واحداً للتسمية في الشاشتين معاً، فلا يتكرّر هنا نفس انحراف ثيمات الوضع
+     * الليلي الذي عالجه البند 3 (نسخة تُحدَّث، وأخرى منسية تتجمّد على القديم).
+     */
+    private fun applyWhatsappPrefixLabels() {
+        binding.rbPrefix970.text = getString(
+            R.string.whatsapp_prefix_label_format,
+            getString(R.string.onboarding_prefix_palestine_label),
+            getString(R.string.onboarding_prefix_palestine_code)
+        )
+        binding.rbPrefix972.text = getString(
+            R.string.whatsapp_prefix_label_format,
+            getString(R.string.onboarding_prefix_israel_label),
+            getString(R.string.onboarding_prefix_israel_code)
+        )
+    }
+
+    // ───────────────────────────── الأمان: قفل التطبيق ─────────────────────────────
+    // كل مفتاح هنا يعتمد على click (لا onCheckedChange): نُرجع المفتاح لحالته الفعلية فوراً،
+    // ثم تُحدَّث الحالة الحقيقية من AppLockManager بعد نجاح الإجراء (refreshSecurityUi) —
+    // فلا يبقى مفتاح "مفعَّل" شكلياً بينما المستخدم ألغى/فشل التأكيد.
+
+    private fun setupSecuritySection() {
+        binding.switchAppLock.setOnClickListener {
+            val turnOn = binding.switchAppLock.isChecked
+            binding.switchAppLock.isChecked = !turnOn
+            if (turnOn) launchLock(LockAction.ENABLE, LockActivity.MODE_SETUP)
+            else launchLock(LockAction.DISABLE, LockActivity.MODE_VERIFY)
+        }
+        binding.switchBiometric.setOnClickListener {
+            val turnOn = binding.switchBiometric.isChecked
+            binding.switchBiometric.isChecked = !turnOn
+            if (turnOn) {
+                AppLockUi.authenticate(
+                    activity = requireActivity(),
+                    title = getString(R.string.lock_biometric_title),
+                    subtitle = null,
+                    negativeText = getString(R.string.lock_cancel),
+                    onSuccess = {
+                        AppLockManager.setBiometricEnabled(true)
+                        if (_binding != null) refreshSecurityUi()
+                    }
+                )
+            } else {
+                AppLockManager.setBiometricEnabled(false)
+                refreshSecurityUi()
+            }
+        }
+        binding.rowAutoLock.setOnClickListener { showAutoLockPicker() }
+        binding.switchSecureScreen.setOnClickListener {
+            AppLockManager.setSecureScreen(binding.switchSecureScreen.isChecked)
+            AppLockManager.applySecureFlag(requireActivity())
+        }
+        binding.btnChangePin.setOnSingleClickListener { launchLock(LockAction.CHANGE, LockActivity.MODE_CHANGE) }
+        binding.btnNewRecovery.setOnSingleClickListener { launchLock(LockAction.NEW_RECOVERY, LockActivity.MODE_VERIFY) }
+        refreshSecurityUi()
+    }
+
+    private fun launchLock(action: LockAction, mode: String) {
+        pendingLockAction = action
+        lockLauncher.launch(Intent(requireContext(), LockActivity::class.java).putExtra(LockActivity.EXTRA_MODE, mode))
+    }
+
+    private fun refreshSecurityUi() {
+        val enabled = AppLockManager.isEnabled()
+        binding.switchAppLock.isChecked = enabled
+        binding.containerAppLockOptions.visibleIf(enabled)
+
+        val biometricAvailable = AppLockManager.biometricAvailable(requireContext())
+        binding.switchBiometric.isEnabled = biometricAvailable
+        binding.switchBiometric.isChecked = biometricAvailable && AppLockManager.isBiometricEnabled()
+        binding.tvBiometricLabel.setText(
+            if (biometricAvailable) R.string.settings_biometric else R.string.settings_biometric_unavailable
+        )
+
+        binding.tvAutoLockValue.text = autoLockLabel(AppLockManager.autoLockDelayMs())
+        binding.switchSecureScreen.isChecked = AppLockManager.isSecureScreenEnabled()
+    }
+
+    private fun autoLockLabel(ms: Long): String = getString(
+        when (ms) {
+            0L -> R.string.settings_auto_lock_immediate
+            30_000L -> R.string.settings_auto_lock_30s
+            300_000L -> R.string.settings_auto_lock_5m
+            else -> R.string.settings_auto_lock_1m
+        }
+    )
+
+    private fun showAutoLockPicker() {
+        val options = AppLockManager.AUTO_LOCK_OPTIONS_MS
+        val labels = options.map { autoLockLabel(it) }.toTypedArray()
+        val checked = options.indexOf(AppLockManager.autoLockDelayMs()).coerceAtLeast(0)
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.settings_auto_lock)
+            .setSingleChoiceItems(labels, checked) { dialog, which ->
+                AppLockManager.setAutoLockDelayMs(options[which])
+                refreshSecurityUi()
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onResume() {
@@ -109,6 +245,7 @@ class SettingsFragment : Fragment() {
         // دون إعادة إنشاء الفرجمنت، فيجب أن يظهر الشريط أو يختفي فوراً بحسب الحالة الفعلية
         // الحالية، لا الحالة وقت فتح الشاشة أول مرة.
         updateNotificationsDisabledWarning()
+        refreshSecurityUi()
     }
 
     /**

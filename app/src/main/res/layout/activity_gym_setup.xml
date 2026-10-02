@@ -197,7 +197,7 @@
                     android:id="@+id/tvStepNextLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/cairo_medium"
                     android:textColor="@color/text_on_accent"
                     android:textSize="@dimen/text_subtitle"
                     android:textStyle="bold"
@@ -253,7 +253,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/cairo_medium"
                     android:includeFontPadding="false"
                     android:text="@string/onboarding_gymname_title"
                     android:textColor="@color/text_primary"
@@ -350,7 +350,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/cairo_medium"
                     android:includeFontPadding="false"
                     android:text="@string/onboarding_pricing_title"
                     android:textColor="@color/text_primary"
@@ -395,7 +395,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:fontFamily="sans-serif-medium"
+                            android:fontFamily="@font/cairo_medium"
                             android:textColor="@color/text_on_accent"
                             android:textSize="@dimen/text_headline"
                             android:textStyle="bold"
@@ -413,7 +413,7 @@
                             android:id="@+id/tvCurrencyName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-medium"
+                            android:fontFamily="@font/cairo_medium"
                             android:textColor="@color/text_primary"
                             android:textSize="@dimen/text_subtitle"
                             android:textStyle="bold"
@@ -470,7 +470,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-medium"
+                                android:fontFamily="@font/cairo_medium"
                                 android:text="@string/onboarding_price_monthly_title"
                                 android:textColor="@color/text_primary"
                                 android:textSize="@dimen/text_subtitle"
@@ -553,7 +553,7 @@
                             android:layout_width="64dp"
                             android:layout_height="64dp"
                             android:contentDescription="@string/onboarding_price_weekly_title"
-                            android:src="@drawable/img_onboarding_icon_calendar_badge" />
+                            android:src="@drawable/img_onboarding_icon_calendar_week_badge" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -565,7 +565,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-medium"
+                                android:fontFamily="@font/cairo_medium"
                                 android:text="@string/onboarding_price_weekly_title"
                                 android:textColor="@color/text_primary"
                                 android:textSize="@dimen/text_subtitle"
@@ -660,7 +660,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="sans-serif-medium"
+                                android:fontFamily="@font/cairo_medium"
                                 android:text="@string/onboarding_price_daily_title"
                                 android:textColor="@color/text_primary"
                                 android:textSize="@dimen/text_subtitle"
@@ -769,7 +769,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/cairo_medium"
                     android:includeFontPadding="false"
                     android:text="@string/onboarding_whatsapp_title"
                     android:textColor="@color/text_primary"
@@ -820,7 +820,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-medium"
+                            android:fontFamily="@font/cairo_medium"
                             android:text="@string/onboarding_prefix_israel_code"
                             android:textColor="@color/text_primary"
                             android:textSize="@dimen/text_headline"
@@ -860,7 +860,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:fontFamily="sans-serif-medium"
+                            android:fontFamily="@font/cairo_medium"
                             android:text="@string/onboarding_prefix_auto_label"
                             android:textColor="@color/text_primary"
                             android:textSize="@dimen/text_headline"
@@ -893,7 +893,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif-medium"
+                            android:fontFamily="@font/cairo_medium"
                             android:text="@string/onboarding_prefix_palestine_code"
                             android:textColor="@color/text_primary"
                             android:textSize="@dimen/text_headline"
@@ -950,86 +950,17 @@
                 android:paddingTop="40dp"
                 android:visibility="gone">
 
-                <!-- شارة النجاح: توهج شعاعي + قصاصات احتفالية متناثرة + الشارة نفسها -->
-                <FrameLayout
+                <!-- شارة النجاح: صورة واحدة متكاملة (الشارة + القصاصات الاحتفالية)
+                     مطابقة تماماً للتصميم المرجعي، بدل الطبقات المنفصلة السابقة -->
+                <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="300dp">
-
-                    <ImageView
-                        android:layout_width="300dp"
-                        android:layout_height="300dp"
-                        android:layout_gravity="center"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/bg_onboarding_success_glow" />
-
-                    <!-- قصاصات احتفالية متناثرة، بأحجام وألوان ودورانات متفاوتة -->
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="top|start"
-                        android:layout_marginStart="30dp"
-                        android:layout_marginTop="20dp"
-                        android:background="@drawable/shape_confetti_piece"
-                        android:backgroundTint="@color/brand_gradient_start"
-                        android:rotation="25" />
-
-                    <View
-                        android:layout_width="8dp"
-                        android:layout_height="8dp"
-                        android:layout_gravity="top|end"
-                        android:layout_marginTop="55dp"
-                        android:layout_marginEnd="40dp"
-                        android:background="@drawable/shape_confetti_piece"
-                        android:backgroundTint="@color/brand_gradient_end" />
-
-                    <View
-                        android:layout_width="9dp"
-                        android:layout_height="14dp"
-                        android:layout_gravity="top|end"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginEnd="90dp"
-                        android:background="@drawable/shape_confetti_piece"
-                        android:backgroundTint="@color/brand_gradient_end"
-                        android:rotation="-20" />
-
-                    <View
-                        android:layout_width="10dp"
-                        android:layout_height="16dp"
-                        android:layout_gravity="bottom|start"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginBottom="50dp"
-                        android:background="@drawable/shape_confetti_piece"
-                        android:backgroundTint="@color/brand_gradient_end"
-                        android:rotation="15" />
-
-                    <View
-                        android:layout_width="9dp"
-                        android:layout_height="14dp"
-                        android:layout_gravity="bottom|end"
-                        android:layout_marginBottom="70dp"
-                        android:layout_marginEnd="35dp"
-                        android:background="@drawable/shape_confetti_piece"
-                        android:backgroundTint="@color/brand_gradient_start"
-                        android:rotation="-25" />
-
-                    <View
-                        android:layout_width="7dp"
-                        android:layout_height="7dp"
-                        android:layout_gravity="bottom|start"
-                        android:layout_marginStart="55dp"
-                        android:layout_marginBottom="15dp"
-                        android:background="@drawable/shape_confetti_piece"
-                        android:backgroundTint="@color/brand_gradient_start" />
-
-                    <ImageView
-                        android:layout_width="180dp"
-                        android:layout_height="180dp"
-                        android:layout_gravity="center"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@string/onboarding_success_badge_description"
-                        android:src="@drawable/img_onboarding_success_badge" />
-
-                </FrameLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:contentDescription="@string/onboarding_success_badge_description"
+                    android:paddingHorizontal="@dimen/spacing_lg"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/img_onboarding_success_hero" />
 
                 <TextView
                     android:id="@+id/tvStep4Title"
@@ -1037,7 +968,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    android:fontFamily="sans-serif-medium"
+                    android:fontFamily="@font/cairo_medium"
                     android:includeFontPadding="false"
                     android:paddingHorizontal="@dimen/spacing_lg"
                     android:text="@string/onboarding_step4_title"

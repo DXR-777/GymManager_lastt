@@ -2,6 +2,7 @@ package com.gympro.manager.utils
 
 import com.gympro.manager.model.SubscriptionType
 import java.util.Calendar
+import java.util.Locale
 
 /**
  * كل العمليات الحسابية المتعلقة بالتواريخ والاشتراكات.
@@ -218,13 +219,23 @@ object DateUtils {
         return "$day $month $year"
     }
 
+    /**
+     * البند 6: Locale.US صريحة إلزامية هنا — بدونها كان "%02d/%02d/%04d".format(...)
+     * يستخدم locale الجهاز الافتراضي، وهو بالضبط ما يشرح تعليق الملف بالأعلى أن هذا
+     * الملف كله (Calendar اليدوي بدل SimpleDateFormat) صُمم عمداً لتجنّبه. النتيجة على
+     * جهاز بنظام أرقام "عربي-هندي": "٢١/٠٦/٢٠٢٦" بدل "21/06/2026" — أخطر أثر عملي لهذا
+     * تحديداً أن formatDateShort() هي المُستخدَمة في BackupManager.exportCsv() لتواريخ
+     * بداية/نهاية الاشتراك؛ ملف CSV مُصمَّم للفتح خارج التطبيق (Excel/Sheets)، فتاريخ
+     * بأرقام غير غربية قد لا يُتعرَّف عليه هناك كتاريخ صالح، ويُقرأ كنص عادي يكسر
+     * الفرز/التصفية على جهاز صاحب النادي.
+     */
     fun formatDateShort(millis: Long): String {
         val cal = Calendar.getInstance()
         cal.timeInMillis = millis
         val day = cal.get(Calendar.DAY_OF_MONTH)
         val month = cal.get(Calendar.MONTH) + 1
         val year = cal.get(Calendar.YEAR)
-        return "%02d/%02d/%04d".format(day, month, year)
+        return "%02d/%02d/%04d".format(Locale.US, day, month, year)
     }
 
     fun startOfWeek(millis: Long = now()): Long {

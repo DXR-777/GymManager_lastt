@@ -16,7 +16,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
-import androidx.recyclerview.widget.LinearLayoutManager
+import android.content.res.Configuration
+import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.gympro.manager.GymApplication
 import com.gympro.manager.R
@@ -27,6 +28,7 @@ import com.gympro.manager.model.MemberSort
 import com.gympro.manager.model.PaymentStatus
 import com.gympro.manager.model.SubscriptionType
 import com.gympro.manager.ui.archive.ArchiveActivity
+import com.gympro.manager.ui.widgets.GridSpacingItemDecoration
 import com.gympro.manager.utils.CurrencyFormatter
 import com.gympro.manager.utils.DateUtils
 import com.gympro.manager.utils.WhatsAppHelper
@@ -79,12 +81,22 @@ class MembersFragment : Fragment() {
     }
 
     /**
-     * يقرأ الفلتر الابتدائي (إن وُجد) من arguments ويطبّقه على القائمة والـ Chip المطابق،
-     * بحيث لا تُفتح شاشة الأعضاء دائماً بفلتر "الكل" عند القدوم من بطاقة في لوحة التحكم.
+     * يقرأ الفلتر الابتدائي (إن وُجد) من arguments ويطبّقه — يغطي فقط لحظة إنشاء أول
+     * نسخة من هذا الفراغمنت. راجع applyFilter() أدناه للحالة الأخرى (نسخة موجودة أصلاً).
      */
     private fun applyInitialFilterIfAny() {
         val filterName = arguments?.getString(ARG_INITIAL_FILTER) ?: return
         val filter = runCatching { MemberFilter.valueOf(filterName) }.getOrNull() ?: return
+        applyFilter(filter)
+    }
+
+    /**
+     * يطبّق فلتراً على القائمة والـ Chip المطابق له. عامة (public) كي تستدعيها
+     * MainActivity.openMembersFiltered() مباشرة على نسخة هذا الفراغمنت القائمة فعلاً
+     * (منذ إصلاح فقدان الحالة عند تبديل التبويبات — راجع showTab في MainActivity)، بدل
+     * الاعتماد فقط على arguments التي لا تُقرأ إلا مرة واحدة عند الإنشاء الأول.
+     */
+    fun applyFilter(filter: MemberFilter) {
         val chipId = when (filter) {
             MemberFilter.ALL -> R.id.chipAll
             MemberFilter.ACTIVE -> R.id.chipActive
@@ -133,12 +145,29 @@ class MembersFragment : Fragment() {
             .show()
     }
 
+    /**
+     * البند 8: على الشاشات الكبيرة (عرض متاح > 600dp) أو في الوضع الأفقي، تتمدد بطاقة
+     * العضو بعرض الشاشة كاملاً وتفقد اتجاهها البصري (رقم/اسم قصيرين داخل بطاقة عريضة
+     * جداً). نستبدل العمود الواحد بشبكة 4 أعمدة في هذه الحالة بدل تخطيطات منفصلة
+     * (layout-sw600dp / layout-land)، فتُعاد حسابها تلقائياً عند الدوران لأن Fragment
+     * تُعاد إنشاؤه افتراضياً مع تغيّر الإعدادات.
+     */
+    private fun useGridLayout(): Boolean {
+        val config = resources.configuration
+        return config.screenWidthDp > 600 || config.orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
+
     private fun setupRecyclerView() {
         adapter = MembersAdapter(
             onClick = { member -> openDetail(member.id) },
             onWhatsappClick = { member -> sendWhatsapp(member) }
         )
-        binding.rvMembers.layoutManager = LinearLayoutManager(context)
+        val spanCount = if (useGridLayout()) 4 else 1
+        binding.rvMembers.layoutManager = GridLayoutManager(context, spanCount)
+        if (spanCount > 1) {
+            val spacingPx = resources.getDimensionPixelSize(R.dimen.spacing_card_gap)
+            binding.rvMembers.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx))
+        }
         binding.rvMembers.adapter = adapter
     }
 

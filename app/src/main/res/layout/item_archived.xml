@@ -80,24 +80,29 @@
             tools:visibility="visible" />
     </LinearLayout>
 
+    <!-- البند 7: 48dp بدل 40dp لكلا الزرّين هنا (نفس إصلاح btnWhatsapp في item_member.xml)
+         — padding زيد بنفس النسبة (8dp إلى 12dp) فيبقى حجم الأيقونة المرئي 24dp كما كان
+         تماماً؛ زادت مساحة اللمس فقط. هذان الزرّان أخطر من غيرهما لأن أفعالهما (استعادة
+         عضو/حذف نهائي لا رجعة فيه) متجاورتان مباشرة — مساحة لمس أكبر تقلّل احتمال الضغط
+         على الزر الخطأ بالخطأ، لا تحسّن الوصولية فقط. -->
     <ImageButton
         android:id="@+id/btnRestore"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:background="@drawable/bg_action_button_success_glass"
         android:contentDescription="@string/action_restore"
-        android:padding="8dp"
+        android:padding="12dp"
         android:src="@drawable/ic_restore"
         app:tint="@color/status_success" />
 
     <ImageButton
         android:id="@+id/btnPermanentDelete"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_marginStart="@dimen/spacing_sm"
         android:background="@drawable/bg_action_button_error_glass"
         android:contentDescription="@string/action_delete"
-        android:padding="8dp"
+        android:padding="12dp"
         android:src="@drawable/ic_delete"
         app:tint="@color/status_error" />
 

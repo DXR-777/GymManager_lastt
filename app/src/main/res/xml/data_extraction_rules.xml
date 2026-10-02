@@ -8,10 +8,15 @@
   بوعي (BackupManager) لا عبر آلية أندرويد الصامتة.
 -->
 <data-extraction-rules>
+    <!-- قفل التطبيق: app_lock.xml مُستبعَد عمداً — بصمة الرمز (HMAC) مرتبطة بمفتاح داخل
+         Android Keystore لا ينتقل مع النسخ الاحتياطي/الجهاز الجديد، فلو استُعيد الملف وحده
+         لصار الرمز "خاطئاً" دائماً على الجهاز الجديد ولا يمكن فتح التطبيق بلا استرداد. -->
     <cloud-backup>
         <include domain="sharedpref" path="." />
+        <exclude domain="sharedpref" path="app_lock.xml" />
     </cloud-backup>
     <device-transfer>
         <include domain="sharedpref" path="." />
+        <exclude domain="sharedpref" path="app_lock.xml" />
     </device-transfer>
 </data-extraction-rules>

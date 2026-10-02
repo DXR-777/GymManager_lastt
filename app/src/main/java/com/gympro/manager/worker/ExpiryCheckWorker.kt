@@ -29,16 +29,36 @@ class ExpiryCheckWorker(
         val now = DateUtils.now()
 
         if (settings.notifyExpiry) {
+            // فرع else أدناه جديد: يُلغي صراحة أي إشعار "ينتهي قريباً/منتهٍ اليوم" سابق
+            // لعضو لم يعد ضمن نطاق 0..3 أيام اليوم (جدّد اشتراكه، أو تجاوزت مدة انتهائه
+            // 3 أيام بلا تجديد فلم يعد "اليوم" بالذات). بدونه كان الإشعار يبقى معلَّقاً
+            // في الشريط إلى الأبد بمعلومة قديمة خاطئة، لأن الحلقة كانت ببساطة لا تفعل
+            // شيئاً لهذا العضو في الأيام التالية بدل إلغاء إشعاره صراحة.
+            var notifiedCount = 0
             members.forEach { member ->
-                val endDate = member.endDate ?: return@forEach
-                val startDate = member.startDate ?: return@forEach
-                if (DateUtils.isFuture(startDate, now)) return@forEach
-                val daysLeft = DateUtils.daysRemaining(endDate, now)
+                val endDate = member.endDate
+                val startDate = member.startDate
+                val daysLeft = if (endDate != null && startDate != null && !DateUtils.isFuture(startDate, now)) {
+                    DateUtils.daysRemaining(endDate, now)
+                } else {
+                    null
+                }
                 when {
-                    daysLeft == 0 -> NotificationHelper.showExpired(applicationContext, member.id, member.name)
-                    daysLeft in 1..3 -> NotificationHelper.showExpiring(applicationContext, member.id, member.name, daysLeft)
+                    daysLeft == 0 -> {
+                        NotificationHelper.showExpired(applicationContext, member.id, member.name)
+                        notifiedCount++
+                    }
+                    daysLeft != null && daysLeft in 1..3 -> {
+                        NotificationHelper.showExpiring(applicationContext, member.id, member.name, daysLeft)
+                        notifiedCount++
+                    }
+                    else -> NotificationHelper.cancelExpiryReminder(applicationContext, member.id)
                 }
             }
+            // ملخّص مجمَّع واحد فوق الإشعارات الفردية أعلاه — راجع تعليق
+            // notif_expiry_summary_title في strings.xml. يُستدعى دائماً (حتى بعدد 0 أو 1)
+            // ليُلغي أي ملخّص قديم عالق من دورة سابقة بعدد لم يعد صحيحاً.
+            NotificationHelper.showExpirySummary(applicationContext, notifiedCount)
         }
 
         if (settings.notifyUnpaid) {

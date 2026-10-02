@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    9.1: خط عربي واحد موحّد لكل النصوص بدل sans-serif (يحلّ إلى Roboto، فتستخدم العربية
+    خط النظام الاحتياطي ويختلف المظهر من جهاز لآخر). Cairo عبر مزوّد خطوط Google — يُحمَّل
+    عند الطلب ويُخزَّن مشتركاً بين التطبيقات (لا يُضاف لحجم الـ APK).
+-->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fontProviderAuthority="com.google.android.gms.fonts"
+    android:fontProviderPackage="com.google.android.gms"
+    android:fontProviderQuery="name=Cairo"
+    android:fontProviderCerts="@array/com_google_android_gms_fonts_certs">
+</font-family>

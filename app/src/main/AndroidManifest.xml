@@ -32,6 +32,12 @@
         android:fullBackupContent="@xml/backup_rules"
         tools:targetApi="33">
 
+        <!-- 9.1: يطلب النظام تحميل Cairo في الخلفية عند التثبيت/التحديث بدل الانتظار
+             لحظة أول استخدام فعلي لأي TextView (تفادي "وميض" الخط الاحتياطي قبل تبديله). -->
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
+
         <activity
             android:screenOrientation="portrait"
             android:name=".ui.splash.SplashActivity"
@@ -84,6 +90,12 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".ui.archive.ArchiveActivity"
+            android:exported="false" />
+
+        <!-- قفل التطبيق: شاشة PIN/بصمة تُعرض فوق أي شاشة عند الحاجة (راجع security/AppLockManager.kt) -->
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".security.LockActivity"
             android:exported="false" />
 
         <provider

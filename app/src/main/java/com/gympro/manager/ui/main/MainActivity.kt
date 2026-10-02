@@ -5,6 +5,10 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.FragmentManager
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -36,8 +40,27 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
-    // فلتر مُعلَّق يُستهلك مرة واحدة فقط عند إنشاء تبويب الأعضاء التالي —
+    /**
+     * إصلاح فقدان حالة التبويبات: كانت showFragment() تستدعي replace() في كل ضغطة على
+     * شريط التنقّل السفلي، فتُدمَّر نسخة الفراغمنت السابقة (ومعها ViewModel المرتبط بها
+     * عبر by viewModels{}) كاملة. الأثر العملي: نص البحث والفلتر المختار في تبويب
+     * "الأعضاء"، ونطاق التاريخ المختار في "الإيرادات"، وموضع التمرير في كليهما — كل هذا
+     * كان يُصفَّر فوراً بمجرد الانتقال للحظة لتبويب آخر والعودة، رغم أن المستخدم لم
+     * يطلب إعادة تعيين أي شيء. الحل: كل تبويب يُنشأ مرة واحدة فقط بعلامة (tag) ثابتة
+     * ويبقى حياً طوال عمر النشاط، ويُخفى/يُظهر (hide/show) بدل أن يُستبدل — نفس النمط
+     * الموصى به رسمياً لشريط تنقّل سفلي مع أكثر من تبويب.
+     */
+    private val tabTagByItemId = mapOf(
+        R.id.nav_dashboard to "tab:dashboard",
+        R.id.nav_members to "tab:members",
+        R.id.nav_revenue to "tab:revenue",
+        R.id.nav_settings to "tab:settings"
+    )
+
+    // فلتر مُعلَّق يُطبَّق على تبويب الأعضاء عند فتحه —
     // يُستخدم من openMembersFiltered() عند الضغط على بطاقات لوحة التحكم (انظر البند 12).
+    // بعد إصلاح فقدان الحالة أعلاه: يُستهلك إما كوسيطة إنشاء (نسخة جديدة أول مرة) أو
+    // عبر استدعاء مباشر لـ MembersFragment.applyFilter() على النسخة الحيّة أصلاً.
     private var pendingMembersFilter: MemberFilter? = null
 
     private val notificationPermissionLauncher =
@@ -49,14 +72,19 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
+        setupBottomNavInset()
+
         requestNotificationPermissionIfNeeded()
 
         if (savedInstanceState == null) {
-            showFragment(DashboardFragment())
+            showTab(R.id.nav_dashboard)
         }
+        // عند إعادة إنشاء النشاط (savedInstanceState != null، مثلاً بعد تدوير الشاشة)،
+        // يُعيد FragmentManager تلقائياً إرفاق كل تبويبات tabTagByItemId المُضافة سابقاً
+        // بنفس حالة hide/show التي كانت عليها — لا حاجة لاستدعاء showTab() هنا مجدداً.
 
         binding.bottomNav.setOnItemSelectedListener { item ->
-            showFragment(createFragment(item.itemId))
+            showTab(item.itemId)
             updateFabVisibility(item.itemId)
             true
         }
@@ -66,6 +94,63 @@ class MainActivity : AppCompatActivity() {
         binding.fabAddMember.setOnClickListener {
             it.isEnabled = false
             startActivity(Intent(this, AddEditMemberActivity::class.java))
+        }
+
+        /**
+         * البند 2: لم يكن هناك أي معالجة لزر/إيماءة الرجوع في هذا النشاط — يخرج المستخدم
+         * من التطبيق فوراً بمجرد ضغطة رجوع واحدة من أي تبويب غير "الرئيسية" (الإعدادات،
+         * الإيرادات، الأعضاء)، خلافاً للسلوك المعتاد في كل تطبيقات شريط التنقّل السفلي
+         * (يعود أولاً لتبويب "الرئيسية"، ولا يخرج من التطبيق إلا بضغطة ثانية من هناك).
+         * نفس نمط OnBackPressedCallback المستخدم في GymSetupActivity لخطوات الإعداد.
+         */
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (binding.bottomNav.selectedItemId != R.id.nav_dashboard) {
+                    binding.bottomNav.selectedItemId = R.id.nav_dashboard
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
+            }
+        })
+    }
+
+    /**
+     * 4.3: fragmentContainer يمتد خلف القائمة العائمة (ليظهر المحتوى من خلال زجاجها)، فنضيف
+     * للعناصر القابلة للتمرير الموسومة بـ "nav_inset_target" حشوة سفلية = ارتفاع القائمة + هامشها،
+     * مع clipToPadding=false، فلا يبقى آخر عنصر مخفياً تحت القائمة.
+     */
+    private var navInsetPx = 0
+
+    private fun setupBottomNavInset() {
+        binding.bottomNav.addOnLayoutChangeListener { v, _, top, _, bottom, _, _, _, _ ->
+            val margin = (v.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+            val inset = (bottom - top) + margin
+            if (inset != navInsetPx) {
+                navInsetPx = inset
+                applyNavInset(binding.fragmentContainer)
+            }
+        }
+        supportFragmentManager.registerFragmentLifecycleCallbacks(
+            object : FragmentManager.FragmentLifecycleCallbacks() {
+                override fun onFragmentViewCreated(
+                    fm: FragmentManager, f: Fragment, v: View, savedInstanceState: Bundle?
+                ) {
+                    applyNavInset(v)
+                }
+            }, false
+        )
+    }
+
+    private fun applyNavInset(root: View) {
+        if (root.tag == "nav_inset_target") {
+            val base = (root.getTag(R.id.tag_base_padding_bottom) as? Int)
+                ?: root.paddingBottom.also { root.setTag(R.id.tag_base_padding_bottom, it) }
+            root.setPadding(root.paddingLeft, root.paddingTop, root.paddingRight, base + navInsetPx)
+            (root as? ViewGroup)?.clipToPadding = false
+        }
+        if (root is ViewGroup) {
+            for (i in 0 until root.childCount) applyNavInset(root.getChildAt(i))
         }
     }
 
@@ -88,16 +173,46 @@ class MainActivity : AppCompatActivity() {
             if (showFab) android.view.View.VISIBLE else android.view.View.GONE
     }
 
-    private fun createFragment(itemId: Int): Fragment {
-        val fragment: Fragment = when (itemId) {
-            R.id.nav_dashboard -> DashboardFragment()
-            R.id.nav_members -> MembersFragment.newInstance(pendingMembersFilter)
-            R.id.nav_revenue -> RevenueFragment()
-            R.id.nav_settings -> SettingsFragment()
-            else -> DashboardFragment()
+    private fun newFragmentFor(itemId: Int): Fragment = when (itemId) {
+        R.id.nav_dashboard -> DashboardFragment()
+        R.id.nav_members -> MembersFragment.newInstance(pendingMembersFilter.also { pendingMembersFilter = null })
+        R.id.nav_revenue -> RevenueFragment()
+        R.id.nav_settings -> SettingsFragment()
+        else -> DashboardFragment()
+    }
+
+    /**
+     * يعرض تبويباً بإخفاء البقية بدل استبدالها — كل تبويب يُنشأ مرة واحدة فقط (بعلامة
+     * ثابتة من tabTagByItemId) ثم يبقى حياً مخفياً في الخلفية طوال عمر النشاط، فتُحفَظ
+     * حالته (نص بحث، فلتر، نطاق تاريخ، موضع تمرير) تلقائياً بين مرات فتحه. راجع تعليق
+     * tabTagByItemId أعلاه لتفاصيل المشكلة السابقة (replace() يُدمِّر كل شيء في كل ضغطة).
+     */
+    private fun showTab(itemId: Int): Fragment {
+        val targetTag = tabTagByItemId[itemId] ?: return newFragmentFor(itemId)
+        val fm = supportFragmentManager
+        val transaction = fm.beginTransaction()
+
+        tabTagByItemId.values.forEach { tag ->
+            if (tag != targetTag) {
+                fm.findFragmentByTag(tag)?.let { transaction.hide(it) }
+            }
         }
-        pendingMembersFilter = null
-        return fragment
+
+        val existing = fm.findFragmentByTag(targetTag)
+        val target = if (existing != null) {
+            transaction.show(existing)
+            existing
+        } else {
+            val created = newFragmentFor(itemId)
+            transaction.add(R.id.fragmentContainer, created, targetTag)
+            created
+        }
+        // commitNow() بدل commit() العادية: ننفّذ المعاملة فوراً (لا ننتظر دورة الرسائل
+        // التالية للـ UI thread) لأن openMembersFiltered() أدناه قد يحتاج فوراً بعد هذا
+        // الاستدعاء التعامل مع "target" كفراغمنت مُرفَق فعلياً بعرضه (view) جاهزاً —
+        // لا كطلب معلَّق قد يُنفَّذ لاحقاً.
+        transaction.commitNow()
+        return target
     }
 
     /**
@@ -106,20 +221,25 @@ class MainActivity : AppCompatActivity() {
      */
     fun openMembersFiltered(filter: MemberFilter) {
         pendingMembersFilter = filter
-        if (binding.bottomNav.selectedItemId == R.id.nav_members) {
-            // التبويب مفتوح أصلاً، فلن يُطلق onItemSelectedListener تلقائياً؛ نطبّق يدوياً.
-            showFragment(createFragment(R.id.nav_members))
+        val alreadyOnMembersTab = binding.bottomNav.selectedItemId == R.id.nav_members
+        if (alreadyOnMembersTab) {
+            // شريط التنقّل لن يُطلق onItemSelectedListener لأن نفس التبويب مختار أصلاً؛
+            // النسخة موجودة وحيّة غالباً (لم يُعاد إنشاؤها) فنطبّق الفلتر عليها مباشرة
+            // بدل newInstance() التي لا تُقرأ إلا عند إنشاء نسخة جديدة من الصفر.
+            val fragment = showTab(R.id.nav_members)
+            (fragment as? MembersFragment)?.applyFilter(filter)
+            pendingMembersFilter = null
             updateFabVisibility(R.id.nav_members)
         } else {
-            // سيُطلق onItemSelectedListener تلقائياً ويتكفّل بإنشاء الفرجمنت وتحديث الـ FAB.
+            // سيُطلق onItemSelectedListener تلقائياً ويتكفّل بعرض/إنشاء التبويب وتحديث الـ FAB.
+            // إن كانت نسخة "الأعضاء" حيّة أصلاً من قبل (تبويب آخر مفتوح حالياً)، showTab()
+            // ستعرضها كما هي بلا استدعاء applyFilter() عندها — لذا نطبّق الفلتر هنا أيضاً
+            // صراحة على أي نسخة موجودة مسبقاً، تحسّباً لهذه الحالة بالذات.
+            val existing = supportFragmentManager.findFragmentByTag(tabTagByItemId[R.id.nav_members])
             binding.bottomNav.selectedItemId = R.id.nav_members
+            (existing as? MembersFragment)?.applyFilter(filter)
+            if (existing != null) pendingMembersFilter = null
         }
-    }
-
-    private fun showFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.fragmentContainer, fragment)
-            .commit()
     }
 
     private fun requestNotificationPermissionIfNeeded() {

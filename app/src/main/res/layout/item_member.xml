@@ -140,14 +140,18 @@
             android:textStyle="bold"
             tools:text="باقي 5 يوم" />
 
+        <!-- البند 7: 48dp بدل 40dp السابقة (الحد الأدنى الموصى به لمساحة اللمس في
+             Material Design/إمكانية الوصول) — على الأرجح أكثر زر ضغطاً بالتطبيق كله
+             (تذكير الأعضاء بالدفع/التجديد). padding زيد من 8dp إلى 12dp بنفس النسبة
+             للحفاظ على حجم الأيقونة المرئي 24dp كما كان تماماً؛ زادت مساحة اللمس فقط. -->
         <ImageButton
             android:id="@+id/btnWhatsapp"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_marginTop="@dimen/spacing_sm"
             android:background="@drawable/bg_whatsapp_button_glass"
             android:contentDescription="@string/detail_action_whatsapp"
-            android:padding="8dp"
+            android:padding="12dp"
             android:src="@drawable/ic_whatsapp" />
     </LinearLayout>
 

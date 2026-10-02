@@ -6,6 +6,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.gympro.manager.data.local.AppDatabase
 import com.gympro.manager.data.repository.GymRepository
+import com.gympro.manager.security.AppLockManager
 import com.gympro.manager.utils.NotificationHelper
 import com.gympro.manager.worker.ArchivePurgeWorker
 import com.gympro.manager.worker.ExpiryCheckWorker
@@ -18,6 +19,7 @@ class GymApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        AppLockManager.install(this)
         NotificationHelper.createChannel(this)
         scheduleExpiryWorker()
         scheduleArchivePurgeWorker()

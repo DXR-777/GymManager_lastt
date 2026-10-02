@@ -54,6 +54,16 @@ class MemberDetailActivity : AppCompatActivity() {
     private var currentHistoryFilter: PaymentStatus? = null
     private var currentHistorySortNewestFirst: Boolean = true
 
+    /**
+     * يحدّ عدد سجلات الاشتراك المعروضة فعلياً في rvHistory (وليس المُحمَّلة في الذاكرة —
+     * fullHistory يبقى كاملاً كما هو). راجع تعليق detail_history_load_more في strings.xml
+     * لسبب وجود هذا الحد: عضو باقة يومية منتظم يتراكم له مئات السجلات، وrvHistory هنا
+     * بلا تدوير حقيقي (داخل ScrollView خارجي)، فرسم كل سجل دفعة واحدة عند أول فتح يسبب
+     * تجميداً ملموساً. يُعاد الحد لقيمته الابتدائية عند أي تغيير فلتر/فرز (refreshHistoryList
+     * تستدعي resetHistoryPaging فقط من مصادر التغيير هذه، لا من كل استدعاء).
+     */
+    private var historyVisibleLimit: Int = HISTORY_PAGE_SIZE
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMemberDetailBinding.inflate(layoutInflater)
@@ -194,8 +204,8 @@ class MemberDetailActivity : AppCompatActivity() {
         binding.tvMemberSince.text = getString(R.string.detail_member_since, DateUtils.formatDate(member.createdAt))
 
         binding.tvTotalMonths.text = stats.totalMonthsSubscribed.toString()
-        binding.tvTotalPaid.text = CurrencyFormatter.format(stats.totalPaid, settings.currencySymbol)
-        binding.tvTotalOutstanding.text = CurrencyFormatter.format(stats.totalOutstanding, settings.currencySymbol)
+        binding.tvTotalPaid.text = CurrencyFormatter.formatEmphasized(this, stats.totalPaid, settings.currencySymbol)
+        binding.tvTotalOutstanding.text = CurrencyFormatter.formatEmphasized(this, stats.totalOutstanding, settings.currencySymbol)
 
         // بنر الدَّين المتراكم: مستقل تماماً عن current.isPaid (الذي يصف الدورة الحالية فقط).
         // يظهر فقط عند وجود دَين تاريخي حقيقي > 0، ويُخفى تماماً غير ذلك حتى لا يتحول
@@ -311,9 +321,16 @@ class MemberDetailActivity : AppCompatActivity() {
                 R.id.chipHistoryUnpaid -> PaymentStatus.UNPAID
                 else -> null
             }
+            // فلتر جديد = عرض مبدئي جديد بنفس الحد الافتراضي، لا الاستمرار بحد ضخم
+            // تراكم من تصفّح سابق لفلتر مختلف تماماً.
+            historyVisibleLimit = HISTORY_PAGE_SIZE
             refreshHistoryList()
         }
         binding.btnHistorySort.setOnSingleClickListener { showHistorySortDialog() }
+        binding.btnHistoryLoadMore.setOnSingleClickListener {
+            historyVisibleLimit += HISTORY_PAGE_SIZE
+            refreshHistoryList()
+        }
     }
 
     /** نفس حوار الفرز المستخدم في شاشة قائمة الأعضاء (MembersFragment.showSortDialog) لكن بخيارين فقط. */
@@ -327,6 +344,7 @@ class MemberDetailActivity : AppCompatActivity() {
             .setTitle(R.string.members_sort_action)
             .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
                 currentHistorySortNewestFirst = which == 0
+                historyVisibleLimit = HISTORY_PAGE_SIZE
                 refreshHistoryList()
                 dialog.dismiss()
             }
@@ -348,7 +366,14 @@ class MemberDetailActivity : AppCompatActivity() {
             list.sortedBy { it.startDate }
         }
 
-        historyAdapter.submitList(list, currentSettings.currencySymbol)
+        // نرسم فقط أول historyVisibleLimit من القائمة المُفلترة/المُفرزة، لا القائمة كاملة —
+        // راجع تعليق historyVisibleLimit أعلاه. fullHistory وlist المُفلترة يبقيان كاملين
+        // في الذاكرة (بلا أي استعلام إضافي)؛ المحدود فقط ما يُرسَل فعلياً لمحوّل RecyclerView.
+        val visibleCount = list.size.coerceAtMost(historyVisibleLimit)
+        val visibleList = list.take(visibleCount)
+        val remaining = list.size - visibleCount
+
+        historyAdapter.submitList(visibleList, currentSettings.currencySymbol)
         // بعد تحديث القائمة نُجبر ScrollView الأب على إعادة قياس كامل الشاشة
         // هذا يحل مشكلة RecyclerView الذي يحسب ارتفاعه مرة واحدة فقط
         // عند أول تحميل ثم لا يُعيد الحساب عند تغيّر عدد الـ items أو أحجامها
@@ -356,13 +381,18 @@ class MemberDetailActivity : AppCompatActivity() {
             binding.rvHistory.requestLayout()
             (binding.rvHistory.parent as? android.view.View)?.requestLayout()
         }
-        val isEmpty = list.isEmpty()
+        val isEmpty = visibleList.isEmpty()
         binding.rvHistory.visibility = if (isEmpty) android.view.View.GONE else android.view.View.VISIBLE
         binding.tvEmptyHistory.setText(
             if (fullHistory.isNotEmpty() && isEmpty) R.string.detail_history_no_results
             else R.string.detail_history_empty
         )
         binding.tvEmptyHistory.visibility = if (isEmpty) android.view.View.VISIBLE else android.view.View.GONE
+
+        binding.btnHistoryLoadMore.visibility = if (remaining > 0) android.view.View.VISIBLE else android.view.View.GONE
+        if (remaining > 0) {
+            binding.btnHistoryLoadMore.text = getString(R.string.detail_history_load_more, remaining.coerceAtMost(HISTORY_PAGE_SIZE))
+        }
     }
 
     private fun typeLabel(type: SubscriptionType): String = when (type) {
@@ -491,5 +521,9 @@ class MemberDetailActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_MEMBER_ID = "extra_member_id"
+
+        /** راجع تعليق historyVisibleLimit أعلاه — نفس قيمة pageSize المستخدمة في
+         *  GymRepository لقائمة الأعضاء (30)، للاتساق فقط، لا لأي سبب تقني مشترك. */
+        private const val HISTORY_PAGE_SIZE = 30
     }
 }

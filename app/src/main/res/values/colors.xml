@@ -24,6 +24,11 @@
     <color name="status_error">#DC2626</color>
     <color name="status_error_bg">#22DC2626</color>
     <color name="status_neutral">#8892B0</color>
+    <!-- نسخ "نص/أيقونة" أفتح للحالات على الخلفيات الداكنة (تباين ≥4.5:1 على surface_card).
+         status_error (#DC2626) يعطي ≈3.4:1 فقط كنص، فيُستخدم للأسطح/الحدود لا للنص الصغير. -->
+    <color name="status_error_text">#F87171</color>
+    <color name="status_warning_text">#F5A623</color>
+    <color name="status_success_text">#34D399</color>
 
     <!-- Surfaces -->
     <color name="background">#0F0F23</color>
@@ -67,9 +72,14 @@
     <!-- سطوح "الزجاج" (Glassmorphism): تعبئة شبه شفافة + حد علوي خفيف يوحيان بلوح
          زجاجي فوق الخلفية الداكنة، بدل بطاقات solid المستخدمة في بقية الشاشات. -->
     <color name="glass_fill">#CC1E1E3A</color>
+    <!-- كتلة Skeleton (7.2): أفتح قليلاً من الخلفية، بلا شفافية زجاجية، ليقرأ كـ"مكان محجوز" -->
+    <color name="skeleton_fill">#2A2A4A</color>
     <color name="glass_fill_alt">#CC252548</color>
     <color name="glass_border">#26FFFFFF</color>
     <color name="glass_border_strong">#40FFFFFF</color>
+    <!-- لمعان علوي أخف لبطاقات الإحصائيات، وخط الحدّ العلوي المُبرَز (بدل الاعتماد على الظل). -->
+    <color name="glass_sheen_soft">#26FFFFFF</color>
+    <color name="glass_top_highlight">#66FFFFFF</color>
 
     <!-- القائمة السفلية العائمة (2026 Glassmorphism): تعبئة أخفّ عتامة عمداً من
          glass_fill_alt العادي (70% بدل 80%) — الهدف "تفاعل مع الخلفية" لا سطح

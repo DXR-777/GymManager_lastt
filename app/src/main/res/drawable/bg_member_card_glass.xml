@@ -33,5 +33,20 @@
             <corners android:radius="@dimen/radius_lg" />
         </shape>
     </item>
+    <!-- حدّ علوي مُبرَز: خط رفيع متلاشي الأطراف يعوّض غياب الظل على الخلفيات الداكنة -->
+    <item
+        android:height="1dp"
+        android:gravity="top"
+        android:start="16dp"
+        android:end="16dp">
+        <shape android:shape="rectangle">
+            <gradient
+                android:type="linear"
+                android:angle="0"
+                android:startColor="@color/transparent"
+                android:centerColor="@color/glass_top_highlight"
+                android:endColor="@color/transparent" />
+        </shape>
+    </item>
 
 </layer-list>

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@color/transparent"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/spacing_lg"
     android:paddingTop="@dimen/spacing_md">
@@ -179,6 +179,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMembers"
+        android:tag="nav_inset_target"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/spacing_sm"

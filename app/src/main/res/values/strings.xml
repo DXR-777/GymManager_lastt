@@ -14,6 +14,15 @@
     <string name="action_share">مشاركة</string>
     <string name="action_restore">استعادة</string>
     <string name="action_retry">إعادة المحاولة</string>
+    <string name="action_exit_app">خروج</string>
+    <!-- البند 5: كانت SplashActivity تقرأ الإعدادات من قاعدة البيانات بلا أي try/catch —
+         خلافاً لنمط الحماية المتعمَّد في كل قراءة/كتابة أخرى حسّاسة بالتطبيق (راجع
+         BackupManager.restoreFromUri والبند 32)، رغم أن هذه أول شاشة يراها المستخدم:
+         أي فشل قراءة هنا (تلف الملف، مساحة تخزين ممتلئة أثناء عملية ترحيل معلّقة...)
+         كان يعني تحطّماً فورياً غير مُفسَّر بلا أي فرصة للمستخدم لفهم ما حدث أو المحاولة
+         مجدداً. -->
+    <string name="splash_load_error_title">تعذّر تحميل التطبيق</string>
+    <string name="splash_load_error_message">حدث خطأ غير متوقع أثناء قراءة بيانات النادي. قد يكون السبب مؤقتاً — حاول مرة أخرى، وإن تكررت المشكلة تواصل مع الدعم.</string>
     <string name="action_search">بحث</string>
     <!-- البند 28: زر "مسح البحث" في شاشة الأعضاء كان يستخدم content description الزر
          العام "إلغاء" (action_cancel) بدل وصف دقيق لما يفعله الزر فعلياً (مسح نص
@@ -56,10 +65,39 @@
     <string name="onboarding_gymname_subtitle">لنبدأ بإعداد هوية ناديك.</string>
     <string name="onboarding_gym_name_hint">أدخل اسم النادي</string>
     <string name="onboarding_gym_illustration_description">توضيح لمبنى النادي</string>
-    <string name="onboarding_step4_title">كل شيء جاهز!</string>
-    <string name="onboarding_step4_subtitle_line1">ناديك جاهز للانطلاق.</string>
-    <string name="onboarding_step4_subtitle_line2">لنحقّق العظمة معاً!</string>
+    <string name="onboarding_step4_title">تم بنجاح!</string>
+    <string name="onboarding_step4_subtitle_line1">تم تجهيز عضويتك بنجاح،</string>
+    <string name="onboarding_step4_subtitle_line2">لتحقّق معاً المزيد من الإنجازات!</string>
     <string name="onboarding_success_badge_description">تم إكمال الإعداد بنجاح</string>
+    <!--
+        البند 4: تدقيق استكمالاً لتوثيق البنود المرقّمة — لم يوجد أثر لأرقام 8 إلى 11 في
+        أي تعليق أو ملف عبر المشروع (فجوة تتبّع لا يمكن معرفة محتواها الأصلي الآن)، فتم
+        بدلاً من ذلك إجراء تدقيق جديد كامل بحثاً عن فجوات من نفس طبيعتها. أوضح ما وُجد:
+        تسميتا مقدّمة رقم واتساب في شاشة الإعدادات (fragment_settings.xml، rbPrefix970/972)
+        كانتا نصاً عربياً حرفياً مكتوباً مباشرة في XML ("فلسطين +970"، "إسرائيل +972") —
+        الاستثناء الوحيد لهذا النمط في كامل شجرة التخطيطات، رغم أن نفس هاتين التسميتين
+        بالذات موجودتان بالفعل كمورد نصوص قياسي (onboarding_prefix_*_label/_code) وتُستخدمان
+        بشكل صحيح في بطاقات اختيار المقدّمة المطابقة في شاشة الإعداد الأولي. رقم الهاتف
+        (السياق الفعلي هنا) لا علاقة له بأسماء الدول سياسياً؛ إعادة استخدام نفس المورد بدل
+        تكراره حرفياً يضمن أن أي تعديل مستقبلي على التسمية (تصحيح إملائي، تغيير الصياغة)
+        يُطبَّق تلقائياً في الشاشتين معاً من مصدر واحد، لا في واحدة بينما تبقى الأخرى قديمة —
+        وهو بالضبط نوع الانحراف الذي عالجه البند 3 سابقاً في ثيمات الوضع الليلي. راجع
+        SettingsFragment.applyWhatsappPrefixLabels() ومورد whatsapp_prefix_label_format
+        أدناه لكيفية التركيب برمجياً بدل التكرار الحرفي.
+    -->
+    <string name="whatsapp_prefix_label_format">%1$s %2$s</string>
+    <!--
+        سيناريو استخدام حقيقي تحت الضغط: عضو باقة "يومية" (سجلّة اشتراك واحدة لكل يوم
+        حضور — راجع تعليق SubscriptionEntity) يتردد على الجيم بانتظام لسنوات يتراكم له
+        مئات سجلات الاشتراك (300 يوم/سنة × 3 سنوات ≈ 900 سجلّة). كانت الشاشة تُحمِّل
+        وتُقيس كل هذه السجلات كعناصر RecyclerView دفعة واحدة عند أول فتح (rvHistory
+        داخل ScrollView خارجي بلا تدوير حقيقي)، ما يسبب تجميداً ملموساً لفتح صفحة عضو
+        منتظم واحد فقط. الحل: عرض دفعة محدودة أولاً (30 سجلّة، بنفس اصطلاح pageSize
+        المستخدم في قائمة الأعضاء) مع زر "تحميل المزيد" لكشف الدفعة التالية من نفس
+        القائمة المحمَّلة أصلاً في الذاكرة (لا استعلام قاعدة بيانات إضافي) عند الطلب
+        فقط. راجع MemberDetailActivity.refreshHistoryList()/HISTORY_PAGE_SIZE.
+    -->
+    <string name="detail_history_load_more">تحميل المزيد (%1$d)</string>
 
     <!-- شاشات الإعداد الأولي (Onboarding) — معالج إعداد النادي: العملة والأسعار (4.2) -->
     <string name="onboarding_pricing_title">العملة والأسعار</string>
@@ -127,9 +165,9 @@
     <string name="nav_settings">الإعدادات</string>
 
     <!-- لوحة التحكم -->
-    <string name="dashboard_greeting_morning">صباح الخير ☀️</string>
-    <string name="dashboard_greeting_evening">مساء الخير 🌙</string>
-    <string name="dashboard_greeting_night">أهلاً بك 👋</string>
+    <string name="dashboard_greeting_morning">صباح الخير</string>
+    <string name="dashboard_greeting_evening">مساء الخير</string>
+    <string name="dashboard_greeting_night">أهلاً بك</string>
     <string name="dashboard_active_members">الأعضاء النشطون</string>
     <string name="dashboard_today_revenue">إيرادات اليوم</string>
     <string name="dashboard_unpaid_count">اشتراكات غير مدفوعة</string>
@@ -140,10 +178,14 @@
          إشارة أنها قابلة للنقر أو ماذا سيحدث عند النقر؛ الوصف هنا يجمعهما بترتيب طبيعي
          (تسمية ثم قيمة) ويضيف تلميح الإجراء. -->
     <string name="dashboard_card_content_description">%1$s: %2$s. اضغط لعرض القائمة</string>
-    <string name="dashboard_expiring_section">⏳ ينتهي اشتراكهم قريباً</string>
-    <string name="dashboard_unpaid_section">💰 لم يدفعوا بعد</string>
-    <string name="dashboard_empty_expiring">لا يوجد أعضاء قريبون من انتهاء الاشتراك 👍</string>
-    <string name="dashboard_empty_unpaid">جميع الأعضاء سدّدوا اشتراكاتهم ✅</string>
+    <string name="dashboard_expiring_section">ينتهي اشتراكهم قريباً</string>
+    <string name="dashboard_unpaid_section">لم يدفعوا بعد</string>
+    <string name="dashboard_section_count_format">(%1$d)</string>
+    <string name="dashboard_view_all">عرض الكل</string>
+    <string name="dashboard_empty_expiring_title">لا اشتراكات تنتهي قريباً</string>
+    <string name="dashboard_empty_expiring_subtitle">كل الاشتراكات سارية لأكثر من 3 أيام</string>
+    <string name="dashboard_empty_unpaid_title">الجميع سدّد</string>
+    <string name="dashboard_empty_unpaid_subtitle">لا توجد اشتراكات غير مدفوعة</string>
 
     <!-- الأعضاء -->
     <string name="members_title">الأعضاء</string>
@@ -408,6 +450,23 @@
     <string name="notif_expiry_body">اشتراك %1$s ينتهي بعد %2$d يوم</string>
     <string name="notif_expired_title">🔴 انتهى الاشتراك</string>
     <string name="notif_expired_body">انتهى اشتراك %1$s اليوم</string>
+    <!--
+        سيناريو استخدام حقيقي تحت الضغط: يوم فيه عشرات الأعضاء تنتهي/توشك اشتراكاتهم
+        بنفس اليوم (شائع لجيم افتتح بعرض ترويجي، فانضم عدد كبير بنفس الأسبوع، فتتزامن
+        كل اشتراكاتهم الشهرية لاحقاً). كان كل عضو يحصل على بطاقة إشعار مستقلة تماماً
+        بلا أي تجميع، فيغرق شريط الإشعارات بعشرات البطاقات دفعة واحدة. الحل: كل إشعار
+        فردي (showExpiring/showExpired) ينضم الآن لنفس المجموعة (EXPIRY_GROUP_KEY)،
+        ويُضاف فوق ذلك إشعار ملخّص واحد (راجع NotificationHelper.showExpirySummary)
+        فقط عند وجود عضوين أو أكثر بنفس الدورة — فيُظهر النظام تلقائياً حزمة واحدة
+        قابلة للتوسعة بدل عشرات البطاقات المنفصلة (Android 8+ grouping، وminSdk هنا 26).
+    -->
+    <plurals name="notif_expiry_summary_title">
+        <item quantity="two">⚠️ عضوان بحاجة لمتابعة اليوم</item>
+        <item quantity="few">⚠️ %d أعضاء بحاجة لمتابعة اليوم</item>
+        <item quantity="many">⚠️ %d عضواً بحاجة لمتابعة اليوم</item>
+        <item quantity="other">⚠️ %d عضو بحاجة لمتابعة اليوم</item>
+    </plurals>
+    <string name="notif_expiry_summary_body">اضغط لعرض التفاصيل: تجديد أو انتهاء اشتراك</string>
     <string name="notif_unpaid_title">💰 تذكير بالدفع</string>
     <string name="notif_unpaid_body">يوجد %1$d عضو لم يسددوا اشتراكهم بعد</string>
     <string name="notif_archive_purge_title">🗑️ حذف نهائي قريب</string>
@@ -432,4 +491,64 @@
         <item>جمعة</item>
         <item>سبت</item>
     </string-array>
+
+    <!-- ===================== قفل التطبيق (PIN + بصمة + استرداد) ===================== -->
+    <string name="lock_title_unlock">أدخل رمز القفل</string>
+    <string name="lock_title_verify">أكّد رمز القفل</string>
+    <string name="lock_title_new">اختر رمز قفل</string>
+    <string name="lock_title_confirm">أعد إدخال الرمز</string>
+    <string name="lock_reset_title">اختر رمزاً جديداً</string>
+    <string name="lock_subtitle_unlock">أدخل الرمز المكوّن من 6 أرقام لفتح التطبيق</string>
+    <string name="lock_subtitle_verify">أكّد هويتك بإدخال الرمز الحالي</string>
+    <string name="lock_subtitle_new">6 أرقام تحمي بيانات ناديك ومبالغه</string>
+    <string name="lock_subtitle_confirm">أدخل نفس الرمز مرة أخرى للتأكيد</string>
+    <string name="lock_error_wrong">الرمز غير صحيح — المحاولات المتبقية: %1$d</string>
+    <string name="lock_error_weak">رمز سهل التخمين (أرقام متكررة أو متسلسلة)، اختر رمزاً آخر</string>
+    <string name="lock_error_mismatch">الرمزان غير متطابقين، ابدأ من جديد</string>
+    <string name="lock_lockout">محاولات خاطئة كثيرة — حاول بعد %1$s</string>
+    <string name="lock_unavailable">تعذّر التحقق من الرمز على هذا الجهاز. اضغط «نسيت الرمز؟» لإعادة التعيين</string>
+    <string name="lock_forgot">نسيت الرمز؟</string>
+    <string name="lock_forgot_title">استعادة الوصول</string>
+    <string name="lock_forgot_option_device">تأكيد بقفل الهاتف (بصمة/نمط/رمز الهاتف)</string>
+    <string name="lock_forgot_option_code">استخدام رمز الاسترداد</string>
+    <string name="lock_device_credential_title">تأكيد هويتك</string>
+    <string name="lock_device_credential_desc">أدخل قفل الهاتف لإعادة تعيين رمز التطبيق</string>
+    <string name="lock_recovery_input_title">أدخل رمز الاسترداد</string>
+    <string name="lock_recovery_input_hint">XXXX-XXXX-XXXX-XXXX</string>
+    <string name="lock_recovery_invalid">رمز الاسترداد غير صحيح</string>
+    <string name="lock_recovery_confirm">تأكيد</string>
+    <string name="lock_cancel">إلغاء</string>
+    <string name="lock_backspace">حذف رقم</string>
+    <string name="lock_biometric_title">فتح التطبيق بالبصمة</string>
+    <string name="lock_biometric_subtitle">المس مستشعر البصمة</string>
+    <string name="lock_use_pin">استخدام الرمز</string>
+    <string name="lock_biometric_offer_title">تفعيل الدخول بالبصمة؟</string>
+    <string name="lock_biometric_offer_body">افتح التطبيق بلمسة واحدة بدل كتابة الرمز في كل مرة. يبقى الرمز متاحاً دائماً كبديل.</string>
+    <string name="lock_biometric_enable">تفعيل</string>
+    <string name="lock_later">لاحقاً</string>
+    <string name="lock_recovery_title">رمز الاسترداد</string>
+    <string name="lock_recovery_body">احتفظ بهذا الرمز في مكان آمن (مكتوباً على ورقة مثلاً). يمكّنك من استعادة الوصول إذا نسيت رمز القفل. لن يُعرض مرة أخرى.</string>
+    <string name="lock_recovery_saved_check">حفظت الرمز في مكان آمن</string>
+    <string name="lock_recovery_copy">نسخ</string>
+    <string name="lock_recovery_continue">متابعة</string>
+    <string name="lock_recovery_copied">تم نسخ الرمز</string>
+    <string name="lock_pin_changed">تم تغيير الرمز</string>
+    <string name="lock_enabled_toast">تم تفعيل قفل التطبيق</string>
+    <string name="lock_disabled_toast">تم إيقاف قفل التطبيق</string>
+    <string name="lock_setup_failed">تعذّر تفعيل القفل على هذا الجهاز</string>
+
+    <string name="settings_security">الأمان</string>
+    <string name="settings_app_lock">قفل التطبيق</string>
+    <string name="settings_app_lock_desc">احمِ بيانات ناديك ومبالغه برمز من 6 أرقام</string>
+    <string name="settings_biometric">الدخول بالبصمة</string>
+    <string name="settings_biometric_unavailable">الدخول بالبصمة (غير متاح — سجّل بصمة في إعدادات الهاتف أولاً)</string>
+    <string name="settings_auto_lock">القفل التلقائي</string>
+    <string name="settings_auto_lock_immediate">فوراً</string>
+    <string name="settings_auto_lock_30s">بعد 30 ثانية</string>
+    <string name="settings_auto_lock_1m">بعد دقيقة</string>
+    <string name="settings_auto_lock_5m">بعد 5 دقائق</string>
+    <string name="settings_secure_screen">إخفاء المحتوى ومنع لقطات الشاشة</string>
+    <string name="settings_secure_screen_desc">يُخفي التطبيق في قائمة التطبيقات الأخيرة ويمنع تصوير الشاشة</string>
+    <string name="settings_change_pin">تغيير الرمز</string>
+    <string name="settings_new_recovery">إنشاء رمز استرداد جديد</string>
 </resources>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- يخزّن الحشوة السفلية الأصلية للعنصر الذي يستقبل هامش القائمة السفلية (MainActivity). -->
+    <item name="tag_base_padding_bottom" type="id" />
+</resources>
