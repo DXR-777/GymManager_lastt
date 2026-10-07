@@ -211,7 +211,7 @@
                         style="@style/Text.Body"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/status_error"
+                        android:textColor="@color/status_error_text"
                         android:textStyle="bold"
                         android:lineSpacingExtra="@dimen/spacing_xs"
                         tools:text="⚠ هذا العضو عليه 300 ₪ ديون سابقة (3 اشتراكات غير مدفوعة)" />
@@ -232,7 +232,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/detail_outstanding_banner_cta"
-                            android:textColor="@color/status_error"
+                            android:textColor="@color/status_error_text"
                             android:textSize="@dimen/text_caption"
                             android:textStyle="bold" />
 
@@ -311,7 +311,7 @@
                         android:paddingTop="6dp"
                         android:paddingEnd="12dp"
                         android:paddingBottom="6dp"
-                        android:textColor="@color/status_success"
+                        android:textColor="@color/status_success_text"
                         android:textSize="@dimen/text_caption"
                         android:includeFontPadding="false"
                         tools:text="مدفوع" />
@@ -396,7 +396,7 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="@dimen/spacing_sm">
-                    <TextView android:id="@+id/tvTotalPaid" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/status_success" tools:text="240 ₪" />
+                    <TextView android:id="@+id/tvTotalPaid" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/status_success_text" tools:text="240 ₪" />
                     <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:text="@string/detail_total_paid" />
                 </LinearLayout>
 
@@ -410,7 +410,7 @@
                     android:gravity="center"
                     android:orientation="vertical"
                     android:padding="@dimen/spacing_sm">
-                    <TextView android:id="@+id/tvTotalOutstanding" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/status_error" tools:text="60 ₪" />
+                    <TextView android:id="@+id/tvTotalOutstanding" style="@style/Text.Subtitle" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/status_error_text" tools:text="60 ₪" />
                     <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="center" android:text="@string/detail_outstanding" />
                 </LinearLayout>
             </LinearLayout>
@@ -472,7 +472,7 @@
                 android:padding="@dimen/spacing_md">
 
                 <ImageView android:layout_width="18dp" android:layout_height="18dp" android:src="@drawable/ic_delete" app:tint="@color/status_error" android:contentDescription="@null"/>
-                <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="@dimen/spacing_xs" android:fontFamily="@font/cairo_medium" android:textColor="@color/status_error" android:text="@string/detail_action_delete"/>
+                <TextView style="@style/Text.Caption" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="@dimen/spacing_xs" android:fontFamily="@font/cairo_medium" android:textColor="@color/status_error_text" android:text="@string/detail_action_delete"/>
             </LinearLayout>
 
             <!-- سجل الاشتراكات: رأس القسم أُعيد بناؤه بصرياً فقط ليطابق نفس نمط رأس
@@ -608,6 +608,7 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHistory"
+                android:layoutAnimation="@anim/layout_fall_down"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:nestedScrollingEnabled="false" />

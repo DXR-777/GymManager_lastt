@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.ViewCompat
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -22,6 +24,8 @@ import com.gympro.manager.ui.members.AddEditMemberActivity
 import com.gympro.manager.ui.members.MembersFragment
 import com.gympro.manager.ui.revenue.RevenueFragment
 import com.gympro.manager.ui.settings.SettingsFragment
+import com.gympro.manager.utils.Haptic
+import com.gympro.manager.utils.haptic
 
 private const val PREFS_NAME = "gym_manager_main_prefs"
 private const val KEY_NOTIFICATION_RATIONALE_SHOWN = "notification_rationale_shown"
@@ -70,6 +74,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setupSystemBarInsets()
         setSupportActionBar(binding.toolbar)
 
         setupBottomNavInset()
@@ -84,6 +89,7 @@ class MainActivity : AppCompatActivity() {
         // بنفس حالة hide/show التي كانت عليها — لا حاجة لاستدعاء showTab() هنا مجدداً.
 
         binding.bottomNav.setOnItemSelectedListener { item ->
+            if (!programmaticNavChange) binding.bottomNav.haptic(Haptic.TICK)
             showTab(item.itemId)
             updateFabVisibility(item.itemId)
             true
@@ -106,7 +112,9 @@ class MainActivity : AppCompatActivity() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (binding.bottomNav.selectedItemId != R.id.nav_dashboard) {
+                    programmaticNavChange = true
                     binding.bottomNav.selectedItemId = R.id.nav_dashboard
+                    programmaticNavChange = false
                 } else {
                     isEnabled = false
                     onBackPressedDispatcher.onBackPressed()
@@ -121,6 +129,34 @@ class MainActivity : AppCompatActivity() {
      * مع clipToPadding=false، فلا يبقى آخر عنصر مخفياً تحت القائمة.
      */
     private var navInsetPx = 0
+
+    /**
+     * Edge-to-edge: الشريط العلوي يُزاح تحت شريط الحالة، والبار السفلي العائم يرتفع بمقدار
+     * شريط التنقل. setupBottomNavInset يقرأ bottomMargin فيلتقط الزيادة تلقائياً فيبقى حشو
+     * المحتوى صحيحاً. لا أثر مع targetSdk 34 (لا insets تصل)، ويعمل بعد رفعه إلى 35+.
+     */
+    /** يمنع اهتزاز التنقل عندما يتغير التبويب برمجياً (زر الرجوع/فتح الأعضاء مفلترة). */
+    private var programmaticNavChange = false
+
+    private fun setupSystemBarInsets() {
+        val appBar = binding.appBar
+        val appBarTop = appBar.paddingTop
+        val nav = binding.bottomNav
+        val navBaseMargin = (nav.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
+            val bars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            appBar.setPadding(appBar.paddingLeft, appBarTop + bars.top, appBar.paddingRight, appBar.paddingBottom)
+            val lp = nav.layoutParams as ViewGroup.MarginLayoutParams
+            if (lp.bottomMargin != navBaseMargin + bars.bottom) {
+                lp.bottomMargin = navBaseMargin + bars.bottom
+                nav.layoutParams = lp
+            }
+            insets
+        }
+        ViewCompat.requestApplyInsets(binding.root)
+    }
 
     private fun setupBottomNavInset() {
         binding.bottomNav.addOnLayoutChangeListener { v, _, top, _, bottom, _, _, _, _ ->
@@ -236,7 +272,9 @@ class MainActivity : AppCompatActivity() {
             // ستعرضها كما هي بلا استدعاء applyFilter() عندها — لذا نطبّق الفلتر هنا أيضاً
             // صراحة على أي نسخة موجودة مسبقاً، تحسّباً لهذه الحالة بالذات.
             val existing = supportFragmentManager.findFragmentByTag(tabTagByItemId[R.id.nav_members])
+            programmaticNavChange = true
             binding.bottomNav.selectedItemId = R.id.nav_members
+            programmaticNavChange = false
             (existing as? MembersFragment)?.applyFilter(filter)
             if (existing != null) pendingMembersFilter = null
         }

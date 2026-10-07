@@ -4,16 +4,22 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.LinearGradient
 import android.graphics.Shader
+import android.os.Build
 import android.os.SystemClock
+import android.view.HapticFeedbackConstants
 import android.text.InputFilter
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.ColorInt
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnPreDraw
 
 fun Context.toast(message: String) {
@@ -139,6 +145,22 @@ fun String.normalizeDigitsToLatin(): String = buildString(length) {
 /** مثل toDoubleOrNull() القياسية، لكن بعد تطبيع الأرقام العربية-الهندية أولاً. */
 fun String.toSafeDoubleOrNull(): Double? = normalizeDigitsToLatin().toDoubleOrNull()
 
+/**
+ * تقريب مبلغ إلى منزلتين عشريتين (HALF_UP) عبر النص العشري لا القيمة الثنائية، فيصبح
+ * 10.005 → 10.01 و0.1+0.2 → 0.3. المبالغ مخزّنة Double، فهذا يمنع تسرّب ضجيج الفاصلة
+ * العائمة (0.30000000000000004) إلى التخزين والتصدير. القيم غير المنتهية تُترك كما هي.
+ */
+fun Double.roundMoney(): Double =
+    if (!isFinite()) this
+    else java.math.BigDecimal.valueOf(this).setScale(2, java.math.RoundingMode.HALF_UP).toDouble()
+
+/**
+ * مثل toSafeDoubleOrNull لكن لإدخال المبالغ: يرفض NaN وInfinity (toDoubleOrNull يقبلهما،
+ * و"NaN <= 0.0" خاطئة فكانت تمرّ فحص السعر الموجب)، ويقرّب إلى منزلتين.
+ */
+fun String.toSafeMoneyOrNull(): Double? =
+    toSafeDoubleOrNull()?.takeIf { it.isFinite() }?.roundMoney()
+
 /** مثل toIntOrNull() القياسية، لكن بعد تطبيع الأرقام العربية-الهندية أولاً. */
 fun String.toSafeIntOrNull(): Int? = normalizeDigitsToLatin().toIntOrNull()
 
@@ -192,4 +214,68 @@ fun EditText.limitDecimalPlaces(maxDecimals: Int = 2) {
         val decimalsCount = resultingText.length - dotIndex - 1
         if (decimalsCount > maxDecimals) "" else null
     }
+}
+
+
+/**
+ * Edge-to-edge: يضيف حشواً للعرض بمقدار شريط الحالة/التنقل/القصّة، ولوحة المفاتيح في الأسفل.
+ *
+ * مع targetSdk 34 (الحالي) تستهلك النافذة الـinsets قبل وصولها هنا فلا يتغير شيء. عند رفع
+ * targetSdk إلى 35+ يفرض أندرويد الرسم خلف الأشرطة، وعندها يصبح هذا هو ما يبقي المحتوى
+ * خارج الأشرطة (وفوق لوحة المفاتيح بدل adjustResize الذي لا يعمل وحده مع edge-to-edge).
+ */
+fun View.applySystemBarInsetsPadding(top: Boolean = true, bottom: Boolean = true) {
+    val l = paddingLeft
+    val t = paddingTop
+    val r = paddingRight
+    val b = paddingBottom
+    ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
+        val bars = insets.getInsets(
+            WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+        )
+        val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+        v.setPadding(
+            l + bars.left,
+            t + if (top) bars.top else 0,
+            r + bars.right,
+            b + if (bottom) maxOf(bars.bottom, ime.bottom) else 0
+        )
+        insets
+    }
+    ViewCompat.requestApplyInsets(this)
+}
+
+
+enum class Haptic { TICK, CONFIRM, REJECT }
+
+/**
+ * اهتزاز لمسي خفيف يتبع إعداد "ردود الفعل اللمسية" في النظام (يُتجاهل تلقائياً إن عُطّل).
+ * TICK للتبديل (فلاتر/تنقل)، CONFIRM لاكتمال إجراء (حفظ/حذف/استرجاع)، REJECT لرفض (فشل تحقق).
+ * CONFIRM/REJECT من API 30، وقبلها بدائل قريبة.
+ */
+fun View.haptic(kind: Haptic) {
+    val constant = when (kind) {
+        Haptic.TICK -> HapticFeedbackConstants.CLOCK_TICK
+        Haptic.CONFIRM ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.CONFIRM
+            else HapticFeedbackConstants.VIRTUAL_KEY
+        Haptic.REJECT ->
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) HapticFeedbackConstants.REJECT
+            else HapticFeedbackConstants.LONG_PRESS
+    }
+    performHapticFeedback(constant)
+}
+
+
+/**
+ * على الشاشات العريضة (أجهزة لوحية/مطوية مفتوحة/نوافذ متعددة): يحدّد عرض جذر الشاشة ويوسّطه
+ * بدل تمدّد النماذج والبطاقات على عرض 1000dp+. لا أثر على الهواتف. يُستدعى بعد setContentView.
+ * الخلفية خارج العمود تبقى لون النافذة نفسه (@color/background) فلا يظهر حدّ.
+ */
+fun Activity.capContentWidth(root: View, maxWidthDp: Int = 600) {
+    if (resources.configuration.screenWidthDp <= maxWidthDp) return
+    val lp = root.layoutParams as? FrameLayout.LayoutParams ?: return
+    lp.width = (maxWidthDp * resources.displayMetrics.density).toInt()
+    lp.gravity = Gravity.CENTER_HORIZONTAL
+    root.layoutParams = lp
 }

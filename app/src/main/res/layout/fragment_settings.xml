@@ -41,7 +41,7 @@
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_marginEnd="@dimen/spacing_sm"
-                android:indeterminateTint="@color/brand_accent"
+                android:indeterminateTint="@color/brand_accent_text"
                 android:visibility="gone" />
 
             <ImageView
@@ -224,12 +224,12 @@
             android:padding="@dimen/spacing_md">
 
             <RadioGroup android:id="@+id/rgWhatsappPrefix" android:layout_width="match_parent" android:layout_height="wrap_content">
-                <RadioButton android:id="@+id/rbPrefixAuto" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="44dp" android:paddingStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:buttonTint="@color/brand_accent" android:text="@string/whatsapp_prefix_auto" />
+                <RadioButton android:id="@+id/rbPrefixAuto" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="44dp" android:paddingStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:buttonTint="@color/brand_accent_text" android:text="@string/whatsapp_prefix_auto" />
                 <!-- البند 4: النص يُضبَط برمجياً (SettingsFragment.applyWhatsappPrefixLabels)
                      من نفس مورد onboarding_prefix_*_label/_code المستخدم في شاشة الإعداد
                      الأولي، بدل تكرار "فلسطين +970"/"إسرائيل +972" حرفياً هنا كنص XML ثابت. -->
-                <RadioButton android:id="@+id/rbPrefix970" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:minHeight="44dp" android:paddingStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:buttonTint="@color/brand_accent" />
-                <RadioButton android:id="@+id/rbPrefix972" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:minHeight="44dp" android:paddingStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:buttonTint="@color/brand_accent" />
+                <RadioButton android:id="@+id/rbPrefix970" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:minHeight="44dp" android:paddingStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:buttonTint="@color/brand_accent_text" />
+                <RadioButton android:id="@+id/rbPrefix972" style="@style/Text.Body" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_xs" android:minHeight="44dp" android:paddingStart="@dimen/spacing_sm" android:textColor="@color/text_primary" android:buttonTint="@color/brand_accent_text" />
             </RadioGroup>
         </LinearLayout>
 
@@ -416,7 +416,7 @@
                     android:minHeight="48dp"
                     android:orientation="horizontal">
                     <TextView style="@style/Text.Body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:textColor="@color/text_primary" android:text="@string/settings_auto_lock" />
-                    <TextView android:id="@+id/tvAutoLockValue" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/brand_accent" />
+                    <TextView android:id="@+id/tvAutoLockValue" style="@style/Text.Body" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="@color/brand_accent_text" />
                 </LinearLayout>
 
             <View android:layout_width="match_parent" android:layout_height="1dp" android:layout_marginVertical="@dimen/spacing_sm" android:background="@color/divider" />
@@ -561,12 +561,70 @@
             android:orientation="vertical"
             android:padding="@dimen/spacing_md">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    style="@style/Text.Body"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/auto_backup_title"
+                    android:textColor="@color/text_primary" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/switchAutoBackup"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvAutoBackupStatus"
+                style="@style/Text.Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:textColor="@color/text_secondary" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAutoBackupFolder"
+                style="@style/Widget.GymManager.Button.Outlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:text="@string/auto_backup_choose_folder"
+                app:icon="@drawable/ic_backup"
+                app:iconGravity="textStart"
+                app:iconPadding="@dimen/spacing_sm"
+                app:iconTint="@color/text_primary"
+                app:strokeColor="@color/glass_border_strong" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:background="@drawable/bg_card_glass"
+            android:elevation="@dimen/elevation_card_resting"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnOpenArchive" style="@style/Widget.GymManager.Button.Outlined"
                 android:layout_width="match_parent" android:layout_height="wrap_content"
                 app:icon="@drawable/ic_archive" app:iconGravity="textStart" app:iconPadding="@dimen/spacing_sm" app:iconTint="@color/text_primary"
                 app:strokeColor="@color/glass_border_strong"
                 android:text="@string/settings_archive" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnTheme" style="@style/Widget.GymManager.Button.Outlined"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="@dimen/spacing_sm"
+                app:icon="@drawable/ic_settings" app:iconGravity="textStart" app:iconPadding="@dimen/spacing_sm" app:iconTint="@color/text_primary"
+                app:strokeColor="@color/glass_border_strong"
+                android:text="@string/settings_theme" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAbout" style="@style/Widget.GymManager.Button.Outlined"

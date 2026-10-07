@@ -21,6 +21,9 @@ import com.gympro.manager.ui.setup.GymSetupActivity
 import com.gympro.manager.utils.applyHorizontalGradient
 import com.gympro.manager.utils.setOnSingleClickListener
 import kotlinx.coroutines.launch
+import com.gympro.manager.utils.SnackType
+import com.gympro.manager.utils.showSnack
+import com.gympro.manager.utils.capContentWidth
 
 // ════════════════════════════════════════════════════════════════════════
 // ⚠️ ملاحظة توقّف — موجَّهة لأي مطوّر بشري أو أداة ذكاء اصطناعي تعمل على هذا
@@ -84,6 +87,7 @@ class OnboardingCloudActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingCloudBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        capContentWidth(binding.root)
 
         binding.tvCloudTitle.applyHorizontalGradient(
             startColor = ContextCompat.getColor(this, R.color.brand_gradient_start),
@@ -135,7 +139,7 @@ class OnboardingCloudActivity : AppCompatActivity() {
     private fun onSignInFailed(exception: ApiException) {
         // المستخدم أغلق نافذة اختيار الحساب بنفسه — ليس خطأً يستدعي رسالة.
         if (exception.statusCode == CommonStatusCodes.CANCELED) return
-        Toast.makeText(this, R.string.onboarding_google_sign_in_failed, Toast.LENGTH_SHORT).show()
+        binding.root.showSnack(getString(R.string.onboarding_google_sign_in_failed), SnackType.ERROR)
     }
 
     private fun goToNextStep() {

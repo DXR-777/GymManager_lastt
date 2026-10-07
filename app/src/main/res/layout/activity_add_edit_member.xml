@@ -605,7 +605,7 @@
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="10dp"
                     android:text="@string/renew_unpaid_default_warning"
-                    android:textColor="@color/status_error"
+                    android:textColor="@color/status_error_text"
                     android:visibility="gone"
                     tools:text="@string/renew_unpaid_default_warning"
                     tools:visibility="visible" />
@@ -835,7 +835,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:textColor="@color/status_partial"
+                                android:textColor="@color/status_partial_text"
                                 android:textStyle="bold"
                                 android:maxLines="1"
                                 android:ellipsize="end"
@@ -1036,7 +1036,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_xs"
                     android:text="@string/member_payment_method_error_required"
-                    android:textColor="@color/status_error"
+                    android:textColor="@color/status_error_text"
                     android:textSize="@dimen/text_card_description"
                     android:visibility="gone"
                     tools:visibility="visible" />

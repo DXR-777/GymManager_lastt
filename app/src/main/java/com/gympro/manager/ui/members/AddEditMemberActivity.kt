@@ -1,5 +1,6 @@
 package com.gympro.manager.ui.members
 
+import androidx.activity.viewModels
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.res.ColorStateList
@@ -36,13 +37,18 @@ import com.gympro.manager.utils.setOnSingleClickListener
 import com.gympro.manager.utils.setupClearFocusOnOutsideTouch
 import com.gympro.manager.utils.stripPhoneSeparators
 import com.gympro.manager.utils.toCleanString
-import com.gympro.manager.utils.toSafeDoubleOrNull
+import com.gympro.manager.utils.toSafeMoneyOrNull
 import com.gympro.manager.utils.toSafeIntOrNull
 import com.gympro.manager.utils.toast
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.Calendar
 import kotlin.coroutines.resume
+import com.gympro.manager.utils.applySystemBarInsetsPadding
+import com.gympro.manager.utils.Haptic
+import com.gympro.manager.utils.haptic
+import com.gympro.manager.utils.MemberHighlight
+import com.gympro.manager.utils.capContentWidth
 
 private const val KEY_SELECTED_TYPE = "add_edit_member_selected_type"
 private const val KEY_PAYMENT_STATUS = "add_edit_member_payment_status"
@@ -69,6 +75,7 @@ class AddEditMemberActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddEditMemberBinding
     private val repository by lazy { (application as GymApplication).repository }
+    private val viewModel: AddEditMemberViewModel by viewModels { AddEditMemberViewModel.Factory(repository) }
 
     private var memberId: Long = -1L
     private var isRenewMode = false
@@ -159,6 +166,8 @@ class AddEditMemberActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityAddEditMemberBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarInsetsPadding()
+        capContentWidth(binding.root)
         setupClearFocusOnOutsideTouch(binding.root)
 
         // البند 2: يُستعاد هنا — قبل أي من setupXxxSegments/Chips أدناه — لأن تلك الدوال
@@ -374,7 +383,7 @@ class AddEditMemberActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                val value = s?.toString()?.trim()?.toSafeDoubleOrNull()
+                val value = s?.toString()?.trim()?.toSafeMoneyOrNull()
                 if (value != null && value > 0.0) binding.tilPrice.error = null
             }
         })
@@ -652,9 +661,9 @@ class AddEditMemberActivity : AppCompatActivity() {
     private fun applyPaymentStatusSegmentUI() {
         data class SegmentStyle(val view: TextView, val status: PaymentStatus, val bgRes: Int, val colorRes: Int)
         val segments = listOf(
-            SegmentStyle(binding.segPaid, PaymentStatus.PAID, R.drawable.bg_payment_status_paid_selected, R.color.status_success),
-            SegmentStyle(binding.segPartial, PaymentStatus.PARTIAL, R.drawable.bg_payment_status_partial_selected, R.color.status_partial),
-            SegmentStyle(binding.segUnpaid, PaymentStatus.UNPAID, R.drawable.bg_payment_status_unpaid_selected, R.color.status_error)
+            SegmentStyle(binding.segPaid, PaymentStatus.PAID, R.drawable.bg_payment_status_paid_selected, R.color.status_success_text),
+            SegmentStyle(binding.segPartial, PaymentStatus.PARTIAL, R.drawable.bg_payment_status_partial_selected, R.color.status_partial_text),
+            SegmentStyle(binding.segUnpaid, PaymentStatus.UNPAID, R.drawable.bg_payment_status_unpaid_selected, R.color.status_error_text)
         )
         segments.forEach { seg ->
             if (seg.status == selectedPaymentStatus) {
@@ -678,9 +687,9 @@ class AddEditMemberActivity : AppCompatActivity() {
 
     private fun updatePaymentStatusHelperText() {
         val (text, colorRes) = when (selectedPaymentStatus) {
-            PaymentStatus.PAID -> R.string.member_payment_status_helper_paid to R.color.status_success
-            PaymentStatus.PARTIAL -> R.string.member_payment_status_helper_partial to R.color.status_partial
-            PaymentStatus.UNPAID -> R.string.member_payment_status_helper_unpaid to R.color.status_error
+            PaymentStatus.PAID -> R.string.member_payment_status_helper_paid to R.color.status_success_text
+            PaymentStatus.PARTIAL -> R.string.member_payment_status_helper_partial to R.color.status_partial_text
+            PaymentStatus.UNPAID -> R.string.member_payment_status_helper_unpaid to R.color.status_error_text
         }
         binding.tvPaymentStatusHelper.text = getString(text)
         binding.tvPaymentStatusHelper.setTextColor(getColor(colorRes))
@@ -725,8 +734,8 @@ class AddEditMemberActivity : AppCompatActivity() {
      * وميض، لأن كلا القيمتين تُحسَبان وتُكتَبان في نفس اللحظة ضمن نفس الاستدعاء).
      */
     private fun updateRemainingAmountPreview() {
-        val price = binding.etPrice.text?.toString()?.trim()?.toSafeDoubleOrNull() ?: 0.0
-        val paid = binding.etPaidAmount.text?.toString()?.trim()?.toSafeDoubleOrNull() ?: 0.0
+        val price = binding.etPrice.text?.toString()?.trim()?.toSafeMoneyOrNull() ?: 0.0
+        val paid = binding.etPaidAmount.text?.toString()?.trim()?.toSafeMoneyOrNull() ?: 0.0
         val remaining = (price - paid).coerceAtLeast(0.0)
         binding.tvTotalAmount.text = CurrencyFormatter.format(price, currentSettings.currencySymbol)
         binding.tvRemainingAmount.text = CurrencyFormatter.format(remaining, currentSettings.currencySymbol)
@@ -908,11 +917,12 @@ class AddEditMemberActivity : AppCompatActivity() {
 
     private fun loadInitialData() {
         lifecycleScope.launch {
-            currentSettings = repository.getSettingsOnce()
+            val initial = viewModel.loadInitial(memberId, isRenewMode)
+            currentSettings = initial.settings
             binding.tilPrice.suffixText = currentSettings.currencySymbol
 
             if (memberId != -1L) {
-                val member = repository.getMemberOnce(memberId)
+                val member = initial.member
                 loadedMember = member
                 // البند 2: نص هذه الحقول مُستعاد تلقائياً بواسطة إطار العمل عند إعادة
                 // الإنشاء (كل EditText له معرِّف ثابت)؛ إعادة كتابته هنا من القاعدة فوق ذلك
@@ -933,12 +943,12 @@ class AddEditMemberActivity : AppCompatActivity() {
                     // عند دخول شاشة التجديد إن كان على العضو دَين سابق، بدل انتظار أي حدث آخر.
                     // يُحمَّل دائماً بلا استثناء (حتى عند الاستعادة) لأنه ليس بيانات أدخلها
                     // المستخدم بل مُشتقّ من القاعدة ولازم لمنطق الحفظ/العرض بلا تخزينه في الـ Bundle.
-                    priorOutstandingBalance = repository.getMemberStats(memberId).totalOutstanding
+                    priorOutstandingBalance = initial.outstandingBalance
                     updateOldDebtWarning()
                     // يُحمَّل قبل أي استدعاء لـ updateEndDatePreview() في هذا الوضع، حتى تعرض
                     // المعاينة نفس تاريخ الانتهاء الذي سيُحسب ويُحفظ فعلياً عند "حفظ".
-                    inheritedMonthlyAnchor = repository.getInheritedMonthlyAnchor(memberId)
-                    val current = repository.getCurrentSubscription(memberId)
+                    inheritedMonthlyAnchor = initial.inheritedMonthlyAnchor
+                    val current = initial.currentSubscription
                     if (!isRestoringState) {
                         suppressAutoFill = true
                         current?.let { sub ->
@@ -984,7 +994,7 @@ class AddEditMemberActivity : AppCompatActivity() {
                     // setupPaymentMethodChips تقرأ القيمة الحالية عند الإعداد) — لا شيء إضافي
                     // مطلوب هنا لهذا الفرع.
                 } else {
-                    val current = repository.getCurrentSubscription(memberId)
+                    val current = initial.currentSubscription
                     current?.let { sub ->
                         // بيانات لازمة للحفظ (updateMemberAndSubscription) بغض النظر عن
                         // الاستعادة — ليست من الحقول القابلة للتحرير المرئية على الشاشة.
@@ -1035,11 +1045,11 @@ class AddEditMemberActivity : AppCompatActivity() {
      * عند تعديل بياناته دون تغييرها فعلياً.
      */
     private suspend fun findDuplicateWarningMessage(name: String, phoneDigits: String): String? {
-        val phoneMatch = repository.findMemberByPhone(phoneDigits, memberId)
-        if (phoneMatch != null) return getString(R.string.member_duplicate_phone_message, phoneMatch.name)
-        val nameMatch = repository.findMemberByName(name, memberId)
-        if (nameMatch != null) return getString(R.string.member_duplicate_name_message, nameMatch.name)
-        return null
+        return when (val match = viewModel.findDuplicate(name, phoneDigits, memberId)) {
+            is DuplicateMatch.Phone -> getString(R.string.member_duplicate_phone_message, match.memberName)
+            is DuplicateMatch.Name -> getString(R.string.member_duplicate_name_message, match.memberName)
+            null -> null
+        }
     }
 
     /**
@@ -1060,7 +1070,17 @@ class AddEditMemberActivity : AppCompatActivity() {
                 .show()
         }
 
+    /**
+     * غلاف حول التحقق والحفظ: إن لم يبدأ الحفظ بعد الاستدعاء (فشل تحقق) → اهتزاز رفض.
+     * الضغط المزدوج أثناء حفظ جارٍ لا يهتز (isSaveInProgress كان true قبلاً).
+     */
     private fun validateAndSave() {
+        val wasInProgress = isSaveInProgress
+        validateAndSaveCore()
+        if (!wasInProgress && !isSaveInProgress) binding.btnSaveMember.haptic(Haptic.REJECT)
+    }
+
+    private fun validateAndSaveCore() {
         val name = binding.etName.text?.toString()?.trim().orEmpty()
         if (name.isEmpty()) {
             binding.tilName.error = getString(R.string.member_error_name_required)
@@ -1091,7 +1111,7 @@ class AddEditMemberActivity : AppCompatActivity() {
         binding.tilPhone.error = null
 
         val priceText = binding.etPrice.text?.toString()?.trim().orEmpty()
-        val price = priceText.toSafeDoubleOrNull()
+        val price = priceText.toSafeMoneyOrNull()
         if (price == null || price <= 0.0) {
             binding.tilPrice.error = getString(R.string.setup_error_price_field)
             binding.etPrice.requestFocus()
@@ -1136,7 +1156,7 @@ class AddEditMemberActivity : AppCompatActivity() {
         var paidAmount: Double? = null
         if (paymentStatus == PaymentStatus.PARTIAL) {
             val paidAmountText = binding.etPaidAmount.text?.toString()?.trim().orEmpty()
-            val parsedPaidAmount = paidAmountText.toSafeDoubleOrNull()
+            val parsedPaidAmount = paidAmountText.toSafeMoneyOrNull()
             if (parsedPaidAmount == null || parsedPaidAmount <= 0.0) {
                 binding.tilPaidAmount.error = getString(R.string.member_paid_amount_error_required)
                 binding.etPaidAmount.requestFocus()
@@ -1264,73 +1284,28 @@ class AddEditMemberActivity : AppCompatActivity() {
         senderPhone: String?,
         paidAmount: Double?
     ) {
-        when {
-            isRenewMode -> {
-                repository.addSubscription(
-                    memberId = memberId,
-                    type = type,
-                    price = price,
-                    startDate = selectedStartDate,
-                    isPaid = isPaid,
-                    customDays = customDays,
-                    paymentMethod = resolvedPaymentMethod,
-                    senderName = senderName,
-                    senderPhone = senderPhone,
-                    paidAmount = paidAmount
-                )
-            }
-            memberId != -1L -> {
-                // نُفوّض حساب يوم الفوترة المرجعي وتاريخ التحصيل الفعلي (paidAt) بالكامل
-                // لـ GymRepository.updateSubscriptionDetails، بدل بنائهما يدوياً هنا.
-                // هذا يضمن أن أي تفعيل لاحق لحالة "مدفوع"/"جزئي" من هذه الشاشة (تسوية
-                // دَين قديم) يُسجَّل بتاريخ التحصيل الحقيقي (الآن)، لا بتاريخ إنشاء
-                // الاشتراك الأصلي — وإلا لظهرت الدفعة في تقرير إيرادات شهر قديم
-                // مُقفَل بدل شهر تحصيلها الفعلي.
-                //
-                // تحديث بيانات العضو واشتراكه يتمّان معاً ضمن معاملة واحدة (راجع
-                // GymRepository.updateMemberAndSubscription) بدل استدعاءين منفصلين، حتى لا
-                // يتوقّف الحفظ بينهما (تدمير الـ Activity، إنهاء العملية) تاركاً بيانات
-                // العضو محدَّثة بينما يُفقَد تحديث الاشتراك صمتاً.
-                val member = loadedMember
-                val subscription = loadedSubscription
-                if (member != null && subscription != null) {
-                    repository.updateMemberAndSubscription(
-                        member = member.copy(name = name, phone = phoneDigits, notes = notes),
-                        subscriptionOriginal = subscription,
-                        type = type,
-                        price = price,
-                        startDate = selectedStartDate,
-                        isPaid = isPaid,
-                        customDays = customDays,
-                        paymentMethod = resolvedPaymentMethod,
-                        senderName = senderName,
-                        senderPhone = senderPhone,
-                        paidAmount = paidAmount
-                    )
-                } else if (member != null) {
-                    // لا يوجد اشتراك محمَّل لهذا العضو (حالة نادرة) — تحديث بيانات
-                    // العضو فقط، بنفس السلوك السابق تماماً في هذه الحالة الاستثنائية.
-                    repository.updateMemberProfile(member.copy(name = name, phone = phoneDigits, notes = notes))
-                }
-            }
-            else -> {
-                repository.addMemberWithSubscription(
-                    name = name,
-                    phone = phoneDigits,
-                    notes = notes,
-                    photoPath = null,
-                    type = type,
-                    price = price,
-                    startDate = selectedStartDate,
-                    isPaid = isPaid,
-                    customDays = customDays,
-                    paymentMethod = resolvedPaymentMethod,
-                    senderName = senderName,
-                    senderPhone = senderPhone,
-                    paidAmount = paidAmount
-                )
-            }
-        }
+        val newMemberId = viewModel.save(
+            MemberSaveRequest(
+                memberId = memberId,
+                isRenewMode = isRenewMode,
+                loadedMember = loadedMember,
+                loadedSubscription = loadedSubscription,
+                name = name,
+                phoneDigits = phoneDigits,
+                notes = notes,
+                type = type,
+                price = price,
+                startDate = selectedStartDate,
+                isPaid = isPaid,
+                customDays = customDays,
+                paymentMethod = resolvedPaymentMethod,
+                senderName = senderName,
+                senderPhone = senderPhone,
+                paidAmount = paidAmount
+            )
+        )
+        if (newMemberId != null) MemberHighlight.set(newMemberId)
+        binding.btnSaveMember.haptic(Haptic.CONFIRM)
         playSaveSuccessPulse {
             toast(getString(R.string.member_save_success))
             finish()

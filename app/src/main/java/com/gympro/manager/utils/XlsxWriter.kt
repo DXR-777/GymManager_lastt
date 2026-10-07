@@ -128,7 +128,7 @@ object XlsxWriter {
                     val ref = "${columnLetter(colIndex)}$rowNum"
                     val style = cellXfIndex(cell.bold)
                     if (cell.numericValue != null) {
-                        append("<c r=\"$ref\" s=\"$style\"><v>${cell.numericValue}</v></c>")
+                        append("<c r=\"$ref\" s=\"$style\"><v>${cell.numericValue.roundMoney()}</v></c>")
                     } else {
                         append("<c r=\"$ref\" s=\"$style\" t=\"inlineStr\"><is><t xml:space=\"preserve\">${xmlEscape(cell.text)}</t></is></c>")
                     }

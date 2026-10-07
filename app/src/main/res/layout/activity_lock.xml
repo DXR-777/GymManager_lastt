@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- شاشة قفل التطبيق — راجع security/LockActivity.kt. لوحة الأرقام LTR عمداً حتى في واجهة RTL. -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText" xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background"
@@ -37,6 +38,7 @@
         <TextView
             android:id="@+id/tvSubtitle"
             style="@style/Text.Body"
+        android:accessibilityLiveRegion="polite"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_xs"
@@ -212,7 +214,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_md"
             android:text="@string/lock_forgot"
-            android:textColor="@color/brand_accent" />
+            android:textColor="@color/brand_accent_text" />
 
     </LinearLayout>
 </ScrollView>

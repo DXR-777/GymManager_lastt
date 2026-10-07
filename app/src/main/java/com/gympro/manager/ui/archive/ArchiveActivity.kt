@@ -18,6 +18,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
+import com.gympro.manager.utils.applySystemBarInsetsPadding
+import com.gympro.manager.utils.Haptic
+import com.gympro.manager.utils.haptic
+import com.gympro.manager.utils.capContentWidth
 
 class ArchiveActivity : AppCompatActivity() {
 
@@ -32,6 +36,8 @@ class ArchiveActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityArchiveBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarInsetsPadding()
+        capContentWidth(binding.root)
 
         binding.btnBack.setOnClickListener { finish() }
 
@@ -39,6 +45,7 @@ class ArchiveActivity : AppCompatActivity() {
             onRestore = { member ->
                 lifecycleScope.launch {
                     repository.restoreMember(member.id)
+                    binding.root.haptic(Haptic.CONFIRM)
                     toast(getString(R.string.archive_restore_success))
                 }
             },
@@ -81,7 +88,10 @@ class ArchiveActivity : AppCompatActivity() {
             .setMessage(getString(R.string.archive_permanent_delete_message, name))
             .setNegativeButton(R.string.action_cancel, null)
             .setPositiveButton(R.string.action_delete) { _, _ ->
-                lifecycleScope.launch { repository.permanentDeleteMember(memberId) }
+                lifecycleScope.launch {
+                    repository.permanentDeleteMember(memberId)
+                    binding.root.haptic(Haptic.CONFIRM)
+                }
             }
             .show()
     }
@@ -92,7 +102,9 @@ class ArchiveActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 searchQuery.flatMapLatest { q -> repository.observeDeletedMembers(q) }
                     .collect { list ->
+                        val wasEmpty = adapter.itemCount == 0
                         adapter.submitList(list)
+                        if (wasEmpty && list.isNotEmpty()) binding.rvArchived.scheduleLayoutAnimation()
                         binding.rvArchived.visibleIf(list.isNotEmpty())
                         binding.emptyArchiveContainer.visibleIf(list.isEmpty())
                         // نفس فجوة "رسالة فارغة مضلِّلة" الموثّقة في شاشة الأعضاء (البند 16)،

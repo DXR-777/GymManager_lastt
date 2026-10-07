@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- الهواتف: الاتجاه العمودي مقفل (يطبّقه GymApplication). تُلغى القيمة في values-sw600dp. -->
+    <bool name="lock_portrait">true</bool>
+    <bool name="is_light_theme">true</bool>
+</resources>

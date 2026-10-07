@@ -11,6 +11,14 @@ import com.gympro.manager.model.MemberListItem
 import com.gympro.manager.model.SubscriptionType
 import com.gympro.manager.utils.DateUtils
 import com.gympro.manager.utils.setOnSingleClickListener
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.view.View
+import android.view.animation.DecelerateInterpolator
+import androidx.core.content.ContextCompat
 
 /**
  * راجع البند 24: PagingDataAdapter بدل ListAdapter العادي — يعرض العناصر تدريجياً
@@ -31,8 +39,69 @@ class MembersAdapter(
     // Placeholder) — لكن enablePlaceholders=false في GymRepository.getActiveMembersPaged
     // يمنع ظهور مواضع فارغة أصلاً، فهذا الحارس احترازي بحت (تفادي NPE نظري لا حالة
     // متوقعة عملياً) بدل الاعتماد على !! غير آمن.
+    /** عضو جديد يُميَّز بوميض حلقة عند ظهوره (يُصفَّر بعد العرض). */
+    var highlightId: Long? = null
+
+    /** نافذة دخول القائمة: العناصر المرتبطة خلالها تظهر بتلاشٍ وانزلاق متدرّج. تتحكم بها الشاشة. */
+    var entranceEnabled = false
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        getItem(position)?.let { holder.bind(it) }
+        val item = getItem(position) ?: return
+        holder.bind(item)
+        val v = holder.itemView
+        // إعادة تعيين آثار التدوير: ViewHolder يُعاد استخدامه وقد يحمل حالة حركة سابقة.
+        v.animate().cancel()
+        v.alpha = 1f
+        v.translationY = 0f
+        v.scaleX = 1f
+        v.scaleY = 1f
+        v.foreground = null
+        when {
+            item.id == highlightId -> {
+                highlightId = null
+                playHighlight(v)
+            }
+            entranceEnabled -> playEntrance(v, position)
+        }
+    }
+
+    private fun playEntrance(v: View, position: Int) {
+        val density = v.resources.displayMetrics.density
+        v.alpha = 0f
+        v.translationY = 20f * density
+        v.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setStartDelay(minOf(position, 6) * 35L)
+            .setDuration(260L)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
+    }
+
+    private fun playHighlight(v: View) {
+        val density = v.resources.displayMetrics.density
+        val ring = GradientDrawable().apply {
+            shape = GradientDrawable.RECTANGLE
+            cornerRadius = v.resources.getDimension(R.dimen.radius_lg)
+            setColor(Color.TRANSPARENT)
+            setStroke((2 * density).toInt(), ContextCompat.getColor(v.context, R.color.brand_accent))
+        }
+        v.foreground = ring
+        ObjectAnimator.ofInt(ring, "alpha", 255, 0).apply {
+            startDelay = 700L
+            duration = 900L
+            addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    if (v.foreground === ring) v.foreground = null
+                }
+            })
+            start()
+        }
+        v.animate()
+            .scaleX(1.03f).scaleY(1.03f)
+            .setDuration(180L)
+            .withEndAction { v.animate().scaleX(1f).scaleY(1f).setDuration(220L).start() }
+            .start()
     }
 
     inner class ViewHolder(private val binding: ItemMemberBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -64,12 +133,12 @@ class MembersAdapter(
                 item.isUnpaid() -> {
                     binding.tvPaymentBadge.text = context.getString(R.string.status_unpaid)
                     binding.tvPaymentBadge.setBackgroundResource(R.drawable.bg_pill_error)
-                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.status_error))
+                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.status_error_text))
                 }
                 else -> {
                     binding.tvPaymentBadge.text = context.getString(R.string.status_paid)
                     binding.tvPaymentBadge.setBackgroundResource(R.drawable.bg_pill_success)
-                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.status_success))
+                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.status_success_text))
                 }
             }
 
@@ -85,7 +154,7 @@ class MembersAdapter(
                 when {
                     days < 0 -> {
                         binding.tvDaysRemaining.text = context.getString(R.string.days_remaining_expired, -days)
-                        binding.tvDaysRemaining.setTextColor(context.getColor(R.color.status_error))
+                        binding.tvDaysRemaining.setTextColor(context.getColor(R.color.status_error_text))
                     }
                     days == 0 -> {
                         binding.tvDaysRemaining.text = context.getString(R.string.days_remaining_today)
@@ -97,7 +166,7 @@ class MembersAdapter(
                     }
                     else -> {
                         binding.tvDaysRemaining.text = context.getString(R.string.days_remaining_format, days)
-                        binding.tvDaysRemaining.setTextColor(context.getColor(R.color.status_success))
+                        binding.tvDaysRemaining.setTextColor(context.getColor(R.color.status_success_text))
                     }
                 }
             }

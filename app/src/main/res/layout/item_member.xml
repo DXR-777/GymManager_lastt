@@ -114,7 +114,7 @@
                 android:paddingTop="@dimen/spacing_xs"
                 android:paddingEnd="@dimen/spacing_sm"
                 android:paddingBottom="@dimen/spacing_xs"
-                android:textColor="@color/status_success"
+                android:textColor="@color/status_success_text"
                 android:textStyle="bold"
                 tools:text="مدفوع" />
         </LinearLayout>

@@ -196,6 +196,10 @@
     <string name="members_filter_unpaid">غير مدفوع</string>
     <string name="members_filter_expiring">ينتهي قريباً</string>
     <string name="members_empty">لا يوجد أعضاء بعد.\nاضغط + لإضافة أول عضو</string>
+    <string name="members_empty_title">لا يوجد أعضاء بعد</string>
+    <string name="members_empty_hint">أضف أول عضو لتبدأ بمتابعة الاشتراكات والمدفوعات</string>
+    <string name="members_empty_add">إضافة عضو</string>
+    <string name="members_empty_clear">مسح البحث والفلتر</string>
     <string name="members_no_results">لا نتائج مطابقة للبحث أو الفلتر الحالي</string>
     <string name="members_archive_action">الأرشيف 🗑️</string>
     <string name="members_sort_action">ترتيب</string>
@@ -381,6 +385,8 @@
     <string name="revenue_week">هذا الأسبوع</string>
     <string name="revenue_month">هذا الشهر</string>
     <string name="revenue_year">هذا العام</string>
+    <string name="revenue_chart_content_description">مخطط أعمدة لإيرادات آخر 7 أيام: %1$s</string>
+    <string name="revenue_chart_content_description_empty">مخطط إيرادات آخر 7 أيام: لا توجد إيرادات</string>
     <string name="revenue_chart_last7days">آخر 7 أيام</string>
     <string name="revenue_by_type">الإيرادات حسب نوع الاشتراك (هذا الشهر)</string>
     <string name="revenue_compare_last_month">مقارنة بالشهر الماضي</string>
@@ -440,6 +446,19 @@
          كان يتسبب بانهيار صامت بدل رسالة واضحة، بخلاف الاستعادة التي تُعالَج بوضوح أعلاه. -->
     <string name="settings_export_csv_error">تعذّر تصدير الملف. تأكد من توفر مساحة تخزين كافية وأعد المحاولة.</string>
     <string name="settings_restore_confirm_title">استعادة النسخة الاحتياطية؟</string>
+    <string name="settings_backup_error">تعذّر إنشاء النسخة الاحتياطية. تحقق من مساحة التخزين وحاول مرة أخرى.</string>
+    <string name="backup_password_title">حماية النسخة الاحتياطية</string>
+    <string name="backup_password_message">النسخة تحتوي أسماء وأرقام عملائك. اختر كلمة مرور لتشفيرها. لا يمكن استرجاعها إن نسيتها، ولن تستطيع فتح النسخة بدونها.</string>
+    <string name="backup_password_hint">كلمة المرور</string>
+    <string name="backup_password_confirm_hint">تأكيد كلمة المرور</string>
+    <string name="backup_password_encrypt">تشفير ونسخ</string>
+    <string name="backup_password_skip">بدون تشفير</string>
+    <string name="backup_password_too_short">6 أحرف على الأقل</string>
+    <string name="backup_password_mismatch">كلمتا المرور غير متطابقتين</string>
+    <string name="restore_password_title">نسخة مشفّرة</string>
+    <string name="restore_password_message">أدخل كلمة المرور التي اخترتها عند إنشاء هذه النسخة.</string>
+    <string name="restore_password_action">استعادة</string>
+    <string name="backup_wrong_password">كلمة المرور غير صحيحة أو الملف تالف</string>
     <string name="settings_restore_confirm_message">سيتم استبدال البيانات الحالية بالكامل بالبيانات الموجودة في النسخة الاحتياطية المختارة.</string>
     <string name="whatsapp_prefix_auto">تلقائي (970+ ثم 972+)</string>
 
@@ -551,4 +570,30 @@
     <string name="settings_secure_screen_desc">يُخفي التطبيق في قائمة التطبيقات الأخيرة ويمنع تصوير الشاشة</string>
     <string name="settings_change_pin">تغيير الرمز</string>
     <string name="settings_new_recovery">إنشاء رمز استرداد جديد</string>
+
+    <!-- رموز وأكواد عملات: ثابتة لا تُترجم -->
+    <string name="currency_symbol_ils" translatable="false">₪</string>
+    <string name="currency_label_ils" translatable="false">₪ ILS</string>
+    <string name="currency_symbol_usd" translatable="false">$</string>
+    <string name="currency_label_usd" translatable="false">$ USD</string>
+    <string name="currency_symbol_jod" translatable="false">د.أ</string>
+    <string name="currency_label_jod" translatable="false">د.أ JOD</string>
+    <string name="currency_symbol_plus" translatable="false">+</string>
+    <string name="notif_backup_title">النسخ الاحتياطي</string>
+    <string name="notif_backup_reminder_body">مرّ أسبوع على آخر نسخة احتياطية. افتح الإعدادات وأنشئ نسخة جديدة.</string>
+    <string name="notif_backup_failed_body">تعذّر النسخ الاحتياطي التلقائي. تحقق من المجلد المختار في الإعدادات.</string>
+    <string name="auto_backup_title">النسخ الاحتياطي التلقائي (أسبوعياً)</string>
+    <string name="auto_backup_choose_folder">اختيار مجلد النسخ</string>
+    <string name="auto_backup_change_folder">تغيير المجلد</string>
+    <string name="auto_backup_password_message">ستُشفَّر النسخ التلقائية بهذه الكلمة وتُحفظ على الجهاز بشكل مشفّر. لا يمكن استرجاعها إن ضاعت.</string>
+    <string name="auto_backup_status_never">لم تتم أي نسخة بعد</string>
+    <string name="auto_backup_status_last">آخر نسخة: %1$s</string>
+    <string name="auto_backup_status_error">فشلت آخر محاولة. اختر المجلد مرة أخرى.</string>
+    <string name="auto_backup_status_off">غير مفعّل</string>
+    <string name="auto_backup_enabled_toast">تم تفعيل النسخ التلقائي</string>
+    <string name="auto_backup_failed_toast">تعذّر إنشاء النسخة في المجلد المختار</string>
+    <string name="settings_theme">المظهر</string>
+    <string name="theme_system">حسب النظام</string>
+    <string name="theme_light">فاتح</string>
+    <string name="theme_dark">داكن</string>
 </resources>

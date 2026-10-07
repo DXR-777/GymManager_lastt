@@ -71,7 +71,7 @@
             android:paddingTop="2dp"
             android:paddingEnd="@dimen/spacing_sm"
             android:paddingBottom="2dp"
-            android:textColor="@color/status_error"
+            android:textColor="@color/status_error_text"
             android:textSize="@dimen/text_caption"
             android:textStyle="bold"
             android:includeFontPadding="false"

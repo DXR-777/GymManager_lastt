@@ -25,9 +25,10 @@ import com.gympro.manager.utils.applyHorizontalGradient
 import com.gympro.manager.utils.limitDecimalPlaces
 import com.gympro.manager.utils.setOnSingleClickListener
 import com.gympro.manager.utils.setupClearFocusOnOutsideTouch
-import com.gympro.manager.utils.toSafeDoubleOrNull
+import com.gympro.manager.utils.toSafeMoneyOrNull
 import com.gympro.manager.utils.toast
 import kotlinx.coroutines.launch
+import com.gympro.manager.utils.capContentWidth
 
 /**
  * خيار عملة في منتقي "العملة والأسعار" (خطوة 2 من 4). ثلاث عملات جاهزة
@@ -97,6 +98,7 @@ class GymSetupActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityGymSetupBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        capContentWidth(binding.root)
         setupClearFocusOnOutsideTouch(binding.root)
 
         // استعادة حالة المعالج بعد إعادة إنشاء الـ Activity (تدوير الشاشة مثلاً)
@@ -286,9 +288,9 @@ class GymSetupActivity : AppCompatActivity() {
      * أي تصحيح مطلوب دون تخمين.
      */
     private fun validateStep2(): Boolean {
-        val monthly = binding.etMonthlyPrice.text?.toString()?.toSafeDoubleOrNull()
-        val weekly = binding.etWeeklyPrice.text?.toString()?.toSafeDoubleOrNull()
-        val daily = binding.etDailyPrice.text?.toString()?.toSafeDoubleOrNull()
+        val monthly = binding.etMonthlyPrice.text?.toString()?.toSafeMoneyOrNull()
+        val weekly = binding.etWeeklyPrice.text?.toString()?.toSafeMoneyOrNull()
+        val daily = binding.etDailyPrice.text?.toString()?.toSafeMoneyOrNull()
 
         val monthlyValid = monthly != null && monthly > 0
         val weeklyValid = weekly != null && weekly > 0
@@ -489,9 +491,9 @@ class GymSetupActivity : AppCompatActivity() {
         // لا .toDouble()/!! مباشرة هنا. لو استُخدمت دالة تحليل مختلفة (أو
         // القياسية toDoubleOrNull) في هذا الموضع، سيمرّ رقم عربي-هندي بنجاح من
         // التحقق أعلاه ثم يُفشل بصمت أو يُعطّل التطبيق هنا عند إعادة تحليله.
-        val daily = binding.etDailyPrice.text?.toString()?.toSafeDoubleOrNull()
-        val weekly = binding.etWeeklyPrice.text?.toString()?.toSafeDoubleOrNull()
-        val monthly = binding.etMonthlyPrice.text?.toString()?.toSafeDoubleOrNull()
+        val daily = binding.etDailyPrice.text?.toString()?.toSafeMoneyOrNull()
+        val weekly = binding.etWeeklyPrice.text?.toString()?.toSafeMoneyOrNull()
+        val monthly = binding.etMonthlyPrice.text?.toString()?.toSafeMoneyOrNull()
 
         // حارس أمان صريح بدل !! غير آمن: نظرياً غير قابل للوصول لأن
         // validateStep2() تحقّقت للتو من نفس الحقول بنفس الدالة تماماً (تحليل

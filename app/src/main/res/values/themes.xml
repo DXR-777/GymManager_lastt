@@ -1,30 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    البند 3: كان يوجد سابقاً values-night/themes.xml مستقل — نسخة قديمة جُمِّدت عند نقطة
-    زمنية مبكرة (على الأرجح ملف افتراضي ولّده Android Studio) ولم تُحدَّث أبداً مع كل
-    مراحل إعادة التصميم اللاحقة هنا (Glassmorphism 2026): كانت تفتقد عشرات الأنماط تماماً
-    (Widget.GymManager.Button.CTA وTextInputLayout.Glass/.Hero وText.HeroPrice/SectionTitle/
-    MemberValue وغيرها)، بينما الأنماط المشتركة بين الملفين (Card، Button.Primary/Outlined،
-    TextInputLayout، BottomSheet) بقيت مجمَّدة على تصميمها المسطّح القديم فيها تحديداً. الأثر
-    العملي: أي مستخدم يُفعِّل الوضع الداكن في *نظام* الجهاز (تفعيل شائع جداً) كان يرى تطبيقاً
-    "مبعثراً" — بطاقات وأزرار قديمة الشكل بجانب نصوص العناوين الجديدة التي تصادف سقوطها
-    تلقائياً للنسخة الافتراضية هنا فقط لغياب مقابلها في الملف الليلي، لا لأي تزامن فعلي.
-
-    القرار: حُذف values-night/themes.xml نهائياً بدل إعادة مزامنته يدوياً مرة أخرى — إذ لا
-    يوجد أصلاً values-night/colors.xml ولا أي نيّة تصميم لمظهر "نهاري" مختلف (التطبيق
-    مصمَّم بهوية داكنة زجاجية ثابتة عمداً، الأصل هنا "Theme.Material3.Dark" مباشرة بلا أي
-    فرع نهاري في التصميم نفسه)، فإبقاء نسخة ليلية منفصلة لا يخدم أي هدف تصميمي حقيقي، ولا
-    يفعل شيئاً غير خلق فخّ صيانة يتكرّر فيه هذا الانحراف تلقائياً مع كل تعديل مستقبلي على
-    هذا الملف يُنسى تطبيقه هناك أيضاً. هذا الملف الوحيد الآن هو مصدر الحقيقة الوحيد للمظهر
-    في كل أوضاع نظام التشغيل (نهاري/ليلي) على حدّ سواء.
-
-    عند إضافة تفريق نهاري/ليلي فعلي مقصود مستقبلاً: يُفضَّل تفريق الألوان نفسها عبر
-    values-night/colors.xml (تُقرأ تلقائياً بنفس أسماء @color/* المستخدمة هنا دون أي تعديل
-    على هذا الملف) بدل تكرار الأنماط كاملة في ملف ثيمات منفصل عرضة للانحراف كما حدث هنا.
--->
+<!-- الألوان تُفرَّق نهاري/ليلي عبر values/colors.xml و values-night/colors.xml بنفس الأسماء. -->
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.GymManager" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.GymManager" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="colorPrimary">@color/brand_accent</item>
         <item name="colorPrimaryVariant">@color/brand_accent_dark</item>
         <item name="colorOnPrimary">@color/text_on_accent</item>
@@ -41,7 +19,8 @@
 
         <item name="android:statusBarColor">@color/background</item>
         <item name="android:navigationBarColor">@color/background</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="23">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="23">@bool/is_light_theme</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">@bool/is_light_theme</item>
 
         <!-- مواءمة أدوار ألوان Material3 الافتراضية (التي كانت تُظهر Snackbar فاتحاً
              ونصوصاً ثانوية بدرجة رمادية/بنفسجية غريبة عن هوية التطبيق) مع لوحة الألوان
@@ -52,6 +31,7 @@
         <item name="colorSurfaceInverse">@color/surface_elevated</item>
         <item name="colorOnSurfaceInverse">@color/text_primary</item>
         <item name="colorPrimaryInverse">@color/brand_accent</item>
+        <item name="colorOutlineVariant">@color/divider</item>
 
         <item name="android:fontFamily">@font/cairo_regular</item>
         <item name="materialAlertDialogTheme">@style/ThemeOverlay.GymManager.Dialog</item>

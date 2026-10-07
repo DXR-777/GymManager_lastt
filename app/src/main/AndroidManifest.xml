@@ -39,7 +39,6 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.splash.SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.GymManager.Splash">
@@ -50,53 +49,53 @@
         </activity>
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.onboarding.OnboardingWelcomeActivity"
             android:exported="false" />
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.onboarding.OnboardingConceptActivity"
             android:exported="false" />
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.onboarding.OnboardingCloudActivity"
             android:exported="false" />
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.setup.GymSetupActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.main.MainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.members.AddEditMemberActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.members.MemberDetailActivity"
             android:exported="false" />
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".ui.archive.ArchiveActivity"
             android:exported="false" />
 
         <!-- قفل التطبيق: شاشة PIN/بصمة تُعرض فوق أي شاشة عند الحاجة (راجع security/AppLockManager.kt) -->
         <activity
-            android:screenOrientation="portrait"
             android:name=".security.LockActivity"
             android:exported="false" />
+
+        <receiver
+            android:name=".worker.TimeChangeReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+            </intent-filter>
+        </receiver>
 
         <provider
             android:name="androidx.core.content.FileProvider"

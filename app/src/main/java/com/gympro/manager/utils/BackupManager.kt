@@ -47,6 +47,7 @@ object BackupManager {
     suspend fun createBackupFile(
         context: Context,
         repository: GymRepository,
+        password: CharArray? = null,
         onProgress: (suspend (processed: Int, total: Int) -> Unit)? = null
     ): File =
         withContext(Dispatchers.IO) {
@@ -74,12 +75,34 @@ object BackupManager {
             }
 
             val timestamp = SimpleDateFormat("yyyy-MM-dd_HHmm", Locale.US).format(System.currentTimeMillis())
-            val file = File(backupDir(context), "gym_backup_$timestamp.json")
-            file.writeText(json.toString(2))
+            // بكلمة مرور → ملف مشفّر .gymbak (AES-256-GCM)؛ بدونها → JSON نصي صريح كما قبل.
+            // النسخة تحتوي أسماء وهواتف العملاء، فالتشفير هو الخيار الموصى به في الواجهة.
+            val plain = json.toString(2).toByteArray(Charsets.UTF_8)
+            val file = if (password != null) {
+                File(backupDir(context), "gym_backup_$timestamp.gymbak").also {
+                    it.writeBytes(BackupCrypto.encrypt(plain, password))
+                }
+            } else {
+                File(backupDir(context), "gym_backup_$timestamp.json").also { it.writeBytes(plain) }
+            }
+            password?.fill('\u0000')
+            BackupPrefs.markBackupDone(context, encrypted = password != null)
+            if (password != null) purgePlainBackups(context)
             file
         }
 
-    fun shareBackupFile(context: Context, file: File) = shareFile(context, file, "application/json")
+    fun purgePlainBackups(context: Context, olderThanMs: Long = 0L) {
+        val cutoff = System.currentTimeMillis() - olderThanMs
+        backupDir(context).listFiles { f ->
+            f.isFile && f.name.startsWith("gym_backup_") && f.extension.equals("json", ignoreCase = true)
+        }?.forEach { if (it.lastModified() <= cutoff) it.delete() }
+    }
+
+    fun shareBackupFile(context: Context, file: File) = shareFile(
+        context,
+        file,
+        if (file.extension.equals("gymbak", ignoreCase = true)) "application/octet-stream" else "application/json"
+    )
 
     /** تنسيق حجم ملف مقروء للبشر (بايت/كيلوبايت/ميغابايت) — راجع البند 26: كان
      *  حجم الملف الناتج غير معروض إطلاقاً أثناء أو بعد النسخ الاحتياطي/الاستعادة.
@@ -102,15 +125,31 @@ object BackupManager {
         context.startActivity(Intent.createChooser(intent, null))
     }
 
+    /**
+     * @throws BackupPasswordRequiredException الملف مشفّر ولم تُمرَّر [password]
+     * @throws BackupWrongPasswordException كلمة المرور خاطئة أو الملف تالف
+     * النسخ القديمة (JSON نصي) تُستعاد كما كانت دون كلمة مرور.
+     */
     suspend fun restoreFromUri(
         context: Context,
         uri: Uri,
         repository: GymRepository,
+        password: CharArray? = null,
         onProgress: (suspend (processed: Int, total: Int) -> Unit)? = null
     ) {
         val (members, subscriptions, settings) = withContext(Dispatchers.IO) {
-            val text = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use { it.readText() }
+            val raw = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
                 ?: throw IllegalStateException("لا يمكن قراءة الملف")
+            val text = if (BackupCrypto.isEncrypted(raw)) {
+                if (password == null) throw BackupPasswordRequiredException()
+                try {
+                    String(BackupCrypto.decrypt(raw, password), Charsets.UTF_8)
+                } finally {
+                    password.fill('\u0000')
+                }
+            } else {
+                String(raw, Charsets.UTF_8)
+            }
             val json = JSONObject(text)
 
             val settings = jsonToSettings(json.getJSONObject("settings"))

@@ -21,6 +21,8 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.gympro.manager.R
 import com.gympro.manager.databinding.ActivityLockBinding
+import com.gympro.manager.utils.applySystemBarInsetsPadding
+import com.gympro.manager.utils.capContentWidth
 
 /**
  * شاشة القفل الواحدة لكل الحالات (راجع MODE_*):
@@ -62,6 +64,8 @@ class LockActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLockBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarInsetsPadding()
+        capContentWidth(binding.root)
 
         mode = intent.getStringExtra(EXTRA_MODE) ?: MODE_UNLOCK
         if (mode != MODE_SETUP && !AppLockManager.isEnabled()) {
@@ -315,7 +319,7 @@ class LockActivity : AppCompatActivity() {
             gravity = Gravity.CENTER
             layoutDirection = View.LAYOUT_DIRECTION_LTR
             setTextColor(ContextCompat.getColor(this@LockActivity, R.color.text_primary))
-            setHintTextColor(ContextCompat.getColor(this@LockActivity, R.color.text_disabled))
+            setHintTextColor(ContextCompat.getColor(this@LockActivity, R.color.text_secondary))
         }
         val container = FrameLayout(this).apply {
             setPadding(dp(24), dp(8), dp(24), 0)
@@ -404,7 +408,7 @@ class LockActivity : AppCompatActivity() {
     private fun setSubtitle(text: String, isError: Boolean) {
         binding.tvSubtitle.text = text
         binding.tvSubtitle.setTextColor(
-            ContextCompat.getColor(this, if (isError) R.color.status_error else R.color.text_secondary)
+            ContextCompat.getColor(this, if (isError) R.color.status_error_text else R.color.text_secondary)
         )
     }
 

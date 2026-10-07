@@ -36,6 +36,8 @@ import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.TimeZone
 import kotlin.math.roundToInt
+import com.gympro.manager.utils.SnackType
+import com.gympro.manager.utils.showSnack
 
 class RevenueFragment : Fragment() {
 
@@ -126,7 +128,7 @@ class RevenueFragment : Fragment() {
                 setTextColor(
                     ContextCompat.getColor(
                         requireContext(),
-                        if (isToday) R.color.brand_accent else R.color.text_secondary
+                        if (isToday) R.color.brand_accent_text else R.color.text_secondary
                     )
                 )
                 setTypeface(typeface, if (isToday) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
@@ -175,6 +177,18 @@ class RevenueFragment : Fragment() {
         binding.barChartLast7Days.invalidate()
         renderDayLabels(lastSevenDayLabels())
         binding.tvNoChartData.visibleIf(values.all { it == 0.0 })
+        // وصف للوصول: المخطط عرض مرسوم لا يقرؤه TalkBack، فنلخّص قيمه نصاً (يوم: مبلغ).
+        val labels = lastSevenDayLabels()
+        binding.barChartLast7Days.contentDescription =
+            if (values.all { it == 0.0 }) {
+                getString(R.string.revenue_chart_content_description_empty)
+            } else {
+                getString(
+                    R.string.revenue_chart_content_description,
+                    values.mapIndexed { i, v -> "${labels.getOrElse(i) { "" }} ${CurrencyFormatter.format(v, currency)}" }
+                        .joinToString("، ")
+                )
+            }
     }
 
     private fun observeState() {
@@ -421,7 +435,7 @@ class RevenueFragment : Fragment() {
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                     )
                 } catch (e: Exception) {
-                    requireContext().toast(getString(R.string.revenue_excel_export_error))
+                    view?.showSnack(getString(R.string.revenue_excel_export_error), SnackType.ERROR)
                 } finally {
                     setShareReportBusy(false)
                 }

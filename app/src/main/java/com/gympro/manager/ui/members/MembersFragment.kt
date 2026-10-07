@@ -18,7 +18,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.paging.LoadState
 import android.content.res.Configuration
 import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.gympro.manager.GymApplication
 import com.gympro.manager.R
 import com.gympro.manager.databinding.FragmentMembersBinding
@@ -35,6 +34,12 @@ import com.gympro.manager.utils.WhatsAppHelper
 import com.gympro.manager.utils.visibleIf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import com.gympro.manager.utils.SnackType
+import com.gympro.manager.utils.showSnack
+import com.gympro.manager.utils.Haptic
+import com.gympro.manager.utils.haptic
+import com.gympro.manager.utils.MemberHighlight
+import com.gympro.manager.utils.setOnSingleClickListener
 
 class MembersFragment : Fragment() {
 
@@ -96,6 +101,39 @@ class MembersFragment : Fragment() {
      * (منذ إصلاح فقدان الحالة عند تبديل التبويبات — راجع showTab في MainActivity)، بدل
      * الاعتماد فقط على arguments التي لا تُقرأ إلا مرة واحدة عند الإنشاء الأول.
      */
+    /** يمنع اهتزاز التبديل عندما يُحدَّد الفلتر برمجياً (من لوحة التحكم) لا بلمسة المستخدم. */
+    private var programmaticFilterChange = false
+
+    private var pendingHighlightId: Long? = null
+    private var sawLoadingForHighlight = false
+    private val closeEntranceRunnable = Runnable { if (_binding != null) adapter.entranceEnabled = false }
+
+    /** يفتح نافذة حركة دخول العناصر لمدة محدودة ثم يغلقها (لا حركة أثناء التمرير العادي). */
+    private fun openEntranceWindow(durationMs: Long) {
+        val root = _binding?.root ?: return
+        adapter.entranceEnabled = true
+        root.removeCallbacks(closeEntranceRunnable)
+        root.postDelayed(closeEntranceRunnable, durationMs)
+    }
+
+    /** يلتقط معرّف العضو المُضاف حديثاً (إن وُجد) قبل إعادة تحميل القائمة. */
+    private fun prepareHighlight() {
+        MemberHighlight.consume()?.let {
+            pendingHighlightId = it
+            sawLoadingForHighlight = false
+        }
+    }
+
+    private fun highlightPendingMember() {
+        val id = pendingHighlightId ?: return
+        pendingHighlightId = null
+        val pos = adapter.snapshot().items.indexOfFirst { it.id == id }
+        if (pos < 0) return // مخفي بسبب فلتر أو بحث حالي
+        adapter.highlightId = id
+        binding.rvMembers.scrollToPosition(pos)
+        adapter.notifyItemChanged(pos)
+    }
+
     fun applyFilter(filter: MemberFilter) {
         val chipId = when (filter) {
             MemberFilter.ALL -> R.id.chipAll
@@ -104,7 +142,9 @@ class MembersFragment : Fragment() {
             MemberFilter.EXPIRED -> R.id.chipExpired
             MemberFilter.UNPAID -> R.id.chipUnpaid
         }
+        programmaticFilterChange = true
         binding.chipGroupFilter.check(chipId)
+        programmaticFilterChange = false
         viewModel.setFilter(filter)
     }
 
@@ -169,6 +209,18 @@ class MembersFragment : Fragment() {
             binding.rvMembers.addItemDecoration(GridSpacingItemDecoration(spanCount, spacingPx))
         }
         binding.rvMembers.adapter = adapter
+        openEntranceWindow(1500L)
+        setupEmptyStateActions()
+    }
+
+    private fun setupEmptyStateActions() {
+        binding.btnEmptyAdd.setOnSingleClickListener {
+            startActivity(Intent(requireContext(), AddEditMemberActivity::class.java))
+        }
+        binding.btnEmptyClear.setOnSingleClickListener {
+            binding.etSearch.setText("")
+            applyFilter(MemberFilter.ALL)
+        }
     }
 
     private fun setupSearch() {
@@ -186,6 +238,10 @@ class MembersFragment : Fragment() {
     private fun setupFilterChips() {
         binding.chipGroupFilter.setOnCheckedStateChangeListener { _, checkedIds ->
             val id = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
+            if (!programmaticFilterChange) {
+                binding.chipGroupFilter.haptic(Haptic.TICK)
+                openEntranceWindow(700L)
+            }
             val newFilter = when (id) {
                 R.id.chipActive -> MemberFilter.ACTIVE
                 R.id.chipExpiring -> MemberFilter.EXPIRING_SOON
@@ -212,8 +268,8 @@ class MembersFragment : Fragment() {
      * كاملة بعد الآن للفحص المباشر عليها.
      */
     private fun observeMembers() {
-        binding.progressMembersLoading.visibleIf(true)
-        binding.rvMembers.visibleIf(false)
+        setSkeleton(true)
+        binding.rvMembers.visibleIf(true)
         binding.emptyMembersContainer.visibleIf(false)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -226,8 +282,12 @@ class MembersFragment : Fragment() {
                     adapter.loadStateFlow.collectLatest { loadStates ->
                         val isLoading = loadStates.refresh is LoadState.Loading
                         val isEmpty = loadStates.refresh is LoadState.NotLoading && adapter.itemCount == 0
-                        binding.progressMembersLoading.visibleIf(isLoading)
-                        binding.rvMembers.visibleIf(!isLoading && !isEmpty)
+                        if (isLoading) sawLoadingForHighlight = true
+                        else if (sawLoadingForHighlight) highlightPendingMember()
+                        // لا نُخفي RecyclerView أبداً: إخفاؤه (GONE) أثناء إعادة التحميل بعد
+                        // إضافة عضو كان يترك القائمة غير مقاسة، فلا تظهر العناصر الجديدة.
+                        // التحميل يظهر فقط عند عدم وجود أي عنصر معروض بعد.
+                        setSkeleton(isLoading && adapter.itemCount == 0)
                         binding.emptyMembersContainer.visibleIf(!isLoading && isEmpty)
                         // البند 16: رسالة "لا يوجد أعضاء بعد / اضغط + لإضافة أول عضو" كانت تظهر
                         // أيضاً عند عدم وجود نتائج بسبب بحث أو فلتر (مثلاً "غير مدفوع")، وهي
@@ -236,8 +296,12 @@ class MembersFragment : Fragment() {
                             val isFiltered = viewModel.currentQuery.value.isNotBlank() ||
                                 viewModel.currentFilter.value != MemberFilter.ALL
                             binding.tvMembersEmptyMessage.setText(
-                                if (isFiltered) R.string.members_no_results else R.string.members_empty
+                                if (isFiltered) R.string.members_no_results else R.string.members_empty_title
                             )
+                            // لا أعضاء أصلاً → دعوة للإضافة؛ نتائج فارغة بسبب بحث/فلتر → زر مسحهما.
+                            binding.tvMembersEmptyHint.visibleIf(!isFiltered)
+                            binding.btnEmptyAdd.visibleIf(!isFiltered)
+                            binding.btnEmptyClear.visibleIf(isFiltered)
                         }
                     }
                 }
@@ -250,7 +314,7 @@ class MembersFragment : Fragment() {
         // من رقم غير صالح (بيانات قديمة سابقة لتحقق AddEditMemberActivity) وإرساله لجهة
         // خاطئة أو لا أحد بصمت.
         if (!WhatsAppHelper.isSendableNumber(member.phone)) {
-            Snackbar.make(binding.root, getString(R.string.whatsapp_invalid_phone), Snackbar.LENGTH_LONG).show()
+            binding.root.showSnack(getString(R.string.whatsapp_invalid_phone), SnackType.ERROR)
             return
         }
         val settings = viewModel.settings.value
@@ -302,24 +366,66 @@ class MembersFragment : Fragment() {
         // openChat() يكفي).
         when (result) {
             WhatsAppHelper.SendResult.AppOpened -> {
-                Snackbar.make(binding.root, getString(R.string.whatsapp_sending_to, number), Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.whatsapp_try_other_prefix)) {
-                        sendWhatsapp(member, forcedPrefix = WhatsAppHelper.otherPrefix(prefix))
-                    }
-                    .show()
+                binding.root.showSnack(
+                    getString(R.string.whatsapp_sending_to, number),
+                    SnackType.SUCCESS,
+                    getString(R.string.whatsapp_try_other_prefix)
+                ) { sendWhatsapp(member, forcedPrefix = WhatsAppHelper.otherPrefix(prefix)) }
             }
             WhatsAppHelper.SendResult.BrowserFallback -> {
-                Snackbar.make(binding.root, getString(R.string.whatsapp_sending_browser_fallback, number), Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.whatsapp_try_other_prefix)) {
-                        sendWhatsapp(member, forcedPrefix = WhatsAppHelper.otherPrefix(prefix))
-                    }
-                    .show()
+                binding.root.showSnack(
+                    getString(R.string.whatsapp_sending_browser_fallback, number),
+                    SnackType.INFO,
+                    getString(R.string.whatsapp_try_other_prefix)
+                ) { sendWhatsapp(member, forcedPrefix = WhatsAppHelper.otherPrefix(prefix)) }
             }
             WhatsAppHelper.SendResult.Failed -> Unit
         }
     }
 
+    /**
+     * إصلاح: بعد إضافة عضو من AddEditMemberActivity كانت القائمة لا تعكس العضو الجديد
+     * (رغم ظهوره في الإحصائيات). نُجبر Paging على إعادة الاستعلام عند العودة للشاشة
+     * وعند إظهار التبويب (hide/show لا يستدعي onResume).
+     */
+    override fun onResume() {
+        super.onResume()
+        if (_binding != null && !isHidden) {
+            prepareHighlight()
+            adapter.refresh()
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden && _binding != null) {
+            prepareHighlight()
+            adapter.refresh()
+        }
+    }
+
+    private var skeletonPulse: android.animation.ObjectAnimator? = null
+
+    private fun setSkeleton(show: Boolean) {
+        val sk = binding.skeletonMembers
+        if (show == (sk.visibility == View.VISIBLE)) return
+        sk.visibleIf(show)
+        skeletonPulse?.cancel()
+        skeletonPulse = null
+        sk.alpha = 1f
+        if (show) {
+            skeletonPulse = android.animation.ObjectAnimator.ofFloat(sk, "alpha", 1f, 0.55f).apply {
+                duration = 800
+                repeatMode = android.animation.ValueAnimator.REVERSE
+                repeatCount = android.animation.ValueAnimator.INFINITE
+                start()
+            }
+        }
+    }
+
     override fun onDestroyView() {
+        skeletonPulse?.cancel()
+        skeletonPulse = null
         super.onDestroyView()
         _binding = null
     }

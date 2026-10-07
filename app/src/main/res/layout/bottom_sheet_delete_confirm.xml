@@ -53,7 +53,7 @@
         android:background="@drawable/bg_banner_error_glass"
         android:gravity="center"
         android:padding="@dimen/spacing_md"
-        android:textColor="@color/status_error"
+        android:textColor="@color/status_error_text"
         android:visibility="gone"
         android:lineSpacingExtra="4dp"
         tools:text="⚠️ تنبيه: على هذا العضو مبلغ غير مدفوع وقدره 60 ₪" />

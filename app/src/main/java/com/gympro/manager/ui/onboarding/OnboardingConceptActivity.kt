@@ -8,6 +8,7 @@ import com.gympro.manager.R
 import com.gympro.manager.databinding.ActivityOnboardingConceptBinding
 import com.gympro.manager.utils.applyHorizontalGradient
 import com.gympro.manager.utils.setOnSingleClickListener
+import com.gympro.manager.utils.capContentWidth
 
 /**
  * شاشة 2 من 4 في مسار الإعداد الأولي (Onboarding) — فكرة التطبيق.
@@ -21,6 +22,7 @@ class OnboardingConceptActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingConceptBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        capContentWidth(binding.root)
 
         binding.tvConceptTitle.applyHorizontalGradient(
             startColor = ContextCompat.getColor(this, R.color.brand_gradient_start),

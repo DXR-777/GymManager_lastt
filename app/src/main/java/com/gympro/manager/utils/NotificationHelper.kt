@@ -24,6 +24,7 @@ object NotificationHelper {
     private const val UNPAID_NOTIF_ID = 9999
     private const val ARCHIVE_PURGE_NOTIF_ID = 2000
     private const val EXPIRY_SUMMARY_NOTIF_ID = 1001
+    private const val BACKUP_NOTIF_ID = 3000
 
     /** راجع تعليق notif_expiry_summary_title في strings.xml — يجمع Android (minSdk هنا
      *  26، فوق حد دعم التجميع API 24) كل إشعار يحمل نفس المفتاح في حزمة واحدة قابلة
@@ -236,6 +237,24 @@ object NotificationHelper {
             NotificationManagerCompat.from(context).notify(archivePurgeTag(memberId), ARCHIVE_PURGE_NOTIF_ID, notification)
         } catch (e: SecurityException) {
             // المستخدم رفض إذن الإشعارات؛ تجاهل بأمان
+        }
+    }
+
+    fun showBackupReminder(context: Context, failed: Boolean) {
+        if (!hasPermission(context)) return
+        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(R.string.notif_backup_title))
+            .setContentText(
+                context.getString(if (failed) R.string.notif_backup_failed_body else R.string.notif_backup_reminder_body)
+            )
+            .setAutoCancel(true)
+            .setContentIntent(contentIntent(context, BACKUP_NOTIF_ID, null))
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .build()
+        try {
+            NotificationManagerCompat.from(context).notify(BACKUP_NOTIF_ID, notification)
+        } catch (e: SecurityException) {
         }
     }
 

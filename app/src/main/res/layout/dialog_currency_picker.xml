@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:fontFamily="@font/cairo_medium"
-                android:text="₪"
+                android:text="@string/currency_symbol_ils"
                 android:textColor="@color/text_on_accent"
                 android:textSize="@dimen/text_subtitle"
                 android:textStyle="bold" />
@@ -89,7 +89,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="₪ ILS"
+                android:text="@string/currency_label_ils"
                 android:textColor="@color/text_secondary"
                 android:textSize="@dimen/text_card_description" />
         </LinearLayout>
@@ -120,7 +120,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:fontFamily="@font/cairo_medium"
-                android:text="$"
+                android:text="@string/currency_symbol_usd"
                 android:textColor="@color/text_on_accent"
                 android:textSize="@dimen/text_subtitle"
                 android:textStyle="bold" />
@@ -146,7 +146,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="$ USD"
+                android:text="@string/currency_label_usd"
                 android:textColor="@color/text_secondary"
                 android:textSize="@dimen/text_card_description" />
         </LinearLayout>
@@ -177,7 +177,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:fontFamily="@font/cairo_medium"
-                android:text="د.أ"
+                android:text="@string/currency_symbol_jod"
                 android:textColor="@color/text_on_accent"
                 android:textSize="@dimen/text_card_description"
                 android:textStyle="bold" />
@@ -203,7 +203,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:text="د.أ JOD"
+                android:text="@string/currency_label_jod"
                 android:textColor="@color/text_secondary"
                 android:textSize="@dimen/text_card_description" />
         </LinearLayout>
@@ -238,7 +238,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:fontFamily="@font/cairo_medium"
-                android:text="+"
+                android:text="@string/currency_symbol_plus"
                 android:textColor="@color/text_on_accent"
                 android:textSize="@dimen/text_subtitle"
                 android:textStyle="bold" />

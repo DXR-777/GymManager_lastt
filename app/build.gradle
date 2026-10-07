@@ -4,6 +4,12 @@ plugins {
     id 'org.jetbrains.kotlin.kapt'
 }
 
+def hasFirebase = file('google-services.json').exists()
+if (hasFirebase) {
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
+}
+
 android {
     namespace 'com.gympro.manager'
     compileSdk 34
@@ -23,6 +29,8 @@ android {
         // في نفس الشاشة — تجربة مختلطة عن غير قصد. "ar" هنا يجعل القرار (عربي فقط
         // حالياً) ساري الفعل عملياً في كل الموارد، لا في strings.xml وحده.
         resConfigs "ar"
+
+        buildConfigField "boolean", "HAS_FIREBASE", hasFirebase.toString()
     }
 
     buildTypes {
@@ -49,6 +57,12 @@ android {
         buildConfig true
     }
 
+    // ملفات schema التي يصدّرها Room (راجع kapt أدناه) تُضاف كأصول لاختبارات الأجهزة، فيستطيع
+    // MigrationTestHelper قراءة مخطط كل إصدار عند كتابة اختبار ترحيل جديد.
+    sourceSets {
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
+
     packagingOptions {
         resources {
             excludes += ['META-INF/DEPENDENCIES']
@@ -56,7 +70,20 @@ android {
     }
 }
 
+// تصدير مخطط قاعدة البيانات (exportSchema = true) إلى app/schemas عند كل بناء.
+// يجب إضافة المجلد إلى git: هو المرجع الوحيد لشكل كل إصدار سابق من القاعدة.
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas".toString())
+    }
+}
+
 dependencies {
+    if (hasFirebase) {
+        implementation platform('com.google.firebase:firebase-bom:32.7.2')
+        implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    }
+
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
@@ -94,5 +121,6 @@ dependencies {
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.room:room-testing:2.6.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }

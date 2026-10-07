@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Brand -->
-    <color name="brand_primary">#1A1A2E</color>
-    <color name="brand_primary_dark">#12121F</color>
-    <color name="brand_secondary">#16213E</color>
-    <color name="brand_accent">#E94560</color>
-    <color name="brand_accent_dark">#C13550</color>
+    <color name="brand_primary">#FFFFFF</color>
+    <color name="brand_primary_dark">#ECEEF8</color>
+    <color name="brand_secondary">#DDE1F3</color>
+    <color name="brand_accent">#D63A56</color>
+    <color name="brand_accent_dark">#B52F4A</color>
     <!-- Soft tonal tint for the bottom nav active pill: keeps the checked icon/label
          (brand_accent) visible on top instead of red-on-red. -->
-    <color name="brand_accent_soft">#33E94560</color>
+    <color name="brand_accent_soft">#33D63A56</color>
 
     <!-- Text input field borders: kept separate from brand_accent (which is red/pink and
          reads as an error state) so a focused field never looks like a validation error.
          See Widget.GymManager.TextInputLayout + color/text_input_stroke_color.xml. -->
-    <color name="input_stroke_normal">#3A3A5E</color>
-    <color name="input_stroke_focused">#8A7FBF</color>
+    <color name="input_stroke_normal">#6F7799</color>
+    <color name="input_stroke_focused">#5B4FC4</color>
 
     <!-- Status -->
     <color name="status_success">#0F9B58</color>
@@ -23,19 +23,19 @@
     <color name="status_warning_bg">#22F5A623</color>
     <color name="status_error">#DC2626</color>
     <color name="status_error_bg">#22DC2626</color>
-    <color name="status_neutral">#8892B0</color>
+    <color name="status_neutral">#5B6485</color>
     <!-- نسخ "نص/أيقونة" أفتح للحالات على الخلفيات الداكنة (تباين ≥4.5:1 على surface_card).
          status_error (#DC2626) يعطي ≈3.4:1 فقط كنص، فيُستخدم للأسطح/الحدود لا للنص الصغير. -->
-    <color name="status_error_text">#F87171</color>
-    <color name="status_warning_text">#F5A623</color>
-    <color name="status_success_text">#34D399</color>
+    <color name="status_error_text">#B91C1C</color>
+    <color name="status_warning_text">#B45309</color>
+    <color name="status_success_text">#047857</color>
 
     <!-- Surfaces -->
-    <color name="background">#0F0F23</color>
-    <color name="surface_card">#1E1E3A</color>
-    <color name="surface_card_alt">#252548</color>
-    <color name="surface_elevated">#2A2A52</color>
-    <color name="divider">#33335A</color>
+    <color name="background">#F4F5FB</color>
+    <color name="surface_card">#FFFFFF</color>
+    <color name="surface_card_alt">#ECEEF8</color>
+    <color name="surface_elevated">#E3E6F3</color>
+    <color name="divider">#D5D9EA</color>
 
     <!-- Payment switch track: OFF must read as an unmistakable financial warning,
          not blend into the surrounding card surface. See switch_track_color.xml. -->
@@ -43,9 +43,9 @@
     <color name="switch_track_unpaid_bg">#22DC2626</color>
 
     <!-- Text -->
-    <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#8892B0</color>
-    <color name="text_disabled">#5A6079</color>
+    <color name="text_primary">#14172B</color>
+    <color name="text_secondary">#4F5878</color>
+    <color name="text_disabled">#8A90A8</color>
     <color name="text_on_accent">#FFFFFF</color>
 
     <!-- Chart palette -->
@@ -62,32 +62,37 @@
     <!-- "جزئي" (Partial Payment): حالة دفع ثالثة جديدة، بنفسجي مميّز عن أخضر
          status_success (مدفوع) وأحمر status_error (غير مدفوع). -->
     <color name="status_partial">#8B5CF6</color>
+    <!-- نسخة فاتحة للنص فقط على الأسطح الداكنة (تباين 5.9 على البطاقة بدل 3.8) -->
+    <color name="snackbar_action">#FF8FA0</color>
+    <color name="status_partial_text">#6D28D9</color>
+    <!-- أخضر داكن للأسطح الصلبة التي عليها نص أبيض (تباين 5.1 بدل 3.6) -->
+    <color name="status_success_solid">#0A7F47</color>
     <color name="status_partial_bg">#228B5CF6</color>
 
     <!-- تدرّج العناصر البارزة (زر الحفظ، حدود بطاقة السعر، شريحة النوع المختار):
          من brand_accent الحالي إلى بنفسجي دافئ، بنفس روح المرجع البصري المرفق. -->
-    <color name="brand_gradient_start">#F2545B</color>
-    <color name="brand_gradient_end">#8B5CF6</color>
+    <color name="brand_gradient_start">#D63A56</color>
+    <color name="brand_gradient_end">#7C4DE8</color>
 
     <!-- سطوح "الزجاج" (Glassmorphism): تعبئة شبه شفافة + حد علوي خفيف يوحيان بلوح
          زجاجي فوق الخلفية الداكنة، بدل بطاقات solid المستخدمة في بقية الشاشات. -->
-    <color name="glass_fill">#CC1E1E3A</color>
+    <color name="glass_fill">#F2FFFFFF</color>
     <!-- كتلة Skeleton (7.2): أفتح قليلاً من الخلفية، بلا شفافية زجاجية، ليقرأ كـ"مكان محجوز" -->
-    <color name="skeleton_fill">#2A2A4A</color>
-    <color name="glass_fill_alt">#CC252548</color>
-    <color name="glass_border">#26FFFFFF</color>
-    <color name="glass_border_strong">#40FFFFFF</color>
+    <color name="skeleton_fill">#E3E6F3</color>
+    <color name="glass_fill_alt">#F2ECEEF8</color>
+    <color name="glass_border">#401B1F3B</color>
+    <color name="glass_border_strong">#4D1B1F3B</color>
     <!-- لمعان علوي أخف لبطاقات الإحصائيات، وخط الحدّ العلوي المُبرَز (بدل الاعتماد على الظل). -->
-    <color name="glass_sheen_soft">#26FFFFFF</color>
-    <color name="glass_top_highlight">#66FFFFFF</color>
+    <color name="glass_sheen_soft">#66FFFFFF</color>
+    <color name="glass_top_highlight">#CCFFFFFF</color>
 
     <!-- القائمة السفلية العائمة (2026 Glassmorphism): تعبئة أخفّ عتامة عمداً من
          glass_fill_alt العادي (70% بدل 80%) — الهدف "تفاعل مع الخلفية" لا سطح
          شبه مصمت، فكلما قلّت العتامة ظهر أكثر من محتوى الشاشة خلف الشريط
          العائم. sheen: توهج علوي أبيض خافت جداً (12% فقط) يحاكي انعكاس ضوء
          خفيف على سطح زجاجي، يتلاشى بالكامل عند 55% من ارتفاع الشريط. -->
-    <color name="bottom_nav_glass_fill">#B3252548</color>
-    <color name="bottom_nav_glass_sheen">#1FFFFFFF</color>
+    <color name="bottom_nav_glass_fill">#F2FFFFFF</color>
+    <color name="bottom_nav_glass_sheen">#99FFFFFF</color>
 
     <!-- وهج ناعم (Glow) خلف زر الحفظ وبطاقة السعر — طبقات شفافة متراكبة تحاكي وهجاً
          بلا الحاجة لتمويه صورة حقيقي. -->
@@ -117,15 +122,18 @@
     <!-- نقاط تقدّم شاشات الإعداد الأولي: النقطة النشطة تستخدم brand_gradient مباشرة،
          وهذا لون النقاط غير النشطة — مأخوذ بالمعايَنة المباشرة من مرجع التصميم
          المرفق (لون بنفسجي رمادي مكتوم، لا يطابق أي رمز نص/حدود موجود مسبقاً). -->
-    <color name="onboarding_dot_inactive">#4A4478</color>
+    <color name="onboarding_dot_inactive">#B3B8D6</color>
 
     <!-- شاشة "فكرة التطبيق" (Onboarding 2 من 4): لون سهم ">" الصغير داخل كل بطاقة
          ميزة — أخفت من text_secondary العادي (معايَنة مباشرة من المرجع: أزرق-بنفسجي
          مكتوم شبه شفاف)، ليقرأ كتفصيل ثانوي لا كعنصر تفاعلي بارز. -->
-    <color name="onboarding_chevron_tint">#8C8CB8</color>
+    <color name="onboarding_chevron_tint">#7A82A6</color>
 
     <!-- الأوراق السفلية الزجاجية (Bottom Sheets): أعتم قليلاً من glass_fill_alt (95% بدل 80%)
          لأن الورقة تحمل نصوصاً وأزراراً تفاعلية طويلة فوق شاشة خلفها محتوى كثيف، فلا يجوز أن
          تشفّ قراءة النص عبرها — تبقى مع ذلك شبه شفافة بما يكفي لتُقرأ كسطح زجاجي لا كلوح مصمت. -->
-    <color name="sheet_glass_fill">#F2252548</color>
+    <color name="sheet_glass_fill">#FAFFFFFF</color>
+    <color name="brand_accent_text">#C93049</color>
+    <color name="icon_default">#14172B</color>
+    <color name="ripple_neutral">#1F1B1F3B</color>
 </resources>

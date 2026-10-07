@@ -27,15 +27,25 @@ import com.gympro.manager.security.AppLockUi
 import com.gympro.manager.security.LockActivity
 import com.gympro.manager.ui.archive.ArchiveActivity
 import com.gympro.manager.utils.BackupManager
+import com.gympro.manager.utils.AutoBackupRunner
+import com.gympro.manager.utils.BackupPrefs
+import com.gympro.manager.utils.ThemePrefs
+import android.text.format.DateUtils as AndroidDateUtils
 import com.gympro.manager.utils.limitDecimalPlaces
 import com.gympro.manager.utils.setOnSingleClickListener
 import com.gympro.manager.utils.setupClearFocusOnOutsideTouch
 import com.gympro.manager.utils.toCleanString
-import com.gympro.manager.utils.toSafeDoubleOrNull
+import com.gympro.manager.utils.toSafeMoneyOrNull
 import com.gympro.manager.utils.toast
 import com.gympro.manager.utils.visibleIf
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import com.gympro.manager.utils.SnackType
+import com.gympro.manager.utils.showSnack
+import androidx.appcompat.app.AlertDialog
+import com.gympro.manager.databinding.DialogBackupPasswordBinding
+import com.gympro.manager.utils.BackupPasswordRequiredException
+import com.gympro.manager.utils.BackupWrongPasswordException
 
 /**
  * خيار عملة في منتقي الإعدادات — مطابق تماماً (بنفس الترتيب والرموز) لقائمة
@@ -58,6 +68,23 @@ class SettingsFragment : Fragment() {
         if (uri != null) confirmRestore(uri)
     }
 
+    private var pendingTreeUri: android.net.Uri? = null
+
+    private val folderLauncher = registerForActivityResult(ActivityResultContracts.OpenDocumentTree()) { uri ->
+        if (uri == null) {
+            if (_binding != null) refreshAutoBackupUi()
+            return@registerForActivityResult
+        }
+        requireContext().contentResolver.takePersistableUriPermission(
+            uri,
+            Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+        )
+        pendingTreeUri = uri
+        showBackupPasswordDialog(allowSkip = false, onCancel = { refreshAutoBackupUi() }) { password ->
+            enableAutoBackup(uri, password)
+        }
+    }
+
     /** الإجراء الأمني الجاري تنفيذه عبر LockActivity — يحدد ما يحدث عند نجاحها. */
     private enum class LockAction { ENABLE, DISABLE, CHANGE, NEW_RECOVERY }
     private var pendingLockAction: LockAction? = null
@@ -67,10 +94,10 @@ class SettingsFragment : Fragment() {
         pendingLockAction = null
         if (result.resultCode == Activity.RESULT_OK) {
             when (action) {
-                LockAction.ENABLE -> requireContext().toast(getString(R.string.lock_enabled_toast))
+                LockAction.ENABLE -> view?.showSnack(getString(R.string.lock_enabled_toast), SnackType.SUCCESS)
                 LockAction.DISABLE -> {
                     AppLockManager.disable()
-                    requireContext().toast(getString(R.string.lock_disabled_toast))
+                    view?.showSnack(getString(R.string.lock_disabled_toast), SnackType.INFO)
                 }
                 LockAction.NEW_RECOVERY -> AppLockManager.generateRecoveryCode()?.let {
                     AppLockUi.showRecoveryCodeDialog(requireContext(), it) {}
@@ -122,7 +149,11 @@ class SettingsFragment : Fragment() {
 
         binding.btnSaveSettings.setOnSingleClickListener { saveSettings() }
         binding.btnBackupNow.setOnSingleClickListener { backupNow() }
-        binding.btnRestoreBackup.setOnSingleClickListener { restoreLauncher.launch(arrayOf("application/json")) }
+        binding.btnTheme.setOnSingleClickListener { showThemePicker() }
+        binding.btnAutoBackupFolder.setOnSingleClickListener { folderLauncher.launch(BackupPrefs.treeUri(requireContext())) }
+        refreshAutoBackupUi()
+        // "*/*": الملف المشفّر .gymbak نوعه octet-stream فلا يظهر في منتقي JSON فقط؛ المحتوى يُتحقق منه عند القراءة.
+        binding.btnRestoreBackup.setOnSingleClickListener { restoreLauncher.launch(arrayOf("*/*")) }
         binding.btnExportCsv.setOnSingleClickListener { exportCsv() }
         binding.btnOpenArchive.setOnSingleClickListener { startActivity(Intent(requireContext(), ArchiveActivity::class.java)) }
         binding.btnAbout.setOnSingleClickListener { showAbout() }
@@ -355,7 +386,7 @@ class SettingsFragment : Fragment() {
             .setPositiveButton(R.string.action_confirm) { _, _ ->
                 val symbol = input.text?.toString()?.trim().orEmpty()
                 if (symbol.isEmpty()) {
-                    requireContext().toast(getString(R.string.currency_custom_dialog_error_empty))
+                    view?.showSnack(getString(R.string.currency_custom_dialog_error_empty), SnackType.ERROR)
                     return@setPositiveButton
                 }
                 selectedCurrency = null
@@ -421,9 +452,9 @@ class SettingsFragment : Fragment() {
         // toSafeDoubleOrNull (لا toDoubleOrNull القياسية) لقبول الأرقام العربية-الهندية،
         // بنفس المعالجة المطبَّقة على نفس الحقول تماماً في شاشة الإعداد الأولي وشاشة
         // إضافة/تعديل عضو — بدونها كان نفس الرقم يُقبل هناك ويُرفَض هنا فقط.
-        val daily = binding.etDailyPrice.text?.toString()?.toSafeDoubleOrNull()
-        val weekly = binding.etWeeklyPrice.text?.toString()?.toSafeDoubleOrNull()
-        val monthly = binding.etMonthlyPrice.text?.toString()?.toSafeDoubleOrNull()
+        val daily = binding.etDailyPrice.text?.toString()?.toSafeMoneyOrNull()
+        val weekly = binding.etWeeklyPrice.text?.toString()?.toSafeMoneyOrNull()
+        val monthly = binding.etMonthlyPrice.text?.toString()?.toSafeMoneyOrNull()
 
         // كل حقل يُرفض أيضاً إن كان صفراً أو سالباً — بدونها كان يمكن حفظ سعر
         // 0/سالب كسعر افتراضي دائم للنادي من شاشة الإعدادات (بعكس شاشة الإعداد
@@ -471,23 +502,131 @@ class SettingsFragment : Fragment() {
                 )
             )
             setBusy(false)
-            requireContext().toast(getString(R.string.settings_save_success))
+            view?.showSnack(getString(R.string.settings_save_success), SnackType.SUCCESS)
         }
     }
 
     private fun backupNow() {
+        showBackupPasswordDialog { password -> runBackup(password) }
+    }
+
+    /** يطلب كلمة مرور (مع تأكيد) أو يسمح بنسخة بلا تشفير؛ الإلغاء لا يفعل شيئاً. */
+    private fun showBackupPasswordDialog(
+        allowSkip: Boolean = true,
+        onCancel: (() -> Unit)? = null,
+        onChosen: (CharArray?) -> Unit
+    ) {
+        val dialogBinding = DialogBackupPasswordBinding.inflate(layoutInflater)
+        if (!allowSkip) dialogBinding.tvBackupPasswordMessage.setText(R.string.auto_backup_password_message)
+        val builder = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.backup_password_title)
+            .setView(dialogBinding.root)
+            .setNegativeButton(R.string.action_cancel) { _, _ -> onCancel?.invoke() }
+            .setOnCancelListener { onCancel?.invoke() }
+            .setPositiveButton(R.string.backup_password_encrypt, null) // يُربط يدوياً ليبقى الحوار مفتوحاً عند الخطأ
+        if (allowSkip) builder.setNeutralButton(R.string.backup_password_skip) { _, _ -> onChosen(null) }
+        val dialog = builder.create()
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val password = dialogBinding.etBackupPassword.text?.toString().orEmpty()
+                val confirm = dialogBinding.etBackupPasswordConfirm.text?.toString().orEmpty()
+                dialogBinding.tilBackupPassword.error = null
+                dialogBinding.tilBackupPasswordConfirm.error = null
+                when {
+                    password.length < 6 ->
+                        dialogBinding.tilBackupPassword.error = getString(R.string.backup_password_too_short)
+                    password != confirm ->
+                        dialogBinding.tilBackupPasswordConfirm.error = getString(R.string.backup_password_mismatch)
+                    else -> {
+                        dialog.dismiss()
+                        onChosen(password.toCharArray())
+                    }
+                }
+            }
+        }
+        dialog.show()
+    }
+
+    private fun enableAutoBackup(uri: android.net.Uri, password: CharArray?) {
+        val ctx = requireContext().applicationContext
+        BackupPrefs.setTree(ctx, uri)
+        BackupPrefs.setPassword(ctx, password)
+        password?.fill('\u0000')
+        BackupPrefs.setAutoEnabled(ctx, true)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val ok = AutoBackupRunner.run(ctx, repository)
+            if (!ok) BackupPrefs.setAutoEnabled(ctx, false)
+            view?.showSnack(
+                getString(if (ok) R.string.auto_backup_enabled_toast else R.string.auto_backup_failed_toast),
+                if (ok) SnackType.SUCCESS else SnackType.ERROR
+            )
+            if (_binding != null) refreshAutoBackupUi()
+        }
+    }
+
+    private fun refreshAutoBackupUi() {
+        val ctx = requireContext()
+        val enabled = BackupPrefs.isAutoEnabled(ctx)
+        binding.switchAutoBackup.setOnCheckedChangeListener(null)
+        binding.switchAutoBackup.isChecked = enabled
+        binding.switchAutoBackup.setOnCheckedChangeListener { _, checked ->
+            if (checked) {
+                folderLauncher.launch(BackupPrefs.treeUri(ctx))
+            } else {
+                BackupPrefs.disableAuto(ctx)
+                refreshAutoBackupUi()
+            }
+        }
+        binding.btnAutoBackupFolder.setText(
+            if (BackupPrefs.treeUri(ctx) != null) R.string.auto_backup_change_folder else R.string.auto_backup_choose_folder
+        )
+        val last = BackupPrefs.lastBackupAt(ctx)
+        binding.tvAutoBackupStatus.text = when {
+            BackupPrefs.lastError(ctx) != null -> getString(R.string.auto_backup_status_error)
+            !enabled -> getString(R.string.auto_backup_status_off)
+            last == 0L -> getString(R.string.auto_backup_status_never)
+            else -> getString(
+                R.string.auto_backup_status_last,
+                AndroidDateUtils.formatDateTime(
+                    ctx, last,
+                    AndroidDateUtils.FORMAT_SHOW_DATE or AndroidDateUtils.FORMAT_SHOW_TIME or AndroidDateUtils.FORMAT_ABBREV_MONTH
+                )
+            )
+        }
+    }
+
+    private fun showThemePicker() {
+        val labels = arrayOf(getString(R.string.theme_system), getString(R.string.theme_light), getString(R.string.theme_dark))
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.settings_theme)
+            .setSingleChoiceItems(labels, ThemePrefs.get(requireContext())) { d, which ->
+                ThemePrefs.set(requireContext(), which)
+                d.dismiss()
+            }
+            .setNegativeButton(R.string.action_cancel, null)
+            .show()
+    }
+
+    private fun runBackup(password: CharArray?) {
         setBusy(true)
         showBackupProgress()
         viewLifecycleOwner.lifecycleScope.launch {
-            val file = BackupManager.createBackupFile(requireContext(), repository) { processed, total ->
-                updateBackupProgress(processed, total)
+            try {
+                val file = BackupManager.createBackupFile(requireContext(), repository, password) { processed, total ->
+                    updateBackupProgress(processed, total)
+                }
+                view?.showSnack(
+                    getString(R.string.settings_backup_success_with_size, BackupManager.formatFileSize(file.length())),
+                    SnackType.SUCCESS
+                )
+                BackupManager.shareBackupFile(requireContext(), file)
+                if (_binding != null) refreshAutoBackupUi()
+            } catch (e: Exception) {
+                view?.showSnack(getString(R.string.settings_backup_error), SnackType.ERROR)
+            } finally {
+                hideBackupProgress()
+                setBusy(false)
             }
-            hideBackupProgress()
-            setBusy(false)
-            requireContext().toast(
-                getString(R.string.settings_backup_success_with_size, BackupManager.formatFileSize(file.length()))
-            )
-            BackupManager.shareBackupFile(requireContext(), file)
         }
     }
 
@@ -516,23 +655,51 @@ class SettingsFragment : Fragment() {
             .setTitle(R.string.settings_restore_confirm_title)
             .setMessage(R.string.settings_restore_confirm_message)
             .setNegativeButton(R.string.action_cancel, null)
-            .setPositiveButton(R.string.action_confirm) { _, _ ->
-                setBusy(true)
-                showBackupProgress()
-                viewLifecycleOwner.lifecycleScope.launch {
-                    try {
-                        BackupManager.restoreFromUri(requireContext(), uri, repository) { processed, total ->
-                            updateBackupProgress(processed, total)
-                        }
-                        requireContext().toast(getString(R.string.settings_restore_success))
-                        loadSettings()
-                    } catch (e: Exception) {
-                        requireContext().toast(e.message ?: getString(R.string.settings_restore_error))
-                    } finally {
-                        setBusy(false)
-                        hideBackupProgress()
-                    }
+            .setPositiveButton(R.string.action_confirm) { _, _ -> restoreWith(uri, null) }
+            .show()
+    }
+
+    /**
+     * يستعيد النسخة؛ إن كانت مشفّرة ولا كلمة مرور (أو الكلمة خاطئة) يطلبها من المستخدم ويُعيد
+     * المحاولة. الحوار يُعرض بعد انتهاء finally حتى لا يبقى التطبيق في وضع "مشغول" خلفه.
+     */
+    private fun restoreWith(uri: android.net.Uri, password: CharArray?) {
+        setBusy(true)
+        showBackupProgress()
+        viewLifecycleOwner.lifecycleScope.launch {
+            var askPassword = false
+            try {
+                BackupManager.restoreFromUri(requireContext(), uri, repository, password) { processed, total ->
+                    updateBackupProgress(processed, total)
                 }
+                view?.showSnack(getString(R.string.settings_restore_success), SnackType.SUCCESS)
+                loadSettings()
+            } catch (e: BackupPasswordRequiredException) {
+                askPassword = true
+            } catch (e: BackupWrongPasswordException) {
+                view?.showSnack(getString(R.string.backup_wrong_password), SnackType.ERROR)
+                askPassword = true
+            } catch (e: Exception) {
+                view?.showSnack(e.message ?: getString(R.string.settings_restore_error), SnackType.ERROR)
+            } finally {
+                setBusy(false)
+                hideBackupProgress()
+            }
+            if (askPassword) promptRestorePassword(uri)
+        }
+    }
+
+    private fun promptRestorePassword(uri: android.net.Uri) {
+        if (_binding == null) return
+        val dialogBinding = DialogBackupPasswordBinding.inflate(layoutInflater)
+        dialogBinding.tvBackupPasswordMessage.setText(R.string.restore_password_message)
+        dialogBinding.tilBackupPasswordConfirm.visibleIf(false)
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(R.string.restore_password_title)
+            .setView(dialogBinding.root)
+            .setNegativeButton(R.string.action_cancel, null)
+            .setPositiveButton(R.string.restore_password_action) { _, _ ->
+                restoreWith(uri, dialogBinding.etBackupPassword.text?.toString().orEmpty().toCharArray())
             }
             .show()
     }
@@ -571,7 +738,7 @@ class SettingsFragment : Fragment() {
                 val file = BackupManager.exportMembersCsv(requireContext(), members, archivedMembers)
                 BackupManager.shareFile(requireContext(), file, "text/csv")
             } catch (e: Exception) {
-                requireContext().toast(e.message ?: getString(R.string.settings_export_csv_error))
+                view?.showSnack(e.message ?: getString(R.string.settings_export_csv_error), SnackType.ERROR)
             } finally {
                 setBusy(false)
             }

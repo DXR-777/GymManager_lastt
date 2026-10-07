@@ -7,7 +7,6 @@ import android.text.style.RelativeSizeSpan
 import androidx.core.content.ContextCompat
 import com.gympro.manager.R
 import java.util.Locale
-import kotlin.math.roundToInt
 
 /**
  * تنسيق الأرقام المالية بشكل موحّد عبر التطبيق (بدون كسور غير ضرورية).
@@ -28,9 +27,12 @@ object CurrencyFormatter {
     private const val ISOLATE_END = "\u2069"   // Pop Directional Isolate
 
     private fun roundedText(amount: Double): String {
-        val rounded = (amount * 100).roundToInt() / 100.0
-        return if (rounded == rounded.toInt().toDouble()) {
-            rounded.toInt().toString()
+        // Long بدل Int: roundToInt()/toInt() تقصّان عند ~21.47 مليون (Int.MAX_VALUE/100)
+        // فتعرضان رقماً خاطئاً لعملات ذات قيم كبيرة. كذلك تُحمى القيم غير المنتهية.
+        if (!amount.isFinite()) return "0"
+        val rounded = Math.round(amount * 100) / 100.0
+        return if (rounded == Math.rint(rounded) && Math.abs(rounded) < 1e15) {
+            rounded.toLong().toString()
         } else {
             // البند 6: Locale.US صريحة إلزامية هنا — بدونها يستخدم "%.2f".format(rounded)
             // locale الجهاز الافتراضي داخلياً، فعلى أي جهاز يكون نظام الأرقام فيه

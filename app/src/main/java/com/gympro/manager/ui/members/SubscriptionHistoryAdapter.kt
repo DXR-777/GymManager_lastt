@@ -92,14 +92,14 @@ class SubscriptionHistoryAdapter(
                 PaymentStatus.PAID -> {
                     binding.tvSubPaid.text = context.getString(R.string.status_paid)
                     binding.tvSubPaid.setBackgroundResource(R.drawable.bg_pill_success)
-                    binding.tvSubPaid.setTextColor(context.getColor(R.color.status_success))
+                    binding.tvSubPaid.setTextColor(context.getColor(R.color.status_success_text))
                     binding.tvSubRemaining.visibility = View.GONE
                     binding.btnSettleDebt.visibility = View.GONE
                 }
                 PaymentStatus.PARTIAL -> {
                     binding.tvSubPaid.text = context.getString(R.string.payment_status_partial)
                     binding.tvSubPaid.setBackgroundResource(R.drawable.bg_pill_partial)
-                    binding.tvSubPaid.setTextColor(context.getColor(R.color.status_partial))
+                    binding.tvSubPaid.setTextColor(context.getColor(R.color.status_partial_text))
                     binding.tvSubRemaining.text = context.getString(
                         R.string.member_remaining_amount_format,
                         CurrencyFormatter.format(sub.remainingAmount(), currencySymbol)
@@ -113,7 +113,7 @@ class SubscriptionHistoryAdapter(
                 PaymentStatus.UNPAID -> {
                     binding.tvSubPaid.text = context.getString(R.string.status_unpaid)
                     binding.tvSubPaid.setBackgroundResource(R.drawable.bg_pill_error)
-                    binding.tvSubPaid.setTextColor(context.getColor(R.color.status_error))
+                    binding.tvSubPaid.setTextColor(context.getColor(R.color.status_error_text))
                     binding.tvSubRemaining.visibility = View.GONE
                     binding.btnSettleDebt.visibility = View.VISIBLE
                     binding.btnSettleDebt.setOnSingleClickListener { onSettleDebt(sub) }

@@ -32,6 +32,10 @@ import androidx.fragment.app.setFragmentResultListener
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import com.gympro.manager.utils.applySystemBarInsetsPadding
+import com.gympro.manager.utils.Haptic
+import com.gympro.manager.utils.haptic
+import com.gympro.manager.utils.capContentWidth
 
 class MemberDetailActivity : AppCompatActivity() {
 
@@ -68,6 +72,8 @@ class MemberDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMemberDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        binding.root.applySystemBarInsetsPadding()
+        capContentWidth(binding.root)
 
         memberId = intent.getLongExtra(EXTRA_MEMBER_ID, -1L)
         if (memberId == -1L) { finish(); return }
@@ -102,6 +108,7 @@ class MemberDetailActivity : AppCompatActivity() {
             if (bundle.getBoolean(DeleteConfirmBottomSheet.RESULT_CONFIRMED)) {
                 lifecycleScope.launch {
                     repository.softDeleteMember(memberId)
+                    binding.root.haptic(Haptic.CONFIRM)
                     showDeleteUndoSnackbar()
                 }
             }
@@ -234,17 +241,17 @@ class MemberDetailActivity : AppCompatActivity() {
                 PaymentStatus.PAID -> {
                     binding.tvCurrentPaidBadge.text = getString(R.string.status_paid)
                     binding.tvCurrentPaidBadge.setBackgroundResource(R.drawable.bg_pill_success)
-                    binding.tvCurrentPaidBadge.setTextColor(getColor(R.color.status_success))
+                    binding.tvCurrentPaidBadge.setTextColor(getColor(R.color.status_success_text))
                 }
                 PaymentStatus.PARTIAL -> {
                     binding.tvCurrentPaidBadge.text = getString(R.string.payment_status_partial)
                     binding.tvCurrentPaidBadge.setBackgroundResource(R.drawable.bg_pill_partial)
-                    binding.tvCurrentPaidBadge.setTextColor(getColor(R.color.status_partial))
+                    binding.tvCurrentPaidBadge.setTextColor(getColor(R.color.status_partial_text))
                 }
                 PaymentStatus.UNPAID -> {
                     binding.tvCurrentPaidBadge.text = getString(R.string.status_unpaid)
                     binding.tvCurrentPaidBadge.setBackgroundResource(R.drawable.bg_pill_error)
-                    binding.tvCurrentPaidBadge.setTextColor(getColor(R.color.status_error))
+                    binding.tvCurrentPaidBadge.setTextColor(getColor(R.color.status_error_text))
                 }
             }
 
@@ -260,9 +267,9 @@ class MemberDetailActivity : AppCompatActivity() {
                 getColor(
                     when {
                         isFutureSubscription -> R.color.text_secondary
-                        days < 0 -> R.color.status_error
+                        days < 0 -> R.color.status_error_text
                         days <= 3 -> R.color.status_warning
-                        else -> R.color.status_success
+                        else -> R.color.status_success_text
                     }
                 )
             )
@@ -314,6 +321,7 @@ class MemberDetailActivity : AppCompatActivity() {
      */
     private fun setupHistoryControls() {
         binding.chipGroupHistoryFilter.setOnCheckedStateChangeListener { _, checkedIds ->
+            binding.chipGroupHistoryFilter.haptic(Haptic.TICK)
             val id = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
             currentHistoryFilter = when (id) {
                 R.id.chipHistoryPaid -> PaymentStatus.PAID
@@ -373,7 +381,9 @@ class MemberDetailActivity : AppCompatActivity() {
         val visibleList = list.take(visibleCount)
         val remaining = list.size - visibleCount
 
+        val historyWasEmpty = historyAdapter.itemCount == 0
         historyAdapter.submitList(visibleList, currentSettings.currencySymbol)
+        if (historyWasEmpty && visibleList.isNotEmpty()) binding.rvHistory.scheduleLayoutAnimation()
         // بعد تحديث القائمة نُجبر ScrollView الأب على إعادة قياس كامل الشاشة
         // هذا يحل مشكلة RecyclerView الذي يحسب ارتفاعه مرة واحدة فقط
         // عند أول تحميل ثم لا يُعيد الحساب عند تغيّر عدد الـ items أو أحجامها

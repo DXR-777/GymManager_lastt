@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="brand_secondary">#16213E</color>
+    <color name="brand_primary">#1A1A2E</color>
+    <color name="brand_primary_dark">#12121F</color>
+    <color name="input_stroke_normal">#6E6EA6</color>
+    <color name="input_stroke_focused">#8A7FBF</color>
+    <color name="status_neutral">#8892B0</color>
+    <color name="status_error_text">#F87171</color>
+    <color name="status_warning_text">#F5A623</color>
+    <color name="status_success_text">#34D399</color>
+    <color name="status_partial_text">#A78BFA</color>
+    <color name="background">#0F0F23</color>
+    <color name="surface_card">#1E1E3A</color>
+    <color name="surface_card_alt">#252548</color>
+    <color name="surface_elevated">#2A2A52</color>
+    <color name="divider">#33335A</color>
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#8892B0</color>
+    <color name="text_disabled">#5A6079</color>
+    <color name="skeleton_fill">#2A2A4A</color>
+    <color name="glass_fill">#CC1E1E3A</color>
+    <color name="glass_fill_alt">#CC252548</color>
+    <color name="glass_border">#40FFFFFF</color>
+    <color name="glass_border_strong">#40FFFFFF</color>
+    <color name="glass_sheen_soft">#26FFFFFF</color>
+    <color name="glass_top_highlight">#66FFFFFF</color>
+    <color name="bottom_nav_glass_fill">#B3252548</color>
+    <color name="bottom_nav_glass_sheen">#1FFFFFFF</color>
+    <color name="sheet_glass_fill">#F2252548</color>
+    <color name="onboarding_dot_inactive">#6A63A0</color>
+    <color name="onboarding_chevron_tint">#8C8CB8</color>
+    <color name="brand_accent_text">#F05A74</color>
+    <color name="icon_default">#FFFFFF</color>
+    <color name="ripple_neutral">#33FFFFFF</color>
+</resources>
