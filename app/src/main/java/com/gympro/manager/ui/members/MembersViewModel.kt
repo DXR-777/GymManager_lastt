@@ -3,16 +3,15 @@ package com.gympro.manager.ui.members
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.filter
 import com.gympro.manager.data.local.entities.GymSettingsEntity
 import com.gympro.manager.data.repository.GymRepository
 import com.gympro.manager.model.MemberFilter
 import com.gympro.manager.model.MemberListItem
 import com.gympro.manager.model.MemberSort
 import com.gympro.manager.utils.DateUtils
+import com.gympro.manager.utils.CrashReporter
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -50,19 +49,29 @@ class MembersViewModel(private val repository: GymRepository) : ViewModel() {
      * cachedIn(viewModelScope): يحتفظ بالصفحات المُحمَّلة عبر دورة حياة الشاشة (تدوير
      * الجهاز مثلاً) بدل إعادة تحميلها من الصفر في كل اشتراك جديد.
      */
-    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
-    val pagedMembers: Flow<PagingData<MemberListItem>> =
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
+    val members: Flow<List<MemberListItem>> =
         combine(
             query.debounce(300).distinctUntilChanged(),
             filter,
             sort
         ) { q, currentFilter, currentSort -> Triple(q, currentFilter, currentSort) }
             .flatMapLatest { (q, currentFilter, currentSort) ->
-                repository.getActiveMembersPaged(q, currentSort).map { pagingData ->
-                    pagingData.filter { member -> matchesFilter(member, currentFilter) }
+                repository.observeActiveMembers(q).map { list ->
+                    val filtered = list.filter { matchesFilter(it, currentFilter) }
+                    when (currentSort) {
+                        MemberSort.NAME -> filtered
+                        MemberSort.NEWEST -> filtered.sortedByDescending { it.id }
+                        MemberSort.EXPIRY_SOONEST -> filtered.sortedWith(
+                            compareBy<MemberListItem> { it.endDate == null }.thenBy { it.endDate ?: Long.MAX_VALUE }
+                        )
+                    }
                 }
             }
-            .cachedIn(viewModelScope)
+            .catch { error ->
+                CrashReporter.record(error)
+                emit(emptyList())
+            }
 
     val currentFilter: StateFlow<MemberFilter> = filter.asStateFlow()
     val currentSort: StateFlow<MemberSort> = sort.asStateFlow()

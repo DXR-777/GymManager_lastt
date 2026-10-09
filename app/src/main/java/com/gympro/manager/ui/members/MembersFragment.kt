@@ -15,7 +15,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.paging.LoadState
 import android.content.res.Configuration
 import androidx.recyclerview.widget.GridLayoutManager
 import com.gympro.manager.GymApplication
@@ -105,7 +104,6 @@ class MembersFragment : Fragment() {
     private var programmaticFilterChange = false
 
     private var pendingHighlightId: Long? = null
-    private var sawLoadingForHighlight = false
     private val closeEntranceRunnable = Runnable { if (_binding != null) adapter.entranceEnabled = false }
 
     /** يفتح نافذة حركة دخول العناصر لمدة محدودة ثم يغلقها (لا حركة أثناء التمرير العادي). */
@@ -117,18 +115,24 @@ class MembersFragment : Fragment() {
     }
 
     /** يلتقط معرّف العضو المُضاف حديثاً (إن وُجد) قبل إعادة تحميل القائمة. */
+    private var highlightAttempts = 0
+
     private fun prepareHighlight() {
         MemberHighlight.consume()?.let {
             pendingHighlightId = it
-            sawLoadingForHighlight = false
+            highlightAttempts = 0
+            _binding?.rvMembers?.post { if (_binding != null) highlightPendingMember() }
         }
     }
 
     private fun highlightPendingMember() {
         val id = pendingHighlightId ?: return
+        val pos = adapter.currentList.indexOfFirst { it.id == id }
+        if (pos < 0) {
+            if (++highlightAttempts >= 4) pendingHighlightId = null
+            return
+        }
         pendingHighlightId = null
-        val pos = adapter.snapshot().items.indexOfFirst { it.id == id }
-        if (pos < 0) return // مخفي بسبب فلتر أو بحث حالي
         adapter.highlightId = id
         binding.rvMembers.scrollToPosition(pos)
         adapter.notifyItemChanged(pos)
@@ -273,36 +277,22 @@ class MembersFragment : Fragment() {
         binding.emptyMembersContainer.visibleIf(false)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch {
-                    viewModel.pagedMembers.collectLatest { pagingData ->
-                        adapter.submitData(pagingData)
+                viewModel.members.collectLatest { list ->
+                    adapter.submitList(list) {
+                        if (_binding != null) highlightPendingMember()
                     }
-                }
-                launch {
-                    adapter.loadStateFlow.collectLatest { loadStates ->
-                        val isLoading = loadStates.refresh is LoadState.Loading
-                        val isEmpty = loadStates.refresh is LoadState.NotLoading && adapter.itemCount == 0
-                        if (isLoading) sawLoadingForHighlight = true
-                        else if (sawLoadingForHighlight) highlightPendingMember()
-                        // لا نُخفي RecyclerView أبداً: إخفاؤه (GONE) أثناء إعادة التحميل بعد
-                        // إضافة عضو كان يترك القائمة غير مقاسة، فلا تظهر العناصر الجديدة.
-                        // التحميل يظهر فقط عند عدم وجود أي عنصر معروض بعد.
-                        setSkeleton(isLoading && adapter.itemCount == 0)
-                        binding.emptyMembersContainer.visibleIf(!isLoading && isEmpty)
-                        // البند 16: رسالة "لا يوجد أعضاء بعد / اضغط + لإضافة أول عضو" كانت تظهر
-                        // أيضاً عند عدم وجود نتائج بسبب بحث أو فلتر (مثلاً "غير مدفوع")، وهي
-                        // رسالة مضلِّلة في تلك الحالة لأن المشكلة ليست غياب الأعضاء فعلياً.
-                        if (!isLoading && isEmpty) {
-                            val isFiltered = viewModel.currentQuery.value.isNotBlank() ||
-                                viewModel.currentFilter.value != MemberFilter.ALL
-                            binding.tvMembersEmptyMessage.setText(
-                                if (isFiltered) R.string.members_no_results else R.string.members_empty_title
-                            )
-                            // لا أعضاء أصلاً → دعوة للإضافة؛ نتائج فارغة بسبب بحث/فلتر → زر مسحهما.
-                            binding.tvMembersEmptyHint.visibleIf(!isFiltered)
-                            binding.btnEmptyAdd.visibleIf(!isFiltered)
-                            binding.btnEmptyClear.visibleIf(isFiltered)
-                        }
+                    setSkeleton(false)
+                    val isEmpty = list.isEmpty()
+                    binding.emptyMembersContainer.visibleIf(isEmpty)
+                    if (isEmpty) {
+                        val isFiltered = viewModel.currentQuery.value.isNotBlank() ||
+                            viewModel.currentFilter.value != MemberFilter.ALL
+                        binding.tvMembersEmptyMessage.setText(
+                            if (isFiltered) R.string.members_no_results else R.string.members_empty_title
+                        )
+                        binding.tvMembersEmptyHint.visibleIf(!isFiltered)
+                        binding.btnEmptyAdd.visibleIf(!isFiltered)
+                        binding.btnEmptyClear.visibleIf(isFiltered)
                     }
                 }
             }
@@ -392,7 +382,6 @@ class MembersFragment : Fragment() {
         super.onResume()
         if (_binding != null && !isHidden) {
             prepareHighlight()
-            adapter.refresh()
         }
     }
 
@@ -400,7 +389,6 @@ class MembersFragment : Fragment() {
         super.onHiddenChanged(hidden)
         if (!hidden && _binding != null) {
             prepareHighlight()
-            adapter.refresh()
         }
     }
 

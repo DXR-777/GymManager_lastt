@@ -2,7 +2,7 @@ package com.gympro.manager.ui.members
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.paging.PagingDataAdapter
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.gympro.manager.R
@@ -28,7 +28,7 @@ import androidx.core.content.ContextCompat
 class MembersAdapter(
     private val onClick: (MemberListItem) -> Unit,
     private val onWhatsappClick: (MemberListItem) -> Unit
-) : PagingDataAdapter<MemberListItem, MembersAdapter.ViewHolder>(DIFF) {
+) : ListAdapter<MemberListItem, MembersAdapter.ViewHolder>(DIFF) {
 
     override fun onCreateViewHolder(parent: ViewGroup, position: Int): ViewHolder {
         val binding = ItemMemberBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -46,7 +46,7 @@ class MembersAdapter(
     var entranceEnabled = false
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position) ?: return
+        val item = getItem(position)
         holder.bind(item)
         val v = holder.itemView
         // إعادة تعيين آثار التدوير: ViewHolder يُعاد استخدامه وقد يحمل حالة حركة سابقة.
