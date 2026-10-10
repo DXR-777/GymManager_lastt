@@ -61,7 +61,6 @@ class MembersAdapter(
                 highlightId = null
                 playHighlight(v)
             }
-            entranceEnabled -> playEntrance(v, position)
         }
     }
 

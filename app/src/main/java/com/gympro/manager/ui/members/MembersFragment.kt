@@ -32,6 +32,7 @@ import com.gympro.manager.utils.DateUtils
 import com.gympro.manager.utils.WhatsAppHelper
 import com.gympro.manager.utils.visibleIf
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import com.gympro.manager.utils.SnackType
 import com.gympro.manager.utils.showSnack
@@ -82,6 +83,9 @@ class MembersFragment : Fragment() {
         setupFilterChips()
         applyInitialFilterIfAny()
         observeMembers()
+        if (com.gympro.manager.BuildConfig.DEBUG) {
+            binding.chipAll.setOnLongClickListener { showDebugInfo(); true }
+        }
     }
 
     /**
@@ -116,6 +120,22 @@ class MembersFragment : Fragment() {
 
     /** يلتقط معرّف العضو المُضاف حديثاً (إن وُجد) قبل إعادة تحميل القائمة. */
     private var highlightAttempts = 0
+    private var lastEmittedCount = -1
+
+    private fun showDebugInfo() {
+        val rv = binding.rvMembers
+        val repo = (requireActivity().application as GymApplication).repository
+        viewLifecycleOwner.lifecycleScope.launch {
+            val dbCount = try { repo.observeActiveMembersCount().first() } catch (e: Exception) { -1 }
+            val msg = "db=$dbCount\nflow=$lastEmittedCount\nadapter=${adapter.itemCount}\n" +
+                "children=${rv.childCount}\nrvVisible=${rv.visibility == View.VISIBLE}\n" +
+                "rv=${rv.width}x${rv.height}\nrvAlpha=${rv.alpha}\n" +
+                "filter=${viewModel.currentFilter.value}\nquery='${viewModel.currentQuery.value}'\n" +
+                "sort=${viewModel.currentSort.value}\nhidden=$isHidden"
+            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+                .setTitle("debug").setMessage(msg).setPositiveButton("OK", null).show()
+        }
+    }
 
     private fun prepareHighlight() {
         MemberHighlight.consume()?.let {
@@ -278,8 +298,14 @@ class MembersFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.members.collectLatest { list ->
+                    lastEmittedCount = list.size
                     adapter.submitList(list) {
-                        if (_binding != null) highlightPendingMember()
+                        if (_binding != null) {
+                            binding.rvMembers.visibility = View.VISIBLE
+                            binding.rvMembers.alpha = 1f
+                            binding.rvMembers.requestLayout()
+                            highlightPendingMember()
+                        }
                     }
                     setSkeleton(false)
                     val isEmpty = list.isEmpty()
