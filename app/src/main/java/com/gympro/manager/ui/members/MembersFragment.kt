@@ -325,7 +325,21 @@ class MembersFragment : Fragment() {
      * مباشرة — وهو النمط القياسي الموصى به مع PagingDataAdapter، إذ لا توجد قائمة
      * كاملة بعد الآن للفحص المباشر عليها.
      */
+    private fun startDebugTicker() {
+        if (!com.gympro.manager.BuildConfig.DEBUG) return
+        ensureDebugStrip()
+        val rv = binding.rvMembers
+        rv.postDelayed(object : Runnable {
+            override fun run() {
+                if (_binding == null) return
+                verifyListRendered()
+                rv.postDelayed(this, 1000)
+            }
+        }, 300)
+    }
+
     private fun observeMembers() {
+        startDebugTicker()
         setSkeleton(true)
         binding.rvMembers.visibleIf(true)
         binding.emptyMembersContainer.visibleIf(false)
