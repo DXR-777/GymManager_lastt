@@ -120,6 +120,40 @@ class MembersFragment : Fragment() {
 
     /** يلتقط معرّف العضو المُضاف حديثاً (إن وُجد) قبل إعادة تحميل القائمة. */
     private var highlightAttempts = 0
+    private var debugStrip: android.widget.TextView? = null
+
+    private fun ensureDebugStrip() {
+        if (!com.gympro.manager.BuildConfig.DEBUG || debugStrip != null) return
+        val host = binding.rvMembers.parent as? android.widget.FrameLayout ?: return
+        debugStrip = android.widget.TextView(requireContext()).apply {
+            textSize = 11f
+            setTextColor(android.graphics.Color.YELLOW)
+            setBackgroundColor(0xCC000000.toInt())
+            setPadding(12, 6, 12, 6)
+            layoutDirection = View.LAYOUT_DIRECTION_LTR
+        }
+        host.addView(
+            debugStrip,
+            android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+                android.view.Gravity.BOTTOM
+            )
+        )
+    }
+
+    private fun verifyListRendered() {
+        val b = _binding ?: return
+        val rv = b.rvMembers
+        if (adapter.itemCount > 0 && (rv.childCount == 0 || rv.height == 0)) {
+            (rv.parent as? View)?.requestLayout()
+            rv.adapter = adapter
+            rv.requestLayout()
+        }
+        debugStrip?.text = "flow=$lastEmittedCount adapter=${adapter.itemCount} children=${rv.childCount} " +
+            "rv=${rv.width}x${rv.height} vis=${rv.visibility} hidden=$isHidden " +
+            "filter=${viewModel.currentFilter.value} q='${viewModel.currentQuery.value}'"
+    }
     private var lastEmittedCount = -1
 
     private fun showDebugInfo() {
@@ -305,6 +339,9 @@ class MembersFragment : Fragment() {
                             binding.rvMembers.alpha = 1f
                             binding.rvMembers.requestLayout()
                             highlightPendingMember()
+                            ensureDebugStrip()
+                            binding.rvMembers.post { verifyListRendered() }
+                            binding.rvMembers.postDelayed({ verifyListRendered() }, 500)
                         }
                     }
                     setSkeleton(false)
@@ -415,6 +452,7 @@ class MembersFragment : Fragment() {
         super.onHiddenChanged(hidden)
         if (!hidden && _binding != null) {
             prepareHighlight()
+            binding.rvMembers.post { verifyListRendered() }
         }
     }
 
