@@ -124,7 +124,7 @@ class MembersFragment : Fragment() {
 
     private fun ensureDebugStrip() {
         if (!true || debugStrip != null) return
-        val host = binding.rvMembers.parent as? android.widget.FrameLayout ?: return
+        val host = binding.root as? android.widget.LinearLayout ?: return
         debugStrip = android.widget.TextView(requireContext()).apply {
             textSize = 11f
             setTextColor(android.graphics.Color.YELLOW)
@@ -134,10 +134,10 @@ class MembersFragment : Fragment() {
         }
         host.addView(
             debugStrip,
-            android.widget.FrameLayout.LayoutParams(
-                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
-                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
-                android.view.Gravity.BOTTOM
+            2,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
             )
         )
     }
@@ -152,7 +152,10 @@ class MembersFragment : Fragment() {
         }
         debugStrip?.text = "flow=$lastEmittedCount adapter=${adapter.itemCount} children=${rv.childCount} " +
             "rv=${rv.width}x${rv.height} vis=${rv.visibility} hidden=$isHidden " +
-            "filter=${viewModel.currentFilter.value} q='${viewModel.currentQuery.value}'"
+            "filter=${viewModel.currentFilter.value} q='${viewModel.currentQuery.value}' " +
+            "skel=${b.skeletonMembers.visibility} empty=${b.emptyMembersContainer.visibility} " +
+            "c0=${rv.getChildAt(0)?.let { "${it.width}x${it.height} a=${it.alpha}" }} " +
+            "first=${adapter.currentList.firstOrNull()?.name}"
     }
     private var lastEmittedCount = -1
 
