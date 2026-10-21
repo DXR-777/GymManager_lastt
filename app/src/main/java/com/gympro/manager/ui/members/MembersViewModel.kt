@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -49,29 +50,40 @@ class MembersViewModel(private val repository: GymRepository) : ViewModel() {
      * cachedIn(viewModelScope): يحتفظ بالصفحات المُحمَّلة عبر دورة حياة الشاشة (تدوير
      * الجهاز مثلاً) بدل إعادة تحميلها من الصفر في كل اشتراك جديد.
      */
+    /**
+     * إصلاح: قائمة الأعضاء كانت Flow "بارداً" يُنشأ من جديد عند كل مرة تبدأ فيها الشاشة
+     * (repeatOnLifecycle) ويموت كلياً عند أول خطأ (catch خارج flatMapLatest كان يُنهي
+     * التدفق بعد emptyList). الآن: تدفق "ساخن" يعمل داخل ViewModel طوال عمره — مثل
+     * DashboardViewModel الذي يعرض العضو الجديد بنجاح — وأي خطأ يُعالَج داخل الاستعلام
+     * فقط دون إنهاء التدفق، فتصل كل إضافة جديدة للقائمة مباشرة.
+     */
     @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class, kotlinx.coroutines.FlowPreview::class)
-    val members: Flow<List<MemberListItem>> =
+    private val membersState: StateFlow<List<MemberListItem>?> =
         combine(
             query.debounce(300).distinctUntilChanged(),
             filter,
             sort
         ) { q, currentFilter, currentSort -> Triple(q, currentFilter, currentSort) }
             .flatMapLatest { (q, currentFilter, currentSort) ->
-                repository.observeActiveMembers(q).map { list ->
-                    val filtered = list.filter { matchesFilter(it, currentFilter) }
-                    when (currentSort) {
-                        MemberSort.NAME -> filtered
-                        MemberSort.NEWEST -> filtered.sortedByDescending { it.id }
-                        MemberSort.EXPIRY_SOONEST -> filtered.sortedWith(
-                            compareBy<MemberListItem> { it.endDate == null }.thenBy { it.endDate ?: Long.MAX_VALUE }
-                        )
+                repository.observeActiveMembers(q)
+                    .map { list ->
+                        val filtered = list.filter { matchesFilter(it, currentFilter) }
+                        when (currentSort) {
+                            MemberSort.NAME -> filtered
+                            MemberSort.NEWEST -> filtered.sortedByDescending { it.id }
+                            MemberSort.EXPIRY_SOONEST -> filtered.sortedWith(
+                                compareBy<MemberListItem> { it.endDate == null }.thenBy { it.endDate ?: Long.MAX_VALUE }
+                            )
+                        }
                     }
-                }
+                    .catch { error ->
+                        CrashReporter.record(error)
+                        emit(emptyList())
+                    }
             }
-            .catch { error ->
-                CrashReporter.record(error)
-                emit(emptyList())
-            }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    val members: Flow<List<MemberListItem>> = membersState.filterNotNull()
 
     val currentFilter: StateFlow<MemberFilter> = filter.asStateFlow()
     val currentSort: StateFlow<MemberSort> = sort.asStateFlow()

@@ -83,7 +83,7 @@ class MembersFragment : Fragment() {
         setupFilterChips()
         applyInitialFilterIfAny()
         observeMembers()
-        if (com.gympro.manager.BuildConfig.DEBUG) {
+        if (true) {
             binding.chipAll.setOnLongClickListener { showDebugInfo(); true }
         }
     }
@@ -123,8 +123,8 @@ class MembersFragment : Fragment() {
     private var debugStrip: android.widget.TextView? = null
 
     private fun ensureDebugStrip() {
-        if (!com.gympro.manager.BuildConfig.DEBUG || debugStrip != null) return
-        val host = binding.rvMembers.parent as? android.widget.FrameLayout ?: return
+        if (!true || debugStrip != null) return
+        val host = binding.root as? android.widget.LinearLayout ?: return
         debugStrip = android.widget.TextView(requireContext()).apply {
             textSize = 11f
             setTextColor(android.graphics.Color.YELLOW)
@@ -134,10 +134,10 @@ class MembersFragment : Fragment() {
         }
         host.addView(
             debugStrip,
-            android.widget.FrameLayout.LayoutParams(
-                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
-                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
-                android.view.Gravity.BOTTOM
+            2,
+            android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
             )
         )
     }
@@ -152,7 +152,10 @@ class MembersFragment : Fragment() {
         }
         debugStrip?.text = "flow=$lastEmittedCount adapter=${adapter.itemCount} children=${rv.childCount} " +
             "rv=${rv.width}x${rv.height} vis=${rv.visibility} hidden=$isHidden " +
-            "filter=${viewModel.currentFilter.value} q='${viewModel.currentQuery.value}'"
+            "filter=${viewModel.currentFilter.value} q='${viewModel.currentQuery.value}' " +
+            "skel=${b.skeletonMembers.visibility} empty=${b.emptyMembersContainer.visibility} " +
+            "c0=${rv.getChildAt(0)?.let { "${it.width}x${it.height} a=${it.alpha}" }} " +
+            "first=${adapter.currentList.firstOrNull()?.name}"
     }
     private var lastEmittedCount = -1
 
@@ -326,7 +329,7 @@ class MembersFragment : Fragment() {
      * كاملة بعد الآن للفحص المباشر عليها.
      */
     private fun startDebugTicker() {
-        if (!com.gympro.manager.BuildConfig.DEBUG) return
+        if (!true) return
         ensureDebugStrip()
         val rv = binding.rvMembers
         rv.postDelayed(object : Runnable {
