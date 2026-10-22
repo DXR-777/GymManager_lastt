@@ -156,8 +156,8 @@
              لكن معكوسة أفقياً (scaleX=-1) بدل تكرار ملف الدرجة اللونية. -->
         <View
             android:layout_width="@dimen/spacing_lg"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
+            android:layout_height="32dp"
+            android:layout_gravity="start|center_vertical"
             android:background="@drawable/bg_chip_row_fade_edge"
             android:importantForAccessibility="no"
             android:scaleX="-1" />
@@ -165,8 +165,8 @@
         <!-- تلميح تمرير عند الحافة اليسرى (end في RTL) -->
         <View
             android:layout_width="@dimen/spacing_lg"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
+            android:layout_height="32dp"
+            android:layout_gravity="end|center_vertical"
             android:background="@drawable/bg_chip_row_fade_edge"
             android:importantForAccessibility="no" />
 

@@ -83,8 +83,8 @@ class MembersFragment : Fragment() {
         setupFilterChips()
         applyInitialFilterIfAny()
         observeMembers()
-        if (true) {
-            binding.chipAll.setOnLongClickListener { showLayoutDiag(); true }
+        if (com.gympro.manager.BuildConfig.DEBUG) {
+            binding.chipAll.setOnLongClickListener { showDebugInfo(); true }
         }
     }
 
@@ -123,8 +123,8 @@ class MembersFragment : Fragment() {
     private var debugStrip: android.widget.TextView? = null
 
     private fun ensureDebugStrip() {
-        if (!true || debugStrip != null) return
-        val host = binding.root as? android.widget.LinearLayout ?: return
+        if (!com.gympro.manager.BuildConfig.DEBUG || debugStrip != null) return
+        val host = binding.rvMembers.parent as? android.widget.FrameLayout ?: return
         debugStrip = android.widget.TextView(requireContext()).apply {
             textSize = 11f
             setTextColor(android.graphics.Color.YELLOW)
@@ -134,10 +134,10 @@ class MembersFragment : Fragment() {
         }
         host.addView(
             debugStrip,
-            2,
-            android.widget.LinearLayout.LayoutParams(
-                android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
-                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            android.widget.FrameLayout.LayoutParams(
+                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
+                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
+                android.view.Gravity.BOTTOM
             )
         )
     }
@@ -152,49 +152,9 @@ class MembersFragment : Fragment() {
         }
         debugStrip?.text = "flow=$lastEmittedCount adapter=${adapter.itemCount} children=${rv.childCount} " +
             "rv=${rv.width}x${rv.height} vis=${rv.visibility} hidden=$isHidden " +
-            "filter=${viewModel.currentFilter.value} q='${viewModel.currentQuery.value}' " +
-            "skel=${b.skeletonMembers.visibility} empty=${b.emptyMembersContainer.visibility} " +
-            "c0=${rv.getChildAt(0)?.let { "${it.width}x${it.height} a=${it.alpha}" }} " +
-            "first=${adapter.currentList.firstOrNull()?.name}"
+            "filter=${viewModel.currentFilter.value} q='${viewModel.currentQuery.value}'"
     }
     private var lastEmittedCount = -1
-
-    private var diagTicks = 0
-    private var diagShown = false
-
-    private fun describeView(v: View?, name: String): String {
-        if (v == null) return "$name=null"
-        val loc = IntArray(2)
-        v.getLocationOnScreen(loc)
-        return "$name: ${v.width}x${v.height} y=${loc[1]} vis=${v.visibility} a=${v.alpha} " +
-            "ty=${v.translationY} sy=${v.scaleY} shown=${v.isShown}"
-    }
-
-    private fun showLayoutDiag() {
-        val b = _binding ?: return
-        val root = b.root
-        val rootParent = root.parent as? View
-        val lines = listOf(
-            describeView(root, "root"),
-            "rootParent=${root.parent?.javaClass?.simpleName} ${rootParent?.width}x${rootParent?.height} " +
-                "clip=${(root.parent as? ViewGroup)?.clipChildren}",
-            "rootLP=${root.layoutParams?.width}x${root.layoutParams?.height} pad=${root.paddingTop}/${root.paddingBottom}",
-            describeView(root.getChildAt(0), "search"),
-            describeView(root.getChildAt(1), "chips"),
-            describeView(debugStrip, "strip"),
-            describeView(b.rvMembers.parent as? View, "rvFrame"),
-            describeView(b.rvMembers, "rv"),
-            describeView(b.emptyMembersContainer, "empty"),
-            describeView(b.skeletonMembers, "skel"),
-            "children=${root.childCount} flow=$lastEmittedCount adapter=${adapter.itemCount} " +
-                "rvChildren=${b.rvMembers.childCount} rvLM=${b.rvMembers.layoutManager?.javaClass?.simpleName}"
-        )
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-            .setTitle("layout diag v6")
-            .setMessage(lines.joinToString("\n"))
-            .setPositiveButton("OK", null)
-            .show()
-    }
 
     private fun showDebugInfo() {
         val rv = binding.rvMembers
@@ -366,15 +326,13 @@ class MembersFragment : Fragment() {
      * كاملة بعد الآن للفحص المباشر عليها.
      */
     private fun startDebugTicker() {
-        if (!true) return
+        if (!com.gympro.manager.BuildConfig.DEBUG) return
         ensureDebugStrip()
         val rv = binding.rvMembers
         rv.postDelayed(object : Runnable {
             override fun run() {
                 if (_binding == null) return
                 verifyListRendered()
-                diagTicks++
-                if (diagTicks == 4 && !diagShown && !isHidden) { diagShown = true; showLayoutDiag() }
                 rv.postDelayed(this, 1000)
             }
         }, 300)
@@ -389,7 +347,6 @@ class MembersFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.members.collectLatest { list ->
                     lastEmittedCount = list.size
-                    android.widget.Toast.makeText(requireContext(), "DIAG v5: members=${list.size}", android.widget.Toast.LENGTH_LONG).show()
                     adapter.submitList(list) {
                         if (_binding != null) {
                             binding.rvMembers.visibility = View.VISIBLE
