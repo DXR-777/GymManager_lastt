@@ -350,6 +350,7 @@ class MembersFragment : Fragment() {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.members.collectLatest { list ->
                     lastEmittedCount = list.size
+                    android.widget.Toast.makeText(requireContext(), "DIAG v5: members=${list.size}", android.widget.Toast.LENGTH_LONG).show()
                     adapter.submitList(list) {
                         if (_binding != null) {
                             binding.rvMembers.visibility = View.VISIBLE
