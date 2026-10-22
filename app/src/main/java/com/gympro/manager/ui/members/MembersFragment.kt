@@ -84,7 +84,7 @@ class MembersFragment : Fragment() {
         applyInitialFilterIfAny()
         observeMembers()
         if (true) {
-            binding.chipAll.setOnLongClickListener { showDebugInfo(); true }
+            binding.chipAll.setOnLongClickListener { showLayoutDiag(); true }
         }
     }
 
@@ -158,6 +158,43 @@ class MembersFragment : Fragment() {
             "first=${adapter.currentList.firstOrNull()?.name}"
     }
     private var lastEmittedCount = -1
+
+    private var diagTicks = 0
+    private var diagShown = false
+
+    private fun describeView(v: View?, name: String): String {
+        if (v == null) return "$name=null"
+        val loc = IntArray(2)
+        v.getLocationOnScreen(loc)
+        return "$name: ${v.width}x${v.height} y=${loc[1]} vis=${v.visibility} a=${v.alpha} " +
+            "ty=${v.translationY} sy=${v.scaleY} shown=${v.isShown}"
+    }
+
+    private fun showLayoutDiag() {
+        val b = _binding ?: return
+        val root = b.root
+        val rootParent = root.parent as? View
+        val lines = listOf(
+            describeView(root, "root"),
+            "rootParent=${root.parent?.javaClass?.simpleName} ${rootParent?.width}x${rootParent?.height} " +
+                "clip=${(root.parent as? ViewGroup)?.clipChildren}",
+            "rootLP=${root.layoutParams?.width}x${root.layoutParams?.height} pad=${root.paddingTop}/${root.paddingBottom}",
+            describeView(root.getChildAt(0), "search"),
+            describeView(root.getChildAt(1), "chips"),
+            describeView(debugStrip, "strip"),
+            describeView(b.rvMembers.parent as? View, "rvFrame"),
+            describeView(b.rvMembers, "rv"),
+            describeView(b.emptyMembersContainer, "empty"),
+            describeView(b.skeletonMembers, "skel"),
+            "children=${root.childCount} flow=$lastEmittedCount adapter=${adapter.itemCount} " +
+                "rvChildren=${b.rvMembers.childCount} rvLM=${b.rvMembers.layoutManager?.javaClass?.simpleName}"
+        )
+        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
+            .setTitle("layout diag v6")
+            .setMessage(lines.joinToString("\n"))
+            .setPositiveButton("OK", null)
+            .show()
+    }
 
     private fun showDebugInfo() {
         val rv = binding.rvMembers
@@ -336,6 +373,8 @@ class MembersFragment : Fragment() {
             override fun run() {
                 if (_binding == null) return
                 verifyListRendered()
+                diagTicks++
+                if (diagTicks == 4 && !diagShown && !isHidden) { diagShown = true; showLayoutDiag() }
                 rv.postDelayed(this, 1000)
             }
         }, 300)

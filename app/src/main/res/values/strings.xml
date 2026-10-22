@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">إدارة الجيم v5</string>
+    <string name="app_name">إدارة الجيم v6</string>
 
     <!-- عام -->
     <string name="action_save">حفظ</string>

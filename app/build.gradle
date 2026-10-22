@@ -18,8 +18,8 @@ android {
         applicationId "com.gympro.manager"
         minSdk 26
         targetSdk 34
-        versionCode 5
-        versionName "1.4-v5-marker"
+        versionCode 6
+        versionName "1.5-v6-layout-diag"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 
