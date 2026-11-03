@@ -38,6 +38,8 @@
                 android:id="@+id/homeContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clipChildren="false"
+                android:clipToPadding="false"
                 android:orientation="vertical"
                 android:paddingHorizontal="@dimen/home_pad"
                 android:paddingTop="16dp"
@@ -173,9 +175,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
+                                android:includeFontPadding="true"
                                 android:textColor="@color/home_hero_symbol"
-                                android:textSize="22sp"
+                                android:textSize="24sp"
                                 android:textStyle="bold"
                                 tools:text="₪" />
 
@@ -183,18 +185,15 @@
                                 android:id="@+id/tvTodayRevenue"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
+                                android:layout_marginStart="8dp"
                                 android:layout_weight="1"
-                                android:autoSizeMaxTextSize="38sp"
-                                android:autoSizeMinTextSize="20sp"
-                                android:autoSizeTextType="uniform"
                                 android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
+                                android:includeFontPadding="true"
                                 android:maxLines="1"
+                                android:paddingTop="2dp"
                                 android:textColor="@color/home_ink"
-                                android:textFontWeight="800"
+                                android:textSize="42sp"
                                 android:textStyle="bold"
-                                tools:targetApi="p"
                                 tools:text="1,240" />
                         </LinearLayout>
 

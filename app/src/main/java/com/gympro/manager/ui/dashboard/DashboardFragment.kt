@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import android.widget.LinearLayout
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -47,6 +49,12 @@ class DashboardFragment : Fragment() {
     private lateinit var unpaidAdapter: DashboardUnpaidAdapter
     private var skeletonPulse: ObjectAnimator? = null
     private val bars = mutableListOf<View>()
+
+    // حركات خفيفة: عدّ تصاعدي للمبلغ، نمو الأعمدة، ظهور متدرّج للأقسام، ونبض نقطة الجرس.
+    private var shownAmount = 0.0
+    private var amountAnimator: ValueAnimator? = null
+    private var dotPulse: ObjectAnimator? = null
+    private var entrancePending = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -129,6 +137,7 @@ class DashboardFragment : Fragment() {
                 lp.height = newHeight
                 bar.layoutParams = lp
             }
+            bar.pivotY = newHeight.toFloat()
         }
     }
 
@@ -316,6 +325,80 @@ class DashboardFragment : Fragment() {
         binding.skeletonDashboard.alpha = 1f
     }
 
+    private fun applyAmountSize(text: String) {
+        binding.tvTodayRevenue.setTextSize(
+            android.util.TypedValue.COMPLEX_UNIT_SP,
+            when {
+                text.length > 10 -> 26f
+                text.length > 8 -> 32f
+                text.length > 6 -> 38f
+                else -> 42f
+            }
+        )
+    }
+
+    /** يعدّ المبلغ تصاعدياً من القيمة المعروضة إلى الجديدة (700ms) — يعمل عند أول ظهور وعند تبديل الفترة. */
+    private fun showAmount(target: Double) {
+        amountAnimator?.cancel()
+        val finalText = formatAmount(target)
+        applyAmountSize(finalText)
+        val from = shownAmount
+        shownAmount = target
+        if (from == target) {
+            binding.tvTodayRevenue.text = finalText
+            return
+        }
+        val whole = target == Math.rint(target)
+        amountAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 700
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { a ->
+                if (_binding == null) return@addUpdateListener
+                val v = from + (target - from) * (a.animatedValue as Float)
+                binding.tvTodayRevenue.text = formatAmount(if (whole) Math.rint(v) else v)
+            }
+            start()
+        }
+    }
+
+    /** ظهور متدرّج (تلاشٍ + صعود 20dp) لكل قسم من الشاشة عند أول تحميل، ثم نمو الأعمدة من أسفلها. */
+    private fun playEntrance() {
+        val density = resources.displayMetrics.density
+        binding.homeContent.children.forEachIndexed { i, child ->
+            child.alpha = 0f
+            child.translationY = 20 * density
+            child.animate().alpha(1f).translationY(0f)
+                .setStartDelay(i * 70L).setDuration(420)
+                .setInterpolator(DecelerateInterpolator()).start()
+        }
+        bars.forEachIndexed { i, bar ->
+            bar.scaleY = 0f
+            bar.animate().scaleY(1f)
+                .setStartDelay(350L + i * 60L).setDuration(450)
+                .setInterpolator(DecelerateInterpolator()).start()
+        }
+    }
+
+    /** نبض هادئ جداً لنقطة الجرس الحمراء (تكبير 1 → 1.35). */
+    private fun updateDotPulse(visible: Boolean) {
+        if (!visible) {
+            dotPulse?.cancel()
+            dotPulse = null
+            return
+        }
+        if (dotPulse != null) return
+        dotPulse = ObjectAnimator.ofPropertyValuesHolder(
+            binding.bellDot,
+            android.animation.PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.35f),
+            android.animation.PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.35f)
+        ).apply {
+            duration = 900
+            repeatCount = ValueAnimator.INFINITE
+            repeatMode = ValueAnimator.REVERSE
+            start()
+        }
+    }
+
     /** بطاقة Hero: العنوان/المبلغ/شريحة المقارنة/الأعمدة/المفتاح حسب الفترة المختارة. */
     private fun bindRevenueCard(state: DashboardUiState) {
         binding.tvRevenueTitle.setText(
@@ -326,7 +409,7 @@ class DashboardFragment : Fragment() {
             }
         )
         binding.tvCurrencySymbol.text = state.currency
-        binding.tvTodayRevenue.text = formatAmount(state.periodRevenue)
+        showAmount(state.periodRevenue)
         val delta = state.deltaPercent
         if (delta == null) {
             binding.tvRevenueDelta.visibility = View.INVISIBLE
@@ -352,6 +435,7 @@ class DashboardFragment : Fragment() {
                 viewModel.uiState.collect { state ->
                     if (isFirstLoad) {
                         isFirstLoad = false
+                        entrancePending = true
                         stopSkeletonPulse()
                         binding.skeletonDashboard.visibleIf(false)
                         binding.scrollDashboardContent.visibleIf(true)
@@ -361,7 +445,9 @@ class DashboardFragment : Fragment() {
                     binding.tvActiveMembersCount.text = state.activeCount.toString()
                     binding.tvUnpaidCount.text = state.unpaidCount.toString()
                     binding.tvExpiringSoonCount.text = state.expiringSoonCount.toString()
-                    binding.bellDot.visibleIf(state.unpaidCount + state.expiringSoonCount > 0)
+                    val hasAlerts = state.unpaidCount + state.expiringSoonCount > 0
+                    binding.bellDot.visibleIf(hasAlerts)
+                    updateDotPulse(hasAlerts)
                     bindRevenueCard(state)
                     updateStatCardAccessibilityLabels(state)
                     bindSectionCount(binding.tvExpiringSectionCount, state.expiringSoonCount)
@@ -374,6 +460,11 @@ class DashboardFragment : Fragment() {
                     binding.tvEmptyExpiring.visibleIf(state.expiringSoon.isEmpty())
                     binding.cardUnpaidList.visibleIf(state.unpaidMembers.isNotEmpty())
                     binding.tvEmptyUnpaid.visibleIf(state.unpaidMembers.isEmpty())
+
+                    if (entrancePending) {
+                        entrancePending = false
+                        playEntrance()
+                    }
                 }
             }
         }
@@ -387,6 +478,11 @@ class DashboardFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        amountAnimator?.cancel()
+        amountAnimator = null
+        dotPulse?.cancel()
+        dotPulse = null
+        shownAmount = 0.0
         stopSkeletonPulse()
         super.onDestroyView()
         _binding = null
