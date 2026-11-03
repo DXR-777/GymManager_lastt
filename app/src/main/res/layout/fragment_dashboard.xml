@@ -471,12 +471,11 @@
                     android:orientation="vertical"
                     android:paddingVertical="2dp">
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvUnpaid"
+                    <LinearLayout
+                        android:id="@+id/listUnpaid"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:nestedScrollingEnabled="false"
-                        android:overScrollMode="never" />
+                        android:orientation="vertical" />
                 </LinearLayout>
 
                 <LinearLayout

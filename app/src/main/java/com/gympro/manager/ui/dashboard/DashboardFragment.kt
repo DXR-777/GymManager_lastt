@@ -46,7 +46,6 @@ class DashboardFragment : Fragment() {
     }
 
     private lateinit var expiringAdapter: DashboardMemberAdapter
-    private lateinit var unpaidAdapter: DashboardUnpaidAdapter
     private var skeletonPulse: ObjectAnimator? = null
     private val bars = mutableListOf<View>()
 
@@ -231,6 +230,28 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    /**
+     * صفوف "لم يدفعوا بعد": قائمة قصيرة (حتى 4) تُبنى كصفوف عادية داخل البطاقة، فيتمدّد ارتفاع
+     * البطاقة مع محتواها دائماً (RecyclerView داخل ScrollView كان يُقاس بارتفاع صف واحد).
+     * الباقي يصل إليه المستخدم عبر "عرض الكل".
+     */
+    private fun bindUnpaidRows(items: List<MemberListItem>) {
+        val container = binding.listUnpaid
+        container.removeAllViews()
+        val currency = viewModel.uiState.value.currency
+        items.take(UNPAID_ROWS).forEachIndexed { index, member ->
+            val row = com.gympro.manager.databinding.ItemDashboardUnpaidBinding.inflate(layoutInflater, container, false)
+            row.divider.visibility = if (index == 0) View.GONE else View.VISIBLE
+            row.tvInitial.text = member.name.trim().firstOrNull()?.uppercase() ?: "?"
+            row.tvName.text = member.name
+            row.tvSubtitle.text = dueText(member)
+            row.tvAmount.text = CurrencyFormatter.format(member.outstandingBalance, currency)
+            row.rowRoot.setOnSingleClickListener { openMember(member.id) }
+            row.btnPay.setOnSingleClickListener { openMember(member.id) }
+            container.addView(row.root)
+        }
+    }
+
     private fun setupLists() {
         expiringAdapter = DashboardMemberAdapter(
             subtitleProvider = { member ->
@@ -242,19 +263,8 @@ class DashboardFragment : Fragment() {
             },
             onClick = { openMember(it.id) }
         )
-        unpaidAdapter = DashboardUnpaidAdapter(
-            // outstandingBalance = الدَّين الحقيقي المتراكم (كل الاشتراكات غير المدفوعة عبر تاريخ العضو)،
-            // وليس price (سعر آخر اشتراك فقط، الذي قد يُظهر مبلغاً أقل بكثير من الدَّين الفعلي).
-            amountProvider = { member ->
-                CurrencyFormatter.format(member.outstandingBalance, viewModel.uiState.value.currency)
-            },
-            dueProvider = { member -> dueText(member) },
-            onClick = { openMember(it.id) }
-        )
         binding.rvExpiringSoon.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.rvExpiringSoon.adapter = expiringAdapter
-        binding.rvUnpaid.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.rvUnpaid.adapter = unpaidAdapter
 
         // 6.2: snap لضبط توقف التمرير على بطاقة كاملة بدل منتصف بطاقة، مع الإطلالة الجزئية
         // من حواف الشاشة (المهيّأة في XML عبر margin/padding سالبَين) كإيحاء بوجود المزيد.
@@ -454,7 +464,7 @@ class DashboardFragment : Fragment() {
                     bindSectionCount(binding.tvUnpaidSectionCount, state.unpaidCount)
 
                     expiringAdapter.submitList(state.expiringSoon)
-                    unpaidAdapter.submitList(state.unpaidMembers)
+                    bindUnpaidRows(state.unpaidMembers)
 
                     binding.rvExpiringSoon.visibleIf(state.expiringSoon.isNotEmpty())
                     binding.tvEmptyExpiring.visibleIf(state.expiringSoon.isEmpty())
@@ -472,6 +482,7 @@ class DashboardFragment : Fragment() {
 
     private companion object {
         const val BAR_COUNT = 7
+        const val UNPAID_ROWS = 4
         /** ارتفاع منطقة الأعمدة داخل الحاوية: 58dp ناقص حشوة علوية 12dp (كما في تصميم HTML). */
         const val BAR_AREA_DP = 46f
         const val BAR_MIN_FRACTION = 0.12f
