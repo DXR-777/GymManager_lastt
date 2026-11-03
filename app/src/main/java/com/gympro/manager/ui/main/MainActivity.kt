@@ -79,6 +79,8 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         setupBottomNavInset()
+        // تصميم HTML: الدائرة المتدرجة (itemBackground) هي مؤشر التبويب النشط، فنُلغي مؤشر Material.
+        binding.bottomNav.isItemActiveIndicatorEnabled = false
 
         requestNotificationPermissionIfNeeded()
 

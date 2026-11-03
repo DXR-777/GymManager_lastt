@@ -83,14 +83,13 @@
         <item name="itemPaddingBottom">0dp</item>
         <!-- تصميم HTML: أيقونات فقط بلا تسميات، والعنصر النشط دائرة بحدّ متدرّج (bg_home_nav_item) -->
         <item name="labelVisibilityMode">unlabeled</item>
-        <item name="itemActiveIndicatorEnabled">false</item>
         <item name="itemBackground">@drawable/bg_home_nav_item</item>
         <item name="itemIconSize">24dp</item>
         <item name="android:minHeight">0dp</item>
     </style>
 
     <style name="Widget.GymManager.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
-        <item name="android:color">@color/brand_accent_soft</item>
+        <item name="android:color">@color/transparent</item>
     </style>
 
     <!-- Card style used across the app — سطح زجاجي (Dark Glassmorphism 2026): تعبئة
