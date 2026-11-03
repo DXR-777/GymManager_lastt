@@ -83,4 +83,9 @@
     <!-- Dashboard: فجوة موحَّدة (أفقياً ورأسياً) بين البطاقات الرئيسية، بدل الجمع بين
          هوامش 4dp على كل بطاقة وفجوات متفرقة أخرى؛ الحواف الخارجية تتطابق الآن مع حشوة الحاوية. -->
     <dimen name="spacing_card_gap">12dp</dimen>
+
+    <!-- الشاشة الرئيسية (تصميم HTML) -->
+    <dimen name="home_pad">20dp</dimen>
+    <dimen name="home_pad_negative">-20dp</dimen>
+    <dimen name="home_bottom_extra">38dp</dimen>
 </resources>

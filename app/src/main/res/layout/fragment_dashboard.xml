@@ -1,524 +1,538 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    الشاشة الرئيسية — مطابقة حرفية لتصميم HTML "إدارة الجيم – الرئيسية":
+    خلفية #0A0B1E + ثلاث كرات ضبابية، رأس (أفاتار + تحية + جرس)، بطاقة Hero متدرّجة
+    (إيرادات + رسم مصغّر + مفتاح اليوم/الأسبوع/الشهر + لوحة مؤشرات من ثلاثة صفوف)،
+    قسمان: شريط أفقي لمن تنتهي اشتراكاتهم، وبطاقة زجاجية بقائمة من لم يدفعوا.
+    كل المعرّفات (ids) المستخدمة في DashboardFragment محفوظة كما كانت.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/transparent">
+    android:background="@color/home_bg">
+
+    <View
+        android:id="@+id/homeOrbs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_home_orbs"
+        android:importantForAccessibility="no" />
 
     <ScrollView
         android:id="@+id/scrollDashboardContent"
-        android:tag="nav_inset_target"
-        android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:clipToPadding="false"
+        android:fillViewport="true"
+        android:overScrollMode="never"
+        android:tag="nav_inset_target">
 
-    <com.gympro.manager.ui.widgets.MaxWidthFrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="@dimen/spacing_lg"
-        android:paddingTop="@dimen/spacing_lg"
-        android:paddingBottom="@dimen/spacing_xl">
-
-        <LinearLayout
+        <com.gympro.manager.ui.widgets.MaxWidthFrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_card_gap"
-            android:background="@drawable/bg_stat_card_glass"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="@dimen/spacing_md">
+            android:layout_gravity="center_horizontal">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:id="@+id/homeContent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/home_pad"
+                android:paddingTop="16dp"
+                android:paddingBottom="@dimen/home_bottom_extra">
 
-                <TextView
-                    android:id="@+id/tvGreeting"
-                    style="@style/Text.Headline"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    tools:text="صباح الخير ☀️"/>
+                <!-- ============ الرأس ============ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/tvGymName"
-                    style="@style/Text.Subtitle"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/tvAvatar"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:background="@drawable/bg_home_avatar"
+                        android:fontFamily="@font/cairo_medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:textColor="@color/home_ink"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        tools:text="ق" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvGreeting"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/cairo_medium"
+                            android:includeFontPadding="false"
+                            android:textColor="@color/home_mute"
+                            android:textSize="12sp"
+                            tools:text="صباح الخير" />
+
+                        <TextView
+                            android:id="@+id/tvGymName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/cairo_medium"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textColor="@color/home_ink"
+                            android:textSize="19sp"
+                            android:textStyle="bold"
+                            tools:text="نادي القوة" />
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/btnBell"
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:background="@drawable/bg_home_glass_circle"
+                        android:clickable="true"
+                        android:contentDescription="@string/home_notifications"
+                        android:focusable="true"
+                        android:foreground="@drawable/ripple_home_circle">
+
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_gravity="center"
+                            android:importantForAccessibility="no"
+                            android:src="@drawable/ic_ds_bell"
+                            app:tint="@color/home_ink" />
+
+                        <View
+                            android:id="@+id/bellDot"
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:layout_gravity="top|end"
+                            android:layout_marginTop="11dp"
+                            android:layout_marginEnd="12dp"
+                            android:background="@drawable/shape_dot"
+                            android:backgroundTint="@color/home_crim"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <!-- ============ بطاقة Hero ============ -->
+                <LinearLayout
+                    android:id="@+id/heroCard"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_xs"
-                    tools:text="نادي القوة الرياضي"/>
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_home_hero"
+                    android:clipToOutline="true"
+                    android:elevation="14dp"
+                    android:minHeight="272dp"
+                    android:orientation="horizontal"
+                    android:outlineSpotShadowColor="@color/home_hero_end"
+                    tools:targetApi="p">
+
+                    <!-- العمود الأيمن (RTL): الإيرادات -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="20dp"
+                        android:paddingTop="20dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="18dp">
+
+                        <TextView
+                            android:id="@+id/tvRevenueTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/cairo_medium"
+                            android:includeFontPadding="false"
+                            android:text="@string/home_revenue_day"
+                            android:textColor="@color/home_hero_title"
+                            android:textSize="14sp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:baselineAligned="true"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvCurrencySymbol"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_medium"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/home_hero_symbol"
+                                android:textSize="22sp"
+                                android:textStyle="bold"
+                                tools:text="₪" />
+
+                            <TextView
+                                android:id="@+id/tvTodayRevenue"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="6dp"
+                                android:layout_weight="1"
+                                android:autoSizeMaxTextSize="38sp"
+                                android:autoSizeMinTextSize="20sp"
+                                android:autoSizeTextType="uniform"
+                                android:fontFamily="@font/cairo_medium"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/home_ink"
+                                android:textFontWeight="800"
+                                android:textStyle="bold"
+                                tools:targetApi="p"
+                                tools:text="1,240" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/tvRevenueDelta"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/bg_home_chip"
+                            android:fontFamily="@font/cairo_medium"
+                            android:includeFontPadding="false"
+                            android:paddingHorizontal="11dp"
+                            android:paddingVertical="5dp"
+                            android:textColor="@color/home_ink"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            tools:text="↗ 18% عن أمس" />
+
+                        <Space
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <LinearLayout
+                            android:id="@+id/barsContainer"
+                            android:layout_width="match_parent"
+                            android:layout_height="58dp"
+                            android:layout_marginBottom="14dp"
+                            android:gravity="bottom"
+                            android:importantForAccessibility="no"
+                            android:orientation="horizontal"
+                            android:paddingTop="12dp" />
+
+                        <LinearLayout
+                            android:id="@+id/segPeriod"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_home_seg"
+                            android:orientation="horizontal"
+                            android:padding="3dp">
+
+                            <TextView
+                                android:id="@+id/segMonth"
+                                style="@style/HomeSegItem"
+                                android:text="@string/home_period_month" />
+
+                            <TextView
+                                android:id="@+id/segWeek"
+                                style="@style/HomeSegItem"
+                                android:text="@string/home_period_week" />
+
+                            <TextView
+                                android:id="@+id/segDay"
+                                style="@style/HomeSegItem"
+                                android:text="@string/home_period_day" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- اللوحة اليسرى (RTL): ثلاثة مؤشرات -->
+                    <LinearLayout
+                        android:layout_width="148dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_home_hero_panel"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/cardActiveMembers"
+                            style="@style/HomePanelRow">
+
+                            <ImageView
+                                style="@style/HomePanelTile"
+                                android:src="@drawable/ic_ds_users"
+                                app:tint="@color/home_blue" />
+
+                            <LinearLayout style="@style/HomePanelText">
+
+                                <TextView
+                                    android:id="@+id/tvActiveMembersCount"
+                                    style="@style/HomePanelNumber"
+                                    android:textColor="@color/home_blue"
+                                    tools:text="86" />
+
+                                <TextView
+                                    style="@style/HomePanelLabel"
+                                    android:text="@string/dashboard_active_members" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginHorizontal="12dp"
+                            android:background="@color/home_line" />
+
+                        <LinearLayout
+                            android:id="@+id/cardUnpaid"
+                            style="@style/HomePanelRow">
+
+                            <ImageView
+                                style="@style/HomePanelTile"
+                                android:src="@drawable/ic_ds_receipt"
+                                app:tint="@color/home_coral" />
+
+                            <LinearLayout style="@style/HomePanelText">
+
+                                <TextView
+                                    android:id="@+id/tvUnpaidCount"
+                                    style="@style/HomePanelNumber"
+                                    android:textColor="@color/home_coral"
+                                    tools:text="7" />
+
+                                <TextView
+                                    style="@style/HomePanelLabel"
+                                    android:text="@string/home_unpaid_short" />
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginHorizontal="12dp"
+                            android:background="@color/home_line" />
+
+                        <LinearLayout
+                            android:id="@+id/cardExpiringSoon"
+                            style="@style/HomePanelRow">
+
+                            <ImageView
+                                style="@style/HomePanelTile"
+                                android:src="@drawable/ic_ds_clock"
+                                app:tint="@color/home_lav" />
+
+                            <LinearLayout style="@style/HomePanelText">
+
+                                <TextView
+                                    android:id="@+id/tvExpiringSoonCount"
+                                    style="@style/HomePanelNumber"
+                                    android:textColor="@color/home_lav"
+                                    tools:text="5" />
+
+                                <TextView
+                                    style="@style/HomePanelLabel"
+                                    android:text="@string/dashboard_expiring_soon" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ============ ينتهي اشتراكهم قريباً ============ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/HomeSectionTitle"
+                        android:text="@string/dashboard_expiring_section" />
+
+                    <TextView
+                        android:id="@+id/tvExpiringSectionCount"
+                        style="@style/HomeSectionCount"
+                        android:background="@drawable/bg_home_count_vio"
+                        android:textColor="@color/home_lav"
+                        android:visibility="gone"
+                        tools:text="5"
+                        tools:visibility="visible" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/btnViewAllExpiring"
+                        style="@style/HomeViewAll"
+                        android:text="@string/dashboard_view_all" />
+                </LinearLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvExpiringSoon"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/home_pad_negative"
+                    android:layout_marginBottom="-12dp"
+                    android:clipToPadding="false"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="@dimen/home_pad"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="14dp" />
+
+                <LinearLayout
+                    android:id="@+id/tvEmptyExpiring"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_home_glass_card"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="24dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_home_empty_circle"
+                        android:importantForAccessibility="no"
+                        android:padding="14dp"
+                        android:src="@drawable/ic_calendar_check2"
+                        app:tint="@color/home_mint" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/cairo_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/dashboard_empty_expiring_title"
+                        android:textColor="@color/home_mint"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/cairo_medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="@string/dashboard_empty_expiring_subtitle"
+                        android:textColor="@color/home_mute"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <!-- ============ لم يدفعوا بعد ============ -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginBottom="12dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        style="@style/HomeSectionTitle"
+                        android:text="@string/dashboard_unpaid_section" />
+
+                    <TextView
+                        android:id="@+id/tvUnpaidSectionCount"
+                        style="@style/HomeSectionCount"
+                        android:background="@drawable/bg_home_count_coral"
+                        android:textColor="@color/home_coral"
+                        android:visibility="gone"
+                        tools:text="7"
+                        tools:visibility="visible" />
+
+                    <Space
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/btnViewAllUnpaid"
+                        style="@style/HomeViewAll"
+                        android:text="@string/dashboard_view_all" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/cardUnpaidList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_home_glass_card"
+                    android:orientation="vertical"
+                    android:paddingVertical="2dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rvUnpaid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/tvEmptyUnpaid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_home_glass_card"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="24dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_home_empty_circle"
+                        android:importantForAccessibility="no"
+                        android:padding="14dp"
+                        android:src="@drawable/ic_check_circle"
+                        app:tint="@color/home_mint" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/cairo_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/dashboard_empty_unpaid_title"
+                        android:textColor="@color/home_mint"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/cairo_medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="@string/dashboard_empty_unpaid_subtitle"
+                        android:textColor="@color/home_mute"
+                        android:textSize="12sp" />
+                </LinearLayout>
 
             </LinearLayout>
-
-        </LinearLayout>
-
-        <!-- بطاقة Hero: إيرادات اليوم هي أهم رقم في الشاشة، فتأخذ العرض الكامل
-             وأكبر خط، بحدّ متدرّج (نفس bg_price_hero_card المستخدم في شاشة العضو). -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/spacing_card_gap"
-            android:background="@drawable/bg_price_hero_card"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="20dp">
-
-            <ImageView
-                android:layout_width="@dimen/icon_badge_hero_size"
-                android:layout_height="@dimen/icon_badge_hero_size"
-                android:background="@drawable/bg_icon_badge"
-                android:backgroundTint="@color/status_success_bg"
-                android:padding="11dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_money"
-                app:tint="@color/status_success_text" />
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_md"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/Text.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/cairo_medium"
-                    android:text="@string/dashboard_today_revenue"
-                    android:textSize="14sp" />
-
-                <TextView
-                    android:id="@+id/tvTodayRevenue"
-                    style="@style/Text.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_xs"
-                    android:textSize="@dimen/text_hero_stat"
-                    tools:text="120 ₪" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- صف المؤشرات الثلاثة الثانوية -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <FrameLayout
-                android:id="@+id/cardActiveMembers"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/bg_stat_card_glass"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="@drawable/ripple_card_lg">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-                <ImageView
-                    android:layout_width="@dimen/icon_badge_size"
-                    android:layout_height="@dimen/icon_badge_size"
-                    android:background="@drawable/bg_icon_badge"
-                    android:backgroundTint="@color/brand_accent_soft"
-                    android:padding="7dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_people"
-                    app:tint="@color/brand_accent_text" />
-                <TextView
-                    android:id="@+id/tvActiveMembersCount"
-                    style="@style/Text.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_sm"
-                    android:textColor="@color/text_primary"
-                    android:textSize="@dimen/text_stat_value"
-                    tools:text="24"/>
-                <TextView
-                    style="@style/Text.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="@font/cairo_medium"
-                    android:minLines="2"
-                    android:maxLines="2"
-                    android:text="@string/dashboard_active_members"
-                    android:textSize="@dimen/text_stat_label" />
-                </LinearLayout>
-
-                <!-- 6.1: سهم صغير في الزاوية يدور تلقائياً مع RTL (ic_chevron_end autoMirrored)
-                     يشير إلى أن البطاقة قابلة للنقر، بعكس بطاقة الإيرادات التي تبقى بلا سهم. -->
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="top|end"
-                    android:layout_margin="10dp"
-                    android:alpha="0.5"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron_end"
-                    app:tint="@color/text_secondary" />
-            </FrameLayout>
-            <Space
-                android:layout_width="@dimen/spacing_card_gap"
-                android:layout_height="0dp" />
-
-            <FrameLayout
-                android:id="@+id/cardUnpaid"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/bg_stat_card_glass"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="@drawable/ripple_card_lg">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-                <ImageView
-                    android:layout_width="@dimen/icon_badge_size"
-                    android:layout_height="@dimen/icon_badge_size"
-                    android:background="@drawable/bg_icon_badge"
-                    android:backgroundTint="@color/status_error_bg"
-                    android:padding="7dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_wallet_minimal"
-                    app:tint="@color/status_error_text" />
-                <TextView
-                    android:id="@+id/tvUnpaidCount"
-                    style="@style/Text.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_sm"
-                    android:textColor="@color/status_error_text"
-                    android:textSize="@dimen/text_stat_value"
-                    tools:text="3"/>
-                <TextView
-                    style="@style/Text.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="@font/cairo_medium"
-                    android:minLines="2"
-                    android:maxLines="2"
-                    android:text="@string/dashboard_unpaid_count"
-                    android:textSize="@dimen/text_stat_label" />
-                </LinearLayout>
-
-                <!-- 6.1: سهم صغير في الزاوية يدور تلقائياً مع RTL (ic_chevron_end autoMirrored)
-                     يشير إلى أن البطاقة قابلة للنقر، بعكس بطاقة الإيرادات التي تبقى بلا سهم. -->
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="top|end"
-                    android:layout_margin="10dp"
-                    android:alpha="0.5"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron_end"
-                    app:tint="@color/text_secondary" />
-            </FrameLayout>
-            <Space
-                android:layout_width="@dimen/spacing_card_gap"
-                android:layout_height="0dp" />
-
-            <FrameLayout
-                android:id="@+id/cardExpiringSoon"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@drawable/bg_stat_card_glass"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="@drawable/ripple_card_lg">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="12dp">
-                <ImageView
-                    android:layout_width="@dimen/icon_badge_size"
-                    android:layout_height="@dimen/icon_badge_size"
-                    android:background="@drawable/bg_icon_badge"
-                    android:backgroundTint="@color/status_warning_bg"
-                    android:padding="7dp"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_calendar_range"
-                    app:tint="@color/status_warning_text" />
-                <TextView
-                    android:id="@+id/tvExpiringSoonCount"
-                    style="@style/Text.Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_sm"
-                    android:textColor="@color/status_warning"
-                    android:textSize="@dimen/text_stat_value"
-                    tools:text="5"/>
-                <TextView
-                    style="@style/Text.Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="@font/cairo_medium"
-                    android:minLines="2"
-                    android:maxLines="2"
-                    android:text="@string/dashboard_expiring_soon"
-                    android:textSize="@dimen/text_stat_label" />
-                </LinearLayout>
-
-                <!-- 6.1: سهم صغير في الزاوية يدور تلقائياً مع RTL (ic_chevron_end autoMirrored)
-                     يشير إلى أن البطاقة قابلة للنقر، بعكس بطاقة الإيرادات التي تبقى بلا سهم. -->
-                <ImageView
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
-                    android:layout_gravity="top|end"
-                    android:layout_margin="10dp"
-                    android:alpha="0.5"
-                    android:importantForAccessibility="no"
-                    android:src="@drawable/ic_chevron_end"
-                    app:tint="@color/text_secondary" />
-            </FrameLayout>
-
-        </LinearLayout>
-
-        <!-- ينتهي اشتراكهم قريباً -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_section"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="@dimen/icon_badge_section_size"
-                android:layout_height="@dimen/icon_badge_section_size"
-                android:background="@drawable/bg_icon_badge"
-                android:backgroundTint="@color/status_warning_bg"
-                android:padding="6dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_calendar_range"
-                app:tint="@color/status_warning_text" />
-
-            <TextView
-                style="@style/Text.SectionTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_sm"
-                android:text="@string/dashboard_expiring_section" />
-
-            <TextView
-                android:id="@+id/tvExpiringSectionCount"
-                style="@style/Text.SectionTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_xs"
-                android:textColor="@color/status_warning_text"
-                android:textSize="14sp"
-                android:visibility="gone"
-                tools:text="(5)"
-                tools:visibility="visible" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/btnViewAllExpiring"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ripple_pill"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="@font/cairo_medium"
-                android:padding="4dp"
-                android:text="@string/dashboard_view_all"
-                android:textColor="@color/brand_accent_text"
-                android:textSize="13sp" />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvExpiringSoon"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_header_gap"
-            android:layout_marginHorizontal="@dimen/spacing_lg_negative"
-            android:paddingHorizontal="@dimen/spacing_lg"
-            android:orientation="horizontal"
-            android:clipToPadding="false" />
-
-        <LinearLayout
-            android:id="@+id/tvEmptyExpiring"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_header_gap"
-            android:background="@drawable/bg_member_card_glass"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/spacing_md"
-            android:paddingVertical="@dimen/spacing_lg"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:alpha="0.85"
-                android:background="@drawable/bg_empty_icon_circle"
-                android:importantForAccessibility="no"
-                android:padding="14dp"
-                android:src="@drawable/ic_calendar_check2"
-                app:tint="@color/status_success_text" />
-
-            <TextView
-                style="@style/Text.SectionTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:text="@string/dashboard_empty_expiring_title"
-                android:textColor="@color/status_success_text"
-                android:textSize="15sp" />
-
-            <TextView
-                style="@style/Text.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:gravity="center"
-                android:text="@string/dashboard_empty_expiring_subtitle" />
-        </LinearLayout>
-
-        <!-- لم يدفعوا بعد -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_section"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="@dimen/icon_badge_section_size"
-                android:layout_height="@dimen/icon_badge_section_size"
-                android:background="@drawable/bg_icon_badge"
-                android:backgroundTint="@color/status_error_bg"
-                android:padding="6dp"
-                android:importantForAccessibility="no"
-                android:src="@drawable/ic_wallet_minimal"
-                app:tint="@color/status_error_text" />
-
-            <TextView
-                style="@style/Text.SectionTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_sm"
-                android:text="@string/dashboard_unpaid_section" />
-
-            <TextView
-                android:id="@+id/tvUnpaidSectionCount"
-                style="@style/Text.SectionTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_xs"
-                android:textColor="@color/status_error_text"
-                android:textSize="14sp"
-                android:visibility="gone"
-                tools:text="(5)"
-                tools:visibility="visible" />
-
-            <Space
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/btnViewAllUnpaid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/ripple_pill"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="@font/cairo_medium"
-                android:padding="4dp"
-                android:text="@string/dashboard_view_all"
-                android:textColor="@color/brand_accent_text"
-                android:textSize="13sp" />
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvUnpaid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_header_gap"
-            android:layout_marginHorizontal="@dimen/spacing_lg_negative"
-            android:paddingHorizontal="@dimen/spacing_lg"
-            android:orientation="horizontal"
-            android:clipToPadding="false" />
-
-        <LinearLayout
-            android:id="@+id/tvEmptyUnpaid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_header_gap"
-            android:background="@drawable/bg_member_card_glass"
-            android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/spacing_md"
-            android:paddingVertical="@dimen/spacing_lg"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                android:alpha="0.85"
-                android:background="@drawable/bg_empty_icon_circle"
-                android:importantForAccessibility="no"
-                android:padding="14dp"
-                android:src="@drawable/ic_check_circle"
-                app:tint="@color/status_success_text" />
-
-            <TextView
-                style="@style/Text.SectionTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:text="@string/dashboard_empty_unpaid_title"
-                android:textColor="@color/status_success_text"
-                android:textSize="15sp" />
-
-            <TextView
-                style="@style/Text.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:gravity="center"
-                android:text="@string/dashboard_empty_unpaid_subtitle" />
-        </LinearLayout>
-
-    </LinearLayout>
-    </com.gympro.manager.ui.widgets.MaxWidthFrameLayout>
+        </com.gympro.manager.ui.widgets.MaxWidthFrameLayout>
     </ScrollView>
 
-    <!-- 7.2 + البند 15: هيكل Skeleton بشكل البطاقات نفسه بدل ProgressBar دائري وسط فراغ،
-         يُعرض أثناء أول تحميل فقط (قبل أول انبعاث من DashboardViewModel.uiState). يبدو
-         التحميل أسرع ولا يقفز التخطيط عند وصول البيانات لأن الأشكال مطابقة مسبقاً. -->
+    <!-- هيكل التحميل (Skeleton) بنفس أشكال التصميم: رأس + Hero 272dp + شريط + بطاقة قائمة -->
     <ScrollView
         android:id="@+id/skeletonDashboard"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
         android:visibility="gone">
 
         <com.gympro.manager.ui.widgets.MaxWidthFrameLayout
@@ -526,110 +540,80 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/spacing_lg"
-            android:paddingTop="@dimen/spacing_lg"
-            android:paddingBottom="@dimen/spacing_xl">
-
-            <!-- رأس ترحيبي -->
-            <View
-                android:layout_width="140dp"
-                android:layout_height="22dp"
-                android:layout_marginBottom="@dimen/spacing_card_gap"
-                android:background="@drawable/bg_skeleton_block" />
-
-            <!-- بطاقة الإيرادات (Hero) -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="88dp"
-                android:layout_marginBottom="@dimen/spacing_card_gap"
-                android:background="@drawable/bg_skeleton_block" />
-
-            <!-- صف المؤشرات الثلاثة -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="104dp"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/home_pad"
+                android:paddingTop="16dp"
+                android:paddingBottom="@dimen/home_bottom_extra">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="46dp"
+                        android:layout_height="46dp"
+                        android:background="@drawable/bg_home_glass_circle" />
+
+                    <View
+                        android:layout_width="120dp"
+                        android:layout_height="20dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_home_skeleton" />
+                </LinearLayout>
 
                 <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_skeleton_block" />
-                <Space
-                    android:layout_width="@dimen/spacing_card_gap"
-                    android:layout_height="0dp" />
+                    android:layout_width="match_parent"
+                    android:layout_height="272dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/bg_home_skeleton_hero" />
+
                 <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_skeleton_block" />
-                <Space
-                    android:layout_width="@dimen/spacing_card_gap"
-                    android:layout_height="0dp" />
+                    android:layout_width="170dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_home_skeleton" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="142dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/bg_home_skeleton" />
+
+                    <View
+                        android:layout_width="142dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="12dp"
+                        android:background="@drawable/bg_home_skeleton" />
+
+                    <View
+                        android:layout_width="60dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_home_skeleton" />
+                </LinearLayout>
+
                 <View
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@drawable/bg_skeleton_block" />
+                    android:layout_width="150dp"
+                    android:layout_height="20dp"
+                    android:layout_marginTop="28dp"
+                    android:layout_marginBottom="12dp"
+                    android:background="@drawable/bg_home_skeleton" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="190dp"
+                    android:background="@drawable/bg_home_skeleton" />
             </LinearLayout>
-
-            <!-- عنوان قسم + قائمة أفقية، مكرّر مرتين (ينتهي قريباً / لم يدفعوا بعد) -->
-            <View
-                android:layout_width="160dp"
-                android:layout_height="18dp"
-                android:layout_marginTop="@dimen/spacing_section"
-                android:layout_marginBottom="@dimen/spacing_header_gap"
-                android:background="@drawable/bg_skeleton_block" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="118dp"
-                android:orientation="horizontal">
-
-                <View
-                    android:layout_width="160dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/spacing_card_gap"
-                    android:background="@drawable/bg_skeleton_block" />
-                <View
-                    android:layout_width="160dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/spacing_card_gap"
-                    android:background="@drawable/bg_skeleton_block" />
-                <View
-                    android:layout_width="80dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/bg_skeleton_block" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="160dp"
-                android:layout_height="18dp"
-                android:layout_marginTop="@dimen/spacing_section"
-                android:layout_marginBottom="@dimen/spacing_header_gap"
-                android:background="@drawable/bg_skeleton_block" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="118dp"
-                android:orientation="horizontal">
-
-                <View
-                    android:layout_width="160dp"
-                    android:layout_height="match_parent"
-                    android:layout_marginEnd="@dimen/spacing_card_gap"
-                    android:background="@drawable/bg_skeleton_block" />
-                <View
-                    android:layout_width="160dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/bg_skeleton_block" />
-            </LinearLayout>
-
-        </LinearLayout>
         </com.gympro.manager.ui.widgets.MaxWidthFrameLayout>
     </ScrollView>
 

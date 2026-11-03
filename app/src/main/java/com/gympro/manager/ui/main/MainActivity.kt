@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.ViewCompat
 import androidx.activity.result.contract.ActivityResultContracts
@@ -92,10 +93,12 @@ class MainActivity : AppCompatActivity() {
             if (!programmaticNavChange) binding.bottomNav.haptic(Haptic.TICK)
             showTab(item.itemId)
             updateFabVisibility(item.itemId)
+            updateHomeChrome(item.itemId)
             true
         }
         // يضبط حالة الزر العائم الصحيحة فور فتح التطبيق (وليس فقط بعد ضغط تبويب يدوياً)
         updateFabVisibility(binding.bottomNav.selectedItemId)
+        updateHomeChrome(binding.bottomNav.selectedItemId)
 
         binding.fabAddMember.setOnClickListener {
             it.isEnabled = false
@@ -141,7 +144,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupSystemBarInsets() {
         val appBar = binding.appBar
         val appBarTop = appBar.paddingTop
-        val nav = binding.bottomNav
+        val nav = binding.dock
         val navBaseMargin = (nav.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { _, insets ->
             val bars = insets.getInsets(
@@ -159,7 +162,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupBottomNavInset() {
-        binding.bottomNav.addOnLayoutChangeListener { v, _, top, _, bottom, _, _, _, _ ->
+        binding.dock.addOnLayoutChangeListener { v, _, top, _, bottom, _, _, _, _ ->
             val margin = (v.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
             val inset = (bottom - top) + margin
             if (inset != navInsetPx) {
@@ -195,6 +198,10 @@ class MainActivity : AppCompatActivity() {
         // العودة من AddEditMemberActivity عبر زر الرجوع تُعيد استخدام نفس نسخة هذه الشاشة
         // دون المرور بـ onCreate مجدداً، لذا يجب إعادة تفعيل الزر هنا صراحة.
         binding.fabAddMember.isEnabled = true
+        // بعد إعادة إنشاء النشاط (تدوير/تبديل الثيم) تُستعاد حالة الشريط السفلي بعد onCreate،
+        // فنُعيد ضبط الـ AppBar/ألوان الأشرطة وزر الإضافة وفق التبويب المختار فعلياً.
+        updateFabVisibility(binding.bottomNav.selectedItemId)
+        updateHomeChrome(binding.bottomNav.selectedItemId)
     }
 
     /**
@@ -207,6 +214,27 @@ class MainActivity : AppCompatActivity() {
         val showFab = selectedItemId == R.id.nav_dashboard || selectedItemId == R.id.nav_members
         binding.fabAddMember.visibility =
             if (showFab) android.view.View.VISIBLE else android.view.View.GONE
+    }
+
+    /**
+     * تصميم HTML للشاشة الرئيسية: لا شريط علوي (الرأس الترحيبي جزء من المحتوى)، والخلفية
+     * #0A0B1E بكراتها الضبابية الخاصة، لذا نُخفي الـ AppBar والتوهج القديم في تبويب "الرئيسية"
+     * فقط، ونُطابق لون شريطي الحالة والتنقّل وأيقوناتهما مع خلفيتها الداكنة الثابتة (حتى في
+     * الوضع النهاري). عند مغادرة التبويب تعود ألوان الثيم المعتادة.
+     */
+    private fun updateHomeChrome(selectedItemId: Int) {
+        val isHome = selectedItemId == R.id.nav_dashboard
+        binding.appBar.visibility = if (isHome) View.GONE else View.VISIBLE
+        binding.screenGlow.visibility = if (isHome) View.GONE else View.VISIBLE
+
+        val barColor = ContextCompat.getColor(this, if (isHome) R.color.home_bg else R.color.background)
+        window.statusBarColor = barColor
+        window.navigationBarColor = barColor
+        val lightBars = !isHome && resources.getBoolean(R.bool.is_light_theme)
+        WindowCompat.getInsetsController(window, binding.root).apply {
+            isAppearanceLightStatusBars = lightBars
+            isAppearanceLightNavigationBars = lightBars
+        }
     }
 
     private fun newFragmentFor(itemId: Int): Fragment = when (itemId) {

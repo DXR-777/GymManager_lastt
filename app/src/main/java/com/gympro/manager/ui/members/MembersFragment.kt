@@ -83,9 +83,6 @@ class MembersFragment : Fragment() {
         setupFilterChips()
         applyInitialFilterIfAny()
         observeMembers()
-        if (com.gympro.manager.BuildConfig.DEBUG) {
-            binding.chipAll.setOnLongClickListener { showDebugInfo(); true }
-        }
     }
 
     /**
@@ -120,57 +117,6 @@ class MembersFragment : Fragment() {
 
     /** يلتقط معرّف العضو المُضاف حديثاً (إن وُجد) قبل إعادة تحميل القائمة. */
     private var highlightAttempts = 0
-    private var debugStrip: android.widget.TextView? = null
-
-    private fun ensureDebugStrip() {
-        if (!com.gympro.manager.BuildConfig.DEBUG || debugStrip != null) return
-        val host = binding.rvMembers.parent as? android.widget.FrameLayout ?: return
-        debugStrip = android.widget.TextView(requireContext()).apply {
-            textSize = 11f
-            setTextColor(android.graphics.Color.YELLOW)
-            setBackgroundColor(0xCC000000.toInt())
-            setPadding(12, 6, 12, 6)
-            layoutDirection = View.LAYOUT_DIRECTION_LTR
-        }
-        host.addView(
-            debugStrip,
-            android.widget.FrameLayout.LayoutParams(
-                android.widget.FrameLayout.LayoutParams.MATCH_PARENT,
-                android.widget.FrameLayout.LayoutParams.WRAP_CONTENT,
-                android.view.Gravity.BOTTOM
-            )
-        )
-    }
-
-    private fun verifyListRendered() {
-        val b = _binding ?: return
-        val rv = b.rvMembers
-        if (adapter.itemCount > 0 && (rv.childCount == 0 || rv.height == 0)) {
-            (rv.parent as? View)?.requestLayout()
-            rv.adapter = adapter
-            rv.requestLayout()
-        }
-        debugStrip?.text = "flow=$lastEmittedCount adapter=${adapter.itemCount} children=${rv.childCount} " +
-            "rv=${rv.width}x${rv.height} vis=${rv.visibility} hidden=$isHidden " +
-            "filter=${viewModel.currentFilter.value} q='${viewModel.currentQuery.value}'"
-    }
-    private var lastEmittedCount = -1
-
-    private fun showDebugInfo() {
-        val rv = binding.rvMembers
-        val repo = (requireActivity().application as GymApplication).repository
-        viewLifecycleOwner.lifecycleScope.launch {
-            val dbCount = try { repo.observeActiveMembersCount().first() } catch (e: Exception) { -1 }
-            val msg = "db=$dbCount\nflow=$lastEmittedCount\nadapter=${adapter.itemCount}\n" +
-                "children=${rv.childCount}\nrvVisible=${rv.visibility == View.VISIBLE}\n" +
-                "rv=${rv.width}x${rv.height}\nrvAlpha=${rv.alpha}\n" +
-                "filter=${viewModel.currentFilter.value}\nquery='${viewModel.currentQuery.value}'\n" +
-                "sort=${viewModel.currentSort.value}\nhidden=$isHidden"
-            com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-                .setTitle("debug").setMessage(msg).setPositiveButton("OK", null).show()
-        }
-    }
-
     private fun prepareHighlight() {
         MemberHighlight.consume()?.let {
             pendingHighlightId = it
@@ -319,43 +265,22 @@ class MembersFragment : Fragment() {
     }
 
     /**
-     * راجع البند 24: تُغذّى القائمة الآن عبر adapter.submitData() (Paging 3) بدل
-     * adapter.submitList() على قائمة كاملة جاهزة مسبقاً. حالتا التحميل الأول والقائمة
-     * الفارغة (البند 15) تُستمَدّان من adapter.loadStateFlow بدل فحص list.isEmpty()
-     * مباشرة — وهو النمط القياسي الموصى به مع PagingDataAdapter، إذ لا توجد قائمة
-     * كاملة بعد الآن للفحص المباشر عليها.
+     * يربط قائمة الأعضاء بالواجهة: تُحدَّث القائمة عند كل تغيير في قاعدة البيانات، وتُعرض
+     * حالة التحميل الأول (الهيكل العظمي) ثم القائمة أو رسالة الفراغ/لا نتائج.
      */
-    private fun startDebugTicker() {
-        if (!com.gympro.manager.BuildConfig.DEBUG) return
-        ensureDebugStrip()
-        val rv = binding.rvMembers
-        rv.postDelayed(object : Runnable {
-            override fun run() {
-                if (_binding == null) return
-                verifyListRendered()
-                rv.postDelayed(this, 1000)
-            }
-        }, 300)
-    }
-
     private fun observeMembers() {
-        startDebugTicker()
         setSkeleton(true)
         binding.rvMembers.visibleIf(true)
         binding.emptyMembersContainer.visibleIf(false)
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.members.collectLatest { list ->
-                    lastEmittedCount = list.size
                     adapter.submitList(list) {
                         if (_binding != null) {
                             binding.rvMembers.visibility = View.VISIBLE
                             binding.rvMembers.alpha = 1f
                             binding.rvMembers.requestLayout()
                             highlightPendingMember()
-                            ensureDebugStrip()
-                            binding.rvMembers.post { verifyListRendered() }
-                            binding.rvMembers.postDelayed({ verifyListRendered() }, 500)
                         }
                     }
                     setSkeleton(false)
@@ -466,7 +391,6 @@ class MembersFragment : Fragment() {
         super.onHiddenChanged(hidden)
         if (!hidden && _binding != null) {
             prepareHighlight()
-            binding.rvMembers.post { verifyListRendered() }
         }
     }
 

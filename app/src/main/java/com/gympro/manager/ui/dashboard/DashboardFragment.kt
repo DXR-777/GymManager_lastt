@@ -7,9 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -22,14 +20,19 @@ import com.gympro.manager.R
 import com.gympro.manager.databinding.FragmentDashboardBinding
 import com.gympro.manager.model.MemberFilter
 import com.gympro.manager.model.MemberListItem
+import com.gympro.manager.model.PaymentStatus
 import com.gympro.manager.ui.main.MainActivity
 import com.gympro.manager.ui.members.MemberDetailActivity
 import com.gympro.manager.utils.CurrencyFormatter
 import com.gympro.manager.utils.DateUtils
+import com.gympro.manager.utils.Haptic
+import com.gympro.manager.utils.applySystemBarInsetsPadding
+import com.gympro.manager.utils.haptic
 import com.gympro.manager.utils.setOnSingleClickListener
 import com.gympro.manager.utils.visibleIf
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.Locale
 
 class DashboardFragment : Fragment() {
 
@@ -41,8 +44,9 @@ class DashboardFragment : Fragment() {
     }
 
     private lateinit var expiringAdapter: DashboardMemberAdapter
-    private lateinit var unpaidAdapter: DashboardMemberAdapter
+    private lateinit var unpaidAdapter: DashboardUnpaidAdapter
     private var skeletonPulse: ObjectAnimator? = null
+    private val bars = mutableListOf<View>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -53,7 +57,11 @@ class DashboardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.homeContent.applySystemBarInsetsPadding(top = true, bottom = false)
         setupGreeting()
+        setupBars()
+        setupPeriodSwitch()
+        setupBell()
         setupLists()
         setupStatCardClicks()
         observeState()
@@ -92,39 +100,156 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    /** أعمدة الرسم المصغّر السبعة (آخر 7 أيام): الأقدم أولاً، واليوم (الأخير) أبيض ناصع. */
+    private fun setupBars() {
+        val density = resources.displayMetrics.density
+        val gap = (5 * density).toInt()
+        binding.barsContainer.removeAllViews()
+        bars.clear()
+        repeat(BAR_COUNT) { index ->
+            val bar = View(requireContext()).apply {
+                setBackgroundResource(if (index == BAR_COUNT - 1) R.drawable.bg_home_bar_current else R.drawable.bg_home_bar)
+            }
+            val lp = LinearLayout.LayoutParams(0, (BAR_MIN_FRACTION * BAR_AREA_DP * density).toInt(), 1f)
+            if (index > 0) lp.marginStart = gap
+            binding.barsContainer.addView(bar, lp)
+            bars += bar
+        }
+    }
+
+    private fun bindBars(values: List<Double>) {
+        val density = resources.displayMetrics.density
+        val max = values.maxOrNull()?.takeIf { it > 0.0 } ?: 0.0
+        bars.forEachIndexed { index, bar ->
+            val value = values.getOrElse(index) { 0.0 }
+            val fraction = if (max > 0.0) (value / max).toFloat().coerceAtLeast(BAR_MIN_FRACTION) else BAR_MIN_FRACTION
+            val lp = bar.layoutParams
+            val newHeight = (fraction * BAR_AREA_DP * density).toInt()
+            if (lp.height != newHeight) {
+                lp.height = newHeight
+                bar.layoutParams = lp
+            }
+        }
+    }
+
+    /** مفتاح "الشهر | الأسبوع | اليوم" داخل بطاقة الإيرادات. */
+    private fun setupPeriodSwitch() {
+        mapOf(
+            binding.segDay to RevenuePeriod.DAY,
+            binding.segWeek to RevenuePeriod.WEEK,
+            binding.segMonth to RevenuePeriod.MONTH
+        ).forEach { (view, period) ->
+            view.setOnClickListener {
+                if (viewModel.uiState.value.period != period) {
+                    it.haptic(Haptic.TICK)
+                    viewModel.setPeriod(period)
+                }
+            }
+        }
+    }
+
+    /**
+     * الجرس: النقطة الحمراء تظهر عند وجود ما يستدعي الانتباه (غير مدفوعين أو اشتراكات توشك على
+     * الانتهاء)، والنقر يفتح قائمة الأعضاء مفلترة على الأهم (غير المدفوعين أولاً).
+     */
+    private fun setupBell() {
+        binding.btnBell.setOnSingleClickListener {
+            val state = viewModel.uiState.value
+            val filter = when {
+                state.unpaidCount > 0 -> MemberFilter.UNPAID
+                state.expiringSoonCount > 0 -> MemberFilter.EXPIRING_SOON
+                else -> null
+            }
+            if (filter != null) (activity as? MainActivity)?.openMembersFiltered(filter)
+        }
+    }
+
+    private fun formatAmount(value: Double): String {
+        val rounded = Math.round(value * 100) / 100.0
+        return if (rounded == Math.rint(rounded) && Math.abs(rounded) < 1e15) {
+            String.format(Locale.US, "%,d", rounded.toLong())
+        } else {
+            String.format(Locale.US, "%,.2f", rounded)
+        }
+    }
+
+    private fun deltaText(period: RevenuePeriod, delta: Int): String {
+        val arrow = when {
+            delta > 0 -> "↗"
+            delta < 0 -> "↘"
+            else -> "→"
+        }
+        val res = when (period) {
+            RevenuePeriod.DAY -> R.string.home_delta_day
+            RevenuePeriod.WEEK -> R.string.home_delta_week
+            RevenuePeriod.MONTH -> R.string.home_delta_month
+        }
+        return getString(res, arrow, Math.abs(delta))
+    }
+
+    /** "بعد يومين" / "بعد 3 أيام" … بدل "باقي N يوم" القديمة (نصوص تصميم HTML). */
+    private fun expiryText(days: Int): String = when {
+        days <= 0 -> getString(R.string.home_in_today)
+        days == 1 -> getString(R.string.home_in_one_day)
+        days == 2 -> getString(R.string.home_in_two_days)
+        days in 3..10 -> getString(R.string.home_in_days, days)
+        else -> getString(R.string.home_in_days_many, days)
+    }
+
+    /**
+     * "مستحق منذ أسبوع" … محسوبة من بداية آخر اشتراك غير مسدَّد. إن كان آخر اشتراك مسدَّداً
+     * والدَّين من اشتراكات أقدم (لا تاريخ دقيق لها في الصف المجمَّع) نعرض "رصيد متأخر" بدل
+     * تاريخ قد يكون مضللاً.
+     */
+    private fun dueText(member: MemberListItem): String {
+        val start = member.startDate
+        if (start == null || member.lastSubscriptionStatus() == PaymentStatus.PAID) {
+            return getString(R.string.home_due_balance)
+        }
+        val d = DateUtils.daysBetween(start, DateUtils.now())
+        return when {
+            d <= 0 -> getString(R.string.home_due_today)
+            d == 1 -> getString(R.string.home_due_one_day)
+            d == 2 -> getString(R.string.home_due_two_days)
+            d < 7 -> getString(R.string.home_due_days, d)
+            d < 14 -> getString(R.string.home_due_one_week)
+            d < 21 -> getString(R.string.home_due_two_weeks)
+            d < 30 -> getString(R.string.home_due_weeks, d / 7)
+            d < 60 -> getString(R.string.home_due_one_month)
+            d < 90 -> getString(R.string.home_due_two_months)
+            d < 365 -> getString(R.string.home_due_months, minOf(d / 30, 11))
+            else -> getString(R.string.home_due_over_year)
+        }
+    }
+
     private fun setupLists() {
         expiringAdapter = DashboardMemberAdapter(
             subtitleProvider = { member ->
-                // درجة الاستعجال: اليوم أو غداً بالأحمر، وما بعده بالأصفر.
+                // درجة الاستعجال: اليوم أو غداً بلون coral، وما بعده بالكهرماني (amber) كما في التصميم.
                 val days = DateUtils.daysRemaining(member.endDate ?: 0L)
-                val text = if (days <= 0) getString(R.string.days_remaining_today)
-                else getString(R.string.days_remaining_format, days)
-                if (days <= 1) SubtitlePill(text, R.drawable.bg_pill_error, R.color.status_error_text)
-                else SubtitlePill(text, R.drawable.bg_pill_warning, R.color.status_warning_text)
+                val text = expiryText(days)
+                if (days <= 1) SubtitlePill(text, R.drawable.bg_home_pill_coral, R.color.home_coral)
+                else SubtitlePill(text, R.drawable.bg_home_pill_amber, R.color.home_amber)
             },
             onClick = { openMember(it.id) }
         )
-        unpaidAdapter = DashboardMemberAdapter(
-            subtitleProvider = { member ->
-                // outstandingBalance = الدَّين الحقيقي المتراكم (كل الاشتراكات غير المدفوعة عبر تاريخ العضو)،
-                // وليس price (سعر آخر اشتراك فقط، الذي قد يُظهر مبلغاً أقل بكثير من الدَّين الفعلي).
-                SubtitlePill(
-                    CurrencyFormatter.format(member.outstandingBalance, viewModel.uiState.value.currency),
-                    R.drawable.bg_pill_error,
-                    R.color.status_error_text
-                )
+        unpaidAdapter = DashboardUnpaidAdapter(
+            // outstandingBalance = الدَّين الحقيقي المتراكم (كل الاشتراكات غير المدفوعة عبر تاريخ العضو)،
+            // وليس price (سعر آخر اشتراك فقط، الذي قد يُظهر مبلغاً أقل بكثير من الدَّين الفعلي).
+            amountProvider = { member ->
+                CurrencyFormatter.format(member.outstandingBalance, viewModel.uiState.value.currency)
             },
+            dueProvider = { member -> dueText(member) },
             onClick = { openMember(it.id) }
         )
         binding.rvExpiringSoon.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         binding.rvExpiringSoon.adapter = expiringAdapter
-        binding.rvUnpaid.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        binding.rvUnpaid.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.rvUnpaid.adapter = unpaidAdapter
 
         // 6.2: snap لضبط توقف التمرير على بطاقة كاملة بدل منتصف بطاقة، مع الإطلالة الجزئية
         // من حواف الشاشة (المهيّأة في XML عبر margin/padding سالبَين) كإيحاء بوجود المزيد.
         LinearSnapHelper().attachToRecyclerView(binding.rvExpiringSoon)
-        LinearSnapHelper().attachToRecyclerView(binding.rvUnpaid)
 
         // "عرض الكل" (6.2): يفتح فلتر الأعضاء الموجود أصلاً بدل تكرار منطق العرض هنا.
         binding.btnViewAllExpiring.setOnSingleClickListener {
@@ -166,13 +291,9 @@ class DashboardFragment : Fragment() {
         )
     }
 
-    private fun TextView.setAlertColor(value: Int, @ColorRes alertColor: Int) {
-        setTextColor(ContextCompat.getColor(context, if (value > 0) alertColor else R.color.text_secondary))
-    }
-
     /** عدّاد بجانب عنوان القسم مثل "(5)" بلون الحالة؛ يختفي عند الصفر. */
-    private fun bindSectionCount(view: TextView, count: Int) {
-        view.text = getString(R.string.dashboard_section_count_format, count)
+    private fun bindSectionCount(view: android.widget.TextView, count: Int) {
+        view.text = count.toString()
         view.visibleIf(count > 0)
     }
 
@@ -195,6 +316,30 @@ class DashboardFragment : Fragment() {
         binding.skeletonDashboard.alpha = 1f
     }
 
+    /** بطاقة Hero: العنوان/المبلغ/شريحة المقارنة/الأعمدة/المفتاح حسب الفترة المختارة. */
+    private fun bindRevenueCard(state: DashboardUiState) {
+        binding.tvRevenueTitle.setText(
+            when (state.period) {
+                RevenuePeriod.DAY -> R.string.home_revenue_day
+                RevenuePeriod.WEEK -> R.string.home_revenue_week
+                RevenuePeriod.MONTH -> R.string.home_revenue_month
+            }
+        )
+        binding.tvCurrencySymbol.text = state.currency
+        binding.tvTodayRevenue.text = formatAmount(state.periodRevenue)
+        val delta = state.deltaPercent
+        if (delta == null) {
+            binding.tvRevenueDelta.visibility = View.INVISIBLE
+        } else {
+            binding.tvRevenueDelta.text = deltaText(state.period, delta)
+            binding.tvRevenueDelta.visibility = View.VISIBLE
+        }
+        bindBars(state.last7Days)
+        binding.segDay.isSelected = state.period == RevenuePeriod.DAY
+        binding.segWeek.isSelected = state.period == RevenuePeriod.WEEK
+        binding.segMonth.isSelected = state.period == RevenuePeriod.MONTH
+    }
+
     private fun observeState() {
         // البند 15 + 7.2: نُخفي محتوى الشاشة ونعرض هيكل الـ Skeleton إلى حين وصول أول
         // انبعاث فعلي من الحالة، بدل ظهور لوحة بأرقام صفرية وقوائم فارغة للحظة قبل التعبئة.
@@ -212,13 +357,12 @@ class DashboardFragment : Fragment() {
                         binding.scrollDashboardContent.visibleIf(true)
                     }
                     binding.tvGymName.text = state.gymName
+                    binding.tvAvatar.text = state.gymName.trim().firstOrNull()?.uppercase() ?: "؟"
                     binding.tvActiveMembersCount.text = state.activeCount.toString()
-                    binding.tvTodayRevenue.text = CurrencyFormatter.formatEmphasized(requireContext(), state.todayRevenue, state.currency)
                     binding.tvUnpaidCount.text = state.unpaidCount.toString()
                     binding.tvExpiringSoonCount.text = state.expiringSoonCount.toString()
-                    // اللون الدلالي يعني "انتبه" فقط: عند الصفر يخفت الرقم إلى لون محايد.
-                    binding.tvUnpaidCount.setAlertColor(state.unpaidCount, R.color.status_error_text)
-                    binding.tvExpiringSoonCount.setAlertColor(state.expiringSoonCount, R.color.status_warning_text)
+                    binding.bellDot.visibleIf(state.unpaidCount + state.expiringSoonCount > 0)
+                    bindRevenueCard(state)
                     updateStatCardAccessibilityLabels(state)
                     bindSectionCount(binding.tvExpiringSectionCount, state.expiringSoonCount)
                     bindSectionCount(binding.tvUnpaidSectionCount, state.unpaidCount)
@@ -228,11 +372,18 @@ class DashboardFragment : Fragment() {
 
                     binding.rvExpiringSoon.visibleIf(state.expiringSoon.isNotEmpty())
                     binding.tvEmptyExpiring.visibleIf(state.expiringSoon.isEmpty())
-                    binding.rvUnpaid.visibleIf(state.unpaidMembers.isNotEmpty())
+                    binding.cardUnpaidList.visibleIf(state.unpaidMembers.isNotEmpty())
                     binding.tvEmptyUnpaid.visibleIf(state.unpaidMembers.isEmpty())
                 }
             }
         }
+    }
+
+    private companion object {
+        const val BAR_COUNT = 7
+        /** ارتفاع منطقة الأعمدة داخل الحاوية: 58dp ناقص حشوة علوية 12dp (كما في تصميم HTML). */
+        const val BAR_AREA_DP = 46f
+        const val BAR_MIN_FRACTION = 0.12f
     }
 
     override fun onDestroyView() {

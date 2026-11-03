@@ -6,7 +6,7 @@
     android:background="@color/transparent"
     android:orientation="vertical"
     android:paddingHorizontal="@dimen/spacing_lg"
-    android:paddingTop="@dimen/spacing_md">
+    android:paddingTop="@dimen/spacing_lg">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -444,14 +444,15 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:clipToPadding="false"
         android:gravity="center"
+        android:tag="nav_inset_target"
         android:orientation="vertical"
         android:visibility="gone">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/spacing_xl"
             android:background="@drawable/bg_card_glass"
             android:elevation="@dimen/elevation_card_resting"
             android:gravity="center"

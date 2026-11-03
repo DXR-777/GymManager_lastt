@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- أيقونات الشريط السفلي (تصميم HTML): النشط أبيض، وغير النشط #9097C2 -->
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:color="@color/brand_accent_text" android:state_checked="true"/>
-    <item android:color="@color/text_secondary"/>
+    <item android:color="#FFFFFF" android:state_checked="true"/>
+    <item android:color="@color/home_nav_idle"/>
 </selector>

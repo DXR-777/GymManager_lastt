@@ -79,9 +79,14 @@
          أصغر (8dp بدل 10dp) لتناسب حجم الحبّة العائمة المدمج الجديد. -->
     <style name="Widget.GymManager.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="itemActiveIndicatorStyle">@style/Widget.GymManager.BottomNavigationView.ActiveIndicator</item>
-        <item name="itemPaddingTop">8dp</item>
-        <item name="itemPaddingBottom">8dp</item>
-        <item name="labelVisibilityMode">selected</item>
+        <item name="itemPaddingTop">0dp</item>
+        <item name="itemPaddingBottom">0dp</item>
+        <!-- تصميم HTML: أيقونات فقط بلا تسميات، والعنصر النشط دائرة بحدّ متدرّج (bg_home_nav_item) -->
+        <item name="labelVisibilityMode">unlabeled</item>
+        <item name="itemActiveIndicatorEnabled">false</item>
+        <item name="itemBackground">@drawable/bg_home_nav_item</item>
+        <item name="itemIconSize">24dp</item>
+        <item name="android:minHeight">0dp</item>
     </style>
 
     <style name="Widget.GymManager.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
@@ -334,5 +339,110 @@
         <item name="android:textColor">@color/text_primary</item>
         <item name="android:textSize">@dimen/text_body</item>
         <item name="android:includeFontPadding">false</item>
+    </style>
+    <!-- ===== الشاشة الرئيسية (تصميم HTML) ===== -->
+    <style name="HomeSegItem" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingVertical">6dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/cairo_medium</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/home_seg_text_color</item>
+        <item name="android:background">@drawable/bg_home_seg_item</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="HomePanelRow" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingHorizontal">10dp</item>
+        <item name="android:background">@drawable/ripple_home_row</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="HomePanelTile" parent="">
+        <item name="android:layout_width">34dp</item>
+        <item name="android:layout_height">34dp</item>
+        <item name="android:background">@drawable/bg_home_tile</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+
+    <style name="HomePanelText" parent="">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_marginStart">9dp</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="HomePanelNumber" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/cairo_medium</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>
+    </style>
+
+    <style name="HomePanelLabel" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">3dp</item>
+        <item name="android:fontFamily">@font/cairo_medium</item>
+        <item name="android:textSize">10.5sp</item>
+        <item name="android:textColor">@color/home_panel_label</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:autoSizeTextType">uniform</item>
+        <item name="android:autoSizeMinTextSize">8sp</item>
+        <item name="android:autoSizeMaxTextSize">10.5sp</item>
+    </style>
+
+    <style name="HomeSectionTitle" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/cairo_medium</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/home_ink</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="HomeSectionCount" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">24dp</item>
+        <item name="android:minWidth">24dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:paddingHorizontal">7dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:fontFamily">@font/cairo_medium</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="HomeViewAll" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/cairo_medium</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/home_coral</item>
+        <item name="android:paddingVertical">8dp</item>
+        <item name="android:paddingHorizontal">4dp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:background">@drawable/ripple_home_pill</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
     </style>
 </resources>

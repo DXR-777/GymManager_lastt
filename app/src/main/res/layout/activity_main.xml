@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
 
     <!-- توهج خلفي (4.1): خلف الرأس والمحتوى العلوي ليعطي الزجاج ما يُقرأ خلفه -->
     <View
+        android:id="@+id/screenGlow"
         android:layout_width="match_parent"
         android:layout_height="360dp"
         android:background="@drawable/bg_screen_glow"
@@ -49,37 +51,53 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAddMember"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/spacing_lg"
-        android:visibility="gone"
-        android:contentDescription="@string/add_member_title"
-        android:src="@drawable/ic_add"
-        app:backgroundTint="@color/fab_add_member_background_color"
-        app:rippleColor="@color/ripple_on_dark"
-        app:tint="@color/white"
-        app:elevation="@dimen/elevation_fab"
-        app:pressedTranslationZ="@dimen/elevation_button_press_lift"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNav"
-        style="@style/Widget.GymManager.BottomNavigationView"
+    <!--
+        الشريط السفلي حرفياً كما في تصميم HTML (.dock): حبّة زجاجية بأربع أيقونات (64dp) + زر إضافة دائري
+        منفصل (64dp) بفجوة 12dp، عرض أقصى 430dp. الزر العائم يُخفى في الإيرادات والإعدادات فيتمدّد الشريط.
+    -->
+    <LinearLayout
+        android:id="@+id/dock"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="28dp"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/bg_bottom_nav_glass"
-        app:elevation="12dp"
-        app:itemIconTint="@color/nav_item_color"
-        app:itemTextColor="@color/nav_item_color"
-        app:menu="@menu/bottom_nav_menu"
+        android:layout_marginBottom="22dp"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_max="480dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintWidth_max="430dp">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            style="@style/Widget.GymManager.BottomNavigationView"
+            android:layout_width="0dp"
+            android:layout_height="64dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_home_nav_pill"
+            android:elevation="10dp"
+            android:paddingHorizontal="8dp"
+            app:elevation="10dp"
+            app:itemIconTint="@color/nav_item_color"
+            app:itemTextColor="@color/nav_item_color"
+            app:menu="@menu/bottom_nav_menu" />
+
+        <ImageButton
+            android:id="@+id/fabAddMember"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/bg_home_fab"
+            android:contentDescription="@string/add_member_title"
+            android:elevation="8dp"
+            android:outlineSpotShadowColor="@color/home_fab_glow"
+            android:scaleType="center"
+            android:src="@drawable/ic_ds_plus"
+            android:visibility="gone"
+            app:tint="@color/white"
+            tools:targetApi="p" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -596,4 +596,36 @@
     <string name="theme_system">حسب النظام</string>
     <string name="theme_light">فاتح</string>
     <string name="theme_dark">داكن</string>
+
+    <!-- الشاشة الرئيسية (تصميم HTML) -->
+    <string name="home_unpaid_short">غير مدفوعة</string>
+    <string name="home_period_day">اليوم</string>
+    <string name="home_period_week">الأسبوع</string>
+    <string name="home_period_month">الشهر</string>
+    <string name="home_revenue_day">إيرادات اليوم</string>
+    <string name="home_revenue_week">إيرادات الأسبوع</string>
+    <string name="home_revenue_month">إيرادات الشهر</string>
+    <string name="home_delta_day">%1$s %2$d%% عن أمس</string>
+    <string name="home_delta_week">%1$s %2$d%% عن الأسبوع الماضي</string>
+    <string name="home_delta_month">%1$s %2$d%% عن الشهر الماضي</string>
+    <string name="home_notifications">الإشعارات</string>
+    <string name="home_pay_action">تسديد</string>
+    <string name="home_plan_custom">اشتراك مخصص</string>
+    <string name="home_in_today">ينتهي اليوم</string>
+    <string name="home_in_one_day">بعد يوم</string>
+    <string name="home_in_two_days">بعد يومين</string>
+    <string name="home_in_days">بعد %1$d أيام</string>
+    <string name="home_in_days_many">بعد %1$d يوماً</string>
+    <string name="home_due_today">مستحق اليوم</string>
+    <string name="home_due_one_day">مستحق منذ يوم</string>
+    <string name="home_due_two_days">مستحق منذ يومين</string>
+    <string name="home_due_days">مستحق منذ %1$d أيام</string>
+    <string name="home_due_one_week">مستحق منذ أسبوع</string>
+    <string name="home_due_two_weeks">مستحق منذ أسبوعين</string>
+    <string name="home_due_weeks">مستحق منذ %1$d أسابيع</string>
+    <string name="home_due_one_month">مستحق منذ شهر</string>
+    <string name="home_due_two_months">مستحق منذ شهرين</string>
+    <string name="home_due_months">مستحق منذ %1$d أشهر</string>
+    <string name="home_due_over_year">مستحق منذ أكثر من سنة</string>
+    <string name="home_due_balance">رصيد متأخر</string>
 </resources>

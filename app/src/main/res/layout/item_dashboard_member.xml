@@ -1,73 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    عنصر بطاقة عضو واحد، يُستخدم في كلا القائمتين الأفقيتين بشاشة Dashboard
-    ("ينتهي قريباً" و"غير مدفوع" — راجع DashboardMemberAdapter.kt). tvSubtitle
-    يحمل معنى مختلفاً حسب القائمة (أيام متبقية / مبلغ مستحق منسَّق عبر
-    CurrencyFormatter). الخلفية المحايدة أدناه افتراضية فقط؛ يضبط
-    DashboardMemberAdapter خلفية ولون النص دلالياً (5.2): أحمر للمبلغ المستحق
-    ولليوم/غداً، وأصفر لبقية الأيام.
-
-    العرض الثابت (160dp) مقصود ومُبقى عمداً رغم توجيه "لا أبعاد ثابتة" العام:
-    tvName يعتمد على maxLines=1 + ellipsize لضمان ارتفاع بطاقة موحّد داخل قائمة
-    أفقية قابلة للتمرير؛ عرض wrap_content هنا كان سيُلغي فائدة الـ ellipsize
-    ويُنتج بطاقات متفاوتة العرض حسب طول الاسم.
+    بطاقة عضو في شريط "ينتهي اشتراكهم قريباً" — مطابقة لـ .m في تصميم HTML:
+    عرض 142dp، أفاتار 48dp بحلقة متدرّجة، الاسم، نوع الاشتراك، ثم شارة الأيام المتبقية.
+    الألوان ثابتة داكنة (home_*) لأن الشاشة الرئيسية داكنة دائماً.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="160dp"
+    android:layout_width="142dp"
     android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/spacing_card_gap"
-    android:background="@drawable/bg_member_card_glass"
-    android:elevation="@dimen/elevation_card_resting"
+    android:layout_marginEnd="12dp"
+    android:background="@drawable/bg_home_glass_card"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="@drawable/ripple_card_lg"
+    android:foreground="@drawable/ripple_home_card"
+    android:gravity="center_horizontal"
     android:orientation="vertical"
-    android:padding="@dimen/spacing_md">
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="14dp">
 
-    <!-- حلقة تدرّج حول الأفاتار: نفس بنية بطاقة العضو في قائمة الأعضاء (item_member.xml) -->
-    <FrameLayout
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:background="@drawable/bg_avatar_ring_gradient"
-        android:padding="4dp">
-
-        <TextView
-            android:id="@+id/tvInitial"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_avatar_circle"
-            android:gravity="center"
-            android:textColor="@color/text_primary"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:includeFontPadding="false"
-            tools:text="م" />
-    </FrameLayout>
+    <TextView
+        android:id="@+id/tvInitial"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_home_avatar"
+        android:fontFamily="@font/cairo_medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:textColor="@color/home_ink"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="ف" />
 
     <TextView
         android:id="@+id/tvName"
-        style="@style/Text.Body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:textColor="@color/text_primary"
-        android:textStyle="bold"
-        android:maxLines="1"
+        android:layout_marginTop="8dp"
         android:ellipsize="end"
+        android:fontFamily="@font/cairo_medium"
+        android:gravity="center"
         android:includeFontPadding="false"
-        tools:text="محمد أحمد" />
+        android:maxLines="1"
+        android:textColor="@color/home_ink"
+        android:textSize="14.5sp"
+        android:textStyle="bold"
+        tools:text="فيصل الشمري" />
+
+    <TextView
+        android:id="@+id/tvPlan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/cairo_medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="@color/home_mute"
+        android:textSize="12sp"
+        tools:text="اشتراك شهري" />
 
     <TextView
         android:id="@+id/tvSubtitle"
-        style="@style/Text.Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_xs"
-        android:background="@drawable/bg_pill_neutral"
-        android:paddingHorizontal="@dimen/spacing_sm"
-        android:paddingVertical="2dp"
-        tools:text="باقي 2 يوم" />
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_home_pill_amber"
+        android:fontFamily="@font/cairo_medium"
+        android:includeFontPadding="false"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="5dp"
+        android:textColor="@color/home_amber"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:text="بعد يومين" />
 
 </LinearLayout>

@@ -2,18 +2,22 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/nav_dashboard"
-        android:icon="@drawable/ic_home"
-        android:title="@string/nav_dashboard" />
+        android:icon="@drawable/ic_ds_home"
+        android:title="@string/nav_dashboard"
+        android:contentDescription="@string/nav_dashboard" />
     <item
         android:id="@+id/nav_members"
-        android:icon="@drawable/ic_people"
-        android:title="@string/nav_members" />
+        android:icon="@drawable/ic_ds_users"
+        android:title="@string/nav_members"
+        android:contentDescription="@string/nav_members" />
     <item
         android:id="@+id/nav_revenue"
-        android:icon="@drawable/ic_chart"
-        android:title="@string/nav_revenue" />
+        android:icon="@drawable/ic_ds_wallet"
+        android:title="@string/nav_revenue"
+        android:contentDescription="@string/nav_revenue" />
     <item
         android:id="@+id/nav_settings"
-        android:icon="@drawable/ic_settings"
-        android:title="@string/nav_settings" />
+        android:icon="@drawable/ic_ds_sliders"
+        android:title="@string/nav_settings"
+        android:contentDescription="@string/nav_settings" />
 </menu>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- الطبقة الأولى هي التي تحدد الـ outline لقصّ المحتوى (clipToOutline) بزاوية 32dp -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient android:type="linear" android:angle="315" android:centerX="0.46"
+                android:startColor="@color/home_hero_start" android:centerColor="@color/home_hero_mid" android:endColor="@color/home_hero_end"/>
+            <corners android:radius="32dp"/>
+        </shape>
+    </item>
+    <item android:width="280dp" android:height="280dp" android:gravity="top|right" android:top="-120dp" android:right="-70dp">
+        <shape android:shape="rectangle">
+            <gradient android:type="radial" android:gradientRadius="137dp" android:centerX="0.5" android:centerY="0.5"
+                android:startColor="@color/home_hero_glare" android:endColor="@color/home_hero_glare_end"/>
+        </shape>
+    </item>
+    <item android:height="1dp" android:gravity="top" android:start="22dp" android:end="22dp">
+        <shape android:shape="rectangle">
+            <gradient android:type="linear" android:angle="0"
+                android:startColor="@color/transparent" android:centerColor="#4DFFFFFF" android:endColor="@color/transparent"/>
+        </shape>
+    </item>
+</layer-list>
