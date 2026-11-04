@@ -1,5 +1,10 @@
 package com.gympro.manager.ui.members
 
+import android.animation.Animator
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
+import android.animation.TimeInterpolator
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -10,6 +15,10 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.LinearInterpolator
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -129,7 +138,10 @@ class MembersFragment : Fragment() {
 
     /** "لا يوجد أي عضو": تُخفى أدوات البحث والفلترة والقائمة وتظهر شاشة البداية. */
     private fun setFirstRun(show: Boolean) {
+        val wasShown = binding.firstRunScroll.visibility == View.VISIBLE
         binding.firstRunScroll.visibleIf(show)
+        if (show && !wasShown) playEmptyEntrance()
+        if (show) startEmptyAnimations() else stopEmptyAnimations()
         binding.listFrame.visibleIf(!show)
         binding.searchBar.visibleIf(!show)
         binding.chipsScroll.visibleIf(!show)
@@ -420,6 +432,10 @@ class MembersFragment : Fragment() {
         if (!hidden && _binding != null) {
             prepareHighlight()
         }
+        if (_binding != null) {
+            if (hidden) stopEmptyAnimations()
+            else if (binding.firstRunScroll.visibility == View.VISIBLE) startEmptyAnimations()
+        }
     }
 
     private var skeletonPulse: android.animation.ObjectAnimator? = null
@@ -441,7 +457,104 @@ class MembersFragment : Fragment() {
         }
     }
 
+    // ───── حركة شاشة "لا يوجد أعضاء": خفيفة، بطيئة، وتتوقف مع إخفاء الشاشة ─────
+    private val emptyAnimators = mutableListOf<Animator>()
+
+    private fun loop(
+        anim: ObjectAnimator,
+        durationMs: Long,
+        interpolator: TimeInterpolator,
+        reverse: Boolean = true,
+        delayMs: Long = 0L
+    ): ObjectAnimator = anim.apply {
+        duration = durationMs
+        this.interpolator = interpolator
+        startDelay = delayMs
+        repeatCount = ValueAnimator.INFINITE
+        repeatMode = if (reverse) ValueAnimator.REVERSE else ValueAnimator.RESTART
+    }
+
+    private fun startEmptyAnimations() {
+        if (_binding == null || emptyAnimators.isNotEmpty() || !ValueAnimator.areAnimatorsEnabled()) return
+        val b = binding
+        val d = resources.displayMetrics.density
+        val ease = AccelerateDecelerateInterpolator()
+        val list = listOf(
+            // الحلقة الخارجية ونقاطها: دورة كاملة كل 30 ثانية
+            loop(ObjectAnimator.ofFloat(b.orbitOuter, View.ROTATION, 0f, 360f), 30_000, LinearInterpolator(), reverse = false),
+            // الحلقة الداخلية "تتنفّس"
+            loop(
+                ObjectAnimator.ofPropertyValuesHolder(
+                    b.orbitInner,
+                    PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.06f),
+                    PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.06f),
+                    PropertyValuesHolder.ofFloat(View.ALPHA, 0.6f, 1f)
+                ), 2_800, ease
+            ),
+            // النواة تطفو وتتنفّس بخفة
+            loop(
+                ObjectAnimator.ofPropertyValuesHolder(
+                    b.orbitCore,
+                    PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 0f, -4f * d),
+                    PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.04f),
+                    PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.04f)
+                ), 3_200, ease
+            ),
+            // موجتان تنتشران من النواة بالتناوب
+            loop(pingAnimator(b.pingA), 3_000, DecelerateInterpolator(), reverse = false),
+            loop(pingAnimator(b.pingB), 3_000, DecelerateInterpolator(), reverse = false, delayMs = 1_500),
+            // وميض النقاط بإيقاعات مختلفة كي لا تبدو آلية
+            loop(ObjectAnimator.ofFloat(b.dotPink, View.ALPHA, 0.45f, 1f), 1_700, ease),
+            loop(ObjectAnimator.ofFloat(b.dotBlue, View.ALPHA, 0.45f, 1f), 2_300, ease),
+            loop(ObjectAnimator.ofFloat(b.dotLav, View.ALPHA, 0.45f, 1f), 2_900, ease)
+        )
+        emptyAnimators += list
+        list.forEach { it.start() }
+    }
+
+    private fun pingAnimator(view: View): ObjectAnimator = ObjectAnimator.ofPropertyValuesHolder(
+        view,
+        PropertyValuesHolder.ofFloat(View.SCALE_X, 1f, 1.9f),
+        PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f, 1.9f),
+        PropertyValuesHolder.ofFloat(View.ALPHA, 0.5f, 0f)
+    )
+
+    private fun stopEmptyAnimations() {
+        emptyAnimators.forEach { it.cancel() }
+        emptyAnimators.clear()
+        val b = _binding ?: return
+        b.orbitOuter.rotation = 0f
+        listOf(b.orbitInner, b.orbitCore).forEach { it.scaleX = 1f; it.scaleY = 1f; it.alpha = 1f; it.translationY = 0f }
+        listOf(b.pingA, b.pingB).forEach { it.alpha = 0f }
+        listOf(b.dotPink, b.dotBlue, b.dotLav).forEach { it.alpha = 1f }
+    }
+
+    /** ظهور متدرّج عند فتح الشاشة: الرسم يكبر من 85% ثم تصعد العناصر التالية واحداً بعد الآخر. */
+    private fun playEmptyEntrance() {
+        if (!ValueAnimator.areAnimatorsEnabled()) return
+        val d = resources.displayMetrics.density
+        binding.emptyContent.children.forEachIndexed { i, child ->
+            child.alpha = 0f
+            child.translationY = 18 * d
+            if (i == 0) { child.scaleX = 0.85f; child.scaleY = 0.85f }
+            child.animate().alpha(1f).translationY(0f).scaleX(1f).scaleY(1f)
+                .setStartDelay(i * 80L).setDuration(450)
+                .setInterpolator(DecelerateInterpolator()).start()
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        if (_binding != null && !isHidden && binding.firstRunScroll.visibility == View.VISIBLE) startEmptyAnimations()
+    }
+
+    override fun onStop() {
+        stopEmptyAnimations()
+        super.onStop()
+    }
+
     override fun onDestroyView() {
+        stopEmptyAnimations()
         skeletonPulse?.cancel()
         skeletonPulse = null
         super.onDestroyView()

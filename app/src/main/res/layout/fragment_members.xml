@@ -133,14 +133,19 @@
         </LinearLayout>
 
         <!-- رقائق الفلترة بعدّاد -->
+        <!--
+            صف الرقائق بمحاذاة حواف المحتوى تماماً (نفس حواف شريط البحث والبطاقات): بلا هوامش سالبة ولا حشوة،
+            فتبدأ "الكل" من الحافة اليمنى مباشرة، وتتلاشى الرقائق بنعومة عند الحافة اليسرى بدل القصّ الحاد.
+        -->
         <HorizontalScrollView
             android:id="@+id/chipsScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/home_pad_negative"
             android:layout_marginTop="12dp"
-            android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/home_pad"
+            android:fadingEdge="horizontal"
+            android:fadingEdgeLength="28dp"
+            android:overScrollMode="never"
+            android:requiresFadingEdge="horizontal"
             android:scrollbars="none">
 
             <com.google.android.material.chip.ChipGroup
@@ -152,7 +157,7 @@
                 app:singleLine="true"
                 app:singleSelection="true">
 
-                <com.google.android.material.chip.Chip
+                <com.gympro.manager.ui.widgets.GradientChip
                     android:id="@+id/chipAll"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
@@ -164,12 +169,13 @@
                     android:textStyle="bold"
                     app:checkedIconVisible="false"
                     app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipSurfaceColor="@color/transparent"
                     app:chipCornerRadius="99dp"
                     app:chipMinHeight="40dp"
                     app:chipStrokeColor="@color/chip_home_stroke"
                     app:chipStrokeWidth="1dp"
                     app:rippleColor="@color/ripple_on_dark" />
-                <com.google.android.material.chip.Chip
+                <com.gympro.manager.ui.widgets.GradientChip
                     android:id="@+id/chipActive"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
@@ -180,12 +186,13 @@
                     android:textStyle="bold"
                     app:checkedIconVisible="false"
                     app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipSurfaceColor="@color/transparent"
                     app:chipCornerRadius="99dp"
                     app:chipMinHeight="40dp"
                     app:chipStrokeColor="@color/chip_home_stroke"
                     app:chipStrokeWidth="1dp"
                     app:rippleColor="@color/ripple_on_dark" />
-                <com.google.android.material.chip.Chip
+                <com.gympro.manager.ui.widgets.GradientChip
                     android:id="@+id/chipExpiring"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
@@ -196,12 +203,13 @@
                     android:textStyle="bold"
                     app:checkedIconVisible="false"
                     app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipSurfaceColor="@color/transparent"
                     app:chipCornerRadius="99dp"
                     app:chipMinHeight="40dp"
                     app:chipStrokeColor="@color/chip_home_stroke"
                     app:chipStrokeWidth="1dp"
                     app:rippleColor="@color/ripple_on_dark" />
-                <com.google.android.material.chip.Chip
+                <com.gympro.manager.ui.widgets.GradientChip
                     android:id="@+id/chipExpired"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
@@ -212,12 +220,13 @@
                     android:textStyle="bold"
                     app:checkedIconVisible="false"
                     app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipSurfaceColor="@color/transparent"
                     app:chipCornerRadius="99dp"
                     app:chipMinHeight="40dp"
                     app:chipStrokeColor="@color/chip_home_stroke"
                     app:chipStrokeWidth="1dp"
                     app:rippleColor="@color/ripple_on_dark" />
-                <com.google.android.material.chip.Chip
+                <com.gympro.manager.ui.widgets.GradientChip
                     android:id="@+id/chipUnpaid"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
@@ -228,6 +237,7 @@
                     android:textStyle="bold"
                     app:checkedIconVisible="false"
                     app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipSurfaceColor="@color/transparent"
                     app:chipCornerRadius="99dp"
                     app:chipMinHeight="40dp"
                     app:chipStrokeColor="@color/chip_home_stroke"
@@ -494,60 +504,102 @@
             android:visibility="gone">
 
             <LinearLayout
+                android:id="@+id/emptyContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="16dp"
-                android:paddingBottom="24dp">
+                android:paddingTop="8dp"
+                android:paddingBottom="16dp">
 
+                <!--
+                    الرسم التوضيحي الحيّ: إطار 196dp (فيه 6dp هامش لتظهر النقاط المدارية كاملة دون قصّ).
+                    الحلقة الخارجية ونقاطها تدور ببطء، الحلقة الداخلية "تتنفّس"، النواة تطفو بهدوء،
+                    وموجتان تنتشران منها بالتناوب. الحركة كلها في MembersFragment.startEmptyAnimations().
+                -->
                 <FrameLayout
-                    android:layout_width="184dp"
-                    android:layout_height="184dp">
+                    android:id="@+id/emptyIllustration"
+                    android:layout_width="196dp"
+                    android:layout_height="196dp"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
 
-                    <View
+                    <FrameLayout
+                        android:id="@+id/orbitOuter"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@drawable/bg_members_orbit_outer"
-                        android:importantForAccessibility="no" />
+                        android:clipChildren="false"
+                        android:clipToPadding="false">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_margin="6dp"
+                            android:background="@drawable/bg_members_orbit_outer"
+                            android:importantForAccessibility="no" />
+
+                        <View
+                            android:id="@+id/dotPink"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="top|center_horizontal"
+                            android:background="@drawable/bg_members_dot"
+                            android:backgroundTint="@color/home_dot_pink"
+                            android:importantForAccessibility="no" />
+
+                        <View
+                            android:id="@+id/dotBlue"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="top|end"
+                            android:layout_marginTop="64dp"
+                            android:layout_marginEnd="4dp"
+                            android:background="@drawable/bg_members_dot"
+                            android:backgroundTint="@color/home_dot_blue"
+                            android:importantForAccessibility="no" />
+
+                        <View
+                            android:id="@+id/dotLav"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="bottom|start"
+                            android:layout_marginStart="27dp"
+                            android:layout_marginBottom="27dp"
+                            android:background="@drawable/bg_members_dot"
+                            android:backgroundTint="@color/home_dot_lav"
+                            android:importantForAccessibility="no" />
+                    </FrameLayout>
 
                     <View
+                        android:id="@+id/orbitInner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_margin="28dp"
+                        android:layout_margin="34dp"
                         android:background="@drawable/bg_members_orbit_inner"
                         android:importantForAccessibility="no" />
 
                     <View
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:layout_gravity="top|center_horizontal"
-                        android:layout_marginTop="-6dp"
-                        android:background="@drawable/bg_members_dot"
-                        android:backgroundTint="@color/home_dot_pink"
+                        android:id="@+id/pingA"
+                        android:layout_width="92dp"
+                        android:layout_height="92dp"
+                        android:layout_gravity="center"
+                        android:alpha="0"
+                        android:background="@drawable/bg_members_ping"
                         android:importantForAccessibility="no" />
 
                     <View
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:layout_gravity="top|end"
-                        android:layout_marginTop="70dp"
-                        android:layout_marginEnd="-6dp"
-                        android:background="@drawable/bg_members_dot"
-                        android:backgroundTint="@color/home_dot_blue"
-                        android:importantForAccessibility="no" />
-
-                    <View
-                        android:layout_width="12dp"
-                        android:layout_height="12dp"
-                        android:layout_gravity="bottom|start"
-                        android:layout_marginStart="14dp"
-                        android:layout_marginBottom="14dp"
-                        android:background="@drawable/bg_members_dot"
-                        android:backgroundTint="@color/home_dot_lav"
+                        android:id="@+id/pingB"
+                        android:layout_width="92dp"
+                        android:layout_height="92dp"
+                        android:layout_gravity="center"
+                        android:alpha="0"
+                        android:background="@drawable/bg_members_ping"
                         android:importantForAccessibility="no" />
 
                     <ImageView
+                        android:id="@+id/orbitCore"
                         android:layout_width="92dp"
                         android:layout_height="92dp"
                         android:layout_gravity="center"
@@ -563,7 +615,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="24dp"
                     android:fontFamily="@font/cairo_medium"
                     android:text="@string/members_empty_title"
                     android:textColor="@color/home_ink"
@@ -573,7 +625,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="8dp"
                     android:gravity="center"
                     android:lineSpacingMultiplier="1.3"
                     android:maxWidth="300dp"
@@ -581,22 +633,31 @@
                     android:textColor="@color/home_mute"
                     android:textSize="14sp" />
 
-                <com.google.android.material.button.MaterialButton
+                <TextView
                     android:id="@+id/btnEmptyAdd"
-                    style="@style/Widget.GymManager.Button.Primary"
                     android:layout_width="match_parent"
-                    android:layout_height="54dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_height="56dp"
+                    android:layout_marginTop="28dp"
+                    android:background="@drawable/bg_home_cta"
+                    android:clickable="true"
+                    android:drawablePadding="8dp"
+                    android:drawableStart="@drawable/ic_ds_plus_small"
+                    android:elevation="8dp"
+                    android:focusable="true"
+                    android:fontFamily="@font/cairo_medium"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:outlineSpotShadowColor="@color/home_fab_glow"
+                    android:paddingHorizontal="24dp"
                     android:text="@string/members_first_add"
-                    app:cornerRadius="99dp"
-                    app:icon="@drawable/ic_add"
-                    app:iconGravity="textStart"
-                    app:iconTint="@color/text_on_accent" />
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="24dp"
                     android:background="@drawable/bg_home_glass_card"
                     android:orientation="vertical"
                     android:paddingHorizontal="16dp"

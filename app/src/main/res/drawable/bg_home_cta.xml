@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- زر الإجراء الرئيسي بتدرّج crim → vio (نفس زر "تسديد" وزر الإضافة العائم) -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="@color/ripple_on_dark">
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="315"
+                android:endColor="@color/home_vio"
+                android:startColor="@color/home_crim"
+                android:type="linear" />
+            <corners android:radius="99dp" />
+        </shape>
+    </item>
+</ripple>
