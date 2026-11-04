@@ -24,6 +24,15 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
+/** أعداد كل فلتر (على كامل الأعضاء بصرف النظر عن البحث) — تظهر داخل رقائق الفلترة وعنوان الشاشة. */
+data class MemberCounts(
+    val all: Int,
+    val active: Int,
+    val expiring: Int,
+    val expired: Int,
+    val unpaid: Int
+)
+
 class MembersViewModel(private val repository: GymRepository) : ViewModel() {
 
     private val query = MutableStateFlow("")
@@ -84,6 +93,23 @@ class MembersViewModel(private val repository: GymRepository) : ViewModel() {
             .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     val members: Flow<List<MemberListItem>> = membersState.filterNotNull()
+
+    /** null حتى أول حساب؛ بعدها تُحدَّث مع كل تغيّر في قاعدة البيانات. */
+    val counts: StateFlow<MemberCounts?> = repository.observeActiveMembers("")
+        .map { list ->
+            MemberCounts(
+                all = list.size,
+                active = list.count { matchesFilter(it, MemberFilter.ACTIVE) },
+                expiring = list.count { matchesFilter(it, MemberFilter.EXPIRING_SOON) },
+                expired = list.count { matchesFilter(it, MemberFilter.EXPIRED) },
+                unpaid = list.count { matchesFilter(it, MemberFilter.UNPAID) }
+            )
+        }
+        .catch { error ->
+            CrashReporter.record(error)
+            emit(MemberCounts(0, 0, 0, 0, 0))
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     val currentFilter: StateFlow<MemberFilter> = filter.asStateFlow()
     val currentSort: StateFlow<MemberSort> = sort.asStateFlow()

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    بطاقة العضو الواحد (قائمة الأعضاء) — Dark Glassmorphism 2026.
-    كل المعرِّفات (IDs) المستخدمة عبر ViewBinding في MembersAdapter.kt محفوظة حرفياً كما
-    كانت: cardRoot, tvInitial, tvName, tvPhone, tvTypeBadge, tvPaymentBadge,
-    tvDaysRemaining, btnWhatsapp. لا تغيير في نوع أي View يحمل معرِّفاً موجوداً، ولا في أي
-    منطق ربط بيانات — تغيير العرض البصري (خلفيات، تباعد، تدرّجات) فقط.
+    بطاقة العضو (إعادة تصميم 2026، نفس لغة الشاشة الرئيسية): صف الهوية (أفاتار + اسم + رقم
+    + زر واتساب)، صف الحالة (نوع الاشتراك + الدفع + الأيام المتبقية)، ثم شريط تقدّم رفيع
+    بلون الحالة. كل المعرِّفات القديمة محفوظة (cardRoot, tvInitial, tvName, tvPhone,
+    tvTypeBadge, tvPaymentBadge, tvDaysRemaining, btnWhatsapp) + الجديد: progressDays.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -12,147 +11,150 @@
     android:id="@+id/cardRoot"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_sm"
-    android:background="@drawable/bg_member_card_glass"
-    android:elevation="@dimen/elevation_card_resting"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_home_glass_card"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="@drawable/ripple_card_lg"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:padding="@dimen/spacing_md">
+    android:foreground="@drawable/ripple_home_card"
+    android:orientation="vertical"
+    android:padding="14dp">
 
-    <!-- حلقة تدرّج زخرفية حول الأفاتار — جديدة، لا تمسّ tvInitial نفسه ولا خلفيته الأصلية -->
-    <FrameLayout
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:background="@drawable/bg_avatar_ring_gradient"
-        android:padding="4dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tvInitial"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_avatar_circle"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_home_avatar"
+            android:fontFamily="@font/cairo_medium"
             android:gravity="center"
-            android:textColor="@color/text_primary"
+            android:includeFontPadding="false"
+            android:textColor="@color/home_ink"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:includeFontPadding="false"
             tools:text="م" />
-    </FrameLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_md"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvName"
-            style="@style/Text.Subtitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textStyle="bold"
-            tools:text="محمد أحمد" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <ImageView
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_phone"
-                app:tint="@color/text_secondary" />
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
             <TextView
-                android:id="@+id/tvPhone"
-                style="@style/Text.Caption"
-                android:layout_width="wrap_content"
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_xs"
-                android:textDirection="ltr"
-                tools:text="0599999999" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_sm"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tvTypeBadge"
-                style="@style/Text.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_type_badge_glass"
-                android:paddingStart="@dimen/spacing_sm"
-                android:paddingTop="@dimen/spacing_xs"
-                android:paddingEnd="@dimen/spacing_sm"
-                android:paddingBottom="@dimen/spacing_xs"
-                android:textColor="@color/text_secondary"
-                tools:text="شهري" />
-
-            <TextView
-                android:id="@+id/tvPaymentBadge"
-                style="@style/Text.Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/spacing_xs"
-                android:background="@drawable/bg_pill_success"
-                android:paddingStart="@dimen/spacing_sm"
-                android:paddingTop="@dimen/spacing_xs"
-                android:paddingEnd="@dimen/spacing_sm"
-                android:paddingBottom="@dimen/spacing_xs"
-                android:textColor="@color/status_success_text"
+                android:ellipsize="end"
+                android:fontFamily="@font/cairo_medium"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/home_ink"
+                android:textSize="16sp"
                 android:textStyle="bold"
-                tools:text="مدفوع" />
+                tools:text="محمد أحمد" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_phone"
+                    app:tint="@color/home_mute" />
+
+                <TextView
+                    android:id="@+id/tvPhone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/home_mute"
+                    android:textDirection="ltr"
+                    android:textSize="13sp"
+                    tools:text="0599999999" />
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_sm"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvDaysRemaining"
-            style="@style/Text.Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_days_chip_glass"
-            android:paddingStart="@dimen/spacing_sm"
-            android:paddingTop="@dimen/spacing_xs"
-            android:paddingEnd="@dimen/spacing_sm"
-            android:paddingBottom="@dimen/spacing_xs"
-            android:textStyle="bold"
-            tools:text="باقي 5 يوم" />
-
-        <!-- البند 7: 48dp بدل 40dp السابقة (الحد الأدنى الموصى به لمساحة اللمس في
-             Material Design/إمكانية الوصول) — على الأرجح أكثر زر ضغطاً بالتطبيق كله
-             (تذكير الأعضاء بالدفع/التجديد). padding زيد من 8dp إلى 12dp بنفس النسبة
-             للحفاظ على حجم الأيقونة المرئي 24dp كما كان تماماً؛ زادت مساحة اللمس فقط. -->
         <ImageButton
             android:id="@+id/btnWhatsapp"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginTop="@dimen/spacing_sm"
-            android:background="@drawable/bg_whatsapp_button_glass"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_members_wa_button"
             android:contentDescription="@string/detail_action_whatsapp"
             android:padding="12dp"
             android:src="@drawable/ic_whatsapp" />
     </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvTypeBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_home_chip"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:textColor="@color/home_mute"
+            android:textSize="11.5sp"
+            android:textStyle="bold"
+            tools:text="شهري" />
+
+        <TextView
+            android:id="@+id/tvPaymentBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_home_pill_mint"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="4dp"
+            android:textColor="@color/home_mint"
+            android:textSize="11.5sp"
+            android:textStyle="bold"
+            tools:text="مدفوع" />
+
+        <TextView
+            android:id="@+id/tvDaysRemaining"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:includeFontPadding="false"
+            android:textColor="@color/home_mint"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="باقي 5 يوم" />
+    </LinearLayout>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressDays"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:importantForAccessibility="no"
+        android:max="100"
+        app:indicatorColor="@color/home_mint"
+        app:trackColor="@color/home_progress_track"
+        app:trackCornerRadius="3dp"
+        app:trackThickness="5dp"
+        tools:progress="60" />
 
 </LinearLayout>

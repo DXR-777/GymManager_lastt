@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شريط البحث الزجاجي: يقوى الحدّ عند تركيز etSearch (addStatesFromChildren على الحاوية). -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_focused="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/home_glass_fill"/>
+            <stroke android:width="1.5dp" android:color="@color/home_search_focus"/>
+            <corners android:radius="99dp"/>
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/home_glass_fill"/>
+            <stroke android:width="1dp" android:color="@color/home_glass_stroke"/>
+            <corners android:radius="99dp"/>
+        </shape>
+    </item>
+</selector>

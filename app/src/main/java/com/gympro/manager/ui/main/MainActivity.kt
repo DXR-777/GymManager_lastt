@@ -225,7 +225,8 @@ class MainActivity : AppCompatActivity() {
      * الوضع النهاري). عند مغادرة التبويب تعود ألوان الثيم المعتادة.
      */
     private fun updateHomeChrome(selectedItemId: Int) {
-        val isHome = selectedItemId == R.id.nav_dashboard
+        // الرئيسية والأعضاء بتصميم 2026 الداكن: رأس خاص بكل شاشة بدل الـ AppBar.
+        val isHome = selectedItemId == R.id.nav_dashboard || selectedItemId == R.id.nav_members
         binding.appBar.visibility = if (isHome) View.GONE else View.VISIBLE
         binding.screenGlow.visibility = if (isHome) View.GONE else View.VISIBLE
 

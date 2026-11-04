@@ -1,82 +1,156 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    شاشة الأعضاء (إعادة تصميم 2026، نفس لغة الشاشة الرئيسية: خلفية #0A0B1E + كرات ضبابية +
+    زجاج). رأس خاص بالشاشة (عنوان + عدّاد + أرشيف) بدل الـ AppBar، شريط بحث فيه زر الترتيب،
+    رقائق فلترة بعدّاد، قائمة بطاقات، وحالتا فراغ: "لا أعضاء إطلاقاً" (firstRunScroll) و"لا نتائج".
+    كل المعرِّفات القديمة محفوظة كما هي.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/transparent"
-    android:orientation="vertical"
-    android:paddingHorizontal="@dimen/spacing_lg"
-    android:paddingTop="@dimen/spacing_lg">
+    android:background="@color/home_bg">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_home_orbs"
+        android:importantForAccessibility="no" />
 
     <LinearLayout
+        android:id="@+id/membersContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:addStatesFromChildren="true"
-        android:background="@drawable/bg_search_bar_glass"
-        android:elevation="@dimen/elevation_card_resting"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/spacing_md"
-        android:paddingVertical="@dimen/spacing_sm">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/home_pad"
+        android:paddingTop="8dp">
 
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_search"
-            app:tint="@color/text_secondary" />
+        <!-- الرأس -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
-        <!-- البند 2: كانت خانة البحث الوحيدة في التطبيق بلا maxLength — يمكن لصق نص
-             طويل جداً بلا أي حد، رغم أنه استعلام بحث لا يحتاج لأكثر من بضع كلمات. -->
-        <EditText
-            android:id="@+id/etSearch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/spacing_sm"
-            android:background="@android:color/transparent"
-            android:hint="@string/members_search_hint"
-            android:paddingVertical="@dimen/spacing_sm"
-            android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_secondary"
-            android:textSize="@dimen/text_body"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:maxLength="60"
-            android:maxLines="1" />
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/btnClearSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ripple_selectable_dark"
-            android:contentDescription="@string/action_clear_search_text"
-            android:padding="@dimen/spacing_sm"
-            android:src="@drawable/ic_close"
-            android:visibility="gone"
-            app:tint="@color/text_secondary" />
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/tvMembersTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_medium"
+                    android:includeFontPadding="false"
+                    android:text="@string/members_title"
+                    android:textColor="@color/home_ink"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm">
+                <TextView
+                    android:id="@+id/tvMembersCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/home_mute"
+                    android:textSize="12sp" />
+            </LinearLayout>
 
+            <ImageButton
+                android:id="@+id/btnArchive"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_home_tile"
+                android:contentDescription="@string/members_archive_cd"
+                android:foreground="@drawable/ripple_home_circle"
+                android:padding="12dp"
+                android:src="@drawable/ic_archive"
+                app:tint="@color/home_ink" />
+        </LinearLayout>
+
+        <!-- شريط البحث (يحوي زر الترتيب على الطرف الأيسر) -->
+        <LinearLayout
+            android:id="@+id/searchBar"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:addStatesFromChildren="true"
+            android:background="@drawable/bg_members_search"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="18dp"
+            android:paddingEnd="7dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_search"
+                app:tint="@color/home_mute" />
+
+            <EditText
+                android:id="@+id/etSearch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="@string/members_search_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLength="60"
+                android:maxLines="1"
+                android:paddingVertical="8dp"
+                android:textColor="@color/home_ink"
+                android:textColorHint="@color/home_mute"
+                android:textSize="15sp" />
+
+            <ImageButton
+                android:id="@+id/btnClearSearch"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ripple_home_circle"
+                android:contentDescription="@string/action_clear_search_text"
+                android:padding="9dp"
+                android:src="@drawable/ic_close"
+                android:visibility="gone"
+                app:tint="@color/home_mute" />
+
+            <ImageButton
+                android:id="@+id/btnSort"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_home_tile"
+                android:contentDescription="@string/members_sort_cd"
+                android:foreground="@drawable/ripple_home_circle"
+                android:padding="10dp"
+                android:src="@drawable/ic_sort"
+                app:tint="@color/home_ink" />
+        </LinearLayout>
+
+        <!-- رقائق الفلترة بعدّاد -->
         <HorizontalScrollView
+            android:id="@+id/chipsScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/home_pad_negative"
+            android:layout_marginTop="12dp"
             android:clipToPadding="false"
-            android:paddingHorizontal="@dimen/spacing_xs"
+            android:paddingHorizontal="@dimen/home_pad"
             android:scrollbars="none">
 
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chipGroupFilter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:chipSpacingHorizontal="@dimen/spacing_sm"
+                app:chipSpacingHorizontal="8dp"
+                app:selectionRequired="true"
                 app:singleLine="true"
-                app:singleSelection="true"
-                app:selectionRequired="true">
+                app:singleSelection="true">
 
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipAll"
@@ -84,432 +158,542 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:checked="true"
-                    android:textColor="@color/chip_filter_text_color"
                     android:text="@string/members_filter_all"
-                    app:chipBackgroundColor="@color/chip_filter_background_color"
-                    app:chipCornerRadius="@dimen/radius_full"
-                    app:chipStrokeColor="@color/chip_filter_stroke_color"
-                    app:chipStrokeWidth="1dp"
+                    android:textColor="@color/chip_home_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
                     app:checkedIconVisible="false"
+                    app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipCornerRadius="99dp"
+                    app:chipMinHeight="40dp"
+                    app:chipStrokeColor="@color/chip_home_stroke"
+                    app:chipStrokeWidth="1dp"
                     app:rippleColor="@color/ripple_on_dark" />
-
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipActive"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/chip_filter_text_color"
                     android:text="@string/members_filter_active"
-                    app:chipBackgroundColor="@color/chip_filter_background_color"
-                    app:chipCornerRadius="@dimen/radius_full"
-                    app:chipStrokeColor="@color/chip_filter_stroke_color"
-                    app:chipStrokeWidth="1dp"
+                    android:textColor="@color/chip_home_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
                     app:checkedIconVisible="false"
+                    app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipCornerRadius="99dp"
+                    app:chipMinHeight="40dp"
+                    app:chipStrokeColor="@color/chip_home_stroke"
+                    app:chipStrokeWidth="1dp"
                     app:rippleColor="@color/ripple_on_dark" />
-
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipExpiring"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/chip_filter_text_color"
                     android:text="@string/members_filter_expiring"
-                    app:chipBackgroundColor="@color/chip_filter_background_color"
-                    app:chipCornerRadius="@dimen/radius_full"
-                    app:chipStrokeColor="@color/chip_filter_stroke_color"
-                    app:chipStrokeWidth="1dp"
+                    android:textColor="@color/chip_home_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
                     app:checkedIconVisible="false"
+                    app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipCornerRadius="99dp"
+                    app:chipMinHeight="40dp"
+                    app:chipStrokeColor="@color/chip_home_stroke"
+                    app:chipStrokeWidth="1dp"
                     app:rippleColor="@color/ripple_on_dark" />
-
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipExpired"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/chip_filter_text_color"
                     android:text="@string/members_filter_expired"
-                    app:chipBackgroundColor="@color/chip_filter_background_color"
-                    app:chipCornerRadius="@dimen/radius_full"
-                    app:chipStrokeColor="@color/chip_filter_stroke_color"
-                    app:chipStrokeWidth="1dp"
+                    android:textColor="@color/chip_home_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
                     app:checkedIconVisible="false"
+                    app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipCornerRadius="99dp"
+                    app:chipMinHeight="40dp"
+                    app:chipStrokeColor="@color/chip_home_stroke"
+                    app:chipStrokeWidth="1dp"
                     app:rippleColor="@color/ripple_on_dark" />
-
                 <com.google.android.material.chip.Chip
                     android:id="@+id/chipUnpaid"
                     style="@style/Widget.Material3.Chip.Filter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/chip_filter_text_color"
                     android:text="@string/members_filter_unpaid"
-                    app:chipBackgroundColor="@color/chip_filter_background_color"
-                    app:chipCornerRadius="@dimen/radius_full"
-                    app:chipStrokeColor="@color/chip_filter_stroke_color"
-                    app:chipStrokeWidth="1dp"
+                    android:textColor="@color/chip_home_text"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
                     app:checkedIconVisible="false"
+                    app:chipBackgroundColor="@color/chip_home_bg"
+                    app:chipCornerRadius="99dp"
+                    app:chipMinHeight="40dp"
+                    app:chipStrokeColor="@color/chip_home_stroke"
+                    app:chipStrokeWidth="1dp"
                     app:rippleColor="@color/ripple_on_dark" />
 
             </com.google.android.material.chip.ChipGroup>
         </HorizontalScrollView>
 
-        <!-- تلميح تمرير عند الحافة اليمنى (start في RTL): نفس درجة bg_chip_row_fade_edge
-             لكن معكوسة أفقياً (scaleX=-1) بدل تكرار ملف الدرجة اللونية. -->
-        <View
-            android:layout_width="@dimen/spacing_lg"
-            android:layout_height="32dp"
-            android:layout_gravity="start|center_vertical"
-            android:background="@drawable/bg_chip_row_fade_edge"
-            android:importantForAccessibility="no"
-            android:scaleX="-1" />
-
-        <!-- تلميح تمرير عند الحافة اليسرى (end في RTL) -->
-        <View
-            android:layout_width="@dimen/spacing_lg"
-            android:layout_height="32dp"
-            android:layout_gravity="end|center_vertical"
-            android:background="@drawable/bg_chip_row_fade_edge"
-            android:importantForAccessibility="no" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvMembers"
-        android:tag="nav_inset_target"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:clipToPadding="false"
-        android:paddingBottom="80dp" />
-
-    <!-- البند 15: تُعرض أثناء أول تحميل فقط (قبل أول انبعاث من Flow قائمة الأعضاء)،
-         بدل ترك القائمة فارغة للحظة ثم الظهور المفاجئ، أو الأسوأ: ظهور رسالة
-         "لا يوجد أعضاء بعد" بشكل خاطف قبل وصول البيانات الفعلية. -->
-    <LinearLayout
-        android:id="@+id/skeletonMembers"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:importantForAccessibility="no"
-        android:orientation="vertical"
-        android:visibility="gone">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="84dp"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:background="@drawable/bg_card_glass"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <View
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_skeleton_block" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_md"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="140dp"
-                        android:layout_height="14dp"
-                        android:background="@drawable/bg_skeleton_block" />
-
-                    <View
-                        android:layout_width="90dp"
-                        android:layout_height="12dp"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:background="@drawable/bg_skeleton_block" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="56dp"
-                    android:layout_height="24dp"
-                    android:background="@drawable/bg_skeleton_block" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="84dp"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:background="@drawable/bg_card_glass"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <View
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_skeleton_block" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_md"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="140dp"
-                        android:layout_height="14dp"
-                        android:background="@drawable/bg_skeleton_block" />
-
-                    <View
-                        android:layout_width="90dp"
-                        android:layout_height="12dp"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:background="@drawable/bg_skeleton_block" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="56dp"
-                    android:layout_height="24dp"
-                    android:background="@drawable/bg_skeleton_block" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="84dp"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:background="@drawable/bg_card_glass"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <View
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_skeleton_block" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_md"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="140dp"
-                        android:layout_height="14dp"
-                        android:background="@drawable/bg_skeleton_block" />
-
-                    <View
-                        android:layout_width="90dp"
-                        android:layout_height="12dp"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:background="@drawable/bg_skeleton_block" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="56dp"
-                    android:layout_height="24dp"
-                    android:background="@drawable/bg_skeleton_block" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="84dp"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:background="@drawable/bg_card_glass"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <View
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_skeleton_block" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_md"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="140dp"
-                        android:layout_height="14dp"
-                        android:background="@drawable/bg_skeleton_block" />
-
-                    <View
-                        android:layout_width="90dp"
-                        android:layout_height="12dp"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:background="@drawable/bg_skeleton_block" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="56dp"
-                    android:layout_height="24dp"
-                    android:background="@drawable/bg_skeleton_block" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="84dp"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:background="@drawable/bg_card_glass"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <View
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_skeleton_block" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_md"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="140dp"
-                        android:layout_height="14dp"
-                        android:background="@drawable/bg_skeleton_block" />
-
-                    <View
-                        android:layout_width="90dp"
-                        android:layout_height="12dp"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:background="@drawable/bg_skeleton_block" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="56dp"
-                    android:layout_height="24dp"
-                    android:background="@drawable/bg_skeleton_block" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="84dp"
-                android:layout_marginTop="@dimen/spacing_sm"
-                android:background="@drawable/bg_card_glass"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="@dimen/spacing_md">
-
-                <View
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:background="@drawable/bg_skeleton_block" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/spacing_md"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <View
-                        android:layout_width="140dp"
-                        android:layout_height="14dp"
-                        android:background="@drawable/bg_skeleton_block" />
-
-                    <View
-                        android:layout_width="90dp"
-                        android:layout_height="12dp"
-                        android:layout_marginTop="@dimen/spacing_sm"
-                        android:background="@drawable/bg_skeleton_block" />
-                </LinearLayout>
-
-                <View
-                    android:layout_width="56dp"
-                    android:layout_height="24dp"
-                    android:background="@drawable/bg_skeleton_block" />
-            </LinearLayout>
-    </LinearLayout>
-
-    <ProgressBar
-        android:id="@+id/progressMembersLoading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:indeterminate="true"
-        android:indeterminateTint="@color/brand_accent_text"
-        android:visibility="gone"
-        android:alpha="0" />
-
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/emptyMembersContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:gravity="center"
-        android:tag="nav_inset_target"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <LinearLayout
+        <!-- القائمة + الهيكل العظمي + لا نتائج -->
+        <FrameLayout
+            android:id="@+id/listFrame"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_card_glass"
-            android:elevation="@dimen/elevation_card_resting"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/spacing_lg"
-            android:paddingVertical="@dimen/spacing_xl">
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-        <ImageView
-            android:layout_width="88dp"
-            android:layout_height="88dp"
-            android:background="@drawable/bg_empty_state_icon"
-            android:contentDescription="@null"
-            android:padding="22dp"
-            android:src="@drawable/ic_people"
-            app:tint="@color/brand_accent_text" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMembers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:clipToPadding="false"
+                android:paddingBottom="80dp"
+                android:tag="nav_inset_target" />
 
-        <TextView
-            android:id="@+id/tvMembersEmptyMessage"
-            style="@style/Text.Subtitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_md"
-            android:gravity="center"
-            android:text="@string/members_empty_title" />
+            <LinearLayout
+                android:id="@+id/skeletonMembers"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp"
+                android:importantForAccessibility="no"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-        <TextView
-            android:id="@+id/tvMembersEmptyHint"
-            style="@style/Text.Body"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_xs"
-            android:gravity="center"
-            android:text="@string/members_empty_hint"
-            android:textColor="@color/text_secondary" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_home_glass_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEmptyAdd"
-            style="@style/Widget.GymManager.Button.Primary"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:text="@string/members_empty_add"
-            app:icon="@drawable/ic_add"
-            app:iconGravity="textStart"
-            app:iconTint="@color/text_on_accent" />
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_home_skeleton" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEmptyClear"
-            style="@style/Widget.GymManager.Button.Outlined"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/spacing_lg"
-            android:text="@string/members_empty_clear"
-            android:visibility="gone" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-        </LinearLayout>
+                    <View
+                        android:layout_width="140dp"
+                        android:layout_height="14dp"
+                        android:background="@drawable/bg_home_skeleton" />
 
+                    <View
+                        android:layout_width="90dp"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_home_skeleton" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_home_skeleton" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_home_glass_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_home_skeleton" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="140dp"
+                        android:layout_height="14dp"
+                        android:background="@drawable/bg_home_skeleton" />
+
+                    <View
+                        android:layout_width="90dp"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_home_skeleton" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_home_skeleton" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_home_glass_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_home_skeleton" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="140dp"
+                        android:layout_height="14dp"
+                        android:background="@drawable/bg_home_skeleton" />
+
+                    <View
+                        android:layout_width="90dp"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_home_skeleton" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_home_skeleton" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="96dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_home_glass_card"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/bg_home_skeleton" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="140dp"
+                        android:layout_height="14dp"
+                        android:background="@drawable/bg_home_skeleton" />
+
+                    <View
+                        android:layout_width="90dp"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/bg_home_skeleton" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="@drawable/bg_home_skeleton" />
+            </LinearLayout>
+
+            </LinearLayout>
+
+            <ProgressBar
+                android:id="@+id/progressMembersLoading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:alpha="0"
+                android:indeterminate="true"
+                android:indeterminateTint="@color/home_lav"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/emptyMembersContainer"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:tag="nav_inset_target"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_home_glass_card"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="28dp">
+
+                    <ImageView
+                        android:layout_width="84dp"
+                        android:layout_height="84dp"
+                        android:background="@drawable/bg_members_orbit_inner"
+                        android:contentDescription="@null"
+                        android:padding="24dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="@color/home_lav" />
+
+                    <TextView
+                        android:id="@+id/tvMembersEmptyMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:fontFamily="@font/cairo_medium"
+                        android:gravity="center"
+                        android:text="@string/members_no_results"
+                        android:textColor="@color/home_ink"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEmptyClear"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="18dp"
+                        android:text="@string/members_empty_clear"
+                        android:textColor="@color/home_ink"
+                        app:cornerRadius="99dp"
+                        app:rippleColor="@color/ripple_on_dark"
+                        app:strokeColor="@color/home_glass_stroke" />
+                </LinearLayout>
+            </LinearLayout>
+        </FrameLayout>
+
+        <!-- حالة "لا يوجد أي عضو" -->
+        <ScrollView
+            android:id="@+id/firstRunScroll"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:fillViewport="true"
+            android:overScrollMode="never"
+            android:tag="nav_inset_target"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingTop="16dp"
+                android:paddingBottom="24dp">
+
+                <FrameLayout
+                    android:layout_width="184dp"
+                    android:layout_height="184dp">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_members_orbit_outer"
+                        android:importantForAccessibility="no" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="28dp"
+                        android:background="@drawable/bg_members_orbit_inner"
+                        android:importantForAccessibility="no" />
+
+                    <View
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="top|center_horizontal"
+                        android:layout_marginTop="-6dp"
+                        android:background="@drawable/bg_members_dot"
+                        android:backgroundTint="@color/home_dot_pink"
+                        android:importantForAccessibility="no" />
+
+                    <View
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="top|end"
+                        android:layout_marginTop="70dp"
+                        android:layout_marginEnd="-6dp"
+                        android:background="@drawable/bg_members_dot"
+                        android:backgroundTint="@color/home_dot_blue"
+                        android:importantForAccessibility="no" />
+
+                    <View
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:layout_gravity="bottom|start"
+                        android:layout_marginStart="14dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@drawable/bg_members_dot"
+                        android:backgroundTint="@color/home_dot_lav"
+                        android:importantForAccessibility="no" />
+
+                    <ImageView
+                        android:layout_width="92dp"
+                        android:layout_height="92dp"
+                        android:layout_gravity="center"
+                        android:background="@drawable/bg_members_core"
+                        android:contentDescription="@null"
+                        android:elevation="12dp"
+                        android:outlineSpotShadowColor="@color/home_fab_glow"
+                        android:padding="26dp"
+                        android:src="@drawable/ic_user_round_plus"
+                        app:tint="@color/white" />
+                </FrameLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="@font/cairo_medium"
+                    android:text="@string/members_empty_title"
+                    android:textColor="@color/home_ink"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:lineSpacingMultiplier="1.3"
+                    android:maxWidth="300dp"
+                    android:text="@string/members_empty_hint"
+                    android:textColor="@color/home_mute"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEmptyAdd"
+                    style="@style/Widget.GymManager.Button.Primary"
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/members_first_add"
+                    app:cornerRadius="99dp"
+                    app:icon="@drawable/ic_add"
+                    app:iconGravity="textStart"
+                    app:iconTint="@color/text_on_accent" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/bg_home_glass_card"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="2dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingVertical="12dp">
+
+                    <TextView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/bg_home_count_vio"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="1"
+                        android:textColor="@color/home_lav"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="@string/members_tip_1"
+                        android:textColor="@color/home_ink"
+                        android:textSize="13.5sp" />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/home_line" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingVertical="12dp">
+
+                    <TextView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/bg_home_count_vio"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="2"
+                        android:textColor="@color/home_lav"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="@string/members_tip_2"
+                        android:textColor="@color/home_ink"
+                        android:textSize="13.5sp" />
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/home_line" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingVertical="12dp">
+
+                    <TextView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:background="@drawable/bg_home_count_vio"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="3"
+                        android:textColor="@color/home_lav"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="@string/members_tip_3"
+                        android:textColor="@color/home_ink"
+                        android:textSize="13.5sp" />
+                </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
     </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

@@ -3,11 +3,11 @@ package com.gympro.manager.ui.members
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.RelativeSizeSpan
 import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
@@ -40,6 +40,8 @@ import com.gympro.manager.utils.Haptic
 import com.gympro.manager.utils.haptic
 import com.gympro.manager.utils.MemberHighlight
 import com.gympro.manager.utils.setOnSingleClickListener
+import com.gympro.manager.utils.applySystemBarInsetsPadding
+import com.google.android.material.chip.Chip
 
 class MembersFragment : Fragment() {
 
@@ -77,12 +79,60 @@ class MembersFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
+        // الرأس جزء من المحتوى (لا AppBar في هذه الشاشة) فنضيف حشوة شريط الحالة هنا.
+        binding.membersContent.applySystemBarInsetsPadding(top = true, bottom = false)
+        setupHeaderActions()
         setupRecyclerView()
         setupSearch()
         setupFilterChips()
         applyInitialFilterIfAny()
         observeMembers()
+        observeCounts()
+    }
+
+    /** الأرشيف في الرأس، والترتيب داخل شريط البحث (كانا سابقاً في قائمة الـ AppBar). */
+    private fun setupHeaderActions() {
+        binding.btnArchive.setOnSingleClickListener {
+            startActivity(Intent(requireContext(), ArchiveActivity::class.java))
+        }
+        binding.btnSort.setOnSingleClickListener { showSortDialog() }
+    }
+
+    /** أعداد الفلاتر تظهر داخل الرقائق، وعدد النشطين تحت عنوان الشاشة. */
+    private fun observeCounts() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.counts.collectLatest { counts ->
+                    if (counts != null && _binding != null) renderCounts(counts)
+                }
+            }
+        }
+    }
+
+    private fun renderCounts(c: MemberCounts) {
+        binding.tvMembersCount.text =
+            if (c.all == 0) getString(R.string.members_count_none)
+            else getString(R.string.members_count_active, c.active)
+        setChipLabel(binding.chipAll, R.string.members_filter_all, c.all)
+        setChipLabel(binding.chipActive, R.string.members_filter_active, c.active)
+        setChipLabel(binding.chipExpiring, R.string.members_filter_expiring, c.expiring)
+        setChipLabel(binding.chipExpired, R.string.members_filter_expired, c.expired)
+        setChipLabel(binding.chipUnpaid, R.string.members_filter_unpaid, c.unpaid)
+    }
+
+    private fun setChipLabel(chip: Chip, labelRes: Int, count: Int) {
+        val label = getString(labelRes)
+        val text = SpannableString("$label  $count")
+        text.setSpan(RelativeSizeSpan(0.85f), label.length + 2, text.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        chip.text = text
+    }
+
+    /** "لا يوجد أي عضو": تُخفى أدوات البحث والفلترة والقائمة وتظهر شاشة البداية. */
+    private fun setFirstRun(show: Boolean) {
+        binding.firstRunScroll.visibleIf(show)
+        binding.listFrame.visibleIf(!show)
+        binding.searchBar.visibleIf(!show)
+        binding.chipsScroll.visibleIf(!show)
     }
 
     /**
@@ -150,22 +200,6 @@ class MembersFragment : Fragment() {
         binding.chipGroupFilter.check(chipId)
         programmaticFilterChange = false
         viewModel.setFilter(filter)
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.member_list_menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.action_archive) {
-            startActivity(Intent(requireContext(), ArchiveActivity::class.java))
-            return true
-        }
-        if (item.itemId == R.id.action_sort) {
-            showSortDialog()
-            return true
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     /**
@@ -285,17 +319,11 @@ class MembersFragment : Fragment() {
                     }
                     setSkeleton(false)
                     val isEmpty = list.isEmpty()
-                    binding.emptyMembersContainer.visibleIf(isEmpty)
-                    if (isEmpty) {
-                        val isFiltered = viewModel.currentQuery.value.isNotBlank() ||
-                            viewModel.currentFilter.value != MemberFilter.ALL
-                        binding.tvMembersEmptyMessage.setText(
-                            if (isFiltered) R.string.members_no_results else R.string.members_empty_title
-                        )
-                        binding.tvMembersEmptyHint.visibleIf(!isFiltered)
-                        binding.btnEmptyAdd.visibleIf(!isFiltered)
-                        binding.btnEmptyClear.visibleIf(isFiltered)
-                    }
+                    val isFiltered = viewModel.currentQuery.value.isNotBlank() ||
+                        viewModel.currentFilter.value != MemberFilter.ALL
+                    // فراغ بلا بحث/فلتر = لا يوجد أي عضو أصلاً → شاشة البداية؛ فراغ مع بحث/فلتر → "لا نتائج".
+                    setFirstRun(isEmpty && !isFiltered)
+                    binding.emptyMembersContainer.visibleIf(isEmpty && isFiltered)
                 }
             }
         }

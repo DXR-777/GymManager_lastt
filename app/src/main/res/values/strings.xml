@@ -628,4 +628,14 @@
     <string name="home_due_months">مستحق منذ %1$d أشهر</string>
     <string name="home_due_over_year">مستحق منذ أكثر من سنة</string>
     <string name="home_due_balance">رصيد متأخر</string>
+
+    <!-- شاشة الأعضاء (إعادة تصميم 2026) -->
+    <string name="members_count_active">%1$d عضواً نشطاً</string>
+    <string name="members_count_none">لا يوجد أعضاء بعد</string>
+    <string name="members_first_add">إضافة أول عضو</string>
+    <string name="members_tip_1">سجّل اسم العضو ورقم واتساب</string>
+    <string name="members_tip_2">اختر نوع الاشتراك والدفع</string>
+    <string name="members_tip_3">تابع التنبيهات وأرسل التذكير</string>
+    <string name="members_archive_cd">الأرشيف</string>
+    <string name="members_sort_cd">ترتيب القائمة</string>
 </resources>

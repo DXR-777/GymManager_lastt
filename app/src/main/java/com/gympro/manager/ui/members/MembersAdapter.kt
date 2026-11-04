@@ -55,7 +55,7 @@ class MembersAdapter(
         v.translationY = 0f
         v.scaleX = 1f
         v.scaleY = 1f
-        v.foreground = null
+        v.foreground = restingForeground(v)
         when {
             item.id == highlightId -> {
                 highlightId = null
@@ -63,6 +63,10 @@ class MembersAdapter(
             }
         }
     }
+
+    /** تموّج اللمس الافتراضي للبطاقة (يُستعاد بعد كل ربط/وميض بدل إلغائه كلياً). */
+    private fun restingForeground(v: View) =
+        ContextCompat.getDrawable(v.context, R.drawable.ripple_home_card)
 
     private fun playEntrance(v: View, position: Int) {
         val density = v.resources.displayMetrics.density
@@ -91,7 +95,7 @@ class MembersAdapter(
             duration = 900L
             addListener(object : AnimatorListenerAdapter() {
                 override fun onAnimationEnd(animation: Animator) {
-                    if (v.foreground === ring) v.foreground = null
+                    if (v.foreground === ring) v.foreground = restingForeground(v)
                 }
             })
             start()
@@ -118,55 +122,60 @@ class MembersAdapter(
                 null -> "—"
             }
 
-            // الشارة يجب أن تعكس الدَّين الحقيقي المتراكم (outstandingBalance عبر isUnpaid())،
-            // وليس فقط isPaid الذي يصف حالة آخر دورة اشتراك فقط. عضو دفع آخر شهر لكن لا يزال
-            // يدين بشهر سابق كان يظهر بشارة "مدفوع" خضراء مضلِّلة في هذه القائمة تحديداً،
-            // رغم أن كل شاشة أخرى بالتطبيق (لوحة التحكم، فلتر "غير مدفوع"، رسالة واتساب،
-            // بانر الدَّين بالملف الشخصي) تعتمد بالفعل على outstandingBalance/isUnpaid().
+            // الشارة تعكس الدَّين الحقيقي المتراكم (outstandingBalance عبر isUnpaid()) لا حالة آخر
+            // اشتراك فقط. الألوان هنا ثابتة داكنة (home_*) لأن الشاشة داكنة دائماً حتى في الوضع النهاري.
             when {
                 item.type == null -> {
                     binding.tvPaymentBadge.text = "—"
-                    binding.tvPaymentBadge.setBackgroundResource(R.drawable.bg_pill_neutral)
-                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.text_secondary))
+                    binding.tvPaymentBadge.setBackgroundResource(R.drawable.bg_home_chip)
+                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.home_mute))
                 }
                 item.isUnpaid() -> {
                     binding.tvPaymentBadge.text = context.getString(R.string.status_unpaid)
-                    binding.tvPaymentBadge.setBackgroundResource(R.drawable.bg_pill_error)
-                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.status_error_text))
+                    binding.tvPaymentBadge.setBackgroundResource(R.drawable.bg_home_pill_coral)
+                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.home_coral))
                 }
                 else -> {
                     binding.tvPaymentBadge.text = context.getString(R.string.status_paid)
-                    binding.tvPaymentBadge.setBackgroundResource(R.drawable.bg_pill_success)
-                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.status_success_text))
+                    binding.tvPaymentBadge.setBackgroundResource(R.drawable.bg_home_pill_mint)
+                    binding.tvPaymentBadge.setTextColor(context.getColor(R.color.home_mint))
                 }
             }
 
+            val mint = context.getColor(R.color.home_mint)
+            val amber = context.getColor(R.color.home_amber)
+            val coral = context.getColor(R.color.home_coral)
+            val mute = context.getColor(R.color.home_mute)
+
             val endDate = item.endDate
+            val progress = binding.progressDays
             if (endDate == null) {
                 binding.tvDaysRemaining.text = "—"
-                binding.tvDaysRemaining.setTextColor(context.getColor(R.color.text_secondary))
-            } else if (item.isFuture()) {
-                binding.tvDaysRemaining.text = context.getString(R.string.days_remaining_not_started)
-                binding.tvDaysRemaining.setTextColor(context.getColor(R.color.text_secondary))
+                binding.tvDaysRemaining.setTextColor(mute)
+                progress.visibility = View.GONE
             } else {
-                val days = DateUtils.daysRemaining(endDate)
-                when {
-                    days < 0 -> {
-                        binding.tvDaysRemaining.text = context.getString(R.string.days_remaining_expired, -days)
-                        binding.tvDaysRemaining.setTextColor(context.getColor(R.color.status_error_text))
+                progress.visibility = View.VISIBLE
+                // طول دورة الاشتراك الحالية (≥1 يوم) لحساب نسبة المتبقي منها.
+                val totalDays = DateUtils.daysBetween(item.startDate ?: endDate, endDate).coerceAtLeast(1)
+                if (item.isFuture()) {
+                    binding.tvDaysRemaining.text = context.getString(R.string.days_remaining_not_started)
+                    binding.tvDaysRemaining.setTextColor(mute)
+                    progress.setIndicatorColor(mute)
+                    progress.setProgressCompat(100, false)
+                } else {
+                    val days = DateUtils.daysRemaining(endDate)
+                    val (label, color) = when {
+                        days < 0 -> context.getString(R.string.days_remaining_expired, -days) to coral
+                        days == 0 -> context.getString(R.string.days_remaining_today) to amber
+                        days <= 3 -> context.getString(R.string.days_remaining_format, days) to amber
+                        else -> context.getString(R.string.days_remaining_format, days) to mint
                     }
-                    days == 0 -> {
-                        binding.tvDaysRemaining.text = context.getString(R.string.days_remaining_today)
-                        binding.tvDaysRemaining.setTextColor(context.getColor(R.color.status_warning))
-                    }
-                    days <= 3 -> {
-                        binding.tvDaysRemaining.text = context.getString(R.string.days_remaining_format, days)
-                        binding.tvDaysRemaining.setTextColor(context.getColor(R.color.status_warning))
-                    }
-                    else -> {
-                        binding.tvDaysRemaining.text = context.getString(R.string.days_remaining_format, days)
-                        binding.tvDaysRemaining.setTextColor(context.getColor(R.color.status_success_text))
-                    }
+                    binding.tvDaysRemaining.text = label
+                    binding.tvDaysRemaining.setTextColor(color)
+                    progress.setIndicatorColor(color)
+                    // المنتهي: شريط فارغ؛ غير ذلك: نسبة المتبقي (بحدّ أدنى صغير يبقيه مرئياً).
+                    val pct = if (days < 0) 0 else (days * 100f / totalDays).toInt().coerceIn(3, 100)
+                    progress.setProgressCompat(pct, false)
                 }
             }
 

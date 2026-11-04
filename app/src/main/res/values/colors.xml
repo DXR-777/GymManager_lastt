@@ -189,4 +189,17 @@
     <color name="home_orb3_end">#002F7BFF</color>
     <color name="home_skeleton">#14FFFFFF</color>
     <color name="home_fab_glow">#737C4DE8</color>
+
+    <!-- شاشة الأعضاء (إعادة تصميم 2026) — ألوان ثابتة داكنة مثل home_* لأن الشاشة داكنة دائماً -->
+    <color name="home_pill_mint_bg">#2434D399</color>
+    <color name="home_wa_fill">#2934D399</color>
+    <color name="home_wa_stroke">#4D34D399</color>
+    <color name="home_progress_track">#1AFFFFFF</color>
+    <color name="home_search_focus">#807C4DE8</color>
+    <color name="home_ring_soft">#1FFFFFFF</color>
+    <color name="home_ring_mid">#33FFFFFF</color>
+    <color name="home_ring_fill">#0AFFFFFF</color>
+    <color name="home_dot_pink">#FFB8C9</color>
+    <color name="home_dot_blue">#A9D3FF</color>
+    <color name="home_dot_lav">#E4D9FF</color>
 </resources>
