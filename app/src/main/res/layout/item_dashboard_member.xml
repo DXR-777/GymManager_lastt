@@ -23,12 +23,11 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="@drawable/bg_home_avatar"
-        android:fontFamily="@font/cairo_medium"
+        android:fontFamily="@font/cairo_bold"
         android:gravity="center"
         android:includeFontPadding="false"
         android:textColor="@color/home_ink"
         android:textSize="18sp"
-        android:textStyle="bold"
         tools:text="ف" />
 
     <TextView
@@ -37,13 +36,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:ellipsize="end"
-        android:fontFamily="@font/cairo_medium"
+        android:fontFamily="@font/cairo_bold"
         android:gravity="center"
         android:includeFontPadding="false"
         android:maxLines="1"
         android:textColor="@color/home_ink"
         android:textSize="14.5sp"
-        android:textStyle="bold"
         tools:text="فيصل الشمري" />
 
     <TextView
@@ -66,13 +64,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:background="@drawable/bg_home_pill_amber"
-        android:fontFamily="@font/cairo_medium"
+        android:fontFamily="@font/cairo_bold"
         android:includeFontPadding="false"
         android:paddingHorizontal="12dp"
         android:paddingVertical="5dp"
         android:textColor="@color/home_amber"
         android:textSize="12sp"
-        android:textStyle="bold"
         tools:text="بعد يومين" />
 
 </LinearLayout>

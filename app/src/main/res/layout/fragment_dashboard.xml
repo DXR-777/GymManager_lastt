@@ -57,12 +57,11 @@
                         android:layout_width="46dp"
                         android:layout_height="46dp"
                         android:background="@drawable/bg_home_avatar"
-                        android:fontFamily="@font/cairo_medium"
+                        android:fontFamily="@font/cairo_bold"
                         android:gravity="center"
                         android:includeFontPadding="false"
                         android:textColor="@color/home_ink"
                         android:textSize="18sp"
-                        android:textStyle="bold"
                         tools:text="ق" />
 
                     <LinearLayout
@@ -87,12 +86,11 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:ellipsize="end"
-                            android:fontFamily="@font/cairo_medium"
+                            android:fontFamily="@font/cairo_bold"
                             android:includeFontPadding="false"
                             android:maxLines="1"
                             android:textColor="@color/home_ink"
                             android:textSize="19sp"
-                            android:textStyle="bold"
                             tools:text="نادي القوة" />
                     </LinearLayout>
 
@@ -174,11 +172,10 @@
                                 android:id="@+id/tvCurrencySymbol"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_medium"
+                                android:fontFamily="@font/cairo_bold"
                                 android:includeFontPadding="true"
                                 android:textColor="@color/home_hero_symbol"
                                 android:textSize="24sp"
-                                android:textStyle="bold"
                                 tools:text="₪" />
 
                             <TextView
@@ -187,13 +184,12 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="8dp"
                                 android:layout_weight="1"
-                                android:fontFamily="@font/cairo_medium"
+                                android:fontFamily="@font/cairo_extrabold"
                                 android:includeFontPadding="true"
                                 android:maxLines="1"
                                 android:paddingTop="2dp"
                                 android:textColor="@color/home_ink"
                                 android:textSize="42sp"
-                                android:textStyle="bold"
                                 tools:text="1,240" />
                         </LinearLayout>
 
@@ -203,13 +199,12 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
                             android:background="@drawable/bg_home_chip"
-                            android:fontFamily="@font/cairo_medium"
+                            android:fontFamily="@font/cairo_bold"
                             android:includeFontPadding="false"
                             android:paddingHorizontal="11dp"
                             android:paddingVertical="5dp"
                             android:textColor="@color/home_ink"
                             android:textSize="12sp"
-                            android:textStyle="bold"
                             tools:text="↗ 18% عن أمس" />
 
                         <Space
@@ -411,12 +406,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/cairo_medium"
+                        android:fontFamily="@font/cairo_bold"
                         android:includeFontPadding="false"
                         android:text="@string/dashboard_empty_expiring_title"
                         android:textColor="@color/home_mint"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -502,12 +496,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:fontFamily="@font/cairo_medium"
+                        android:fontFamily="@font/cairo_bold"
                         android:includeFontPadding="false"
                         android:text="@string/dashboard_empty_unpaid_title"
                         android:textColor="@color/home_mint"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:textSize="15sp" />
 
                     <TextView
                         android:layout_width="wrap_content"

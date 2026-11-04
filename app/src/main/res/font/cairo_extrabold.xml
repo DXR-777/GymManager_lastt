@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cairo بوزن 800 حقيقي (بدل تثخين اصطناعي للوزن 500) ليطابق عناوين وأزرار تصميم HTML -->
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+    android:fontProviderAuthority="com.google.android.gms.fonts"
+    android:fontProviderPackage="com.google.android.gms"
+    android:fontProviderQuery="name=Cairo&amp;weight=800"
+    android:fontProviderCerts="@array/com_google_android_gms_fonts_certs">
+</font-family>

@@ -32,12 +32,11 @@
             android:layout_width="44dp"
             android:layout_height="44dp"
             android:background="@drawable/bg_home_avatar"
-            android:fontFamily="@font/cairo_medium"
+            android:fontFamily="@font/cairo_bold"
             android:gravity="center"
             android:includeFontPadding="false"
             android:textColor="@color/home_ink"
             android:textSize="18sp"
-            android:textStyle="bold"
             tools:text="س" />
 
         <LinearLayout
@@ -52,12 +51,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:fontFamily="@font/cairo_medium"
+                android:fontFamily="@font/cairo_bold"
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:textColor="@color/home_ink"
                 android:textSize="15sp"
-                android:textStyle="bold"
                 tools:text="سعد الحربي" />
 
             <TextView
@@ -79,12 +77,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:fontFamily="@font/cairo_medium"
+            android:fontFamily="@font/cairo_bold"
             android:includeFontPadding="false"
             android:maxLines="1"
             android:textColor="@color/home_coral"
             android:textSize="16sp"
-            android:textStyle="bold"
             tools:text="₪ 150" />
 
         <TextView
@@ -93,14 +90,13 @@
             android:layout_height="32dp"
             android:layout_marginStart="10dp"
             android:background="@drawable/bg_home_pay"
-            android:fontFamily="@font/cairo_medium"
+            android:fontFamily="@font/cairo_bold"
             android:gravity="center"
             android:includeFontPadding="false"
             android:minWidth="56dp"
             android:paddingHorizontal="14dp"
             android:text="@string/home_pay_action"
             android:textColor="@color/white"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:textSize="12sp" />
     </LinearLayout>
 </LinearLayout>

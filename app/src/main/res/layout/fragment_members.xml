@@ -42,12 +42,11 @@
                     android:id="@+id/tvMembersTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/cairo_medium"
+                    android:fontFamily="@font/cairo_bold"
                     android:includeFontPadding="false"
                     android:text="@string/members_title"
                     android:textColor="@color/home_ink"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:textSize="24sp" />
 
                 <TextView
                     android:id="@+id/tvMembersCount"
@@ -469,12 +468,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:fontFamily="@font/cairo_medium"
+                        android:fontFamily="@font/cairo_bold"
                         android:gravity="center"
                         android:text="@string/members_no_results"
                         android:textColor="@color/home_ink"
-                        android:textSize="16sp"
-                        android:textStyle="bold" />
+                        android:textSize="16sp" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnEmptyClear"
@@ -616,11 +614,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:fontFamily="@font/cairo_medium"
+                    android:fontFamily="@font/cairo_extrabold"
                     android:text="@string/members_empty_title"
                     android:textColor="@color/home_ink"
-                    android:textSize="22sp"
-                    android:textStyle="bold" />
+                    android:textSize="22sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -633,26 +630,36 @@
                     android:textColor="@color/home_mute"
                     android:textSize="14sp" />
 
-                <TextView
+                <LinearLayout
                     android:id="@+id/btnEmptyAdd"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginTop="28dp"
                     android:background="@drawable/bg_home_cta"
                     android:clickable="true"
-                    android:drawablePadding="8dp"
-                    android:drawableStart="@drawable/ic_ds_plus_small"
                     android:elevation="8dp"
                     android:focusable="true"
-                    android:fontFamily="@font/cairo_medium"
                     android:gravity="center"
-                    android:includeFontPadding="false"
+                    android:orientation="horizontal"
                     android:outlineSpotShadowColor="@color/home_fab_glow"
-                    android:paddingHorizontal="24dp"
-                    android:text="@string/members_first_add"
-                    android:textColor="@color/white"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
+                    android:paddingHorizontal="24dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_ds_plus_small" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:fontFamily="@font/cairo_bold"
+                        android:includeFontPadding="false"
+                        android:text="@string/members_first_add"
+                        android:textColor="@color/white"
+                        android:textSize="16sp" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"

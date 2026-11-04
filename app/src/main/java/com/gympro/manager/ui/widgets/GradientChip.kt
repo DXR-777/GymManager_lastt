@@ -27,6 +27,10 @@ class GradientChip @JvmOverloads constructor(
         )
     ).apply { shape = GradientDrawable.RECTANGLE }
 
+    init {
+        setWillNotDraw(false)
+    }
+
     override fun onDraw(canvas: Canvas) {
         if (isChecked && width > 0 && height > 0) {
             gradient.setBounds(0, 0, width, height)

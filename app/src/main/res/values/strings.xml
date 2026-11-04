@@ -197,7 +197,7 @@
     <string name="members_filter_expiring">ينتهي قريباً</string>
     <string name="members_empty">لا يوجد أعضاء بعد.\nاضغط + لإضافة أول عضو</string>
     <string name="members_empty_title">لا يوجد أعضاء بعد</string>
-    <string name="members_empty_hint">أضف أول عضو لتبدأ بمتابعة الاشتراكات والمدفوعات</string>
+    <string name="members_empty_hint">أضف أول عضو لتبدأ بمتابعة الاشتراكات والمدفوعات.</string>
     <string name="members_empty_add">إضافة عضو</string>
     <string name="members_empty_clear">مسح البحث والفلتر</string>
     <string name="members_no_results">لا نتائج مطابقة للبحث أو الفلتر الحالي</string>

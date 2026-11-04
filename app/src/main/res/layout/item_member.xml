@@ -30,12 +30,11 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:background="@drawable/bg_home_avatar"
-            android:fontFamily="@font/cairo_medium"
+            android:fontFamily="@font/cairo_bold"
             android:gravity="center"
             android:includeFontPadding="false"
             android:textColor="@color/home_ink"
             android:textSize="18sp"
-            android:textStyle="bold"
             tools:text="م" />
 
         <LinearLayout
@@ -50,12 +49,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:fontFamily="@font/cairo_medium"
+                android:fontFamily="@font/cairo_bold"
                 android:includeFontPadding="false"
                 android:maxLines="1"
                 android:textColor="@color/home_ink"
                 android:textSize="16sp"
-                android:textStyle="bold"
                 tools:text="محمد أحمد" />
 
             <LinearLayout
