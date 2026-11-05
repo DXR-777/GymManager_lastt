@@ -1,154 +1,287 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!--
+    شاشة "الأعضاء المحذوفون" (إعادة تصميم 2026، نفس لغة الرئيسية والأعضاء): خلفية #0A0B1E + كرات ضبابية،
+    رأس بزر رجوع زجاجي وعنوان وعدّاد وزر "استعادة الكل"، شريط بحث زجاجي، ملاحظة المهلة، قائمة بطاقات،
+    وحالة فارغة بدائرة متوهّجة. كل المعرِّفات القديمة محفوظة (+ archiveContent, tvArchiveCount, tvArchiveEmptyHint).
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    android:orientation="vertical">
+    android:background="@color/home_bg">
 
-    <!-- رأس مخصَّص بنفس مواصفات رأس شاشة إضافة/تعديل عضو المرجعية (راجع activity_member_detail.xml):
-         btnBack يحلّ محلّ toolbar.setNavigationOnClickListener، والعنوان صار tvToolbarTitle
-         بنمط Text.Title المتمركز بدل عنوان Toolbar الافتراضي المحاذى للبداية. -->
-    <LinearLayout
+    <View
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/background"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="@dimen/spacing_sm"
-        android:paddingEnd="@dimen/spacing_sm">
-
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="@dimen/touch_target_min"
-            android:layout_height="@dimen/touch_target_min"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/action_back"
-            android:padding="12dp"
-            android:src="@drawable/ic_back"
-            app:tint="@color/text_primary" />
-
-        <TextView
-            android:id="@+id/tvToolbarTitle"
-            style="@style/Text.Title"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:ellipsize="end"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:text="@string/archive_title" />
-
-        <ImageView
-            android:layout_width="@dimen/icon_badge_size"
-            android:layout_height="@dimen/icon_badge_size"
-            android:background="@drawable/bg_icon_badge"
-            android:backgroundTint="@color/brand_accent"
-            android:importantForAccessibility="no"
-            android:padding="7dp"
-            android:src="@drawable/ic_archive"
-            app:tint="@android:color/white" />
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:background="@drawable/bg_home_orbs"
+        android:importantForAccessibility="no" />
 
     <LinearLayout
+        android:id="@+id/archiveContent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/spacing_lg"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:addStatesFromChildren="true"
-        android:background="@drawable/bg_search_bar_glass"
-        android:elevation="@dimen/elevation_card_resting"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="@dimen/spacing_md"
-        android:paddingVertical="@dimen/spacing_sm">
-
-        <ImageView
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_search"
-            app:tint="@color/text_secondary" />
-
-        <!-- البند 2: نفس ملاحظة etSearch في fragment_members.xml — خانة بحث الأرشيف
-             كانت أيضاً بلا maxLength. -->
-        <EditText
-            android:id="@+id/etArchiveSearch"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="@dimen/spacing_sm"
-            android:background="@android:color/transparent"
-            android:hint="@string/members_search_hint"
-            android:paddingVertical="@dimen/spacing_sm"
-            android:textColor="@color/text_primary"
-            android:textColorHint="@color/text_secondary"
-            android:textSize="@dimen/text_body"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:maxLength="60"
-            android:maxLines="1" />
-
-        <ImageButton
-            android:id="@+id/btnClearArchiveSearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ripple_selectable_dark"
-            android:contentDescription="@string/archive_clear_search"
-            android:padding="@dimen/spacing_sm"
-            android:src="@drawable/ic_close"
-            android:visibility="gone"
-            app:tint="@color/text_secondary" />
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvArchived"
-        android:layoutAnimation="@anim/layout_fall_down"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:clipToPadding="false"
-        android:padding="@dimen/spacing_lg" />
-
-    <LinearLayout
-        android:id="@+id/emptyArchiveContainer"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:paddingHorizontal="@dimen/home_pad"
+        android:paddingTop="8dp">
 
-        <!-- الحالة الفارغة داخل بطاقة زجاجية: نفس بنية emptyMembersContainer في fragment_members.xml -->
+        <!-- الرأس: رجوع + عنوان/عدّاد + شارة الأرشيف -->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/spacing_xl"
-            android:background="@drawable/bg_card_glass"
-            android:elevation="@dimen/elevation_card_resting"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingHorizontal="@dimen/spacing_lg"
-            android:paddingVertical="@dimen/spacing_xl">
+            android:layout_height="64dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <ImageView
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:alpha="0.35"
+                android:id="@+id/btnBack"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:background="@drawable/bg_home_tile"
+                android:contentDescription="@string/action_back"
+                android:foreground="@drawable/ripple_home_circle"
+                android:padding="13dp"
+                android:src="@drawable/ic_back"
+                app:tint="@color/home_ink" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="14dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvToolbarTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/cairo_bold"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:text="@string/archive_title"
+                    android:textColor="@color/home_ink"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:id="@+id/tvArchiveCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/home_mute"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/btnRestoreAll"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_archive_btn_restore"
+                android:clickable="true"
+                android:drawableStart="@drawable/ic_restore"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/home_mint"
+                android:focusable="true"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="14dp"
+                android:text="@string/archive_restore_all"
+                android:textColor="@color/home_mint"
+                android:textSize="12.5sp"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <!-- شريط البحث الزجاجي (نفس شاشة الأعضاء) -->
+        <LinearLayout
+            android:id="@+id/archiveSearchBar"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="6dp"
+            android:addStatesFromChildren="true"
+            android:background="@drawable/bg_members_search"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="18dp"
+            android:paddingEnd="10dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ic_archive"
-                app:tint="@color/text_secondary" />
+                android:src="@drawable/ic_search"
+                app:tint="@color/home_mute" />
+
+            <EditText
+                android:id="@+id/etArchiveSearch"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:hint="@string/members_search_hint"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLength="60"
+                android:maxLines="1"
+                android:paddingVertical="8dp"
+                android:textColor="@color/home_ink"
+                android:textColorHint="@color/home_mute"
+                android:textSize="15sp" />
+
+            <ImageButton
+                android:id="@+id/btnClearArchiveSearch"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ripple_home_circle"
+                android:contentDescription="@string/archive_clear_search"
+                android:padding="9dp"
+                android:src="@drawable/ic_close"
+                android:visibility="gone"
+                app:tint="@color/home_mute" />
+        </LinearLayout>
+
+        <!-- ملاحظة المهلة: تشرح أن المحذوف يمكن استعادته قبل الحذف النهائي -->
+        <LinearLayout
+            android:id="@+id/archiveNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_home_note"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp">
+
+            <ImageView
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_ds_clock"
+                app:tint="@color/home_lav" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/cairo_regular"
+                android:includeFontPadding="false"
+                android:lineSpacingMultiplier="1.2"
+                android:text="@string/archive_note"
+                android:textColor="@color/home_lav"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvArchived"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/home_pad_negative"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:layoutAnimation="@anim/layout_fall_down"
+            android:paddingHorizontal="@dimen/home_pad"
+            android:paddingTop="14dp"
+            android:paddingBottom="24dp" />
+
+        <LinearLayout
+            android:id="@+id/emptyArchiveContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:paddingBottom="40dp"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="168dp"
+                android:layout_height="168dp">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_members_orbit_outer"
+                    android:importantForAccessibility="no" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="26dp"
+                    android:background="@drawable/bg_members_orbit_inner"
+                    android:importantForAccessibility="no" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="22dp"
+                    android:layout_marginEnd="14dp"
+                    android:background="@drawable/bg_members_dot"
+                    android:backgroundTint="@color/home_dot_lav"
+                    android:importantForAccessibility="no" />
+
+                <View
+                    android:layout_width="10dp"
+                    android:layout_height="10dp"
+                    android:layout_gravity="bottom|start"
+                    android:layout_marginStart="22dp"
+                    android:layout_marginBottom="18dp"
+                    android:background="@drawable/bg_members_dot"
+                    android:backgroundTint="@color/home_dot_blue"
+                    android:importantForAccessibility="no" />
+
+                <ImageView
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_home_empty_circle"
+                    android:importantForAccessibility="no"
+                    android:padding="22dp"
+                    android:src="@drawable/ic_archive"
+                    app:tint="@color/home_lav" />
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/tvArchiveEmptyMessage"
-                style="@style/Text.Body"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_md"
+                android:layout_marginTop="18dp"
+                android:fontFamily="@font/cairo_bold"
                 android:gravity="center"
-                android:text="@string/archive_empty" />
+                android:includeFontPadding="false"
+                android:text="@string/archive_empty"
+                android:textColor="@color/home_ink"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvArchiveEmptyHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:lineSpacingMultiplier="1.3"
+                android:maxWidth="300dp"
+                android:text="@string/archive_empty_hint"
+                android:textColor="@color/home_mute"
+                android:textSize="13.5sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnArchiveEmptyBack"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/action_back"
+                android:textColor="@color/home_ink"
+                app:cornerRadius="99dp"
+                app:rippleColor="@color/ripple_on_dark"
+                app:strokeColor="@color/home_glass_stroke" />
         </LinearLayout>
     </LinearLayout>
-
-</LinearLayout>
+</FrameLayout>

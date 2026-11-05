@@ -32,14 +32,27 @@ class ArchiveActivity : AppCompatActivity() {
     /** استعلام بحث الأرشيف — راجع البند 15: سابقاً لم يوجد بحث إطلاقاً في هذه الشاشة. */
     private val searchQuery = MutableStateFlow("")
 
+    /** آخر قائمة معروضة (بعد البحث) — تُستخدم لـ "استعادة الكل". */
+    private var currentList: List<com.gympro.manager.model.MemberListItem> = emptyList()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityArchiveBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.root.applySystemBarInsetsPadding()
-        capContentWidth(binding.root)
+        // شاشة داكنة دائماً (نفس الرئيسية والأعضاء): شريطا الحالة والتنقّل بلون الخلفية وأيقونات فاتحة.
+        val barColor = androidx.core.content.ContextCompat.getColor(this, R.color.home_bg)
+        window.statusBarColor = barColor
+        window.navigationBarColor = barColor
+        androidx.core.view.WindowCompat.getInsetsController(window, binding.root).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
+        binding.archiveContent.applySystemBarInsetsPadding()
+        capContentWidth(binding.archiveContent)
 
         binding.btnBack.setOnClickListener { finish() }
+        binding.btnArchiveEmptyBack.setOnClickListener { finish() }
+        binding.btnRestoreAll.setOnClickListener { confirmRestoreAll() }
 
         adapter = ArchiveAdapter(
             onRestore = { member ->
@@ -82,6 +95,24 @@ class ArchiveActivity : AppCompatActivity() {
         }
     }
 
+    /** استعادة كل الأعضاء المعروضين دفعة واحدة، بعد تأكيد (لا يظهر الزر أثناء البحث). */
+    private fun confirmRestoreAll() {
+        val items = currentList
+        if (items.isEmpty()) return
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.archive_restore_all_title)
+            .setMessage(getString(R.string.archive_restore_all_message, items.size))
+            .setNegativeButton(R.string.action_cancel, null)
+            .setPositiveButton(R.string.archive_restore_all_confirm) { _, _ ->
+                lifecycleScope.launch {
+                    items.forEach { repository.restoreMember(it.id) }
+                    binding.root.haptic(Haptic.CONFIRM)
+                    toast(getString(R.string.archive_restore_all_success, items.size))
+                }
+            }
+            .show()
+    }
+
     private fun confirmPermanentDelete(memberId: Long, name: String) {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.archive_permanent_delete_title)
@@ -110,10 +141,20 @@ class ArchiveActivity : AppCompatActivity() {
                         // نفس فجوة "رسالة فارغة مضلِّلة" الموثّقة في شاشة الأعضاء (البند 16)،
                         // نتفاداها هنا منذ البداية بدل تكرارها: رسالة مختلفة حين يكون
                         // البحث هو سبب عدم وجود نتائج بدل الأرشيف الفارغ فعلياً.
+                        val searching = searchQuery.value.isNotBlank()
                         binding.tvArchiveEmptyMessage.setText(
-                            if (searchQuery.value.isBlank()) R.string.archive_empty
-                            else R.string.archive_no_search_results
+                            if (searching) R.string.archive_no_search_results else R.string.archive_empty
                         )
+                        binding.tvArchiveEmptyHint.visibleIf(!searching)
+                        binding.btnArchiveEmptyBack.visibleIf(!searching)
+                        // أرشيف فارغ فعلاً: لا معنى للبحث ولا لملاحظة المهلة، فتُخفيان لشاشة هادئة.
+                        val archiveReallyEmpty = list.isEmpty() && !searching
+                        binding.archiveSearchBar.visibleIf(!archiveReallyEmpty)
+                        binding.archiveNote.visibleIf(!archiveReallyEmpty)
+                        currentList = list
+                        binding.btnRestoreAll.visibleIf(list.isNotEmpty() && !searching)
+                        binding.tvArchiveCount.visibleIf(list.isNotEmpty())
+                        binding.tvArchiveCount.text = getString(R.string.archive_count_format, list.size)
                     }
             }
         }

@@ -62,6 +62,15 @@ class SettingsFragment : Fragment() {
 
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
+    // ---- حفظ صور الأعضاء في Google Drive (انظر CloudPhotosSettingsController) ----
+    private var cloudPhotos: CloudPhotosSettingsController? = null
+    private val cloudSignInLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        cloudPhotos?.onSignInResult(result.data)
+    }
+    private val cloudConsentLauncher = registerForActivityResult(ActivityResultContracts.StartIntentSenderForResult()) { result ->
+        cloudPhotos?.onConsentResult(result.data)
+    }
+
     private val repository by lazy { (requireActivity().application as GymApplication).repository }
 
     private val restoreLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
@@ -131,6 +140,11 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        cloudPhotos = CloudPhotosSettingsController(
+            this, binding, repository,
+            launchSignIn = { cloudSignInLauncher.launch(it) },
+            launchConsent = { cloudConsentLauncher.launch(it) }
+        ).also { it.bind() }
         requireActivity().setupClearFocusOnOutsideTouch(view)
         loadSettings()
 
@@ -754,6 +768,7 @@ class SettingsFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        cloudPhotos = null
         super.onDestroyView()
         _binding = null
     }

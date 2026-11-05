@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- مؤشّر التحديد المتحرّك خلف الرقائق: تدرّج crim → vio بزاوية 135° كزر aria-pressed في تصميم HTML -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <gradient
+        android:angle="315"
+        android:endColor="@color/home_vio"
+        android:startColor="@color/home_crim"
+        android:type="linear" />
+    <corners android:radius="99dp" />
+</shape>

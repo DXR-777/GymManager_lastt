@@ -1,5 +1,6 @@
 package com.gympro.manager.ui.members
 
+import com.gympro.manager.utils.bindMemberAvatar
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
@@ -110,7 +111,7 @@ class MembersAdapter(
     inner class ViewHolder(private val binding: ItemMemberBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MemberListItem) {
             val context = binding.root.context
-            binding.tvInitial.text = item.name.trim().firstOrNull()?.uppercase() ?: "?"
+            binding.tvInitial.bindMemberAvatar(item.name, item.photoPath)
             binding.tvName.text = item.name
             binding.tvPhone.text = item.phone
 

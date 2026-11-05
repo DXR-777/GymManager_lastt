@@ -59,6 +59,8 @@ class GymRepository(private val db: AppDatabase) {
 
     fun observeActiveMembers(query: String = "") = memberDao.getActiveMembers(query)
 
+    suspend fun getAllPhotoPaths(): List<String> = memberDao.getAllPhotoPaths()
+
     /**
      * راجع البند 24: نسخة مُقسَّمة على صفحات (Paging 3) من observeActiveMembers أعلاه —
      * تُستخدم في MembersViewModel.pagedMembers لعرض قائمة الأعضاء بدون تحميل كل الصفوف

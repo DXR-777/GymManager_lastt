@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- لون احتياطي = منتصف التدرّج؛ GradientChip يرسم التدرّج الكامل فوقه -->
-    <item android:color="#A9439F" android:state_checked="true" />
+    <!-- التحديد يُرسم بمؤشّر متدرّج متحرّك خلف الرقائق (chipIndicator) -->
+    <item android:color="@color/transparent" android:state_checked="true" />
     <item android:color="@color/home_glass_fill" />
 </selector>

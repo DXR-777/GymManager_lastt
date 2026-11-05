@@ -1,5 +1,6 @@
 package com.gympro.manager.ui.dashboard
 
+import com.gympro.manager.utils.bindMemberAvatar
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Intent
@@ -242,7 +243,7 @@ class DashboardFragment : Fragment() {
         items.take(UNPAID_ROWS).forEachIndexed { index, member ->
             val row = com.gympro.manager.databinding.ItemDashboardUnpaidBinding.inflate(layoutInflater, container, false)
             row.divider.visibility = if (index == 0) View.GONE else View.VISIBLE
-            row.tvInitial.text = member.name.trim().firstOrNull()?.uppercase() ?: "?"
+            row.tvInitial.bindMemberAvatar(member.name, member.photoPath)
             row.tvName.text = member.name
             row.tvSubtitle.text = dueText(member)
             row.tvAmount.text = CurrencyFormatter.format(member.outstandingBalance, currency)

@@ -2,4 +2,8 @@
 <resources>
     <!-- يخزّن الحشوة السفلية الأصلية للعنصر الذي يستقبل هامش القائمة السفلية (MainActivity). -->
     <item name="tag_base_padding_bottom" type="id" />
+    <!-- أفاتار العضو (MemberAvatar.kt): الخلفية الأصلية، علَم الالتقاط، ومسار الصورة المطلوب حالياً. -->
+    <item name="tag_avatar_bg" type="id" />
+    <item name="tag_avatar_ready" type="id" />
+    <item name="tag_avatar_path" type="id" />
 </resources>

@@ -1,109 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    بطاقة عضو محذوف (تحسين UX 2026): هوية العضو + تاريخ الحذف + شارة الدَّين، ثم مؤقّت الحذف النهائي
+    كشريط تقدّم بلون الإلحاح (أخضر ← كهرماني ← مرجاني)، ثم زرّان بنصّ واضح ومفصولان: "استعادة" (الأساسي)
+    و"حذف نهائي" (الثانوي الخطِر) — بدل أيقونتين متجاورتين بلا نص. المعرِّفات القديمة كلها محفوظة.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_sm"
-    android:background="@drawable/bg_member_card_glass"
-    android:elevation="@dimen/elevation_card_resting"
-    android:gravity="center_vertical"
-    android:orientation="horizontal"
-    android:padding="@dimen/spacing_md">
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_home_glass_card"
+    android:orientation="vertical"
+    android:padding="14dp">
 
-    <!-- حلقة التدرّج المعتمدة لكل أفاتار (راجع item_member.xml)؛ تُخفَّف بـ alpha لأن هذا
-         العضو مؤرشف (نفس روح لون الحرف الأولي text_secondary الخافت السابق). -->
-    <FrameLayout
-        android:layout_width="52dp"
-        android:layout_height="52dp"
-        android:alpha="0.7"
-        android:background="@drawable/bg_avatar_ring_gradient"
-        android:padding="4dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
         <TextView
             android:id="@+id/tvInitial"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="center"
-            android:background="@drawable/bg_avatar_circle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_home_avatar"
+            android:fontFamily="@font/cairo_bold"
             android:gravity="center"
-            android:textColor="@color/text_secondary"
+            android:includeFontPadding="false"
+            android:textColor="@color/home_ink"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:includeFontPadding="false"
             tools:text="م" />
-    </FrameLayout>
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_md"
-        android:layout_weight="1"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tvName"
-            style="@style/Text.Body"
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textColor="@color/text_primary"
-            android:textStyle="bold"
-            android:includeFontPadding="false"
-            tools:text="محمد أحمد" />
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvDeletedOn"
-            style="@style/Text.Caption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            tools:text="حُذف في 15 يونيو 2026" />
+            <TextView
+                android:id="@+id/tvName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/cairo_bold"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:textColor="@color/home_ink"
+                android:textSize="16sp"
+                tools:text="محمد أحمد" />
+
+            <TextView
+                android:id="@+id/tvDeletedOn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/cairo_regular"
+                android:includeFontPadding="false"
+                android:textColor="@color/home_mute"
+                android:textSize="12sp"
+                tools:text="حُذف في 15 يونيو 2026" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tvDebtBadge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/bg_pill_error_glass"
-            android:paddingStart="@dimen/spacing_sm"
-            android:paddingTop="2dp"
-            android:paddingEnd="@dimen/spacing_sm"
-            android:paddingBottom="2dp"
-            android:textColor="@color/status_error_text"
-            android:textSize="@dimen/text_caption"
-            android:textStyle="bold"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/bg_home_pill_coral"
+            android:fontFamily="@font/cairo_bold"
             android:includeFontPadding="false"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:textColor="@color/home_coral"
+            android:textSize="11.5sp"
             android:visibility="gone"
-            tools:text="⚠️ دَين مستحق: 150 ₪"
+            tools:text="دَين مستحق: 150 ₪"
             tools:visibility="visible" />
     </LinearLayout>
 
-    <!-- البند 7: 48dp بدل 40dp لكلا الزرّين هنا (نفس إصلاح btnWhatsapp في item_member.xml)
-         — padding زيد بنفس النسبة (8dp إلى 12dp) فيبقى حجم الأيقونة المرئي 24dp كما كان
-         تماماً؛ زادت مساحة اللمس فقط. هذان الزرّان أخطر من غيرهما لأن أفعالهما (استعادة
-         عضو/حذف نهائي لا رجعة فيه) متجاورتان مباشرة — مساحة لمس أكبر تقلّل احتمال الضغط
-         على الزر الخطأ بالخطأ، لا تحسّن الوصولية فقط. -->
-    <ImageButton
-        android:id="@+id/btnRestore"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="@drawable/bg_action_button_success_glass"
-        android:contentDescription="@string/action_restore"
-        android:padding="12dp"
-        android:src="@drawable/ic_restore"
-        app:tint="@color/status_success" />
+    <TextView
+        android:id="@+id/tvPurgeCountdown"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:fontFamily="@font/cairo_bold"
+        android:includeFontPadding="false"
+        android:textColor="@color/home_mint"
+        android:textSize="12sp"
+        tools:text="يُحذف نهائياً خلال 28 يوم" />
 
-    <ImageButton
-        android:id="@+id/btnPermanentDelete"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginStart="@dimen/spacing_sm"
-        android:background="@drawable/bg_action_button_error_glass"
-        android:contentDescription="@string/action_delete"
-        android:padding="12dp"
-        android:src="@drawable/ic_delete"
-        app:tint="@color/status_error" />
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progressPurge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:importantForAccessibility="no"
+        android:max="100"
+        app:indicatorColor="@color/home_mint"
+        app:trackColor="@color/home_progress_track"
+        app:trackCornerRadius="3dp"
+        app:trackThickness="5dp"
+        tools:progress="90" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/btnRestore"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_archive_btn_restore"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_restore"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/home_mint"
+            android:focusable="true"
+            android:fontFamily="@font/cairo_bold"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="14dp"
+            android:text="@string/action_restore"
+            android:textColor="@color/home_mint"
+            android:textSize="13.5sp" />
+
+        <TextView
+            android:id="@+id/btnPermanentDelete"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_archive_btn_delete"
+            android:clickable="true"
+            android:drawableStart="@drawable/ic_delete"
+            android:drawablePadding="8dp"
+            android:drawableTint="@color/home_coral"
+            android:focusable="true"
+            android:fontFamily="@font/cairo_bold"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:paddingHorizontal="14dp"
+            android:text="@string/archive_delete_forever"
+            android:textColor="@color/home_coral"
+            android:textSize="13.5sp"
+            android:layout_marginStart="10dp" />
+
+    </LinearLayout>
 </LinearLayout>

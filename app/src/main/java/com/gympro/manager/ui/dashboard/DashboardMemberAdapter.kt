@@ -1,5 +1,6 @@
 package com.gympro.manager.ui.dashboard
 
+import com.gympro.manager.utils.bindMemberAvatar
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -57,7 +58,7 @@ class DashboardMemberAdapter(
     inner class ViewHolder(private val binding: ItemDashboardMemberBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MemberListItem) {
             val context = binding.root.context
-            binding.tvInitial.text = item.initial()
+            binding.tvInitial.bindMemberAvatar(item.name, item.photoPath)
             binding.tvName.text = item.name
             binding.tvPlan.text = planLabel(context, item.type)
             val pill = subtitleProvider(item)
@@ -98,7 +99,7 @@ class DashboardUnpaidAdapter(
     inner class ViewHolder(private val binding: ItemDashboardUnpaidBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MemberListItem, position: Int) {
             binding.divider.visibility = if (position == 0) android.view.View.GONE else android.view.View.VISIBLE
-            binding.tvInitial.text = item.initial()
+            binding.tvInitial.bindMemberAvatar(item.name, item.photoPath)
             binding.tvName.text = item.name
             binding.tvSubtitle.text = dueProvider(item)
             binding.tvAmount.text = amountProvider(item)

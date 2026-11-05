@@ -38,7 +38,9 @@ data class MemberSaveRequest(
     val paymentMethod: PaymentMethod,
     val senderName: String?,
     val senderPhone: String?,
-    val paidAmount: Double?
+    val paidAmount: Double?,
+    /** مسار صورة العضو النسبي (null = بلا صورة). يُتجاهل في وضع التجديد. */
+    val photoPath: String?
 )
 
 class AddEditMemberViewModel(private val repository: GymRepository) : ViewModel() {
@@ -95,7 +97,7 @@ class AddEditMemberViewModel(private val repository: GymRepository) : ViewModel(
                 val subscription = r.loadedSubscription
                 if (member != null && subscription != null) {
                     repository.updateMemberAndSubscription(
-                        member = member.copy(name = r.name, phone = r.phoneDigits, notes = r.notes),
+                        member = member.copy(name = r.name, phone = r.phoneDigits, notes = r.notes, photoPath = r.photoPath),
                         subscriptionOriginal = subscription,
                         type = r.type,
                         price = r.price,
@@ -108,14 +110,14 @@ class AddEditMemberViewModel(private val repository: GymRepository) : ViewModel(
                         paidAmount = r.paidAmount
                     )
                 } else if (member != null) {
-                    repository.updateMemberProfile(member.copy(name = r.name, phone = r.phoneDigits, notes = r.notes))
+                    repository.updateMemberProfile(member.copy(name = r.name, phone = r.phoneDigits, notes = r.notes, photoPath = r.photoPath))
                 }
             }
             else -> return repository.addMemberWithSubscription(
                 name = r.name,
                 phone = r.phoneDigits,
                 notes = r.notes,
-                photoPath = null,
+                photoPath = r.photoPath,
                 type = r.type,
                 price = r.price,
                 startDate = r.startDate,

@@ -202,4 +202,7 @@
     <color name="home_dot_pink">#FFB8C9</color>
     <color name="home_dot_blue">#A9D3FF</color>
     <color name="home_dot_lav">#E4D9FF</color>
+    <!-- أزرار الأرشيف (استعادة/حذف نهائي) -->
+    <color name="home_btn_coral_fill">#14FFA3A3</color>
+    <color name="home_btn_coral_stroke">#4DFFA3A3</color>
 </resources>

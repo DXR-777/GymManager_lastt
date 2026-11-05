@@ -104,6 +104,113 @@
                         app:tint="@android:color/white" />
                 </LinearLayout>
 
+                <!-- صورة العضو: من جهات الاتصال أو منتقي الصور الرسمي، بلا أي صلاحية. -->
+                <LinearLayout
+                    android:id="@+id/photoSection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_header_gap"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <FrameLayout
+                        android:layout_width="96dp"
+                        android:layout_height="96dp">
+
+                        <TextView
+                            android:id="@+id/tvPhotoAvatar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/bg_home_avatar"
+                            android:contentDescription="@string/member_photo_cd"
+                            android:fontFamily="@font/cairo_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:textColor="@color/home_ink"
+                            android:textSize="34sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:layout_gravity="bottom|end"
+                            android:background="@drawable/bg_members_core"
+                            android:contentDescription="@null"
+                            android:padding="7dp"
+                            android:src="@drawable/ic_camera"
+                            app:tint="@android:color/white" />
+
+                        <ProgressBar
+                            android:id="@+id/progressPhoto"
+                            style="?android:attr/progressBarStyleSmall"
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="center"
+                            android:visibility="gone" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPhotoContact"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1"
+                            android:text="@string/member_photo_contact"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp"
+                            app:cornerRadius="99dp"
+                            app:icon="@drawable/ic_people"
+                            app:iconGravity="textStart"
+                            app:iconSize="18dp"
+                            app:iconTint="@color/text_primary"
+                            app:strokeColor="@color/glass_border_strong" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnPhotoGallery"
+                            style="@style/Widget.Material3.Button.OutlinedButton"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1"
+                            android:text="@string/member_photo_gallery"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp"
+                            app:cornerRadius="99dp"
+                            app:icon="@drawable/ic_image"
+                            app:iconGravity="textStart"
+                            app:iconSize="18dp"
+                            app:iconTint="@color/text_primary"
+                            app:strokeColor="@color/glass_border_strong" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/btnPhotoRemove"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:paddingHorizontal="16dp"
+                        android:text="@string/member_photo_remove"
+                        android:textColor="@color/status_error_text"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
+
+                    <TextView
+                        style="@style/Text.Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/member_photo_hint" />
+                </LinearLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilName"
                     style="@style/Widget.GymManager.TextInputLayout.Glass"

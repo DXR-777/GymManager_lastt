@@ -1,6 +1,8 @@
 package com.gympro.manager.ui.archive
 
+import com.gympro.manager.utils.bindMemberAvatar
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -45,22 +47,38 @@ class ArchiveAdapter(
     inner class ViewHolder(private val binding: ItemArchivedBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: MemberListItem) {
             val context = binding.root.context
-            binding.tvInitial.text = item.name.trim().firstOrNull()?.uppercase() ?: "?"
+            binding.tvInitial.bindMemberAvatar(item.name, item.photoPath)
             binding.tvName.text = item.name
-            // بجانب تاريخ الحذف، نعرض الآن أيضاً المدة المتبقية قبل الحذف النهائي التلقائي
-            // (راجع ArchivePurgeWorker) — بدون هذا، وعد "يمكنك استعادته خلال 30 يوماً" في
-            // نافذة تأكيد الحذف يبقى غير مرئي هنا؛ يرى الموظف تاريخ الأرشفة فقط بلا أي فكرة
-            // عن المهلة المتبقية الفعلية.
-            binding.tvDeletedOn.text = item.deletedAt?.let { deletedAt ->
+            // مؤقّت الحذف النهائي التلقائي (راجع ArchivePurgeWorker): نصّ + شريط تقدّم بلون الإلحاح
+            // (أخضر > 10 أيام، كهرماني 4–10، مرجاني ≤ 3) حتى يرى الموظف فوراً من يوشك أن يُحذف.
+            val deletedAt = item.deletedAt
+            if (deletedAt == null) {
+                binding.tvDeletedOn.text = "—"
+                binding.tvPurgeCountdown.visibility = View.GONE
+                binding.progressPurge.visibility = View.GONE
+            } else {
+                binding.tvDeletedOn.text = context.getString(R.string.archive_deleted_on, DateUtils.formatDate(deletedAt))
                 val elapsed = DateUtils.daysBetween(deletedAt, DateUtils.now())
                 val daysLeft = (GymRepository.ARCHIVE_RETENTION_DAYS - elapsed).coerceAtLeast(0)
-                val countdown = if (daysLeft > 0) {
+                val color = context.getColor(
+                    when {
+                        daysLeft <= 3 -> R.color.home_coral
+                        daysLeft <= 10 -> R.color.home_amber
+                        else -> R.color.home_mint
+                    }
+                )
+                binding.tvPurgeCountdown.visibility = View.VISIBLE
+                binding.tvPurgeCountdown.text = if (daysLeft > 0) {
                     context.getString(R.string.archive_purge_countdown, daysLeft)
                 } else {
                     context.getString(R.string.archive_purge_countdown_today)
                 }
-                context.getString(R.string.archive_deleted_on, DateUtils.formatDate(deletedAt)) + " · " + countdown
-            } ?: "—"
+                binding.tvPurgeCountdown.setTextColor(color)
+                binding.progressPurge.visibility = View.VISIBLE
+                binding.progressPurge.setIndicatorColor(color)
+                val pct = (daysLeft * 100 / GymRepository.ARCHIVE_RETENTION_DAYS).coerceIn(4, 100)
+                binding.progressPurge.setProgressCompat(pct, false)
+            }
 
             // الدَّين الحقيقي المتراكم (outstandingBalance عبر isUnpaid()) يجب أن يبقى مرئياً
             // حتى بعد الأرشفة، بنفس المبدأ المطبَّق في بقية الشاشات (لوحة التحكم، فلتر "غير

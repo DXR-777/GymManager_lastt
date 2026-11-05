@@ -20,6 +20,10 @@ interface MemberDao {
     @Update
     suspend fun update(member: MemberEntity)
 
+    /** كل مسارات صور الأعضاء (بما فيهم المؤرشفون) — لمزامنة الصور مع Google Drive. */
+    @Query("SELECT photoPath FROM members WHERE photoPath IS NOT NULL AND photoPath != ''")
+    suspend fun getAllPhotoPaths(): List<String>
+
     @Query("SELECT * FROM members WHERE id = :id LIMIT 1")
     suspend fun getByIdOnce(id: Long): MemberEntity?
 

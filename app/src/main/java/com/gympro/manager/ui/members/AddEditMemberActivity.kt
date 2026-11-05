@@ -49,12 +49,20 @@ import com.gympro.manager.utils.Haptic
 import com.gympro.manager.utils.haptic
 import com.gympro.manager.utils.MemberHighlight
 import com.gympro.manager.utils.capContentWidth
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
+import com.gympro.manager.utils.CloudPhotoSync
+import com.gympro.manager.utils.MemberPhotoStore
+import com.gympro.manager.utils.PhotoImport
+import com.gympro.manager.utils.bindMemberAvatar
 
 private const val KEY_SELECTED_TYPE = "add_edit_member_selected_type"
 private const val KEY_PAYMENT_STATUS = "add_edit_member_payment_status"
 private const val KEY_PAY_METHOD = "add_edit_member_pay_method"
 private const val KEY_START_DATE = "add_edit_member_start_date"
 private const val KEY_HAS_UNSAVED_CHANGES = "add_edit_member_has_unsaved_changes"
+private const val KEY_PHOTO_PATH = "add_edit_member_photo_path"
+private const val KEY_PENDING_PHOTO = "add_edit_member_pending_photo"
 
 /**
  * شاشة واحدة تخدم 3 سياقات بحسب الـ Intent extras المُمرَّرة:
@@ -162,6 +170,97 @@ class AddEditMemberActivity : AppCompatActivity() {
     // تماماً عن حالة الدفع المختارة لهذا التجديد نفسه.
     private var priorOutstandingBalance: Double = 0.0
 
+    // ---------------------------------------------------------------- صورة العضو
+    // بلا أي صلاحية: منتقي الصور الرسمي (صورة واحدة يختارها المستخدم) + منتقي جهات النظام
+    // (جهة واحدة، تُقرأ صورتها بصلاحية مؤقتة). الملف يُنسخ مصغَّراً إلى مساحة التطبيق الخاصة
+    // فوراً (pendingPhotoPath)، ويُثبَّت عند "حفظ" ويُحذف إن خرج المستخدم دون حفظ.
+    private var photoPath: String? = null
+    private var originalPhotoPath: String? = null
+    private var pendingPhotoPath: String? = null
+    private var photoCommitted = false
+
+    private val pickPhoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
+        if (uri != null) importPhoto { MemberPhotoStore.importFromUri(this, uri) }
+    }
+    private val pickContact = registerForActivityResult(ActivityResultContracts.PickContact()) { uri ->
+        if (uri != null) importPhoto { MemberPhotoStore.importFromContact(this, uri) }
+    }
+
+    private fun setupPhotoSection() {
+        binding.photoSection.visibility = if (isRenewMode) View.GONE else View.VISIBLE
+        binding.btnPhotoGallery.setOnSingleClickListener { launchGalleryPicker() }
+        binding.tvPhotoAvatar.setOnSingleClickListener { launchGalleryPicker() }
+        binding.btnPhotoContact.setOnSingleClickListener { pickContact.launch(null) }
+        binding.btnPhotoRemove.setOnSingleClickListener { removePhoto() }
+        // الحرف الأول في الأفاتار يتبع الاسم المكتوب ما دامت لا توجد صورة.
+        binding.etName.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) { if (photoPath == null) renderPhoto() }
+        })
+        renderPhoto()
+    }
+
+    private fun launchGalleryPicker() {
+        pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    private fun importPhoto(block: suspend () -> PhotoImport) {
+        lifecycleScope.launch {
+            binding.progressPhoto.visibility = View.VISIBLE
+            val result = block()
+            binding.progressPhoto.visibility = View.GONE
+            when (result) {
+                is PhotoImport.Saved -> {
+                    discardPendingPhoto()
+                    pendingPhotoPath = result.path
+                    photoPath = result.path
+                    markDirty()
+                    renderPhoto()
+                }
+                PhotoImport.NoPhoto -> toast(getString(R.string.member_photo_none_in_contact))
+                PhotoImport.Failed -> toast(getString(R.string.member_photo_failed))
+            }
+        }
+    }
+
+    private fun removePhoto() {
+        discardPendingPhoto()
+        photoPath = null
+        markDirty()
+        renderPhoto()
+    }
+
+    private fun discardPendingPhoto() {
+        MemberPhotoStore.delete(this, pendingPhotoPath)
+        pendingPhotoPath = null
+    }
+
+    private fun renderPhoto() {
+        val name = binding.etName.text?.toString().orEmpty().ifBlank { "؟" }
+        binding.tvPhotoAvatar.bindMemberAvatar(name, photoPath, 512)
+        binding.btnPhotoRemove.visibility = if (photoPath != null && !isRenewMode) View.VISIBLE else View.GONE
+    }
+
+    /** بعد نجاح الحفظ: تثبيت الصورة الجديدة وحذف القديمة المستبدَلة. */
+    private fun commitPhoto() {
+        photoCommitted = true
+        pendingPhotoPath = null
+        val old = originalPhotoPath
+        if (!isRenewMode && old != null && old != photoPath) {
+            MemberPhotoStore.delete(this, old)
+            CloudPhotoSync.queueRemoteDelete(this, old)
+        }
+        // رفع الصورة الجديدة إلى حساب Google إن كان المستخدم فعّل ذلك (بصمت وعند توفر الشبكة).
+        if (!isRenewMode && photoPath != old) CloudPhotoSync.scheduleIfEnabled(this)
+    }
+
+    override fun onDestroy() {
+        // خروج بلا حفظ: لا نترك الصورة المختارة يتيمة في مساحة التطبيق.
+        if (isFinishing && !photoCommitted) MemberPhotoStore.delete(this, pendingPhotoPath)
+        super.onDestroy()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddEditMemberBinding.inflate(layoutInflater)
@@ -189,6 +288,8 @@ class AddEditMemberActivity : AppCompatActivity() {
                 selectedStartDate = state.getLong(KEY_START_DATE)
             }
             hasUnsavedChanges = state.getBoolean(KEY_HAS_UNSAVED_CHANGES, hasUnsavedChanges)
+            photoPath = state.getString(KEY_PHOTO_PATH)
+            pendingPhotoPath = state.getString(KEY_PENDING_PHOTO)
         }
 
         memberId = intent.getLongExtra(EXTRA_MEMBER_ID, -1L)
@@ -220,6 +321,7 @@ class AddEditMemberActivity : AppCompatActivity() {
         setupLiveValidationFeedback()
         setupDirtyTracking()
         setupDecimalPlaceLimits()
+        setupPhotoSection()
         loadInitialData()
         animatePriceHeroEntrance()
 
@@ -242,6 +344,8 @@ class AddEditMemberActivity : AppCompatActivity() {
         selectedPayMethod?.let { outState.putString(KEY_PAY_METHOD, it.name) }
         outState.putLong(KEY_START_DATE, selectedStartDate)
         outState.putBoolean(KEY_HAS_UNSAVED_CHANGES, hasUnsavedChanges)
+        photoPath?.let { outState.putString(KEY_PHOTO_PATH, it) }
+        pendingPhotoPath?.let { outState.putString(KEY_PENDING_PHOTO, it) }
     }
 
     /**
@@ -924,6 +1028,9 @@ class AddEditMemberActivity : AppCompatActivity() {
             if (memberId != -1L) {
                 val member = initial.member
                 loadedMember = member
+                originalPhotoPath = member?.photoPath
+                if (!isRestoringState) photoPath = originalPhotoPath
+                renderPhoto()
                 // البند 2: نص هذه الحقول مُستعاد تلقائياً بواسطة إطار العمل عند إعادة
                 // الإنشاء (كل EditText له معرِّف ثابت)؛ إعادة كتابته هنا من القاعدة فوق ذلك
                 // كانت بالضبط ما يمحو تعديلات المستخدم غير المحفوظة بصمت عند استعادة الشاشة.
@@ -1301,9 +1408,11 @@ class AddEditMemberActivity : AppCompatActivity() {
                 paymentMethod = resolvedPaymentMethod,
                 senderName = senderName,
                 senderPhone = senderPhone,
-                paidAmount = paidAmount
+                paidAmount = paidAmount,
+                photoPath = photoPath
             )
         )
+        commitPhoto()
         if (newMemberId != null) MemberHighlight.set(newMemberId)
         binding.btnSaveMember.haptic(Haptic.CONFIRM)
         playSaveSuccessPulse {

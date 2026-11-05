@@ -211,6 +211,7 @@ class MembersFragment : Fragment() {
         programmaticFilterChange = true
         binding.chipGroupFilter.check(chipId)
         programmaticFilterChange = false
+        binding.chipGroupFilter.post { moveChipIndicator(animate = true) }
         viewModel.setFilter(filter)
     }
 
@@ -219,20 +220,29 @@ class MembersFragment : Fragment() {
      * وفلاتر حالة (نشط/منتهي/...) بلا أي طريقة لإعادة ترتيب النتائج نفسها.
      */
     private fun showSortDialog() {
-        val sorts = arrayOf(MemberSort.NAME, MemberSort.EXPIRY_SOONEST, MemberSort.NEWEST)
-        val labels = arrayOf(
-            getString(R.string.members_sort_name),
-            getString(R.string.members_sort_expiry_soonest),
-            getString(R.string.members_sort_newest)
-        )
-        val checkedIndex = sorts.indexOf(viewModel.currentSort.value).coerceAtLeast(0)
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.members_sort_action)
-            .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
-                viewModel.setSort(sorts[which])
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(requireContext())
+        val sheet = com.gympro.manager.databinding.BottomSheetMemberSortBinding.inflate(layoutInflater)
+        dialog.setContentView(sheet.root)
+        dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            ?.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+
+        val current = viewModel.currentSort.value
+        listOf(
+            Triple(sheet.rowSortName, sheet.radioSortName, MemberSort.NAME),
+            Triple(sheet.rowSortExpiry, sheet.radioSortExpiry, MemberSort.EXPIRY_SOONEST),
+            Triple(sheet.rowSortNewest, sheet.radioSortNewest, MemberSort.NEWEST)
+        ).forEach { (row, radio, sort) ->
+            val selected = sort == current
+            row.setBackgroundResource(if (selected) R.drawable.bg_home_sort_row_selected else R.drawable.bg_home_sort_row)
+            radio.setBackgroundResource(if (selected) R.drawable.bg_home_radio_on else R.drawable.bg_home_radio_off)
+            radio.setImageResource(if (selected) R.drawable.ic_ds_check else 0)
+            row.isSelected = selected
+            row.setOnSingleClickListener {
+                viewModel.setSort(sort)
                 dialog.dismiss()
             }
-            .show()
+        }
+        dialog.show()
     }
 
     /**
@@ -285,8 +295,58 @@ class MembersFragment : Fragment() {
         binding.btnClearSearch.setOnClickListener { binding.etSearch.text?.clear() }
     }
 
+    private var chipIndicatorAnimator: ValueAnimator? = null
+
+    /** ينقل المؤشّر المتدرّج خلف الرقاقة المختارة (انزلاق 280ms)، أو يضعه فوراً بلا حركة عند أول عرض. */
+    private fun moveChipIndicator(animate: Boolean) {
+        val b = _binding ?: return
+        val chip = b.chipGroupFilter.findViewById<View>(b.chipGroupFilter.checkedChipId)
+        val ind = b.chipIndicator
+        if (chip == null || chip.width == 0) {
+            ind.visibility = View.INVISIBLE
+            return
+        }
+        val toX = chip.left.toFloat()
+        val toY = chip.top.toFloat()
+        val toW = chip.width
+        val toH = chip.height
+        chipIndicatorAnimator?.cancel()
+        fun apply(x: Float, w: Int) {
+            val lp = ind.layoutParams
+            if (lp.width != w || lp.height != toH) {
+                lp.width = w
+                lp.height = toH
+                ind.layoutParams = lp
+            }
+            ind.translationX = x
+            ind.translationY = toY
+        }
+        if (!animate || ind.visibility != View.VISIBLE || !ValueAnimator.areAnimatorsEnabled()) {
+            apply(toX, toW)
+            ind.visibility = View.VISIBLE
+            return
+        }
+        val fromX = ind.translationX
+        val fromW = ind.layoutParams.width.coerceAtLeast(1)
+        chipIndicatorAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 280
+            interpolator = android.view.animation.DecelerateInterpolator()
+            addUpdateListener {
+                val t = it.animatedValue as Float
+                apply(fromX + (toX - fromX) * t, (fromW + (toW - fromW) * t).toInt())
+            }
+            start()
+        }
+    }
+
     private fun setupFilterChips() {
+        // الوضع الأولي + إعادة الضبط عند أي تغيّر في قياس الرقائق (تغيّر العدّادات يغيّر العرض).
+        binding.chipGroupFilter.addOnLayoutChangeListener { _, l, t, r, b, ol, ot, orr, ob ->
+            if (r - l != orr - ol || b - t != ob - ot) moveChipIndicator(animate = false)
+        }
+        binding.chipGroupFilter.post { moveChipIndicator(animate = false) }
         binding.chipGroupFilter.setOnCheckedStateChangeListener { _, checkedIds ->
+            binding.chipGroupFilter.post { moveChipIndicator(animate = true) }
             val id = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
             if (!programmaticFilterChange) {
                 binding.chipGroupFilter.haptic(Haptic.TICK)
@@ -554,6 +614,7 @@ class MembersFragment : Fragment() {
     }
 
     override fun onDestroyView() {
+        chipIndicatorAnimator?.cancel()
         stopEmptyAnimations()
         skeletonPulse?.cancel()
         skeletonPulse = null

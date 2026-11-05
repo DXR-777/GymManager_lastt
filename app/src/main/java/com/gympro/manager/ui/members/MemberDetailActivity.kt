@@ -1,5 +1,6 @@
 package com.gympro.manager.ui.members
 
+import com.gympro.manager.utils.bindMemberAvatar
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -205,7 +206,7 @@ class MemberDetailActivity : AppCompatActivity() {
         stats: MemberStats,
         settings: GymSettingsEntity
     ) {
-        binding.tvInitial.text = member.name.trim().firstOrNull()?.uppercase() ?: "?"
+        binding.tvInitial.bindMemberAvatar(member.name, member.photoPath, 384)
         binding.tvName.text = member.name
         binding.tvPhone.text = member.phone
         binding.tvMemberSince.text = getString(R.string.detail_member_since, DateUtils.formatDate(member.createdAt))

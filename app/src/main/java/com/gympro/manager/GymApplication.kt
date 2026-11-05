@@ -32,6 +32,7 @@ class GymApplication : Application() {
         scheduleExpiryWorker()
         scheduleArchivePurgeWorker()
         AutoBackupWorker.schedule(this)
+        com.gympro.manager.utils.CloudPhotoSync.ensurePeriodic(this)
         ThemePrefs.apply(this)
         installOrientationPolicy()
     }

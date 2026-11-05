@@ -365,7 +365,7 @@
     <string name="archive_permanent_delete_title">حذف نهائي؟</string>
     <string name="archive_permanent_delete_message">سيتم حذف %1$s نهائياً مع جميع سجلاته. لا يمكن التراجع عن هذا الإجراء.</string>
     <!-- يظهر فقط عندما outstandingBalance > 0 لعضو مؤرشف، حتى لا يغيب الدَّين عن صاحب النادي أثناء وجود العضو في الأرشيف -->
-    <string name="archive_debt_badge">⚠️ دَين مستحق: %1$s</string>
+    <string name="archive_debt_badge">دَين مستحق: %1$s</string>
 
     <!-- واتساب -->
     <string name="whatsapp_not_installed">تطبيق واتساب غير مثبت على الجهاز</string>
@@ -638,4 +638,41 @@
     <string name="members_tip_3">تابع التنبيهات وأرسل التذكير</string>
     <string name="members_archive_cd">الأرشيف</string>
     <string name="members_sort_cd">ترتيب القائمة</string>
+
+    <string name="members_sort_subtitle">اختر كيف تُرتَّب قائمة الأعضاء</string>
+    <string name="members_sort_name_desc">أبجدياً من الألف إلى الياء</string>
+    <string name="members_sort_expiry_desc">من ينتهي اشتراكه أولاً يظهر أولاً</string>
+    <string name="members_sort_newest_desc">آخر الأعضاء إضافةً في الأعلى</string>
+
+    <string name="archive_note">يمكنك استعادة أي عضو قبل انتهاء مهلة الحذف النهائي، وبعدها يُحذف مع كل سجلاته.</string>
+    <string name="archive_empty_hint">الأعضاء الذين تحذفهم يظهرون هنا، ويمكنك استعادتهم في أي وقت خلال المهلة.</string>
+    <string name="archive_count_format">%1$d عضواً في السلة</string>
+    <!-- صورة العضو -->
+    <string name="member_photo_contact">من جهات الاتصال</string>
+    <string name="member_photo_gallery">من الصور</string>
+    <string name="member_photo_remove">إزالة الصورة</string>
+    <string name="member_photo_hint">لا نحتاج صلاحية الوصول للصور أو الجهات، تختار صورة واحدة فقط</string>
+    <string name="member_photo_none_in_contact">لا توجد صورة لهذه الجهة</string>
+    <string name="member_photo_failed">تعذّر استخدام هذه الصورة</string>
+    <string name="member_photo_cd">صورة العضو، اضغط للاختيار من الصور</string>
+    <!-- الأرشيف (تحسين UX 2026) -->
+    <string name="archive_delete_forever">حذف نهائي</string>
+    <string name="archive_restore_all">استعادة الكل</string>
+    <string name="archive_restore_all_title">استعادة كل الأعضاء؟</string>
+    <string name="archive_restore_all_message">سيعود %1$d عضواً إلى قائمة الأعضاء بكل بياناتهم واشتراكاتهم.</string>
+    <string name="archive_restore_all_confirm">استعادة</string>
+    <string name="archive_restore_all_success">تمت استعادة %1$d عضواً</string>
+    <!-- حفظ صور الأعضاء في حساب Google -->
+    <string name="cloud_section_title">حساب Google</string>
+    <string name="cloud_account_none">لا يوجد حساب Google مرتبط</string>
+    <string name="cloud_signin">ربط حساب Google</string>
+    <string name="cloud_photos_switch">حفظ صور الأعضاء في حسابي</string>
+    <string name="cloud_photos_hint">تُرفع الصور إلى مساحة التطبيق الخاصة داخل Google Drive (لا تظهر في ملفاتك)، وتعود تلقائياً عند تسجيل الدخول على هاتف جديد.</string>
+    <string name="cloud_sync_now">مزامنة الآن</string>
+    <string name="cloud_status_idle">بانتظار المزامنة الأولى عند توفر الإنترنت…</string>
+    <string name="cloud_status_ok">آخر مزامنة: %1$s</string>
+    <string name="cloud_status_consent">يلزم منح إذن الوصول من جديد، اضغط «مزامنة الآن»</string>
+    <string name="cloud_status_failed">تعذّرت المزامنة، ستُعاد المحاولة تلقائياً</string>
+    <string name="cloud_consent_denied">لم يُمنح إذن الحفظ في Google Drive</string>
+    <string name="cloud_auth_failed">تعذّر الاتصال بحساب Google</string>
 </resources>
