@@ -51,6 +51,7 @@ import com.gympro.manager.utils.MemberHighlight
 import com.gympro.manager.utils.capContentWidth
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import com.gympro.manager.utils.AddMemberMotion
 import com.gympro.manager.utils.CloudPhotoSync
 import com.gympro.manager.utils.MemberPhotoStore
 import com.gympro.manager.utils.PhotoImport
@@ -217,6 +218,7 @@ class AddEditMemberActivity : AppCompatActivity() {
                     photoPath = result.path
                     markDirty()
                     renderPhoto()
+                    AddMemberMotion.pop(binding.tvPhotoAvatar)
                 }
                 PhotoImport.NoPhoto -> toast(getString(R.string.member_photo_none_in_contact))
                 PhotoImport.Failed -> toast(getString(R.string.member_photo_failed))
@@ -323,7 +325,7 @@ class AddEditMemberActivity : AppCompatActivity() {
         setupDecimalPlaceLimits()
         setupPhotoSection()
         loadInitialData()
-        animatePriceHeroEntrance()
+        if (savedInstanceState == null) AddMemberMotion.staggerIn(binding.scrollContent)
 
         binding.btnSaveMember.setOnSingleClickListener { validateAndSave() }
     }
@@ -508,6 +510,10 @@ class AddEditMemberActivity : AppCompatActivity() {
         binding.segCustom.setOnClickListener { selectType(SubscriptionType.CUSTOM) }
         applyTypeSegmentSelection()
         updateCustomDaysVisibility()
+        // إعادة وضع المؤشر عند تغيّر مقاس القطاعات (تدوير/حجم خط) بلا حركة.
+        binding.segmentedType.addOnLayoutChangeListener { _, l, _, r, _, ol, _, or2, _ ->
+            if (r - l != or2 - ol) applyTypeSegmentSelection()
+        }
     }
 
     /**
@@ -580,23 +586,20 @@ class AddEditMemberActivity : AppCompatActivity() {
             val icon = container.getChildAt(0) as ImageView
             val label = container.getChildAt(1) as TextView
             if (type == selectedSubscriptionType) {
-                container.setBackgroundResource(R.drawable.bg_segment_selected_type)
+                container.setBackgroundResource(0)
                 icon.imageTintList = ColorStateList.valueOf(getColor(R.color.white))
                 label.setTextColor(getColor(R.color.white))
                 label.setTypeface(null, Typeface.BOLD)
             } else {
                 container.setBackgroundResource(0)
-                icon.imageTintList = ColorStateList.valueOf(getColor(R.color.text_secondary))
-                label.setTextColor(getColor(R.color.text_secondary))
+                icon.imageTintList = ColorStateList.valueOf(getColor(R.color.home_mute))
+                label.setTextColor(getColor(R.color.home_mute))
                 label.setTypeface(null, Typeface.NORMAL)
             }
         }
-        // حركة اختيار بسيطة (Material Motion خفيف) على القطاع المختار حديثاً فقط.
-        segments.firstOrNull { it.second == selectedSubscriptionType }?.first?.let { view ->
-            view.scaleX = 0.94f
-            view.scaleY = 0.94f
-            view.animate().scaleX(1f).scaleY(1f).setDuration(160)
-                .setInterpolator(OvershootInterpolator(1.5f)).start()
+        // المؤشر المنزلق ينتقل خلف القطاع المختار (بلا حركة عند أول وضع أو أثناء التحميل الأولي).
+        segments.firstOrNull { it.second == selectedSubscriptionType }?.first?.let { selected ->
+            AddMemberMotion.moveThumb(binding.segTypeThumb, selected, animate = !isLoadingInitialData)
         }
     }
 
@@ -727,6 +730,9 @@ class AddEditMemberActivity : AppCompatActivity() {
         markDirty()
         selectedPaymentStatus = status
         applyPaymentStatusSegmentUI()
+        binding.segmentedPaymentStatus.addOnLayoutChangeListener { _, l, _, r, _, ol, _, or2, _ ->
+            if (r - l != or2 - ol) applyPaymentStatusSegmentUI()
+        }
         updatePaymentStatusHelperText()
         if (animate) {
             TransitionManager.beginDelayedTransition(binding.scrollContent)
@@ -765,35 +771,32 @@ class AddEditMemberActivity : AppCompatActivity() {
     private fun applyPaymentStatusSegmentUI() {
         data class SegmentStyle(val view: TextView, val status: PaymentStatus, val bgRes: Int, val colorRes: Int)
         val segments = listOf(
-            SegmentStyle(binding.segPaid, PaymentStatus.PAID, R.drawable.bg_payment_status_paid_selected, R.color.status_success_text),
-            SegmentStyle(binding.segPartial, PaymentStatus.PARTIAL, R.drawable.bg_payment_status_partial_selected, R.color.status_partial_text),
-            SegmentStyle(binding.segUnpaid, PaymentStatus.UNPAID, R.drawable.bg_payment_status_unpaid_selected, R.color.status_error_text)
+            SegmentStyle(binding.segPaid, PaymentStatus.PAID, R.drawable.bg_payment_status_paid_selected, R.color.home_mint),
+            SegmentStyle(binding.segPartial, PaymentStatus.PARTIAL, R.drawable.bg_payment_status_partial_selected, R.color.home_lav),
+            SegmentStyle(binding.segUnpaid, PaymentStatus.UNPAID, R.drawable.bg_payment_status_unpaid_selected, R.color.home_coral)
         )
         segments.forEach { seg ->
             if (seg.status == selectedPaymentStatus) {
-                seg.view.setBackgroundResource(seg.bgRes)
+                seg.view.setBackgroundResource(0)
+                binding.segPaymentThumb.setBackgroundResource(seg.bgRes)
                 seg.view.setTextColor(getColor(seg.colorRes))
                 seg.view.setTypeface(null, Typeface.BOLD)
             } else {
                 seg.view.setBackgroundResource(0)
-                seg.view.setTextColor(getColor(R.color.text_secondary))
+                seg.view.setTextColor(getColor(R.color.home_mute))
                 seg.view.setTypeface(null, Typeface.NORMAL)
             }
         }
-        // نفس حركة الاختيار الخفيفة المستخدمة في applyTypeSegmentSelection، للاتساق.
-        segments.firstOrNull { it.status == selectedPaymentStatus }?.view?.let { view ->
-            view.scaleX = 0.94f
-            view.scaleY = 0.94f
-            view.animate().scaleX(1f).scaleY(1f).setDuration(160)
-                .setInterpolator(OvershootInterpolator(1.5f)).start()
+        segments.firstOrNull { it.status == selectedPaymentStatus }?.view?.let { selected ->
+            AddMemberMotion.moveThumb(binding.segPaymentThumb, selected, animate = !isLoadingInitialData)
         }
     }
 
     private fun updatePaymentStatusHelperText() {
         val (text, colorRes) = when (selectedPaymentStatus) {
-            PaymentStatus.PAID -> R.string.member_payment_status_helper_paid to R.color.status_success_text
-            PaymentStatus.PARTIAL -> R.string.member_payment_status_helper_partial to R.color.status_partial_text
-            PaymentStatus.UNPAID -> R.string.member_payment_status_helper_unpaid to R.color.status_error_text
+            PaymentStatus.PAID -> R.string.member_payment_status_helper_paid to R.color.home_mint
+            PaymentStatus.PARTIAL -> R.string.member_payment_status_helper_partial to R.color.home_lav
+            PaymentStatus.UNPAID -> R.string.member_payment_status_helper_unpaid to R.color.home_coral
         }
         binding.tvPaymentStatusHelper.text = getString(text)
         binding.tvPaymentStatusHelper.setTextColor(getColor(colorRes))
@@ -806,7 +809,9 @@ class AddEditMemberActivity : AppCompatActivity() {
      */
     private fun updatePartialAmountVisibility() {
         val show = selectedPaymentStatus == PaymentStatus.PARTIAL
-        binding.llPartialAmountGroup.visibility = if (show) View.VISIBLE else View.GONE
+        val target = if (show) View.VISIBLE else View.GONE
+        if (!isLoadingInitialData && binding.llPartialAmountGroup.visibility != target) AddMemberMotion.expand(binding.scrollContent)
+        binding.llPartialAmountGroup.visibility = target
         if (show) updateRemainingAmountPreview()
     }
 
@@ -841,8 +846,11 @@ class AddEditMemberActivity : AppCompatActivity() {
         val price = binding.etPrice.text?.toString()?.trim()?.toSafeMoneyOrNull() ?: 0.0
         val paid = binding.etPaidAmount.text?.toString()?.trim()?.toSafeMoneyOrNull() ?: 0.0
         val remaining = (price - paid).coerceAtLeast(0.0)
-        binding.tvTotalAmount.text = CurrencyFormatter.format(price, currentSettings.currencySymbol)
-        binding.tvRemainingAmount.text = CurrencyFormatter.format(remaining, currentSettings.currencySymbol)
+        AddMemberMotion.countUp(binding.tvTotalAmount, price) { CurrencyFormatter.format(it, currentSettings.currencySymbol) }
+        AddMemberMotion.countUp(binding.tvRemainingAmount, remaining) { CurrencyFormatter.format(it, currentSettings.currencySymbol) }
+        // شريط نسبة المدفوع من الإجمالي (يتحرّك مع كل تعديل).
+        val share = if (price > 0.0) (paid / price * 100.0).toInt().coerceIn(0, 100) else 0
+        binding.progressPaidShare.setProgressCompat(share, true)
     }
 
     /**
@@ -853,8 +861,9 @@ class AddEditMemberActivity : AppCompatActivity() {
      * الشاشة.
      */
     private fun updatePaymentSectionVisibility() {
-        binding.llPaymentSection.visibility =
-            if (selectedPaymentStatus != PaymentStatus.UNPAID) View.VISIBLE else View.GONE
+        val target = if (selectedPaymentStatus != PaymentStatus.UNPAID) View.VISIBLE else View.GONE
+        if (!isLoadingInitialData && binding.llPaymentSection.visibility != target) AddMemberMotion.expand(binding.scrollContent)
+        binding.llPaymentSection.visibility = target
     }
 
     // ==================================================================== طريقة الدفع
@@ -867,10 +876,10 @@ class AddEditMemberActivity : AppCompatActivity() {
      * loadInitialData بالقيمة المحفوظة فعلياً لهذا الاشتراك.
      */
     private fun setupPaymentMethodChips() {
-        binding.methodPalpay.setOnClickListener { selectPaymentMethod(PaymentMethod.PALPAY) }
-        binding.methodJawwal.setOnClickListener { selectPaymentMethod(PaymentMethod.JAWWAL_PAY) }
-        binding.methodBank.setOnClickListener { selectPaymentMethod(PaymentMethod.BANK_OF_PALESTINE) }
-        binding.methodCash.setOnClickListener { selectPaymentMethod(PaymentMethod.CASH) }
+        binding.methodPalpay.setOnClickListener { AddMemberMotion.pop(it); selectPaymentMethod(PaymentMethod.PALPAY) }
+        binding.methodJawwal.setOnClickListener { AddMemberMotion.pop(it); selectPaymentMethod(PaymentMethod.JAWWAL_PAY) }
+        binding.methodBank.setOnClickListener { AddMemberMotion.pop(it); selectPaymentMethod(PaymentMethod.BANK_OF_PALESTINE) }
+        binding.methodCash.setOnClickListener { AddMemberMotion.pop(it); selectPaymentMethod(PaymentMethod.CASH) }
         applyPaymentMethodChipUI()
         updateSenderGroupVisibility(animate = false)
     }
@@ -900,7 +909,7 @@ class AddEditMemberActivity : AppCompatActivity() {
                 else R.drawable.bg_payment_method_chip_unselected
             )
             val label = container.getChildAt(1) as TextView
-            label.setTextColor(getColor(if (selected) R.color.text_primary else R.color.text_secondary))
+            label.setTextColor(getColor(if (selected) R.color.home_ink else R.color.home_mute))
             if (selected) {
                 container.scaleX = 0.92f
                 container.scaleY = 0.92f
@@ -1184,7 +1193,18 @@ class AddEditMemberActivity : AppCompatActivity() {
     private fun validateAndSave() {
         val wasInProgress = isSaveInProgress
         validateAndSaveCore()
-        if (!wasInProgress && !isSaveInProgress) binding.btnSaveMember.haptic(Haptic.REJECT)
+        if (!wasInProgress && !isSaveInProgress) {
+            binding.btnSaveMember.haptic(Haptic.REJECT)
+            shakeFirstError()
+        }
+    }
+
+    /** هزّة قصيرة لأول حقل ظاهر فيه خطأ تحقّق (تلفت النظر دون رسالة إضافية). */
+    private fun shakeFirstError() {
+        listOf(
+            binding.tilName, binding.tilPhone, binding.tilPrice, binding.tilCustomDays,
+            binding.tilPaidAmount, binding.tilSenderName, binding.tilSenderPhone
+        ).firstOrNull { it.error != null && it.isShown }?.let { AddMemberMotion.shake(it) }
     }
 
     private fun validateAndSaveCore() {

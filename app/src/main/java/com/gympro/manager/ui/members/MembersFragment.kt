@@ -396,6 +396,7 @@ class MembersFragment : Fragment() {
                     // فراغ بلا بحث/فلتر = لا يوجد أي عضو أصلاً → شاشة البداية؛ فراغ مع بحث/فلتر → "لا نتائج".
                     setFirstRun(isEmpty && !isFiltered)
                     binding.emptyMembersContainer.visibleIf(isEmpty && isFiltered)
+                    if (isEmpty && isFiltered) noResultsAnimator().start() else noResultsAnimator?.stop()
                 }
             }
         }
@@ -520,6 +521,18 @@ class MembersFragment : Fragment() {
     // ───── حركة شاشة "لا يوجد أعضاء": خفيفة، بطيئة، وتتوقف مع إخفاء الشاشة ─────
     private val emptyAnimators = mutableListOf<Animator>()
 
+    /** حركة حالة "لا نتائج" (بحث/فلتر بلا تطابق) — تعمل فقط وهي ظاهرة. */
+    private var noResultsAnimator: com.gympro.manager.utils.NoResultsAnimator? = null
+
+    private fun noResultsAnimator(): com.gympro.manager.utils.NoResultsAnimator =
+        noResultsAnimator ?: com.gympro.manager.utils.NoResultsAnimator(
+            stage = binding.scanStage,
+            lens = binding.lensGroup,
+            halo = binding.lensHalo,
+            ghostRows = listOf(binding.ghostRow1, binding.ghostRow2, binding.ghostRow3),
+            staggered = listOf(binding.tvMembersEmptyMessage, binding.btnEmptyClear)
+        ).also { noResultsAnimator = it }
+
     private fun loop(
         anim: ObjectAnimator,
         durationMs: Long,
@@ -606,16 +619,20 @@ class MembersFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         if (_binding != null && !isHidden && binding.firstRunScroll.visibility == View.VISIBLE) startEmptyAnimations()
+        if (_binding != null && !isHidden && binding.emptyMembersContainer.visibility == View.VISIBLE) noResultsAnimator().start()
     }
 
     override fun onStop() {
         stopEmptyAnimations()
+        noResultsAnimator?.stop()
         super.onStop()
     }
 
     override fun onDestroyView() {
         chipIndicatorAnimator?.cancel()
         stopEmptyAnimations()
+        noResultsAnimator?.stop()
+        noResultsAnimator = null
         skeletonPulse?.cancel()
         skeletonPulse = null
         super.onDestroyView()

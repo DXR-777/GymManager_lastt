@@ -440,4 +440,44 @@
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
     </style>
+
+    <!-- نماذج الإدخال بألوان ثابتة داكنة (نفس لغة home_*) -->
+    <style name="Text.Form.SectionTitle" parent="Text.SectionTitle">
+        <item name="android:textColor">@color/home_ink</item>
+    </style>
+    <style name="Text.Form.SegmentLabel" parent="Text.MemberSegmentLabel">
+        <item name="android:textColor">@color/home_mute</item>
+    </style>
+    <style name="Text.Form.Caption" parent="Text.Caption">
+        <item name="android:textColor">@color/home_mute</item>
+    </style>
+    <style name="Text.Form.PaymentMethodLabel" parent="Text.PaymentMethodLabel">
+        <item name="android:textColor">@color/home_mute</item>
+    </style>
+    <style name="Text.Form.MemberValue" parent="Text.MemberValue">
+        <item name="android:textColor">@color/home_ink</item>
+    </style>
+    <style name="Text.Form.MemberHint" parent="Text.MemberHint">
+        <item name="android:textColor">@color/home_mute</item>
+    </style>
+    <style name="Text.Form.WalletCheckboxLabel" parent="Text.WalletCheckboxLabel">
+        <item name="android:textColor">@color/home_ink</item>
+    </style>
+    <style name="Text.Form.Title" parent="Text.Title">
+        <item name="android:textColor">@color/home_ink</item>
+    </style>
+    <style name="Text.Form.HeroPrice" parent="Text.HeroPrice">
+        <item name="android:textColor">@color/home_ink</item>
+    </style>
+    <style name="Widget.GymManager.TextInputLayout.Form" parent="Widget.GymManager.TextInputLayout.Glass">
+        <item name="boxStrokeColor">@color/form_input_stroke</item>
+        <item name="boxBackgroundColor">@color/home_glass_fill</item>
+        <item name="hintTextColor">@color/home_lav</item>
+        <item name="android:textColorHint">@color/home_mute</item>
+        <item name="errorTextColor">@color/home_coral</item>
+        <item name="boxStrokeErrorColor">@color/home_coral</item>
+        <item name="helperTextTextColor">@color/home_mute</item>
+        <item name="counterTextColor">@color/home_mute</item>
+        <item name="endIconTint">@color/home_mute</item>
+    </style>
 </resources>

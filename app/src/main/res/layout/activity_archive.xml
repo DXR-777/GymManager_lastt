@@ -196,44 +196,81 @@
             android:paddingBottom="40dp"
             android:visibility="gone">
 
+            <!-- رسم الأرشيف الفارغ المتحرك (OrbitAnimator): دوران متعاكس للحلقتين مع النقاط، تنفّس للدائرة
+                 المركزية، وموجتان تنتشران منها. كل العناصر ثابتة في التخطيط والحركة تُشغَّل من الكود. -->
             <FrameLayout
+                android:id="@+id/orbitRoot"
                 android:layout_width="168dp"
-                android:layout_height="168dp">
+                android:layout_height="168dp"
+                android:importantForAccessibility="no">
 
                 <View
+                    android:id="@+id/orbitRipple1"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:layout_gravity="center"
+                    android:alpha="0"
+                    android:background="@drawable/bg_members_orbit_inner" />
+
+                <View
+                    android:id="@+id/orbitRipple2"
+                    android:layout_width="76dp"
+                    android:layout_height="76dp"
+                    android:layout_gravity="center"
+                    android:alpha="0"
+                    android:background="@drawable/bg_members_orbit_inner" />
+
+                <FrameLayout
+                    android:id="@+id/orbitRotorOuter"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_members_orbit_outer" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="top|center_horizontal"
+                        android:layout_marginTop="-5dp"
+                        android:background="@drawable/bg_members_dot"
+                        android:backgroundTint="@color/home_dot_lav" />
+
+                    <View
+                        android:layout_width="10dp"
+                        android:layout_height="10dp"
+                        android:layout_gravity="top|start"
+                        android:layout_marginStart="31dp"
+                        android:layout_marginTop="148dp"
+                        android:background="@drawable/bg_members_dot"
+                        android:backgroundTint="@color/home_dot_blue" />
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/orbitRotorInner"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@drawable/bg_members_orbit_outer"
-                    android:importantForAccessibility="no" />
+                    android:layout_margin="26dp">
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="26dp"
-                    android:background="@drawable/bg_members_orbit_inner"
-                    android:importantForAccessibility="no" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_members_orbit_inner" />
 
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="top|end"
-                    android:layout_marginTop="22dp"
-                    android:layout_marginEnd="14dp"
-                    android:background="@drawable/bg_members_dot"
-                    android:backgroundTint="@color/home_dot_lav"
-                    android:importantForAccessibility="no" />
-
-                <View
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_gravity="bottom|start"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginBottom="18dp"
-                    android:background="@drawable/bg_members_dot"
-                    android:backgroundTint="@color/home_dot_blue"
-                    android:importantForAccessibility="no" />
+                    <View
+                        android:layout_width="7dp"
+                        android:layout_height="7dp"
+                        android:layout_gravity="top|start"
+                        android:layout_marginStart="26dp"
+                        android:layout_marginTop="4dp"
+                        android:background="@drawable/bg_members_dot"
+                        android:backgroundTint="@color/home_dot_pink" />
+                </FrameLayout>
 
                 <ImageView
+                    android:id="@+id/orbitCore"
                     android:layout_width="76dp"
                     android:layout_height="76dp"
                     android:layout_gravity="center"

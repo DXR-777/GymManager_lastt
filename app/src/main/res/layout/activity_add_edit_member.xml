@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
+    android:background="@drawable/bg_home_page"
     android:orientation="vertical">
 
     <!--
@@ -16,7 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/background"
+        android:background="@android:color/transparent"
         android:gravity="center_vertical"
         android:orientation="horizontal"
         android:paddingStart="@dimen/spacing_sm"
@@ -24,17 +24,18 @@
 
         <ImageView
             android:id="@+id/btnBack"
-            android:layout_width="@dimen/touch_target_min"
-            android:layout_height="@dimen/touch_target_min"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_home_tile"
             android:contentDescription="@string/action_back"
+            android:foreground="@drawable/ripple_home_circle"
             android:padding="12dp"
             android:src="@drawable/ic_back"
-            app:tint="@color/text_primary" />
+            app:tint="@color/home_ink" />
 
         <TextView
             android:id="@+id/tvToolbarTitle"
-            style="@style/Text.Title"
+            style="@style/Text.Form.Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -47,18 +48,18 @@
         <ImageView
             android:importantForAccessibility="no"
             android:id="@+id/imgToolbarBadge"
-            android:layout_width="@dimen/icon_badge_size"
-            android:layout_height="@dimen/icon_badge_size"
-            android:background="@drawable/bg_icon_badge"
-            android:backgroundTint="@color/brand_accent"
-            android:padding="7dp"
+            android:layout_width="46dp"
+            android:layout_height="46dp"
+            android:background="@drawable/bg_home_tile"
+            android:padding="12dp"
             android:src="@drawable/ic_user_round_plus"
-            app:tint="@android:color/white" />
+            app:tint="@color/home_lav" />
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:clipToPadding="false"
         android:scrollbars="none">
 
@@ -69,14 +70,13 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/spacing_lg"
             android:paddingTop="@dimen/spacing_lg"
-            android:paddingBottom="@dimen/spacing_sm">
+            android:paddingBottom="@dimen/spacing_lg">
 
             <!-- ============================= القسم 1: معلومات العضو ============================= -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_card_glass"
-                android:elevation="@dimen/elevation_card_resting"
+                android:background="@drawable/bg_home_glass_card"
                 android:orientation="vertical"
                 android:padding="@dimen/spacing_md">
 
@@ -87,7 +87,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/Text.SectionTitle"
+                        style="@style/Text.Form.SectionTitle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -97,11 +97,10 @@
                         android:importantForAccessibility="no"
                         android:layout_width="@dimen/icon_badge_size"
                         android:layout_height="@dimen/icon_badge_size"
-                        android:background="@drawable/bg_icon_badge"
-                        android:backgroundTint="@color/brand_accent"
+                        android:background="@drawable/bg_home_tile"
                         android:padding="7dp"
                         android:src="@drawable/ic_person_placeholder"
-                        app:tint="@android:color/white" />
+                        app:tint="@color/home_lav" />
                 </LinearLayout>
 
                 <!-- صورة العضو: من جهات الاتصال أو منتقي الصور الرسمي، بلا أي صلاحية. -->
@@ -163,14 +162,14 @@
                             android:layout_marginEnd="6dp"
                             android:layout_weight="1"
                             android:text="@string/member_photo_contact"
-                            android:textColor="@color/text_primary"
+                            android:textColor="@color/home_ink"
                             android:textSize="13sp"
                             app:cornerRadius="99dp"
                             app:icon="@drawable/ic_people"
                             app:iconGravity="textStart"
                             app:iconSize="18dp"
-                            app:iconTint="@color/text_primary"
-                            app:strokeColor="@color/glass_border_strong" />
+                            app:iconTint="@color/home_ink"
+                            app:strokeColor="@color/home_glass_stroke" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btnPhotoGallery"
@@ -180,14 +179,14 @@
                             android:layout_marginStart="6dp"
                             android:layout_weight="1"
                             android:text="@string/member_photo_gallery"
-                            android:textColor="@color/text_primary"
+                            android:textColor="@color/home_ink"
                             android:textSize="13sp"
                             app:cornerRadius="99dp"
                             app:icon="@drawable/ic_image"
                             app:iconGravity="textStart"
                             app:iconSize="18dp"
-                            app:iconTint="@color/text_primary"
-                            app:strokeColor="@color/glass_border_strong" />
+                            app:iconTint="@color/home_ink"
+                            app:strokeColor="@color/home_glass_stroke" />
                     </LinearLayout>
 
                     <TextView
@@ -198,13 +197,13 @@
                         android:gravity="center"
                         android:paddingHorizontal="16dp"
                         android:text="@string/member_photo_remove"
-                        android:textColor="@color/status_error_text"
+                        android:textColor="@color/home_coral"
                         android:textSize="13sp"
                         android:textStyle="bold"
                         android:visibility="gone" />
 
                     <TextView
-                        style="@style/Text.Caption"
+                        style="@style/Text.Form.Caption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center"
@@ -213,7 +212,7 @@
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilName"
-                    style="@style/Widget.GymManager.TextInputLayout.Glass"
+                    style="@style/Widget.GymManager.TextInputLayout.Form"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_header_gap"
@@ -228,12 +227,12 @@
                         android:inputType="textCapWords"
                         android:maxLength="60"
                         android:maxLines="1"
-                        android:textColor="@color/text_primary" />
+                        android:textColor="@color/home_ink" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/tilPhone"
-                    style="@style/Widget.GymManager.TextInputLayout.Glass"
+                    style="@style/Widget.GymManager.TextInputLayout.Form"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_md"
@@ -252,7 +251,7 @@
                         android:inputType="phone"
                         android:maxLength="20"
                         android:maxLines="1"
-                        android:textColor="@color/text_primary"
+                        android:textColor="@color/home_ink"
                         android:textDirection="ltr" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
@@ -266,7 +265,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/Text.SectionTitle"
+                    style="@style/Text.Form.SectionTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -276,11 +275,10 @@
                     android:importantForAccessibility="no"
                     android:layout_width="@dimen/icon_badge_size"
                     android:layout_height="@dimen/icon_badge_size"
-                    android:background="@drawable/bg_icon_badge"
-                    android:backgroundTint="@color/brand_accent"
+                    android:background="@drawable/bg_home_tile"
                     android:padding="7dp"
                     android:src="@drawable/ic_badge_dollar_sign"
-                    app:tint="@android:color/white" />
+                    app:tint="@color/home_lav" />
             </LinearLayout>
 
             <!--
@@ -290,12 +288,26 @@
                 AddEditMemberActivity.applyTypeSegmentSelection() الذي يصل إليهما عبر
                 getChildAt(0)/(1) بدل مُعرِّفات مستقلة لكل عنصر.
             -->
-            <LinearLayout
-                android:id="@+id/segmentedType"
+            <FrameLayout
+                android:id="@+id/segTypeHost"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_header_gap"
-                android:background="@drawable/bg_segment_track"
+                android:background="@drawable/bg_segment_track">
+
+                <!-- مؤشر الاختيار المنزلق: يتحرك خلف القطاعات (AddMemberMotion.moveThumb). -->
+                <View
+                    android:id="@+id/segTypeThumb"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/bg_segment_selected_type"
+                    android:importantForAccessibility="no"
+                    android:visibility="invisible" />
+
+                <LinearLayout
+                android:id="@+id/segmentedType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:padding="4dp">
 
@@ -321,10 +333,10 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_calendar"
-                        app:tint="@color/text_secondary" />
+                        app:tint="@color/home_mute" />
 
                     <TextView
-                        style="@style/Text.MemberSegmentLabel"
+                        style="@style/Text.Form.SegmentLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -356,10 +368,10 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_calendar"
-                        app:tint="@color/text_secondary" />
+                        app:tint="@color/home_mute" />
 
                     <TextView
-                        style="@style/Text.MemberSegmentLabel"
+                        style="@style/Text.Form.SegmentLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -395,7 +407,7 @@
                         app:tint="@android:color/white" />
 
                     <TextView
-                        style="@style/Text.MemberSegmentLabel"
+                        style="@style/Text.Form.SegmentLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -429,10 +441,10 @@
                         android:layout_width="22dp"
                         android:layout_height="22dp"
                         android:src="@drawable/ic_sliders"
-                        app:tint="@color/text_secondary" />
+                        app:tint="@color/home_mute" />
 
                     <TextView
-                        style="@style/Text.MemberSegmentLabel"
+                        style="@style/Text.Form.SegmentLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
@@ -441,10 +453,11 @@
                         android:text="@string/subscription_custom" />
                 </LinearLayout>
             </LinearLayout>
+            </FrameLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilCustomDays"
-                style="@style/Widget.GymManager.TextInputLayout.Glass"
+                style="@style/Widget.GymManager.TextInputLayout.Form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_md"
@@ -458,7 +471,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="number"
                     android:maxLength="4"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="@color/home_ink" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- ============================= القسم 3: سعر الاشتراك ============================= -->
@@ -470,7 +483,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/Text.SectionTitle"
+                    style="@style/Text.Form.SectionTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -480,11 +493,10 @@
                     android:importantForAccessibility="no"
                     android:layout_width="@dimen/icon_badge_size"
                     android:layout_height="@dimen/icon_badge_size"
-                    android:background="@drawable/bg_icon_badge"
-                    android:backgroundTint="@color/brand_accent"
+                    android:background="@drawable/bg_home_tile"
                     android:padding="7dp"
                     android:src="@drawable/ic_tag"
-                    app:tint="@android:color/white" />
+                    app:tint="@color/home_lav" />
             </LinearLayout>
 
             <LinearLayout
@@ -513,8 +525,9 @@
                     app:suffixTextAppearance="@style/TextAppearance.GymManager.HeroSuffix">
 
                     <com.google.android.material.textfield.TextInputEditText
+                    android:textColor="@color/home_ink"
                         android:id="@+id/etPrice"
-                        style="@style/Text.HeroPrice"
+                        style="@style/Text.Form.HeroPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@null"
@@ -537,8 +550,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_section"
-                android:background="@drawable/bg_card_glass"
-                android:elevation="@dimen/elevation_card_resting"
+                android:background="@drawable/bg_home_glass_card"
                 android:orientation="vertical"
                 android:padding="@dimen/spacing_md">
 
@@ -549,7 +561,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/Text.SectionTitle"
+                        style="@style/Text.Form.SectionTitle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -559,11 +571,10 @@
                         android:importantForAccessibility="no"
                         android:layout_width="@dimen/icon_badge_size"
                         android:layout_height="@dimen/icon_badge_size"
-                        android:background="@drawable/bg_icon_badge"
-                        android:backgroundTint="@color/brand_accent"
+                        android:background="@drawable/bg_home_tile"
                         android:padding="7dp"
                         android:src="@drawable/ic_calendar_range"
-                        app:tint="@android:color/white" />
+                        app:tint="@color/home_lav" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -604,10 +615,10 @@
                                 android:layout_height="12dp"
                                 android:layout_marginEnd="4dp"
                                 android:src="@drawable/ic_calendar_plus2"
-                                app:tint="@color/text_secondary" />
+                                app:tint="@color/home_mute" />
 
                             <TextView
-                                style="@style/Text.Caption"
+                                style="@style/Text.Form.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -617,7 +628,7 @@
 
                         <TextView
                             android:id="@+id/tvStartDateValue"
-                            style="@style/Text.MemberValue"
+                            style="@style/Text.Form.MemberValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -640,7 +651,7 @@
                             android:layout_height="16dp"
                             android:layout_gravity="center"
                             android:src="@drawable/ic_forward"
-                            app:tint="@color/text_secondary" />
+                            app:tint="@color/home_mute" />
                     </FrameLayout>
 
                     <LinearLayout
@@ -664,10 +675,10 @@
                                 android:layout_height="12dp"
                                 android:layout_marginEnd="4dp"
                                 android:src="@drawable/ic_calendar_check2"
-                                app:tint="@color/text_secondary" />
+                                app:tint="@color/home_mute" />
 
                             <TextView
-                                style="@style/Text.Caption"
+                                style="@style/Text.Form.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -677,7 +688,7 @@
 
                         <TextView
                             android:id="@+id/tvEndDateValue"
-                            style="@style/Text.MemberValue"
+                            style="@style/Text.Form.MemberValue"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
@@ -690,29 +701,29 @@
 
                 <TextView
                     android:id="@+id/tvRenewalHint"
-                    style="@style/Text.MemberHint"
+                    style="@style/Text.Form.MemberHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
-                    android:background="@drawable/bg_pill_warning"
+                    android:background="@drawable/bg_form_note_amber"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="10dp"
-                    android:textColor="@color/status_warning"
+                    android:textColor="@color/home_amber"
                     android:visibility="gone"
                     tools:text="للعضو 5 أيام متبقية..."
                     tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/tvRenewUnpaidWarning"
-                    style="@style/Text.MemberHint"
+                    style="@style/Text.Form.MemberHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
-                    android:background="@drawable/bg_pill_error"
+                    android:background="@drawable/bg_form_note_coral"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="10dp"
                     android:text="@string/renew_unpaid_default_warning"
-                    android:textColor="@color/status_error_text"
+                    android:textColor="@color/home_coral"
                     android:visibility="gone"
                     tools:text="@string/renew_unpaid_default_warning"
                     tools:visibility="visible" />
@@ -722,15 +733,15 @@
                      دفع هذا التجديد نفسه (يظهر حتى لو اختير "مدفوع بالكامل" هنا). -->
                 <TextView
                     android:id="@+id/tvOldDebtWarning"
-                    style="@style/Text.MemberHint"
+                    style="@style/Text.Form.MemberHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
-                    android:background="@drawable/bg_pill_warning"
+                    android:background="@drawable/bg_form_note_amber"
                     android:paddingHorizontal="12dp"
                     android:paddingVertical="10dp"
                     android:text="@string/renew_old_debt_warning"
-                    android:textColor="@color/status_warning"
+                    android:textColor="@color/home_amber"
                     android:visibility="gone"
                     tools:text="@string/renew_old_debt_warning"
                     tools:visibility="visible" />
@@ -741,8 +752,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_section"
-                android:background="@drawable/bg_card_glass"
-                android:elevation="@dimen/elevation_card_resting"
+                android:background="@drawable/bg_home_glass_card"
                 android:orientation="vertical"
                 android:padding="@dimen/spacing_md">
 
@@ -753,7 +763,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/Text.SectionTitle"
+                        style="@style/Text.Form.SectionTitle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -763,29 +773,42 @@
                         android:importantForAccessibility="no"
                         android:layout_width="@dimen/icon_badge_size"
                         android:layout_height="@dimen/icon_badge_size"
-                        android:background="@drawable/bg_icon_badge"
-                        android:backgroundTint="@color/status_partial"
+                        android:background="@drawable/bg_home_tile"
                         android:padding="7dp"
                         android:src="@drawable/ic_circle_dollar_sign"
-                        app:tint="@android:color/white" />
+                        app:tint="@color/home_lav" />
                 </LinearLayout>
 
                 <!--
                     حالة الدفع الثلاثية: 3 قطاعات نصّية مخصَّصة (بلا أيقونات، بخلاف نوع
                     الاشتراك أعلاه) — راجع AddEditMemberActivity.applyPaymentStatusSelection().
                 -->
+                <FrameLayout
+                android:id="@+id/segPaymentHost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_header_gap"
+                android:background="@drawable/bg_segment_track">
+
+                <!-- مؤشر الاختيار المنزلق: يتحرك خلف القطاعات (AddMemberMotion.moveThumb). -->
+                <View
+                    android:id="@+id/segPaymentThumb"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:background="@drawable/bg_segment_selected_type"
+                    android:importantForAccessibility="no"
+                    android:visibility="invisible" />
+
                 <LinearLayout
                     android:id="@+id/segmentedPaymentStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_header_gap"
-                    android:background="@drawable/bg_segment_track"
                     android:orientation="horizontal"
                     android:padding="4dp">
 
                     <TextView
                         android:id="@+id/segUnpaid"
-                        style="@style/Text.MemberSegmentLabel"
+                        style="@style/Text.Form.SegmentLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -804,7 +827,7 @@
 
                     <TextView
                         android:id="@+id/segPartial"
-                        style="@style/Text.MemberSegmentLabel"
+                        style="@style/Text.Form.SegmentLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -825,7 +848,7 @@
 
                     <TextView
                         android:id="@+id/segPaid"
-                        style="@style/Text.MemberSegmentLabel"
+                        style="@style/Text.Form.SegmentLabel"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -842,10 +865,11 @@
                         android:ellipsize="end"
                         android:text="@string/payment_status_paid" />
                 </LinearLayout>
+            </FrameLayout>
 
                 <TextView
                     android:id="@+id/tvPaymentStatusHelper"
-                    style="@style/Text.MemberHint"
+                    style="@style/Text.Form.MemberHint"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_sm"
@@ -868,7 +892,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilPaidAmount"
-                        style="@style/Widget.GymManager.TextInputLayout.Glass"
+                        style="@style/Widget.GymManager.TextInputLayout.Form"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/member_paid_amount_label">
@@ -879,7 +903,7 @@
                             android:layout_height="wrap_content"
                             android:inputType="numberDecimal"
                             android:maxLength="10"
-                            android:textColor="@color/text_primary" />
+                            android:textColor="@color/home_ink" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <LinearLayout
@@ -899,7 +923,7 @@
                             android:orientation="vertical">
 
                             <TextView
-                                style="@style/Text.Caption"
+                                style="@style/Text.Form.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -908,7 +932,7 @@
 
                             <TextView
                                 android:id="@+id/tvTotalAmount"
-                                style="@style/Text.MemberValue"
+                                style="@style/Text.Form.MemberValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
@@ -929,7 +953,7 @@
                             android:orientation="vertical">
 
                             <TextView
-                                style="@style/Text.Caption"
+                                style="@style/Text.Form.Caption"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:maxLines="1"
@@ -938,11 +962,11 @@
 
                             <TextView
                                 android:id="@+id/tvRemainingAmount"
-                                style="@style/Text.MemberValue"
+                                style="@style/Text.Form.MemberValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:textColor="@color/status_partial_text"
+                                android:textColor="@color/home_lav"
                                 android:textStyle="bold"
                                 android:maxLines="1"
                                 android:ellipsize="end"
@@ -951,6 +975,17 @@
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
+                            <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/progressPaidShare"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_sm"
+                    android:importantForAccessibility="no"
+                    android:max="100"
+                    app:indicatorColor="@color/home_lav"
+                    app:trackColor="@color/home_progress_track"
+                    app:trackCornerRadius="3dp"
+                    app:trackThickness="6dp" />
             </LinearLayout>
 
             <!--
@@ -975,7 +1010,7 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        style="@style/Text.SectionTitle"
+                        style="@style/Text.Form.SectionTitle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -985,11 +1020,10 @@
                         android:importantForAccessibility="no"
                         android:layout_width="@dimen/icon_badge_size"
                         android:layout_height="@dimen/icon_badge_size"
-                        android:background="@drawable/bg_icon_badge"
-                        android:backgroundTint="@color/brand_accent"
+                        android:background="@drawable/bg_home_tile"
                         android:padding="7dp"
                         android:src="@drawable/ic_credit_card"
-                        app:tint="@android:color/white" />
+                        app:tint="@color/home_lav" />
                 </LinearLayout>
 
                 <HorizontalScrollView
@@ -1030,7 +1064,7 @@
                                 android:src="@drawable/ic_pay_palpay" />
 
                             <TextView
-                                style="@style/Text.PaymentMethodLabel"
+                                style="@style/Text.Form.PaymentMethodLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -1062,7 +1096,7 @@
                                 android:src="@drawable/ic_pay_jawwal" />
 
                             <TextView
-                                style="@style/Text.PaymentMethodLabel"
+                                style="@style/Text.Form.PaymentMethodLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -1094,7 +1128,7 @@
                                 android:src="@drawable/ic_pay_bank" />
 
                             <TextView
-                                style="@style/Text.PaymentMethodLabel"
+                                style="@style/Text.Form.PaymentMethodLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -1125,7 +1159,7 @@
                                 android:src="@drawable/ic_pay_cash" />
 
                             <TextView
-                                style="@style/Text.PaymentMethodLabel"
+                                style="@style/Text.Form.PaymentMethodLabel"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -1143,7 +1177,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_xs"
                     android:text="@string/member_payment_method_error_required"
-                    android:textColor="@color/status_error_text"
+                    android:textColor="@color/home_coral"
                     android:textSize="@dimen/text_card_description"
                     android:visibility="gone"
                     tools:visibility="visible" />
@@ -1154,8 +1188,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_section"
-                    android:background="@drawable/bg_card_glass"
-                android:elevation="@dimen/elevation_card_resting"
+                    android:background="@drawable/bg_home_glass_card"
                     android:orientation="vertical"
                     android:padding="@dimen/spacing_md"
                     android:visibility="visible"
@@ -1168,7 +1201,7 @@
                         android:orientation="horizontal">
 
                         <TextView
-                            style="@style/Text.SectionTitle"
+                            style="@style/Text.Form.SectionTitle"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
@@ -1178,16 +1211,16 @@
                             android:importantForAccessibility="no"
                             android:layout_width="@dimen/icon_badge_size"
                             android:layout_height="@dimen/icon_badge_size"
-                            android:background="@drawable/bg_icon_badge"
-                            android:backgroundTint="@color/brand_accent"
+                            android:background="@drawable/bg_home_tile"
                             android:padding="7dp"
                             android:src="@drawable/ic_wallet_minimal"
-                            app:tint="@android:color/white" />
+                            app:tint="@color/home_lav" />
                     </LinearLayout>
 
                     <com.google.android.material.checkbox.MaterialCheckBox
+                        app:buttonTint="@color/home_vio"
                         android:id="@+id/cbSenderSameAsMember"
-                        style="@style/Text.WalletCheckboxLabel"
+                        style="@style/Text.Form.WalletCheckboxLabel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_header_gap"
@@ -1198,7 +1231,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilSenderName"
-                        style="@style/Widget.GymManager.TextInputLayout.Glass"
+                        style="@style/Widget.GymManager.TextInputLayout.Form"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_sm"
@@ -1214,12 +1247,13 @@
                             android:inputType="textCapWords"
                             android:maxLength="60"
                             android:maxLines="1"
-                            android:textColor="@color/text_primary" />
+                            android:textColor="@color/home_ink" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.checkbox.MaterialCheckBox
+                        app:buttonTint="@color/home_vio"
                         android:id="@+id/cbSenderPhoneSameAsMember"
-                        style="@style/Text.WalletCheckboxLabel"
+                        style="@style/Text.Form.WalletCheckboxLabel"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_md"
@@ -1230,7 +1264,7 @@
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/tilSenderPhone"
-                        style="@style/Widget.GymManager.TextInputLayout.Glass"
+                        style="@style/Widget.GymManager.TextInputLayout.Form"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/spacing_sm"
@@ -1247,7 +1281,7 @@
                             android:inputType="phone"
                             android:maxLength="20"
                             android:maxLines="1"
-                            android:textColor="@color/text_primary"
+                            android:textColor="@color/home_ink"
                             android:textDirection="ltr" />
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
@@ -1256,7 +1290,7 @@
             <!-- ============================= ملاحظات ============================= -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/tilNotes"
-                style="@style/Widget.GymManager.TextInputLayout.Glass"
+                style="@style/Widget.GymManager.TextInputLayout.Form"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_section"
@@ -1270,15 +1304,28 @@
                     android:inputType="textMultiLine"
                     android:maxLength="500"
                     android:minLines="2"
-                    android:textColor="@color/text_primary" />
+                    android:textColor="@color/home_ink" />
             </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- شريط الحفظ الثابت أسفل الشاشة: الزر دائماً في متناول الإبهام دون التمرير حتى النهاية. -->
+    <FrameLayout
+        android:id="@+id/saveBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_form_bottom_bar"
+        android:paddingHorizontal="@dimen/spacing_lg"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp">
 
             <!-- ============================= زر الحفظ ============================= -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_section"
-                android:layout_marginBottom="@dimen/spacing_lg">
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp">
 
                 <FrameLayout
                     android:id="@+id/frameSaveGlow"
@@ -1322,6 +1369,6 @@
                     android:visibility="gone" />
             </FrameLayout>
 
-        </LinearLayout>
-    </ScrollView>
+
+    </FrameLayout>
 </LinearLayout>

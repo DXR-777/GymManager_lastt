@@ -474,14 +474,144 @@
                     android:orientation="vertical"
                     android:padding="28dp">
 
-                    <ImageView
-                        android:layout_width="84dp"
-                        android:layout_height="84dp"
-                        android:background="@drawable/bg_members_orbit_inner"
-                        android:contentDescription="@null"
-                        android:padding="24dp"
-                        android:src="@drawable/ic_search"
-                        app:tint="@color/home_lav" />
+                    <!-- مشهد "البحث بلا نتائج" المتحرك (NoResultsAnimator): قائمة أشباح باهتة تلمع تباعاً،
+                         وعدسة تمسحها بحركة انسيابية مع نبضة هالة. كله ثابت هنا والحركة من الكود. -->
+                    <FrameLayout
+                        android:id="@+id/scanStage"
+                        android:layout_width="220dp"
+                        android:layout_height="140dp"
+                        android:importantForAccessibility="no">
+
+                        <LinearLayout
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:id="@+id/ghostRow1"
+                                android:layout_width="match_parent"
+                                android:layout_height="34dp"
+                                android:layout_marginBottom="10dp"
+                                android:alpha="0.5"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:background="@drawable/bg_home_skeleton" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:orientation="vertical">
+
+                                    <View
+                                        android:layout_width="110dp"
+                                        android:layout_height="9dp"
+                                        android:background="@drawable/bg_home_skeleton" />
+
+                                    <View
+                                        android:layout_width="70dp"
+                                        android:layout_height="8dp"
+                                        android:layout_marginTop="6dp"
+                                        android:background="@drawable/bg_home_skeleton" />
+                                </LinearLayout>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/ghostRow2"
+                                android:layout_width="match_parent"
+                                android:layout_height="34dp"
+                                android:layout_marginBottom="10dp"
+                                android:alpha="0.5"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:background="@drawable/bg_home_skeleton" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:orientation="vertical">
+
+                                    <View
+                                        android:layout_width="92dp"
+                                        android:layout_height="9dp"
+                                        android:background="@drawable/bg_home_skeleton" />
+
+                                    <View
+                                        android:layout_width="60dp"
+                                        android:layout_height="8dp"
+                                        android:layout_marginTop="6dp"
+                                        android:background="@drawable/bg_home_skeleton" />
+                                </LinearLayout>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:id="@+id/ghostRow3"
+                                android:layout_width="match_parent"
+                                android:layout_height="34dp"
+                                android:layout_marginBottom="0dp"
+                                android:alpha="0.5"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:layout_width="30dp"
+                                    android:layout_height="30dp"
+                                    android:background="@drawable/bg_home_skeleton" />
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="10dp"
+                                    android:orientation="vertical">
+
+                                    <View
+                                        android:layout_width="120dp"
+                                        android:layout_height="9dp"
+                                        android:background="@drawable/bg_home_skeleton" />
+
+                                    <View
+                                        android:layout_width="76dp"
+                                        android:layout_height="8dp"
+                                        android:layout_marginTop="6dp"
+                                        android:background="@drawable/bg_home_skeleton" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:id="@+id/lensGroup"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
+                            android:layout_gravity="center">
+
+                            <View
+                                android:id="@+id/lensHalo"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
+                                android:alpha="0"
+                                android:background="@drawable/bg_members_orbit_inner" />
+
+                            <ImageView
+                                android:id="@+id/lensIcon"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:layout_gravity="center"
+                                android:background="@drawable/bg_home_tile"
+                                android:contentDescription="@null"
+                                android:elevation="6dp"
+                                android:padding="13dp"
+                                android:src="@drawable/ic_search"
+                                app:tint="@color/home_lav" />
+                        </FrameLayout>
+                    </FrameLayout>
 
                     <TextView
                         android:id="@+id/tvMembersEmptyMessage"

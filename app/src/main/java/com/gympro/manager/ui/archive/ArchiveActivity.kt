@@ -1,6 +1,7 @@
 package com.gympro.manager.ui.archive
 
 import android.os.Bundle
+import android.view.View
 import android.text.Editable
 import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
@@ -33,6 +34,8 @@ class ArchiveActivity : AppCompatActivity() {
     private val searchQuery = MutableStateFlow("")
 
     /** آخر قائمة معروضة (بعد البحث) — تُستخدم لـ "استعادة الكل". */
+    private lateinit var orbitAnimator: com.gympro.manager.utils.OrbitAnimator
+
     private var currentList: List<com.gympro.manager.model.MemberListItem> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +53,15 @@ class ArchiveActivity : AppCompatActivity() {
         binding.archiveContent.applySystemBarInsetsPadding()
         capContentWidth(binding.archiveContent)
 
+        orbitAnimator = com.gympro.manager.utils.OrbitAnimator(
+            root = binding.orbitRoot,
+            rotorOuter = binding.orbitRotorOuter,
+            rotorInner = binding.orbitRotorInner,
+            ripple1 = binding.orbitRipple1,
+            ripple2 = binding.orbitRipple2,
+            core = binding.orbitCore,
+            staggered = listOf(binding.tvArchiveEmptyMessage, binding.tvArchiveEmptyHint, binding.btnArchiveEmptyBack)
+        )
         binding.btnBack.setOnClickListener { finish() }
         binding.btnArchiveEmptyBack.setOnClickListener { finish() }
         binding.btnRestoreAll.setOnClickListener { confirmRestoreAll() }
@@ -96,6 +108,16 @@ class ArchiveActivity : AppCompatActivity() {
     }
 
     /** استعادة كل الأعضاء المعروضين دفعة واحدة، بعد تأكيد (لا يظهر الزر أثناء البحث). */
+    override fun onStart() {
+        super.onStart()
+        if (::orbitAnimator.isInitialized && binding.emptyArchiveContainer.visibility == View.VISIBLE) orbitAnimator.start()
+    }
+
+    override fun onStop() {
+        if (::orbitAnimator.isInitialized) orbitAnimator.stop()
+        super.onStop()
+    }
+
     private fun confirmRestoreAll() {
         val items = currentList
         if (items.isEmpty()) return
@@ -152,6 +174,8 @@ class ArchiveActivity : AppCompatActivity() {
                         binding.archiveSearchBar.visibleIf(!archiveReallyEmpty)
                         binding.archiveNote.visibleIf(!archiveReallyEmpty)
                         currentList = list
+                        // الحركة تعمل فقط حين يكون رسم "الأرشيف فارغ" ظاهراً (توفيراً للبطارية).
+                        if (list.isEmpty()) orbitAnimator.start() else orbitAnimator.stop()
                         binding.btnRestoreAll.visibleIf(list.isNotEmpty() && !searching)
                         binding.tvArchiveCount.visibleIf(list.isNotEmpty())
                         binding.tvArchiveCount.text = getString(R.string.archive_count_format, list.size)

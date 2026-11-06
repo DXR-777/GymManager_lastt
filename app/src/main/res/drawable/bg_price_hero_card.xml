@@ -5,8 +5,8 @@
             <gradient
                 android:type="linear"
                 android:angle="45"
-                android:startColor="@color/brand_gradient_start"
-                android:endColor="@color/brand_gradient_end"/>
+                android:startColor="@color/home_crim"
+                android:endColor="@color/home_vio"/>
             <corners android:radius="@dimen/radius_lg"/>
         </shape>
     </item>
@@ -17,7 +17,7 @@
         android:start="2dp"
         android:end="2dp">
         <shape android:shape="rectangle">
-            <solid android:color="@color/glass_fill"/>
+            <solid android:color="@color/home_avatar_inner"/>
             <corners android:radius="@dimen/radius_lg"/>
         </shape>
     </item>
