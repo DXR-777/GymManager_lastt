@@ -300,6 +300,8 @@
                     android:id="@+id/segTypeThumb"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:layout_gravity="left|top"
+                    tools:ignore="RtlHardcoded"
                     android:background="@drawable/bg_segment_selected_type"
                     android:importantForAccessibility="no"
                     android:visibility="invisible" />
@@ -527,6 +529,8 @@
                     <com.google.android.material.textfield.TextInputEditText
                     android:textColor="@color/home_ink"
                         android:id="@+id/etPrice"
+                        android:hint="0"
+                        android:textColorHint="@color/home_mute"
                         style="@style/Text.Form.HeroPrice"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -795,6 +799,8 @@
                     android:id="@+id/segPaymentThumb"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
+                    android:layout_gravity="left|top"
+                    tools:ignore="RtlHardcoded"
                     android:background="@drawable/bg_segment_selected_type"
                     android:importantForAccessibility="no"
                     android:visibility="invisible" />
