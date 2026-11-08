@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- قرص مركز الأرشيف: حلقة بتدرج الهوية + قلب داكن + طبقة لون خفيفة (بدل الرمادي المسطّح). -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <gradient android:type="linear" android:angle="315"
+                android:startColor="@color/home_crim" android:endColor="@color/home_vio"/>
+        </shape>
+    </item>
+    <item android:top="1.5dp" android:bottom="1.5dp" android:start="1.5dp" android:end="1.5dp">
+        <shape android:shape="oval"><solid android:color="@color/home_avatar_inner"/></shape>
+    </item>
+    <item android:top="1.5dp" android:bottom="1.5dp" android:start="1.5dp" android:end="1.5dp">
+        <shape android:shape="oval">
+            <gradient android:type="linear" android:angle="315"
+                android:startColor="#2ED63A56" android:endColor="#407C4DE8"/>
+        </shape>
+    </item>
+</layer-list>

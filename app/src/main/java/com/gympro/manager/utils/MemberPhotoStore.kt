@@ -22,6 +22,13 @@ sealed class PhotoImport {
     object Failed : PhotoImport()
 }
 
+/** نتيجة تجهيز صورة للقصّ: ملف مؤقت جاهز، أو الجهة بلا صورة، أو فشلت القراءة. */
+sealed class PhotoStage {
+    data class Ready(val path: String) : PhotoStage()
+    object NoPhoto : PhotoStage()
+    object Failed : PhotoStage()
+}
+
 /**
  * تخزين صور الأعضاء داخل مساحة التطبيق الخاصة (filesDir/member_photos) — بلا أي صلاحية.
  *
@@ -38,6 +45,8 @@ object MemberPhotoStore {
     private const val DIR = "member_photos"
     private const val MAX_SIDE = 640
     private const val JPEG_QUALITY = 88
+    private const val STAGE_SIDE = 1800
+    private const val STAGE_DIR = "photo_crop"
 
     fun file(context: Context, relativePath: String): File = File(context.filesDir, relativePath)
 
@@ -82,6 +91,93 @@ object MemberPhotoStore {
         }
     }
 
+    // ------------------------------------------------------------------ قصّ حر (تجهيز + حفظ)
+
+    /** صورة من المعرض: تُنسخ مدوَّرة بحسب EXIF إلى ملف مؤقت كبير (≤1800px) ليقصّها المستخدم يدوياً. */
+    suspend fun stageFromUri(context: Context, uri: Uri): PhotoStage = withContext(Dispatchers.IO) {
+        try {
+            val resolver = context.contentResolver
+            val orientation = resolver.openInputStream(uri)?.use { readOrientation(it) }
+                ?: ExifInterface.ORIENTATION_NORMAL
+            val bitmap = decodeScaled(STAGE_SIDE) { resolver.openInputStream(uri) }
+                ?: return@withContext PhotoStage.Failed
+            PhotoStage.Ready(writeStage(context, orient(bitmap, orientation)))
+        } catch (e: Exception) {
+            CrashReporter.record(e)
+            PhotoStage.Failed
+        }
+    }
+
+    /** صورة جهة اتصال اختارها المستخدم: نفس مسار القصّ الحر. */
+    suspend fun stageFromContact(context: Context, contactUri: Uri): PhotoStage = withContext(Dispatchers.IO) {
+        try {
+            val resolver = context.contentResolver
+            var bytes: ByteArray? = ContactsContract.Contacts
+                .openContactPhotoInputStream(resolver, contactUri, true)
+                ?.use { it.readBytes() }
+            if (bytes == null) {
+                val photoUri = resolver.query(
+                    contactUri, arrayOf(ContactsContract.Contacts.PHOTO_URI), null, null, null
+                )?.use { c -> if (c.moveToFirst()) c.getString(0) else null }
+                if (!photoUri.isNullOrBlank()) {
+                    bytes = resolver.openInputStream(Uri.parse(photoUri))?.use { it.readBytes() }
+                }
+            }
+            val data = bytes
+            if (data == null || data.isEmpty()) return@withContext PhotoStage.NoPhoto
+            val bitmap = decodeScaled(STAGE_SIDE) { ByteArrayInputStream(data) }
+                ?: return@withContext PhotoStage.Failed
+            PhotoStage.Ready(writeStage(context, bitmap))
+        } catch (e: Exception) {
+            CrashReporter.record(e)
+            PhotoStage.Failed
+        }
+    }
+
+    /** إعادة ضبط صورة محفوظة: تُنسخ إلى ملف مؤقت لتُفتح في شاشة القصّ. */
+    suspend fun stageFromStored(context: Context, relativePath: String): PhotoStage = withContext(Dispatchers.IO) {
+        try {
+            val src = file(context, relativePath)
+            if (!src.exists()) return@withContext PhotoStage.Failed
+            val dst = File(stageDir(context), "${UUID.randomUUID()}.jpg")
+            src.copyTo(dst, overwrite = true)
+            PhotoStage.Ready(dst.absolutePath)
+        } catch (e: Exception) {
+            CrashReporter.record(e)
+            PhotoStage.Failed
+        }
+    }
+
+    fun decodeStaged(absolutePath: String): Bitmap? =
+        runCatching { BitmapFactory.decodeFile(absolutePath) }.getOrNull()
+
+    /** يحفظ الصورة المقصوصة (مربعة) نهائياً في مجلد الصور ويعيد المسار النسبي. */
+    fun saveCropped(context: Context, bitmap: Bitmap): String {
+        val square = if (bitmap.width > MAX_SIDE) Bitmap.createScaledBitmap(bitmap, MAX_SIDE, MAX_SIDE, true) else bitmap
+        return writeJpeg(context, square)
+    }
+
+    private fun stageDir(context: Context): File = File(context.cacheDir, STAGE_DIR).apply { mkdirs() }
+
+    private fun writeStage(context: Context, bitmap: Bitmap): String {
+        val out = File(stageDir(context), "${UUID.randomUUID()}.jpg")
+        FileOutputStream(out).use { bitmap.compress(Bitmap.CompressFormat.JPEG, 92, it) }
+        return out.absolutePath
+    }
+
+    /** تدوير/قلب بحسب EXIF دون أي قصّ. */
+    private fun orient(source: Bitmap, orientation: Int): Bitmap {
+        val matrix = Matrix()
+        when (orientation) {
+            ExifInterface.ORIENTATION_ROTATE_90 -> matrix.postRotate(90f)
+            ExifInterface.ORIENTATION_ROTATE_180 -> matrix.postRotate(180f)
+            ExifInterface.ORIENTATION_ROTATE_270 -> matrix.postRotate(270f)
+            ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> matrix.postScale(-1f, 1f)
+            ExifInterface.ORIENTATION_FLIP_VERTICAL -> matrix.postScale(1f, -1f)
+        }
+        return if (matrix.isIdentity) source else Bitmap.createBitmap(source, 0, 0, source.width, source.height, matrix, true)
+    }
+
     /** يحذف ملف صورة (ضمن مجلد الصور فقط — حماية من أي مسار خارجه). */
     fun delete(context: Context, relativePath: String?) {
         if (relativePath.isNullOrBlank()) return
@@ -92,12 +188,12 @@ object MemberPhotoStore {
         }
     }
 
-    private fun decodeScaled(open: () -> InputStream?): Bitmap? {
+    private fun decodeScaled(maxSide: Int = MAX_SIDE, open: () -> InputStream?): Bitmap? {
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
         open()?.use { BitmapFactory.decodeStream(it, null, bounds) }
         if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
         var sample = 1
-        while (bounds.outWidth / (sample * 2) >= MAX_SIDE && bounds.outHeight / (sample * 2) >= MAX_SIDE) sample *= 2
+        while (bounds.outWidth / (sample * 2) >= maxSide && bounds.outHeight / (sample * 2) >= maxSide) sample *= 2
         val options = BitmapFactory.Options().apply { inSampleSize = sample }
         return open()?.use { BitmapFactory.decodeStream(it, null, options) }
     }

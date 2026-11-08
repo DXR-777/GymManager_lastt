@@ -26,7 +26,8 @@ class OrbitAnimator(
     private val ripple1: View,
     private val ripple2: View,
     private val core: View,
-    private val staggered: List<View>
+    private val staggered: List<View>,
+    private val glow: View? = null
 ) {
     private val animators = mutableListOf<Animator>()
     var isRunning = false
@@ -84,6 +85,21 @@ class OrbitAnimator(
             interpolator = AccelerateDecelerateInterpolator()
         }
 
+        // هالة خلف المركز تنبض مع التنفّس
+        glow?.let { g ->
+            animators += ObjectAnimator.ofPropertyValuesHolder(
+                g,
+                PropertyValuesHolder.ofFloat(View.ALPHA, 0.55f, 1f),
+                PropertyValuesHolder.ofFloat(View.SCALE_X, 0.92f, 1.08f),
+                PropertyValuesHolder.ofFloat(View.SCALE_Y, 0.92f, 1.08f)
+            ).apply {
+                duration = 2_600
+                repeatCount = ValueAnimator.INFINITE
+                repeatMode = ValueAnimator.REVERSE
+                interpolator = AccelerateDecelerateInterpolator()
+            }
+        }
+
         // 4) موجتان
         animators += rippleAnimator(ripple1, 0L)
         animators += rippleAnimator(ripple2, 1_700L)
@@ -126,6 +142,7 @@ class OrbitAnimator(
         rotorInner.rotation = 0f
         core.scaleX = 1f; core.scaleY = 1f; core.translationY = 0f
         listOf(ripple1, ripple2).forEach { it.alpha = 0f; it.scaleX = 1f; it.scaleY = 1f }
+        glow?.let { it.alpha = 1f; it.scaleX = 1f; it.scaleY = 1f }
         staggered.forEach { it.alpha = 1f; it.translationY = 0f }
     }
 }

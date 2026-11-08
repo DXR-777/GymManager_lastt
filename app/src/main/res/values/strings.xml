@@ -675,4 +675,13 @@
     <string name="cloud_status_failed">تعذّرت المزامنة، ستُعاد المحاولة تلقائياً</string>
     <string name="cloud_consent_denied">لم يُمنح إذن الحفظ في Google Drive</string>
     <string name="cloud_auth_failed">تعذّر الاتصال بحساب Google</string>
+    <!-- قصّ/ضبط صورة العضو -->
+    <string name="crop_title">ضبط الصورة</string>
+    <string name="crop_hint">حرّك الصورة بإصبعك وكبّرها بالقرص أو الشريط لتختار الجزء الذي سيظهر</string>
+    <string name="crop_confirm">تأكيد</string>
+    <string name="crop_cancel">إلغاء</string>
+    <string name="crop_rotate">تدوير</string>
+    <string name="crop_reset">إعادة ضبط</string>
+    <string name="crop_failed">تعذّر فتح الصورة</string>
+    <string name="member_photo_adjust">ضبط الصورة</string>
 </resources>

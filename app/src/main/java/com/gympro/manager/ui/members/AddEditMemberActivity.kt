@@ -1,5 +1,6 @@
 package com.gympro.manager.ui.members
 
+import android.content.Intent
 import androidx.activity.viewModels
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
@@ -55,6 +56,7 @@ import com.gympro.manager.utils.AddMemberMotion
 import com.gympro.manager.utils.CloudPhotoSync
 import com.gympro.manager.utils.MemberPhotoStore
 import com.gympro.manager.utils.PhotoImport
+import com.gympro.manager.utils.PhotoStage
 import com.gympro.manager.utils.bindMemberAvatar
 
 private const val KEY_SELECTED_TYPE = "add_edit_member_selected_type"
@@ -181,10 +183,17 @@ class AddEditMemberActivity : AppCompatActivity() {
     private var photoCommitted = false
 
     private val pickPhoto = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
-        if (uri != null) importPhoto { MemberPhotoStore.importFromUri(this, uri) }
+        if (uri != null) stageAndCrop { MemberPhotoStore.stageFromUri(this, uri) }
     }
     private val pickContact = registerForActivityResult(ActivityResultContracts.PickContact()) { uri ->
-        if (uri != null) importPhoto { MemberPhotoStore.importFromContact(this, uri) }
+        if (uri != null) stageAndCrop { MemberPhotoStore.stageFromContact(this, uri) }
+    }
+
+    /** ناتج شاشة القصّ: مسار الصورة المقصوصة المحفوظة (أو إلغاء). */
+    private val cropLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == RESULT_OK) {
+            result.data?.getStringExtra(PhotoCropActivity.EXTRA_RESULT_PATH)?.let { onPhotoCropped(it) }
+        }
     }
 
     private fun setupPhotoSection() {
@@ -193,6 +202,9 @@ class AddEditMemberActivity : AppCompatActivity() {
         binding.tvPhotoAvatar.setOnSingleClickListener { launchGalleryPicker() }
         binding.btnPhotoContact.setOnSingleClickListener { pickContact.launch(null) }
         binding.btnPhotoRemove.setOnSingleClickListener { removePhoto() }
+        binding.btnPhotoAdjust.setOnSingleClickListener {
+            photoPath?.let { current -> stageAndCrop { MemberPhotoStore.stageFromStored(this, current) } }
+        }
         // الحرف الأول في الأفاتار يتبع الاسم المكتوب ما دامت لا توجد صورة.
         binding.etName.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -204,6 +216,32 @@ class AddEditMemberActivity : AppCompatActivity() {
 
     private fun launchGalleryPicker() {
         pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+    }
+
+    /** يجهّز الصورة المختارة (من المعرض/الجهة/الحالية) ثم يفتح شاشة القصّ الحر. */
+    private fun stageAndCrop(block: suspend () -> PhotoStage) {
+        lifecycleScope.launch {
+            binding.progressPhoto.visibility = View.VISIBLE
+            val result = block()
+            binding.progressPhoto.visibility = View.GONE
+            when (result) {
+                is PhotoStage.Ready -> cropLauncher.launch(
+                    Intent(this@AddEditMemberActivity, PhotoCropActivity::class.java)
+                        .putExtra(PhotoCropActivity.EXTRA_INPUT_PATH, result.path)
+                )
+                PhotoStage.NoPhoto -> toast(getString(R.string.member_photo_none_in_contact))
+                PhotoStage.Failed -> toast(getString(R.string.member_photo_failed))
+            }
+        }
+    }
+
+    private fun onPhotoCropped(path: String) {
+        discardPendingPhoto()
+        pendingPhotoPath = path
+        photoPath = path
+        markDirty()
+        renderPhoto()
+        AddMemberMotion.pop(binding.tvPhotoAvatar)
     }
 
     private fun importPhoto(block: suspend () -> PhotoImport) {
@@ -241,7 +279,9 @@ class AddEditMemberActivity : AppCompatActivity() {
     private fun renderPhoto() {
         val name = binding.etName.text?.toString().orEmpty().ifBlank { "؟" }
         binding.tvPhotoAvatar.bindMemberAvatar(name, photoPath, 512)
-        binding.btnPhotoRemove.visibility = if (photoPath != null && !isRenewMode) View.VISIBLE else View.GONE
+        val hasPhoto = photoPath != null && !isRenewMode
+        binding.btnPhotoRemove.visibility = if (hasPhoto) View.VISIBLE else View.GONE
+        binding.btnPhotoAdjust.visibility = if (hasPhoto) View.VISIBLE else View.GONE
     }
 
     /** بعد نجاح الحفظ: تثبيت الصورة الجديدة وحذف القديمة المستبدَلة. */

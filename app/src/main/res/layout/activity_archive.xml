@@ -2,7 +2,7 @@
 <!--
     شاشة "الأعضاء المحذوفون" (إعادة تصميم 2026، نفس لغة الرئيسية والأعضاء): خلفية #0A0B1E + كرات ضبابية،
     رأس بزر رجوع زجاجي وعنوان وعدّاد وزر "استعادة الكل"، شريط بحث زجاجي، ملاحظة المهلة، قائمة بطاقات،
-    وحالة فارغة بدائرة متوهّجة. كل المعرِّفات القديمة محفوظة (+ archiveContent, tvArchiveCount, tvArchiveEmptyHint).
+    وحالة فارغة بدائرة متوهّجة. كل المعرِّفات القديمة محفوظة (+ archiveContent, tvArchiveCount).
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -196,12 +196,13 @@
             android:paddingBottom="40dp"
             android:visibility="gone">
 
-            <!-- رسم الأرشيف الفارغ المتحرك (OrbitAnimator): دوران متعاكس للحلقتين مع النقاط، تنفّس للدائرة
-                 المركزية، وموجتان تنتشران منها. كل العناصر ثابتة في التخطيط والحركة تُشغَّل من الكود. -->
+            <!-- رسم الأرشيف الفارغ المتحرك (OrbitAnimator). الحلقات مُزاحة 6dp داخل حاوية الدوران، والنقاط
+                 مركّزها على محيط الحلقة تماماً — فلا تُقصّ أبداً (كانت تظهر نصف دائرة). -->
             <FrameLayout
                 android:id="@+id/orbitRoot"
                 android:layout_width="168dp"
                 android:layout_height="168dp"
+                android:clipChildren="false"
                 android:importantForAccessibility="no">
 
                 <View
@@ -220,6 +221,13 @@
                     android:alpha="0"
                     android:background="@drawable/bg_members_orbit_inner" />
 
+                <View
+                    android:id="@+id/orbitGlow"
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bg_archive_glow" />
+
                 <FrameLayout
                     android:id="@+id/orbitRotorOuter"
                     android:layout_width="match_parent"
@@ -228,22 +236,23 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_margin="6dp"
                         android:background="@drawable/bg_members_orbit_outer" />
 
                     <View
                         android:layout_width="10dp"
                         android:layout_height="10dp"
-                        android:layout_gravity="top|center_horizontal"
-                        android:layout_marginTop="-5dp"
+                        android:layout_gravity="top|start"
+                        android:layout_marginStart="79dp"
+                        android:layout_marginTop="1dp"
                         android:background="@drawable/bg_members_dot"
                         android:backgroundTint="@color/home_dot_lav" />
-
                     <View
                         android:layout_width="10dp"
                         android:layout_height="10dp"
                         android:layout_gravity="top|start"
-                        android:layout_marginStart="31dp"
-                        android:layout_marginTop="148dp"
+                        android:layout_marginStart="34dp"
+                        android:layout_marginTop="143dp"
                         android:background="@drawable/bg_members_dot"
                         android:backgroundTint="@color/home_dot_blue" />
                 </FrameLayout>
@@ -257,35 +266,105 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_margin="4dp"
                         android:background="@drawable/bg_members_orbit_inner" />
 
                     <View
                         android:layout_width="7dp"
                         android:layout_height="7dp"
                         android:layout_gravity="top|start"
-                        android:layout_marginStart="26dp"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginStart="28dp"
+                        android:layout_marginTop="8dp"
                         android:background="@drawable/bg_members_dot"
                         android:backgroundTint="@color/home_dot_pink" />
                 </FrameLayout>
 
-                <ImageView
+                <!-- ظلّ الأرض: ثابت تحت الصندوق الطافي -->
+                <View
+                    android:id="@+id/archiveShadow"
+                    android:layout_width="78dp"
+                    android:layout_height="14dp"
+                    android:layout_gravity="top|center_horizontal"
+                    android:layout_marginTop="118dp"
+                    android:background="@drawable/bg_archive_shadow"
+                    android:importantForAccessibility="no" />
+
+                <!-- النواة = صندوق أرشيف مغلق ثلاثي الأبعاد. orbitCore يتولّى الطفو/التنفّس (OrbitAnimator)،
+                     و archiveBoxGroup يتولّى الاهتزاز والانضغاط، والغطاء يُرفع ويعود (ArchiveBoxAnimator). -->
+                <FrameLayout
                     android:id="@+id/orbitCore"
-                    android:layout_width="76dp"
-                    android:layout_height="76dp"
+                    android:layout_width="92dp"
+                    android:layout_height="66dp"
                     android:layout_gravity="center"
-                    android:background="@drawable/bg_home_empty_circle"
-                    android:importantForAccessibility="no"
-                    android:padding="22dp"
-                    android:src="@drawable/ic_archive"
-                    app:tint="@color/home_lav" />
+                    android:clickable="true"
+                    android:clipChildren="false"
+                    android:contentDescription="@string/archive_empty"
+                    android:focusable="true">
+
+                    <FrameLayout
+                        android:id="@+id/archiveBoxGroup"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:clipChildren="false">
+
+                        <ImageView
+                            android:layout_width="92dp"
+                            android:layout_height="62dp"
+                            android:layout_gravity="bottom"
+                            android:importantForAccessibility="no"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/archive_box" />
+
+                        <View
+                            android:id="@+id/archiveDust1"
+                            android:layout_width="7dp"
+                            android:layout_height="7dp"
+                            android:layout_gravity="top|center_horizontal"
+                            android:layout_marginTop="22dp"
+                            android:alpha="0"
+                            android:background="@drawable/bg_members_dot"
+                            android:backgroundTint="@color/home_dot_lav" />
+
+                        <View
+                            android:id="@+id/archiveDust2"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
+                            android:layout_gravity="top|center_horizontal"
+                            android:layout_marginTop="24dp"
+                            android:layout_marginStart="26dp"
+                            android:alpha="0"
+                            android:background="@drawable/bg_members_dot"
+                            android:backgroundTint="@color/home_dot_blue" />
+
+                        <View
+                            android:id="@+id/archiveDust3"
+                            android:layout_width="6dp"
+                            android:layout_height="6dp"
+                            android:layout_gravity="top|center_horizontal"
+                            android:layout_marginTop="23dp"
+                            android:layout_marginEnd="26dp"
+                            android:alpha="0"
+                            android:background="@drawable/bg_members_dot"
+                            android:backgroundTint="@color/home_dot_pink" />
+
+                        <ImageView
+                            android:id="@+id/archiveLid"
+                            android:layout_width="92dp"
+                            android:layout_height="30dp"
+                            android:layout_gravity="top"
+                            android:layout_marginTop="4dp"
+                            android:importantForAccessibility="no"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/archive_lid" />
+                    </FrameLayout>
+                </FrameLayout>
             </FrameLayout>
 
             <TextView
                 android:id="@+id/tvArchiveEmptyMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="26dp"
                 android:fontFamily="@font/cairo_bold"
                 android:gravity="center"
                 android:includeFontPadding="false"
@@ -293,20 +372,6 @@
                 android:textColor="@color/home_ink"
                 android:textSize="20sp" />
 
-            <TextView
-                android:id="@+id/tvArchiveEmptyHint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="24dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/cairo_regular"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:lineSpacingMultiplier="1.3"
-                android:maxWidth="300dp"
-                android:text="@string/archive_empty_hint"
-                android:textColor="@color/home_mute"
-                android:textSize="13.5sp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnArchiveEmptyBack"

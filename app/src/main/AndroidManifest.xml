@@ -85,6 +85,11 @@
             android:name=".ui.archive.ArchiveActivity"
             android:exported="false" />
 
+        <!-- ضبط/قصّ صورة العضو قبل حفظها -->
+        <activity
+            android:name=".ui.members.PhotoCropActivity"
+            android:exported="false" />
+
         <!-- قفل التطبيق: شاشة PIN/بصمة تُعرض فوق أي شاشة عند الحاجة (راجع security/AppLockManager.kt) -->
         <activity
             android:name=".security.LockActivity"

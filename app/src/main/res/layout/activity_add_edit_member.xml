@@ -70,7 +70,7 @@
             android:orientation="vertical"
             android:paddingHorizontal="@dimen/spacing_lg"
             android:paddingTop="@dimen/spacing_lg"
-            android:paddingBottom="@dimen/spacing_lg">
+            android:paddingBottom="64dp">
 
             <!-- ============================= القسم 1: معلومات العضو ============================= -->
             <LinearLayout
@@ -188,6 +188,19 @@
                             app:iconTint="@color/home_ink"
                             app:strokeColor="@color/home_glass_stroke" />
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/btnPhotoAdjust"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center"
+                        android:paddingHorizontal="16dp"
+                        android:text="@string/member_photo_adjust"
+                        android:textColor="@color/home_lav"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
                     <TextView
                         android:id="@+id/btnPhotoRemove"
@@ -1321,24 +1334,28 @@
         android:id="@+id/saveBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="-28dp"
         android:background="@drawable/bg_form_bottom_bar"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:paddingHorizontal="@dimen/spacing_lg"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp">
+        android:paddingTop="30dp"
+        android:paddingBottom="14dp">
 
             <!-- ============================= زر الحفظ ============================= -->
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp">
+                android:clipChildren="false"
+                android:clipToPadding="false">
 
                 <FrameLayout
                     android:id="@+id/frameSaveGlow"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_button_glow"
-                    android:padding="8dp">
+                    android:background="@null"
+                    android:clipChildren="false"
+                    android:clipToPadding="false">
 
                     <TextView
                         android:id="@+id/btnSaveMember"
@@ -1350,6 +1367,8 @@
                         android:elevation="@dimen/elevation_fab"
                         android:focusable="true"
                         android:foreground="@drawable/ripple_button_save"
+                        android:outlineAmbientShadowColor="@android:color/transparent"
+                        android:outlineSpotShadowColor="@color/home_fab_glow"
                         android:gravity="center"
                         android:paddingStart="@dimen/spacing_lg"
                         android:paddingEnd="@dimen/spacing_lg"

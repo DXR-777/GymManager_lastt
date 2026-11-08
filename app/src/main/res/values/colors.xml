@@ -205,4 +205,8 @@
     <!-- أزرار الأرشيف (استعادة/حذف نهائي) -->
     <color name="home_btn_coral_fill">#14FFA3A3</color>
     <color name="home_btn_coral_stroke">#4DFFA3A3</color>
+    <!-- شاشة قصّ الصورة -->
+    <color name="home_crop_dim">#CC060713</color>
+    <color name="home_crop_ring">#B3FFFFFF</color>
+    <color name="home_crop_grid">#59FFFFFF</color>
 </resources>

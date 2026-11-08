@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    شاشة ضبط صورة العضو: معاينة دائرية تماماً كما ستظهر في التطبيق، تحريك بالإصبع، تكبير بالقرص أو بالشريط،
+    نقر مزدوج للتكبير السريع، تدوير 90°، وإعادة ضبط. الناتج صورة مربعة (تُعرض دائرية).
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_home_page">
+
+    <LinearLayout
+        android:id="@+id/cropContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingHorizontal="@dimen/home_pad">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp">
+
+            <ImageView
+                android:id="@+id/btnCropBack"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_gravity="center_vertical|start"
+                android:background="@drawable/bg_home_tile"
+                android:contentDescription="@string/action_back"
+                android:foreground="@drawable/ripple_home_circle"
+                android:padding="12dp"
+                android:src="@drawable/ic_back"
+                app:tint="@color/home_ink" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/cairo_bold"
+                android:text="@string/crop_title"
+                android:textColor="@color/home_ink"
+                android:textSize="19sp" />
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:lineSpacingMultiplier="1.3"
+            android:text="@string/crop_hint"
+            android:textColor="@color/home_mute"
+            android:textSize="13sp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1">
+
+            <com.gympro.manager.ui.members.CropImageView
+                android:id="@+id/cropView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ProgressBar
+                android:id="@+id/progressCrop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminateTint="@color/home_lav" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/cropControls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="−"
+                    android:textColor="@color/home_mute"
+                    android:textSize="22sp" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderZoom"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:contentDescription="@string/crop_hint"
+                    android:value="1"
+                    android:valueFrom="1"
+                    android:valueTo="6"
+                    app:haloColor="#337C4DE8"
+                    app:thumbColor="@color/home_lav"
+                    app:trackColorActive="@color/home_vio"
+                    app:trackColorInactive="@color/home_progress_track" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+"
+                    android:textColor="@color/home_mute"
+                    android:textSize="22sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/btnCropRotate"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_crop_tool"
+                android:clickable="true"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/home_lav"
+                android:drawableTop="@drawable/ic_rotate"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:text="@string/crop_rotate"
+                android:textColor="@color/home_ink"
+                android:textSize="12sp" />
+
+                <Space
+                    android:layout_width="12dp"
+                    android:layout_height="match_parent" />
+
+            <TextView
+                android:id="@+id/btnCropReset"
+                android:layout_width="0dp"
+                android:layout_height="64dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_crop_tool"
+                android:clickable="true"
+                android:drawablePadding="4dp"
+                android:drawableTint="@color/home_lav"
+                android:drawableTop="@drawable/ic_restore"
+                android:focusable="true"
+                android:gravity="center"
+                android:paddingTop="10dp"
+                android:text="@string/crop_reset"
+                android:textColor="@color/home_ink"
+                android:textSize="12sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCropCancel"
+                    style="@style/Widget.Material3.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_weight="1"
+                    android:text="@string/crop_cancel"
+                    android:textColor="@color/home_ink"
+                    app:cornerRadius="99dp"
+                    app:rippleColor="@color/ripple_on_dark"
+                    app:strokeColor="@color/home_glass_stroke" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCropConfirm"
+                    style="@style/Widget.GymManager.Button.Primary"
+                    android:layout_width="0dp"
+                    android:layout_height="54dp"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1.6"
+                    android:text="@string/crop_confirm"
+                    app:cornerRadius="99dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

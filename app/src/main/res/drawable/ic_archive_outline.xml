@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- أيقونة أرشيف خطية (بدل المصمتة ذات السهم الأسود الثقيل): غطاء + صندوق + سهم للداخل. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M3.5,5.5h17v3.5h-17z M5,9v9a1.5,1.5 0 0 0 1.5,1.5h11a1.5,1.5 0 0 0 1.5,-1.5V9 M12,11.5v5.5 M9.5,14.5l2.5,2.5l2.5,-2.5"/>
+</vector>
