@@ -34,7 +34,6 @@ class ArchiveActivity : AppCompatActivity() {
     private val searchQuery = MutableStateFlow("")
 
     /** آخر قائمة معروضة (بعد البحث) — تُستخدم لـ "استعادة الكل". */
-    private lateinit var orbitAnimator: com.gympro.manager.utils.OrbitAnimator
     private lateinit var boxAnimator: com.gympro.manager.utils.ArchiveBoxAnimator
 
     private var currentList: List<com.gympro.manager.model.MemberListItem> = emptyList()
@@ -54,21 +53,15 @@ class ArchiveActivity : AppCompatActivity() {
         binding.archiveContent.applySystemBarInsetsPadding()
         capContentWidth(binding.archiveContent)
 
-        orbitAnimator = com.gympro.manager.utils.OrbitAnimator(
-            root = binding.orbitRoot,
-            rotorOuter = binding.orbitRotorOuter,
-            rotorInner = binding.orbitRotorInner,
-            ripple1 = binding.orbitRipple1,
-            ripple2 = binding.orbitRipple2,
-            core = binding.orbitCore,
-            glow = binding.orbitGlow,
-            staggered = listOf(binding.tvArchiveEmptyMessage, binding.btnArchiveEmptyBack)
-        )
         boxAnimator = com.gympro.manager.utils.ArchiveBoxAnimator(
+            root = binding.orbitRoot,
+            floater = binding.orbitCore,
             group = binding.archiveBoxGroup,
             lid = binding.archiveLid,
             dust = listOf(binding.archiveDust1, binding.archiveDust2, binding.archiveDust3),
-            shadow = binding.archiveShadow
+            shadow = binding.archiveShadow,
+            glow = binding.orbitGlow,
+            title = binding.tvArchiveEmptyMessage
         )
         // نقر على الصندوق = يفتح ويهتز من جديد
         binding.orbitCore.setOnClickListener {
@@ -76,7 +69,6 @@ class ArchiveActivity : AppCompatActivity() {
             boxAnimator.replay()
         }
         binding.btnBack.setOnClickListener { finish() }
-        binding.btnArchiveEmptyBack.setOnClickListener { finish() }
         binding.btnRestoreAll.setOnClickListener { confirmRestoreAll() }
 
         adapter = ArchiveAdapter(
@@ -122,22 +114,20 @@ class ArchiveActivity : AppCompatActivity() {
 
     /** استعادة كل الأعضاء المعروضين دفعة واحدة، بعد تأكيد (لا يظهر الزر أثناء البحث). */
     private fun startEmptyMotion() {
-        orbitAnimator.start()
         boxAnimator.start()
     }
 
     private fun stopEmptyMotion() {
-        orbitAnimator.stop()
         boxAnimator.stop()
     }
 
     override fun onStart() {
         super.onStart()
-        if (::orbitAnimator.isInitialized && binding.emptyArchiveContainer.visibility == View.VISIBLE) startEmptyMotion()
+        if (::boxAnimator.isInitialized && binding.emptyArchiveContainer.visibility == View.VISIBLE) startEmptyMotion()
     }
 
     override fun onStop() {
-        if (::orbitAnimator.isInitialized) stopEmptyMotion()
+        if (::boxAnimator.isInitialized) stopEmptyMotion()
         super.onStop()
     }
 
@@ -190,7 +180,6 @@ class ArchiveActivity : AppCompatActivity() {
                         binding.tvArchiveEmptyMessage.setText(
                             if (searching) R.string.archive_no_search_results else R.string.archive_empty
                         )
-                        binding.btnArchiveEmptyBack.visibleIf(!searching)
                         // أرشيف فارغ فعلاً: لا معنى للبحث ولا لملاحظة المهلة، فتُخفيان لشاشة هادئة.
                         val archiveReallyEmpty = list.isEmpty() && !searching
                         binding.archiveSearchBar.visibleIf(!archiveReallyEmpty)
