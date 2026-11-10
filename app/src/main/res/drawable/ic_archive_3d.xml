@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- أيقونة الأرشيف ثلاثية الأبعاد (صندوق بغطاء بمنظور + توهّج بنفسجي خلفه)، بألوان التطبيق
+     (home_crim → home_vio). ملوّنة بالكامل: لا تستخدم android:tint معها. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="64dp" android:height="64dp" android:viewportWidth="64" android:viewportHeight="64">
+
+    <!-- توهّج خلف الصندوق -->
+    <path android:pathData="M32,50m-30,0a30,30 0 1,1 60,0a30,30 0 1,1 -60,0">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="radial" android:centerX="32" android:centerY="50" android:gradientRadius="30">
+                <item android:offset="0" android:color="#807C4DE8"/>
+                <item android:offset="1" android:color="#007C4DE8"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- ظلّ الأرض -->
+    <path android:fillColor="#4D000000" android:pathData="M13,57a19,3 0 1,0 38,0a19,3 0 1,0 -38,0Z"/>
+
+    <!-- جسم الصندوق -->
+    <path android:pathData="M20,27H44A6,6 0 0 1 50,33V49A6,6 0 0 1 44,55H20A6,6 0 0 1 14,49V33A6,6 0 0 1 20,27Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="27" android:endX="0" android:endY="55">
+                <item android:offset="0" android:color="#B83CA0"/>
+                <item android:offset="1" android:color="#6F3FD8"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#00000000" android:strokeColor="#33FFFFFF" android:strokeWidth="1"
+        android:pathData="M20,27H44A6,6 0 0 1 50,33V49A6,6 0 0 1 44,55H20A6,6 0 0 1 14,49V33A6,6 0 0 1 20,27Z"/>
+    <!-- ظلّ الغطاء على الجسم -->
+    <path android:fillColor="#471A0A40" android:pathData="M14,30H50V35H14Z"/>
+    <!-- فتحة المقبض -->
+    <path android:fillColor="#99241047" android:pathData="M27.5,38H36.5A2.5,2.5 0 0 1 36.5,43H27.5A2.5,2.5 0 0 1 27.5,38Z"/>
+    <path android:fillColor="#00000000" android:strokeColor="#47FFFFFF" android:strokeWidth="1" android:strokeLineCap="round" android:pathData="M27,44.5H37"/>
+
+    <!-- الوجه الأمامي للغطاء -->
+    <path android:pathData="M13,19H51A4,4 0 0 1 55,23V25A4,4 0 0 1 51,29H13A4,4 0 0 1 9,25V23A4,4 0 0 1 13,19Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="19" android:endX="0" android:endY="29">
+                <item android:offset="0" android:color="#E2476A"/>
+                <item android:offset="1" android:color="#B03AA0"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- الوجه العلوي للغطاء -->
+    <path android:pathData="M13,19L17,12Q18,11 20,11H44Q46,11 47,12L51,19Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="11" android:endX="0" android:endY="19">
+                <item android:offset="0" android:color="#FF8AA0"/>
+                <item android:offset="1" android:color="#E2476A"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#00000000" android:strokeColor="#80FFFFFF" android:strokeWidth="1" android:strokeLineCap="round" android:pathData="M13,20.2H51"/>
+</vector>

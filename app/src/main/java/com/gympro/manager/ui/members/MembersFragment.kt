@@ -145,6 +145,8 @@ class MembersFragment : Fragment() {
         binding.listFrame.visibleIf(!show)
         binding.searchBar.visibleIf(!show)
         binding.chipsScroll.visibleIf(!show)
+        // زر الأرشيف يظهر فقط بعد إضافة أعضاء (لا معنى له في شاشة البداية الفارغة).
+        binding.btnArchive.visibleIf(!show)
     }
 
     /**

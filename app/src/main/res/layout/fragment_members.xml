@@ -58,16 +58,17 @@
                     android:textSize="12sp" />
             </LinearLayout>
 
+            <!-- أيقونة أرشيف ثلاثية الأبعاد ملوّنة بلا إطار/خلفية: لا tint ولا bg_home_tile. -->
             <ImageButton
                 android:id="@+id/btnArchive"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:background="@drawable/bg_home_tile"
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:background="@null"
                 android:contentDescription="@string/members_archive_cd"
                 android:foreground="@drawable/ripple_home_circle"
-                android:padding="12dp"
-                android:src="@drawable/ic_archive"
-                app:tint="@color/home_ink" />
+                android:padding="0dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_archive_3d" />
         </LinearLayout>
 
         <!-- شريط البحث (يحوي زر الترتيب على الطرف الأيسر) -->
