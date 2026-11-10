@@ -202,34 +202,34 @@
 
             <FrameLayout
                 android:id="@+id/orbitRoot"
-                android:layout_width="300dp"
-                android:layout_height="250dp"
+                android:layout_width="220dp"
+                android:layout_height="180dp"
                 android:clipChildren="false"
                 android:importantForAccessibility="no">
 
                 <!-- هالة بنفسجية ناعمة خلف الصندوق -->
                 <View
                     android:id="@+id/orbitGlow"
-                    android:layout_width="300dp"
-                    android:layout_height="300dp"
+                    android:layout_width="240dp"
+                    android:layout_height="240dp"
                     android:layout_gravity="center"
                     android:background="@drawable/bg_archive_glow" />
 
                 <!-- ظلّ الأرض: ثابت تحت الصندوق الطافي -->
                 <View
                     android:id="@+id/archiveShadow"
-                    android:layout_width="180dp"
-                    android:layout_height="28dp"
+                    android:layout_width="124dp"
+                    android:layout_height="20dp"
                     android:layout_gravity="top|center_horizontal"
-                    android:layout_marginTop="190dp"
+                    android:layout_marginTop="134dp"
                     android:background="@drawable/bg_archive_shadow"
                     android:importantForAccessibility="no" />
 
                 <!-- orbitCore: الطفو (ArchiveBoxAnimator)، archiveBoxGroup: الانضغاط والاهتزاز، archiveLid: الغطاء -->
                 <FrameLayout
                     android:id="@+id/orbitCore"
-                    android:layout_width="200dp"
-                    android:layout_height="142dp"
+                    android:layout_width="140dp"
+                    android:layout_height="100dp"
                     android:layout_gravity="center"
                     android:clickable="true"
                     android:clipChildren="false"
@@ -243,8 +243,8 @@
                         android:clipChildren="false">
 
                         <ImageView
-                            android:layout_width="200dp"
-                            android:layout_height="135dp"
+                            android:layout_width="140dp"
+                            android:layout_height="95dp"
                             android:layout_gravity="bottom"
                             android:importantForAccessibility="no"
                             android:scaleType="fitXY"
@@ -252,42 +252,42 @@
 
                         <View
                             android:id="@+id/archiveDust1"
-                            android:layout_width="9dp"
-                            android:layout_height="9dp"
+                            android:layout_width="7dp"
+                            android:layout_height="7dp"
                             android:layout_gravity="top|center_horizontal"
-                            android:layout_marginTop="48dp"
+                            android:layout_marginTop="34dp"
                             android:alpha="0"
                             android:background="@drawable/bg_members_dot"
                             android:backgroundTint="@color/home_dot_lav" />
 
                         <View
                             android:id="@+id/archiveDust2"
-                            android:layout_width="7dp"
-                            android:layout_height="7dp"
+                            android:layout_width="5dp"
+                            android:layout_height="5dp"
                             android:layout_gravity="top|center_horizontal"
-                            android:layout_marginStart="58dp"
-                            android:layout_marginTop="50dp"
+                            android:layout_marginStart="41dp"
+                            android:layout_marginTop="35dp"
                             android:alpha="0"
                             android:background="@drawable/bg_members_dot"
                             android:backgroundTint="@color/home_dot_blue" />
 
                         <View
                             android:id="@+id/archiveDust3"
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
+                            android:layout_width="6dp"
+                            android:layout_height="6dp"
                             android:layout_gravity="top|center_horizontal"
-                            android:layout_marginTop="49dp"
-                            android:layout_marginEnd="58dp"
+                            android:layout_marginTop="34dp"
+                            android:layout_marginEnd="41dp"
                             android:alpha="0"
                             android:background="@drawable/bg_members_dot"
                             android:backgroundTint="@color/home_dot_pink" />
 
                         <ImageView
                             android:id="@+id/archiveLid"
-                            android:layout_width="200dp"
-                            android:layout_height="65dp"
+                            android:layout_width="140dp"
+                            android:layout_height="46dp"
                             android:layout_gravity="top"
-                            android:layout_marginTop="8dp"
+                            android:layout_marginTop="6dp"
                             android:importantForAccessibility="no"
                             android:scaleType="fitXY"
                             android:src="@drawable/archive_lid" />
@@ -305,7 +305,7 @@
                 android:includeFontPadding="false"
                 android:text="@string/archive_empty"
                 android:textColor="@color/home_ink"
-                android:textSize="24sp" />
+                android:textSize="22sp" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

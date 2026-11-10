@@ -840,6 +840,68 @@ class AddEditMemberActivity : AppCompatActivity() {
         }
         binding.tvPaymentStatusHelper.text = getString(text)
         binding.tvPaymentStatusHelper.setTextColor(getColor(colorRes))
+        updatePaymentProgress()
+    }
+
+    private var paymentBarIndicatorColor = 0
+    private var paymentBarTrackColor = 0
+    private var paymentBarColorAnimator: android.animation.ValueAnimator? = null
+
+    /**
+     * شريط حالة الدفع تحت الملخّص يعكس الحالة المختارة دائماً (لا يبقى عالقاً على آخر قيمة جزئية):
+     *  - غير مدفوع: فارغ، لكن مجراه مصبوغ بالمرجاني الخافت = "كامل المبلغ مستحق".
+     *  - جزئي: يمتلئ بنسبة المدفوع من الإجمالي بلون الخزامي (لون قطاع "جزئي").
+     *  - مدفوع: ممتلئ 100% بالأخضر النعناعي (لون قطاع "مدفوع").
+     * الألوان تتحوّل بسلاسة والتقدّم يتحرّك (بلا حركة أثناء التحميل الأولي).
+     */
+    private fun updatePaymentProgress() {
+        val price = binding.etPrice.text?.toString()?.trim()?.toSafeMoneyOrNull() ?: 0.0
+        val paid = binding.etPaidAmount.text?.toString()?.trim()?.toSafeMoneyOrNull() ?: 0.0
+        val animate = !isLoadingInitialData
+        val coral = getColor(R.color.home_coral)
+        val defaultTrack = getColor(R.color.home_progress_track)
+        val share: Int
+        val indicator: Int
+        val track: Int
+        when (selectedPaymentStatus) {
+            PaymentStatus.UNPAID -> {
+                share = 0
+                indicator = coral
+                track = androidx.core.graphics.ColorUtils.setAlphaComponent(coral, 64)
+            }
+            PaymentStatus.PARTIAL -> {
+                share = if (price > 0.0) (paid / price * 100.0).toInt().coerceIn(0, 100) else 0
+                indicator = getColor(R.color.home_lav)
+                track = defaultTrack
+            }
+            PaymentStatus.PAID -> {
+                share = 100
+                indicator = getColor(R.color.home_mint)
+                track = defaultTrack
+            }
+        }
+        val bar = binding.progressPaidShare
+        val fromIndicator = if (paymentBarIndicatorColor == 0) indicator else paymentBarIndicatorColor
+        val fromTrack = if (paymentBarTrackColor == 0) track else paymentBarTrackColor
+        paymentBarColorAnimator?.cancel()
+        if (animate && (fromIndicator != indicator || fromTrack != track)) {
+            val evaluator = android.animation.ArgbEvaluator()
+            paymentBarColorAnimator = android.animation.ValueAnimator.ofFloat(0f, 1f).apply {
+                duration = 280
+                addUpdateListener {
+                    val t = it.animatedValue as Float
+                    bar.setIndicatorColor(evaluator.evaluate(t, fromIndicator, indicator) as Int)
+                    bar.trackColor = evaluator.evaluate(t, fromTrack, track) as Int
+                }
+                start()
+            }
+        } else {
+            bar.setIndicatorColor(indicator)
+            bar.trackColor = track
+        }
+        paymentBarIndicatorColor = indicator
+        paymentBarTrackColor = track
+        bar.setProgressCompat(share, animate)
     }
 
     /**
@@ -889,8 +951,7 @@ class AddEditMemberActivity : AppCompatActivity() {
         AddMemberMotion.countUp(binding.tvTotalAmount, price) { CurrencyFormatter.format(it, currentSettings.currencySymbol) }
         AddMemberMotion.countUp(binding.tvRemainingAmount, remaining) { CurrencyFormatter.format(it, currentSettings.currencySymbol) }
         // شريط نسبة المدفوع من الإجمالي (يتحرّك مع كل تعديل).
-        val share = if (price > 0.0) (paid / price * 100.0).toInt().coerceIn(0, 100) else 0
-        binding.progressPaidShare.setProgressCompat(share, true)
+        updatePaymentProgress()
     }
 
     /**
