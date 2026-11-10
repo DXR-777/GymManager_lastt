@@ -73,6 +73,11 @@ class ArchiveBoxAnimator(
             PropertyValuesHolder.ofFloat(View.ALPHA, 0f, 1f),
             PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, 16 * d, 0f)
         ).apply { startDelay = 250; duration = 450; interpolator = DecelerateInterpolator() }
+        ambient.first().addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                root.setLayerType(View.LAYER_TYPE_NONE, null)
+            }
+        })
         ambient += ObjectAnimator.ofFloat(floater, View.TRANSLATION_Y, 0f, -7 * d).apply {
             duration = 2_600
             repeatCount = ValueAnimator.INFINITE
@@ -114,8 +119,8 @@ class ArchiveBoxAnimator(
     private fun play(onEnd: () -> Unit) {
         val d = density
         val w = group.width.toFloat().coerceAtLeast(1f)
-        val liftY = w * 0.43f
-        val liftX = w * 0.26f
+        val liftY = w * 0.34f
+        val liftX = w * 0.20f
         group.pivotX = group.width / 2f
         group.pivotY = group.height.toFloat()
         lid.pivotX = lid.width / 2f
@@ -152,7 +157,7 @@ class ArchiveBoxAnimator(
 
         // 2) غبار ناعم يتصاعد من داخل الصندوق الفارغ
         dust.forEachIndexed { i, v ->
-            val rise = w * (0.30f + i * 0.09f)
+            val rise = w * (0.24f + i * 0.07f)
             val drift = (if (i % 2 == 0) 1 else -1) * (6 + i * 3) * d
             list += anim(
                 v, 520L + i * 110L, 950, DecelerateInterpolator(1.3f),

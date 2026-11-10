@@ -18,6 +18,8 @@
 
     <LinearLayout
         android:id="@+id/archiveContent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
@@ -192,6 +194,8 @@
         -->
         <LinearLayout
             android:id="@+id/emptyArchiveContainer"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -203,7 +207,7 @@
             <FrameLayout
                 android:id="@+id/orbitRoot"
                 android:layout_width="220dp"
-                android:layout_height="180dp"
+                android:layout_height="250dp"
                 android:clipChildren="false"
                 android:importantForAccessibility="no">
 
@@ -221,7 +225,7 @@
                     android:layout_width="124dp"
                     android:layout_height="20dp"
                     android:layout_gravity="top|center_horizontal"
-                    android:layout_marginTop="134dp"
+                    android:layout_marginTop="169dp"
                     android:background="@drawable/bg_archive_shadow"
                     android:importantForAccessibility="no" />
 
