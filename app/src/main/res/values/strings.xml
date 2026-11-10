@@ -277,6 +277,12 @@
     <string name="member_info_section_title">معلومات العضو</string>
     <string name="member_price_section_title">سعر الاشتراك</string>
     <string name="member_dates_section_title">مدة الاشتراك</string>
+    <!-- بطاقة السعر/المدة المضغوطة (النموذج 4) -->
+    <string name="member_days_one">يوم واحد</string>
+    <string name="member_days_two">يومان</string>
+    <string name="member_days_few">%1$d أيام</string>
+    <string name="member_days_many">%1$d يوماً</string>
+    <string name="member_dates_toggle_cd">تواريخ الاشتراك: %1$s. اضغط لعرض أو إخفاء حقول التواريخ</string>
     <string name="member_payment_status_section_title">حالة الدفع</string>
     <string name="member_payment_method_section_title">طريقة الدفع</string>
     <!-- البند 28: يمنع حفظ "PalPay" كطريقة دفع افتراضية بلا اختيار واعٍ من المستخدم -->

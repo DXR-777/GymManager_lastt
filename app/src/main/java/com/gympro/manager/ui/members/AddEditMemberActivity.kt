@@ -66,6 +66,7 @@ private const val KEY_START_DATE = "add_edit_member_start_date"
 private const val KEY_HAS_UNSAVED_CHANGES = "add_edit_member_has_unsaved_changes"
 private const val KEY_PHOTO_PATH = "add_edit_member_photo_path"
 private const val KEY_PENDING_PHOTO = "add_edit_member_pending_photo"
+private const val KEY_DATES_EXPANDED = "add_edit_member_dates_expanded"
 
 /**
  * شاشة واحدة تخدم 3 سياقات بحسب الـ Intent extras المُمرَّرة:
@@ -99,6 +100,8 @@ class AddEditMemberActivity : AppCompatActivity() {
     private var currentSettings: GymSettingsEntity = GymSettingsEntity()
     private var selectedStartDate: Long = DateUtils.startOfDay(DateUtils.now())
     private var suppressAutoFill = false
+    // النموذج 4: هل جزء التواريخ مفتوح في البطاقة المضغوطة (مغلق افتراضياً، ويُستعاد عند تدوير الشاشة).
+    private var datesExpanded = false
     // يُمنع أي Animation على ظهور/اختفاء قسم الدفع أو مجموعة بيانات المُرسِل أثناء
     // التحميل الأولي للبيانات (وضع التعديل/التجديد)، حتى لا تظهر حركة انتقال غير
     // مرغوبة فور فتح الشاشة — نفس مبدأ suppressAutoFill لكن لظهور/اختفاء الحقول بدل
@@ -332,6 +335,7 @@ class AddEditMemberActivity : AppCompatActivity() {
             hasUnsavedChanges = state.getBoolean(KEY_HAS_UNSAVED_CHANGES, hasUnsavedChanges)
             photoPath = state.getString(KEY_PHOTO_PATH)
             pendingPhotoPath = state.getString(KEY_PENDING_PHOTO)
+            datesExpanded = state.getBoolean(KEY_DATES_EXPANDED, false)
         }
 
         memberId = intent.getLongExtra(EXTRA_MEMBER_ID, -1L)
@@ -352,6 +356,7 @@ class AddEditMemberActivity : AppCompatActivity() {
         })
 
         setupTypeSegments()
+        setupDatesToggle()
         setupDatePicker()
         setupPaymentStatusSegments()
         setupPartialAmountListener()
@@ -388,6 +393,7 @@ class AddEditMemberActivity : AppCompatActivity() {
         outState.putBoolean(KEY_HAS_UNSAVED_CHANGES, hasUnsavedChanges)
         photoPath?.let { outState.putString(KEY_PHOTO_PATH, it) }
         pendingPhotoPath?.let { outState.putString(KEY_PENDING_PHOTO, it) }
+        outState.putBoolean(KEY_DATES_EXPANDED, datesExpanded)
     }
 
     /**
@@ -683,6 +689,48 @@ class AddEditMemberActivity : AppCompatActivity() {
     }
 
     /**
+     * النموذج 4 (بطاقة السعر/المدة المضغوطة): الضغط على منطقة شارة الأيام + ملخّص التواريخ + السهم
+     * يفتح/يغلق حقلَي التواريخ. الحقول نفسها (boxStartDate/tvStartDateValue/tvEndDateValue) لم تتغيّر،
+     * فيبقى منطق اختيار التاريخ وحساب الانتهاء والحفظ كما هو تماماً — هذا تغيير عرض فقط.
+     */
+    private fun setupDatesToggle() {
+        applyDatesExpanded(animate = false)
+        binding.llDatesToggle.setOnClickListener {
+            datesExpanded = !datesExpanded
+            applyDatesExpanded(animate = true)
+        }
+    }
+
+    private fun applyDatesExpanded(animate: Boolean) {
+        if (animate) AddMemberMotion.expand(binding.scrollContent)
+        binding.llDatesExpanded.visibility = if (datesExpanded) View.VISIBLE else View.GONE
+        val rotation = if (datesExpanded) 180f else 0f
+        if (animate) {
+            binding.imgDatesChevron.animate().rotation(rotation).setDuration(220).start()
+        } else {
+            binding.imgDatesChevron.rotation = rotation
+        }
+    }
+
+    /** نص شارة الأيام بصيغة عربية سليمة (يوم واحد / يومان / 3–10 أيام / 11+ يوماً). */
+    private fun daysLabel(days: Int): String = when {
+        days == 1 -> getString(R.string.member_days_one)
+        days == 2 -> getString(R.string.member_days_two)
+        days in 3..10 -> getString(R.string.member_days_few, days)
+        else -> getString(R.string.member_days_many, days)
+    }
+
+    /** يحدّث شارة الأيام وملخّص التواريخ في السطر المضغوط من تاريخَي البدء والانتهاء الحاليين. */
+    private fun updateDurationSummary(endDate: Long) {
+        val days = (DateUtils.daysBetween(selectedStartDate, endDate) + 1).coerceAtLeast(1)
+        val range = DateUtils.formatDateRangeShort(selectedStartDate, endDate)
+        binding.tvDaysChip.text = daysLabel(days)
+        binding.tvDatesSummary.text = range
+        binding.llDatesToggle.contentDescription =
+            getString(R.string.member_dates_toggle_cd, "${daysLabel(days)}، $range")
+    }
+
+    /**
      * البند 6: حدّ أدنى وأقصى معقولان لتاريخ بداية الاشتراك، بدل ترك المنتقي بلا أي
      * قيد يسمح باختيار تاريخ بعيد جداً في الماضي أو المستقبل بالخطأ (تمرير سريع
      * بعجلة السنة في DatePickerDialog، مثلاً). 5 سنوات للخلف تكفي لأي إدخال بيانات
@@ -742,6 +790,7 @@ class AddEditMemberActivity : AppCompatActivity() {
             currentCustomDaysForPreview()
         )
         binding.tvEndDateValue.text = DateUtils.formatDate(end)
+        updateDurationSummary(end)
     }
 
     // ==================================================================== حالة الدفع (جديد)

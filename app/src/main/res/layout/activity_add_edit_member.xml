@@ -489,280 +489,307 @@
                     android:textColor="@color/home_ink" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- ============================= القسم 3: سعر الاشتراك ============================= -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_section"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    style="@style/Text.Form.SectionTitle"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/member_price_section_title" />
-
-                <ImageView
-                    android:importantForAccessibility="no"
-                    android:layout_width="@dimen/icon_badge_size"
-                    android:layout_height="@dimen/icon_badge_size"
-                    android:background="@drawable/bg_home_tile"
-                    android:padding="7dp"
-                    android:src="@drawable/ic_tag"
-                    app:tint="@color/home_lav" />
-            </LinearLayout>
-
+            <!-- ===================== القسم 3+4 (مدمجان): السعر + المدة — بطاقة مضغوطة قابلة للتوسيع =====================
+                النموذج 4: سطر واحد (~66dp) فيه السعر (قابل للتعديل مباشرة) وعدد الأيام والتواريخ
+                مختصرة. الضغط على منطقة llDatesToggle يفتح/يغلق حقلَي التواريخ (llDatesExpanded).
+                كل المعرِّفات القديمة (priceHeroCard/tilPrice/etPrice/boxStartDate/tvStartDateValue/
+                tvEndDateValue/tvRenewalHint/...) محفوظة كما هي، فلا يتغيّر أي منطق في الـ Activity.
+            -->
             <LinearLayout
                 android:id="@+id/priceHeroCard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_header_gap"
+                android:layout_marginTop="@dimen/spacing_section"
                 android:background="@drawable/bg_price_hero_card"
                 android:elevation="@dimen/elevation_card_selected"
-                android:gravity="center"
-                android:minHeight="88dp"
-                android:orientation="horizontal"
-                android:paddingStart="@dimen/spacing_lg"
-                android:paddingEnd="@dimen/spacing_lg"
-                android:paddingTop="@dimen/spacing_lg"
-                android:paddingBottom="@dimen/spacing_lg">
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/tilPrice"
-                    style="@style/Widget.GymManager.TextInputLayout.Hero"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    app:boxStrokeWidth="0dp"
-                    app:boxStrokeWidthFocused="0dp"
-                    app:suffixTextAppearance="@style/TextAppearance.GymManager.HeroSuffix">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                    android:textColor="@color/home_ink"
-                        android:id="@+id/etPrice"
-                        android:hint="0"
-                        android:textColorHint="@color/home_mute"
-                        style="@style/Text.Form.HeroPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@null"
-                        android:gravity="center"
-                        android:minWidth="64dp"
-                        android:minEms="2"
-                        android:includeFontPadding="false"
-                        android:inputType="numberDecimal"
-                        android:maxLength="10"
-                        android:textAlignment="center"
-                        android:paddingStart="0dp"
-                        android:paddingEnd="0dp"
-                        android:paddingTop="0dp"
-                        android:paddingBottom="0dp" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </LinearLayout>
-
-            <!-- ============================= القسم 4: مدة الاشتراك ============================= -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_section"
-                android:background="@drawable/bg_home_glass_card"
                 android:orientation="vertical"
-                android:padding="@dimen/spacing_md">
+                android:paddingStart="@dimen/spacing_md"
+                android:paddingEnd="@dimen/spacing_sm"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp">
 
+                <!-- السطر المضغوط: [شارة المحفظة] [السعر] [شارة الأيام] ... [التواريخ] [سهم] -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="66dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
-
-                    <TextView
-                        style="@style/Text.Form.SectionTitle"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="@string/member_dates_section_title" />
 
                     <ImageView
                         android:importantForAccessibility="no"
-                        android:layout_width="@dimen/icon_badge_size"
-                        android:layout_height="@dimen/icon_badge_size"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:background="@drawable/bg_home_tile"
-                        android:padding="7dp"
-                        android:src="@drawable/ic_calendar_range"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_wallet_minimal"
                         app:tint="@color/home_lav" />
-                </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_header_gap"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilPrice"
+                        style="@style/Widget.GymManager.TextInputLayout.Hero"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        app:boxStrokeWidth="0dp"
+                        app:boxStrokeWidthFocused="0dp"
+                        app:suffixTextAppearance="@style/TextAppearance.GymManager.HeroSuffix">
 
-                    <!--
-                        ترتيب البطاقتين: "تاريخ البدء" (القابلة للنقر) أولاً، تليها "تاريخ
-                        الانتهاء" (محسوبة تلقائياً). في تخطيط RTL هذا يضع "البدء" في أقصى
-                        اليمين (بداية القراءة) والسهم يتجه نحو "الانتهاء" على اليسار، فيطابق
-                        اتجاه السهم (ic_forward) اتجاه التدفق المنطقي فعلياً بدل عكسه.
-                    -->
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPrice"
+                            style="@style/Text.Form.HeroPrice"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:gravity="center"
+                            android:hint="0"
+                            android:includeFontPadding="false"
+                            android:inputType="numberDecimal"
+                            android:maxLength="10"
+                            android:minWidth="36dp"
+                            android:minEms="1"
+                            android:paddingStart="0dp"
+                            android:paddingTop="0dp"
+                            android:paddingEnd="0dp"
+                            android:paddingBottom="0dp"
+                            android:textAlignment="center"
+                            android:textColor="@color/home_ink"
+                            android:textColorHint="@color/home_mute"
+                            android:textSize="28sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <!-- منطقة التبديل: شارة الأيام + ملخّص التواريخ + السهم (هدف لمس واسع ≥ 48dp). -->
                     <LinearLayout
-                        android:id="@+id/boxStartDate"
+                        android:id="@+id/llDatesToggle"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:minHeight="56dp"
-                        android:background="@drawable/bg_date_box"
-                        android:foreground="@drawable/ripple_selectable_dark"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:importantForAccessibility="no"
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:layout_marginEnd="4dp"
-                                android:src="@drawable/ic_calendar_plus2"
-                                app:tint="@color/home_mute" />
-
-                            <TextView
-                                style="@style/Text.Form.Caption"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLines="1"
-                                android:ellipsize="end"
-                                android:text="@string/member_start_date_label" />
-                        </LinearLayout>
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/touch_target_min"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tvStartDateValue"
-                            style="@style/Text.Form.MemberValue"
+                            android:id="@+id/tvDaysChip"
+                            style="@style/Text.Form.Caption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
+                            android:background="@drawable/bg_pill_neutral"
                             android:maxLines="1"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            tools:text="25 مايو 2026" />
-                    </LinearLayout>
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="5dp"
+                            android:textSize="13sp"
+                            tools:text="7 أيام" />
 
-                    <FrameLayout
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_marginStart="@dimen/spacing_sm"
-                        android:layout_marginEnd="@dimen/spacing_sm"
-                        android:background="@drawable/bg_icon_badge">
+                        <TextView
+                            android:id="@+id/tvDatesSummary"
+                            style="@style/Text.Form.Caption"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_sm"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:gravity="end|center_vertical"
+                            android:maxLines="1"
+                            android:textDirection="rtl"
+                            android:textSize="13sp"
+                            tools:text="10 – 16 نوفمبر" />
 
                         <ImageView
+                            android:id="@+id/imgDatesChevron"
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:layout_marginStart="2dp"
                             android:importantForAccessibility="no"
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_forward"
-                            app:tint="@color/home_mute" />
-                    </FrameLayout>
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:minHeight="56dp"
-                        android:background="@drawable/bg_date_box"
-                        android:gravity="center"
-                        android:orientation="vertical">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:importantForAccessibility="no"
-                                android:layout_width="12dp"
-                                android:layout_height="12dp"
-                                android:layout_marginEnd="4dp"
-                                android:src="@drawable/ic_calendar_check2"
-                                app:tint="@color/home_mute" />
-
-                            <TextView
-                                style="@style/Text.Form.Caption"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLines="1"
-                                android:ellipsize="end"
-                                android:text="@string/member_end_date_label" />
-                        </LinearLayout>
-
-                        <TextView
-                            android:id="@+id/tvEndDateValue"
-                            style="@style/Text.Form.MemberValue"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:maxLines="1"
-                            android:ellipsize="end"
-                            android:gravity="center"
-                            tools:text="25 يونيو 2026" />
+                            android:src="@drawable/ic_chevron_down" />
                     </LinearLayout>
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tvRenewalHint"
-                    style="@style/Text.Form.MemberHint"
+                <!-- الجزء الموسَّع: حقلا التواريخ (يظهر عند الضغط فقط). -->
+                <LinearLayout
+                    android:id="@+id/llDatesExpanded"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_sm"
-                    android:background="@drawable/bg_form_note_amber"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="10dp"
-                    android:textColor="@color/home_amber"
+                    android:orientation="vertical"
+                    android:paddingEnd="@dimen/spacing_sm"
+                    android:paddingBottom="@dimen/spacing_md"
                     android:visibility="gone"
-                    tools:text="للعضو 5 أيام متبقية..."
-                    tools:visibility="visible" />
+                    tools:visibility="visible">
 
-                <TextView
-                    android:id="@+id/tvRenewUnpaidWarning"
-                    style="@style/Text.Form.MemberHint"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_sm"
-                    android:background="@drawable/bg_form_note_coral"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="10dp"
-                    android:text="@string/renew_unpaid_default_warning"
-                    android:textColor="@color/home_coral"
-                    android:visibility="gone"
-                    tools:text="@string/renew_unpaid_default_warning"
-                    tools:visibility="visible" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/home_glass_stroke"
+                        android:importantForAccessibility="no" />
 
-                <!-- البند 29: تذكير مستقل بدَين سابق متراكم — راجع
-                     AddEditMemberActivity.updateOldDebtWarning(). لا علاقة له بحالة
-                     دفع هذا التجديد نفسه (يظهر حتى لو اختير "مدفوع بالكامل" هنا). -->
-                <TextView
-                    android:id="@+id/tvOldDebtWarning"
-                    style="@style/Text.Form.MemberHint"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/spacing_sm"
-                    android:background="@drawable/bg_form_note_amber"
-                    android:paddingHorizontal="12dp"
-                    android:paddingVertical="10dp"
-                    android:text="@string/renew_old_debt_warning"
-                    android:textColor="@color/home_amber"
-                    android:visibility="gone"
-                    tools:text="@string/renew_old_debt_warning"
-                    tools:visibility="visible" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_header_gap"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <!-- "تاريخ البدء" (قابل للنقر) أولاً ثم "تاريخ الانتهاء" (محسوب تلقائياً) — في RTL
+                             يقع "البدء" يميناً والسهم يتجه نحو "الانتهاء" يساراً. -->
+                        <LinearLayout
+                            android:id="@+id/boxStartDate"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_date_box"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="@drawable/ripple_selectable_dark"
+                            android:gravity="center"
+                            android:minHeight="56dp"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_calendar_plus2"
+                                    app:tint="@color/home_mute" />
+
+                                <TextView
+                                    style="@style/Text.Form.Caption"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
+                                    android:text="@string/member_start_date_label" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tvStartDateValue"
+                                style="@style/Text.Form.MemberValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                tools:text="25 مايو 2026" />
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_marginStart="@dimen/spacing_sm"
+                            android:layout_marginEnd="@dimen/spacing_sm"
+                            android:background="@drawable/bg_icon_badge">
+
+                            <ImageView
+                                android:layout_width="16dp"
+                                android:layout_height="16dp"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_forward"
+                                app:tint="@color/home_mute" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/bg_date_box"
+                            android:gravity="center"
+                            android:minHeight="56dp"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="12dp"
+                                    android:layout_height="12dp"
+                                    android:layout_marginEnd="4dp"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_calendar_check2"
+                                    app:tint="@color/home_mute" />
+
+                                <TextView
+                                    style="@style/Text.Form.Caption"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:ellipsize="end"
+                                    android:maxLines="1"
+                                    android:text="@string/member_end_date_label" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/tvEndDateValue"
+                                style="@style/Text.Form.MemberValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:ellipsize="end"
+                                android:gravity="center"
+                                android:maxLines="1"
+                                tools:text="25 يونيو 2026" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
+
+            <!-- التنبيهات خارج الجزء القابل للطيّ عمداً: يجب أن تبقى ظاهرة دائماً (تجديد/غير مدفوع/دَين سابق). -->
+            <TextView
+                android:id="@+id/tvRenewalHint"
+                style="@style/Text.Form.MemberHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:background="@drawable/bg_form_note_amber"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="10dp"
+                android:textColor="@color/home_amber"
+                android:visibility="gone"
+                tools:text="للعضو 5 أيام متبقية..."
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/tvRenewUnpaidWarning"
+                style="@style/Text.Form.MemberHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:background="@drawable/bg_form_note_coral"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="10dp"
+                android:text="@string/renew_unpaid_default_warning"
+                android:textColor="@color/home_coral"
+                android:visibility="gone"
+                tools:text="@string/renew_unpaid_default_warning"
+                tools:visibility="visible" />
+
+            <!-- البند 29: تذكير مستقل بدَين سابق متراكم — راجع AddEditMemberActivity.updateOldDebtWarning(). -->
+            <TextView
+                android:id="@+id/tvOldDebtWarning"
+                style="@style/Text.Form.MemberHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:background="@drawable/bg_form_note_amber"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="10dp"
+                android:text="@string/renew_old_debt_warning"
+                android:textColor="@color/home_amber"
+                android:visibility="gone"
+                tools:text="@string/renew_old_debt_warning"
+                tools:visibility="visible" />
 
             <!-- ============================= القسم 5: حالة الدفع (جديد) ============================= -->
             <LinearLayout

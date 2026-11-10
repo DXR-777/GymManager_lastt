@@ -220,6 +220,28 @@ object DateUtils {
     }
 
     /**
+     * صيغة مختصرة لنطاق التواريخ في السطر المضغوط (مثلاً "10 – 16 نوفمبر"): تُحذف تفاصيل الشهر/السنة
+     * المكرَّرة. السنة تظهر مرة واحدة في النهاية فقط إن اختلفت السنتان أو كانت غير السنة الحالية.
+     */
+    fun formatDateRangeShort(startMillis: Long, endMillis: Long): String {
+        val s = Calendar.getInstance().apply { timeInMillis = startMillis }
+        val e = Calendar.getInstance().apply { timeInMillis = endMillis }
+        val sd = s.get(Calendar.DAY_OF_MONTH)
+        val ed = e.get(Calendar.DAY_OF_MONTH)
+        val sm = ARABIC_MONTHS[s.get(Calendar.MONTH)]
+        val em = ARABIC_MONTHS[e.get(Calendar.MONTH)]
+        val sy = s.get(Calendar.YEAR)
+        val ey = e.get(Calendar.YEAR)
+        val currentYear = Calendar.getInstance().get(Calendar.YEAR)
+        val yearSuffix = if (sy != ey || ey != currentYear) " $ey" else ""
+        return when {
+            sy == ey && s.get(Calendar.MONTH) == e.get(Calendar.MONTH) && sd == ed -> "$sd $sm$yearSuffix"
+            sy == ey && s.get(Calendar.MONTH) == e.get(Calendar.MONTH) -> "$sd – $ed $em$yearSuffix"
+            else -> "$sd $sm – $ed $em$yearSuffix"
+        }
+    }
+
+    /**
      * البند 6: Locale.US صريحة إلزامية هنا — بدونها كان "%02d/%02d/%04d".format(...)
      * يستخدم locale الجهاز الافتراضي، وهو بالضبط ما يشرح تعليق الملف بالأعلى أن هذا
      * الملف كله (Calendar اليدوي بدل SimpleDateFormat) صُمم عمداً لتجنّبه. النتيجة على
