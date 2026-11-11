@@ -502,6 +502,20 @@
     <string name="notification_rationale_message">فعّل الإشعارات لتصلك تنبيهات فورية عند اقتراب انتهاء اشتراك أحد الأعضاء أو عند وجود أعضاء لم يسددوا بعد — حتى لا يفوتك متابعتهم.</string>
     <string name="notification_rationale_allow">تفعيل</string>
     <string name="notification_rationale_later">ليس الآن</string>
+    <!-- ورقة تفعيل التنبيهات (Soft Ask) -->
+    <string name="notif_sheet_title">لا تفوّت أي متابعة</string>
+    <string name="notif_sheet_subtitle">تنبيهات ذكية تصلك في الوقت المناسب، بلا إزعاج.</string>
+    <string name="notif_sheet_preview_label">هكذا ستظهر تنبيهاتك</string>
+    <string name="notif_sheet_preview_time">الآن</string>
+    <string name="notif_sheet_preview_title">ينتهي اشتراك أحمد خالد اليوم</string>
+    <string name="notif_sheet_preview_body">اضغط لعرض العضو وإرسال تذكير</string>
+    <string name="notif_benefit_expiring_title">اشتراكات تقترب من الانتهاء</string>
+    <string name="notif_benefit_expiring_desc">تنبيه فوري قبل أن يتوقف اشتراك العضو</string>
+    <string name="notif_benefit_unpaid_title">أعضاء لم يسددوا بعد</string>
+    <string name="notif_benefit_unpaid_desc">تذكير بالمبالغ المتبقية حتى لا تضيع</string>
+    <string name="notif_sheet_allow">تفعيل التنبيهات</string>
+    <string name="notif_sheet_later">ليس الآن</string>
+    <string name="notif_sheet_footnote">يمكنك تغيير ذلك في أي وقت من إعدادات الهاتف</string>
 
     <!-- البند 19: أسماء الأيام المختصرة لعمود الرسم البياني (RevenueFragment.lastSevenDayLabels)
          كانت مصفوفة Kotlin ثابتة داخل الكود، فلا يمكن ترجمتها أو تعديلها مركزياً مثل

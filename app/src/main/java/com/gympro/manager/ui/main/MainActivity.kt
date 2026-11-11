@@ -1,6 +1,8 @@
 package com.gympro.manager.ui.main
 
 import android.Manifest
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -16,6 +18,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.gympro.manager.R
 import com.gympro.manager.databinding.ActivityMainBinding
@@ -333,14 +337,40 @@ class MainActivity : AppCompatActivity() {
         // إعدادات النظام لاحقاً، بلا حاجة لعودة هذا الحوار للإلحاح عليه من جديد.
         prefs.edit().putBoolean(KEY_NOTIFICATION_RATIONALE_SHOWN, true).apply()
 
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.notification_rationale_title)
-            .setMessage(R.string.notification_rationale_message)
-            .setCancelable(false)
-            .setNegativeButton(R.string.notification_rationale_later, null)
-            .setPositiveButton(R.string.notification_rationale_allow) { _, _ ->
-                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        showNotificationPermissionSheet()
+    }
+
+    /**
+     * ورقة تمهيدية (Soft Ask) بتصميم احترافي بدل AlertDialog: جرس 3D + معاينة إشعار + فوائد محددة،
+     * وزر "تفعيل التنبيهات" هو وحده الذي يستدعي حوار إذن النظام الفعلي. "ليس الآن" أو السحب
+     * لأسفل لا يطلبان شيئاً من النظام (فلا يُحرق حوار النظام الذي يظهر مرة واحدة فقط).
+     */
+    private fun showNotificationPermissionSheet() {
+        val sheet = BottomSheetDialog(this)
+        val content = layoutInflater.inflate(R.layout.bottom_sheet_notification_permission, null)
+        sheet.setContentView(content)
+        sheet.behavior.skipCollapsed = true
+        sheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        content.findViewById<View>(R.id.btnNotifAllow).setOnClickListener {
+            sheet.dismiss()
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+        content.findViewById<View>(R.id.btnNotifLater).setOnClickListener { sheet.dismiss() }
+
+        // اهتزاز خفيف للجرس عند الظهور (يُحترم إعداد إيقاف الحركة في النظام).
+        val bell = content.findViewById<View>(R.id.imgNotifBell)
+        if (ValueAnimator.areAnimatorsEnabled()) {
+            bell.post {
+                bell.pivotX = bell.width / 2f
+                bell.pivotY = bell.height * 0.15f
+                ObjectAnimator.ofFloat(bell, View.ROTATION, 0f, 14f, -12f, 9f, -6f, 3f, 0f).apply {
+                    duration = 900
+                    startDelay = 400
+                    start()
+                }
             }
-            .show()
+        }
+        sheet.show()
     }
 }

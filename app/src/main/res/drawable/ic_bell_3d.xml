@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- جرس ثلاثي الأبعاد بألوان التطبيق (crim → vio) مع لمعة وحافة سفلية وشارة إشعار.
+     ملوّن بالكامل: لا تستخدم android:tint معه. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="64dp" android:height="64dp" android:viewportWidth="64" android:viewportHeight="64">
+
+    <path android:fillColor="#4D000000" android:pathData="M16,59a16,3 0 1,0 32,0a16,3 0 1,0 -32,0Z"/>
+
+    <!-- اللسان -->
+    <path android:pathData="M27,53a5,5 0 1,0 10,0a5,5 0 1,0 -10,0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="48" android:endX="0" android:endY="58">
+                <item android:offset="0" android:color="#F1EBFF"/>
+                <item android:offset="1" android:color="#9A78F0"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- المقبض العلوي -->
+    <path android:fillColor="#FF8AA6" android:pathData="M29,8a3,3 0 1,0 6,0a3,3 0 1,0 -6,0Z"/>
+
+    <!-- جسم الجرس -->
+    <path android:pathData="M32,9C23.5,9 17,15.5 17,24V35C17,40 14.5,43 12.5,45.5H51.5C49.5,43 47,40 47,35V24C47,15.5 40.5,9 32,9Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="9" android:endX="0" android:endY="46">
+                <item android:offset="0" android:color="#FF8AA6"/>
+                <item android:offset="0.45" android:color="#E2476A"/>
+                <item android:offset="1" android:color="#8E3FB5"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#00000000" android:strokeColor="#40FFFFFF" android:strokeWidth="1"
+        android:pathData="M32,9C23.5,9 17,15.5 17,24V35C17,40 14.5,43 12.5,45.5H51.5C49.5,43 47,40 47,35V24C47,15.5 40.5,9 32,9Z"/>
+    <!-- لمعة -->
+    <path android:fillColor="#00000000" android:strokeColor="#A6FFFFFF" android:strokeWidth="2.2" android:strokeLineCap="round"
+        android:pathData="M22,25C22,19 25.5,14.5 30.5,12.8"/>
+
+    <!-- الحافة السفلية -->
+    <path android:pathData="M11,45.5H53A2.5,2.5 0 0 1 53,50.5H11A2.5,2.5 0 0 1 11,45.5Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="45" android:endX="0" android:endY="51">
+                <item android:offset="0" android:color="#D04C9A"/>
+                <item android:offset="1" android:color="#6F3FD8"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#00000000" android:strokeColor="#66FFFFFF" android:strokeWidth="1" android:strokeLineCap="round" android:pathData="M13,46.6H51"/>
+
+    <!-- شارة الإشعار -->
+    <path android:fillColor="#1A1033" android:pathData="M38.5,15a9.5,9.5 0 1,0 19,0a9.5,9.5 0 1,0 -19,0Z"/>
+    <path android:pathData="M40.5,15a7.5,7.5 0 1,0 15,0a7.5,7.5 0 1,0 -15,0Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="8" android:endX="0" android:endY="22">
+                <item android:offset="0" android:color="#FF7A98"/>
+                <item android:offset="1" android:color="#C22E56"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#FFFFFF" android:pathData="M45.5,15a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0Z"/>
+</vector>
