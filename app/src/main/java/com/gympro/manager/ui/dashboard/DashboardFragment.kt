@@ -25,6 +25,7 @@ import com.gympro.manager.model.MemberFilter
 import com.gympro.manager.model.MemberListItem
 import com.gympro.manager.model.PaymentStatus
 import com.gympro.manager.ui.main.MainActivity
+import com.gympro.manager.ui.members.AddEditMemberActivity
 import com.gympro.manager.ui.members.MemberDetailActivity
 import com.gympro.manager.utils.CurrencyFormatter
 import com.gympro.manager.utils.DateUtils
@@ -285,6 +286,11 @@ class DashboardFragment : Fragment() {
         binding.btnViewAllUnpaid.setOnSingleClickListener {
             (activity as? MainActivity)?.openMembersFiltered(MemberFilter.UNPAID)
         }
+
+        // زر "إضافة أول عضو" في حالة الصالة الجديدة: نفس إجراء الزر العائم.
+        binding.btnEmptyAddMember.setOnSingleClickListener {
+            startActivity(Intent(requireContext(), AddEditMemberActivity::class.java))
+        }
     }
 
     private fun openMember(id: Long) {
@@ -475,10 +481,24 @@ class DashboardFragment : Fragment() {
                     expiringAdapter.submitList(state.expiringSoon)
                     bindUnpaidRows(state.unpaidMembers)
 
+                    // صالة جديدة (لا أعضاء إطلاقاً): تصميم الفراغ الخاص بها بدل رسالة "الكل بخير".
+                    val isNewGym = state.isLoaded && state.totalCount == 0
                     binding.rvExpiringSoon.visibleIf(state.expiringSoon.isNotEmpty())
-                    binding.tvEmptyExpiring.visibleIf(state.expiringSoon.isEmpty())
+                    binding.tvEmptyExpiring.visibleIf(state.expiringSoon.isEmpty() && !isNewGym)
+                    binding.emptyNewExpiring.visibleIf(isNewGym)
                     binding.cardUnpaidList.visibleIf(state.unpaidMembers.isNotEmpty())
-                    binding.tvEmptyUnpaid.visibleIf(state.unpaidMembers.isEmpty())
+                    binding.tvEmptyUnpaid.visibleIf(state.unpaidMembers.isEmpty() && !isNewGym)
+                    binding.emptyNewUnpaid.visibleIf(isNewGym)
+
+                    // "اشتراكاتكم في أمان": أقرب انتهاء (يظهر فقط لو يوجد أعضاء نشطون) + شريحة التحصيل
+                    val nextDays = state.nextExpiryDays
+                    binding.chipNextExpiry.visibleIf(nextDays != null && nextDays > 0)
+                    if (nextDays != null && nextDays > 0) {
+                        binding.tvNextExpiry.text = resources.getQuantityString(
+                            R.plurals.dashboard_empty_next_expiry, nextDays, nextDays
+                        )
+                    }
+                    binding.chipCollected.visibleIf(state.activeCount > 0)
 
                     refreshNotificationNudges()
 

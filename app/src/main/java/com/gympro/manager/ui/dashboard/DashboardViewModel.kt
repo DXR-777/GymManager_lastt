@@ -21,6 +21,12 @@ data class DashboardUiState(
     val gymName: String = "",
     val currency: String = "₪",
     val activeCount: Int = 0,
+    /** عدد كل الأعضاء (نشطين أو منتهين) — صفر يعني صالة جديدة بلا أعضاء بعد. */
+    val totalCount: Int = 0,
+    /** false حتى أول حساب فعلي من قاعدة البيانات — يمنع ظهور حالة "صالة جديدة" كوميض قبل وصول البيانات. */
+    val isLoaded: Boolean = false,
+    /** أيام متبقية لأقرب انتهاء اشتراك بين الأعضاء النشطين؛ null إن لم يوجد نشط. */
+    val nextExpiryDays: Int? = null,
     val todayRevenue: Double = 0.0,
     val period: RevenuePeriod = RevenuePeriod.DAY,
     /** إيراد الفترة المختارة (اليوم/الأسبوع حتى الآن/الشهر حتى الآن). */
@@ -125,6 +131,10 @@ class DashboardViewModel(private val repository: GymRepository) : ViewModel() {
                         gymName = settings?.gymName.orEmpty(),
                         currency = settings?.currencySymbol ?: "₪",
                         activeCount = activeMembers.size,
+                        totalCount = members.size,
+                        isLoaded = true,
+                        nextExpiryDays = activeMembers.mapNotNull { it.endDate }.minOrNull()
+                            ?.let { DateUtils.daysRemaining(it, now) },
                         todayRevenue = todayRevenue,
                         period = period,
                         periodRevenue = periodRevenue,

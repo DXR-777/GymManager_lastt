@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- حلقة تحصيل مكتملة (100%) متدرّجة مع علامة صح (78x78) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="78dp"
+    android:height="78dp"
+    android:viewportWidth="78"
+    android:viewportHeight="78">
+    <path
+        android:pathData="M39,39m-32,0a32,32 0,1 0,64 0a32,32 0,1 0,-64 0"
+        android:fillColor="#00000000"
+        android:strokeColor="#1FFFFFFF"
+        android:strokeWidth="5"/>
+    <path
+        android:pathData="M39,39m-32,0a32,32 0,1 0,64 0a32,32 0,1 0,-64 0"
+        android:fillColor="#00000000"
+        android:strokeWidth="5"
+        android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient android:startX="10" android:startY="10" android:endX="68" android:endY="68" android:type="linear">
+                <item android:color="#FF6F8E" android:offset="0"/>
+                <item android:color="#B55BE0" android:offset="0.5"/>
+                <item android:color="#7C4DE8" android:offset="1"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M39,39m-21,0a21,21 0,1 0,42 0a21,21 0,1 0,-42 0"
+        android:fillColor="#12FFFFFF"/>
+    <path
+        android:pathData="M29,40 L36,47 L50,32"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.6"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+</vector>

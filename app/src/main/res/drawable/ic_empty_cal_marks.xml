@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- خط رأس التقويم + حلقتا التعليق + نقطتان زخرفيتان (78x78) -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="78dp"
+    android:height="78dp"
+    android:viewportWidth="78"
+    android:viewportHeight="78">
+    <path
+        android:pathData="M13,31 H65 M28,10 V23 M50,10 V23"
+        android:fillColor="#00000000"
+        android:strokeColor="#C9B5FF"
+        android:strokeWidth="2.4"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M70,14m-2.6,0a2.6,2.6 0,1 0,5.2 0a2.6,2.6 0,1 0,-5.2 0"
+        android:fillColor="#FF8FA0"/>
+    <path
+        android:pathData="M8,60m-2,0a2,2 0,1 0,4 0a2,2 0,1 0,-4 0"
+        android:fillColor="#A9D3FF"/>
+</vector>
