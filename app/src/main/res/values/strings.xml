@@ -182,23 +182,13 @@
     <string name="dashboard_unpaid_section">لم يدفعوا بعد</string>
     <string name="dashboard_section_count_format">(%1$d)</string>
     <string name="dashboard_view_all">عرض الكل</string>
-    <string name="dashboard_empty_expiring_title">اشتراكاتكم في أمان</string>
-    <string name="dashboard_empty_expiring_subtitle">لا يوجد اشتراك ينتهي خلال الأيام الثلاثة القادمة</string>
-    <string name="dashboard_empty_unpaid_title">التحصيل مكتمل</string>
-    <string name="dashboard_empty_unpaid_subtitle">كل الأعضاء سدّدوا — لا مستحقات متأخرة</string>
-    <string name="dashboard_new_expiring_title">لا اشتراكات بعد</string>
+    <string name="dashboard_empty_expiring_title">لا اشتراكات تنتهي قريباً</string>
+    <string name="dashboard_empty_expiring_subtitle">كل الاشتراكات سارية لأكثر من 3 أيام</string>
+    <string name="dashboard_empty_unpaid_title">الجميع سدّد</string>
+    <string name="dashboard_empty_unpaid_subtitle">لا توجد اشتراكات غير مدفوعة</string>
+    <string name="dashboard_new_expiring_title">ابدأ بإضافة أول عضو</string>
     <string name="dashboard_new_expiring_subtitle">سننبّهك هنا قبل انتهاء أي اشتراك بأيام، لتجدّده في الوقت المناسب</string>
     <string name="dashboard_new_add_first_member">إضافة أول عضو</string>
-    <string name="dashboard_empty_collected_chip">100% محصّل هذا الشهر</string>
-    <string name="day_today">اليوم</string>
-    <string name="day_tomorrow">غداً</string>
-    <plurals name="dashboard_empty_next_expiry">
-        <item quantity="one">أقرب انتهاء بعد يوم</item>
-        <item quantity="two">أقرب انتهاء بعد يومين</item>
-        <item quantity="few">أقرب انتهاء بعد %d أيام</item>
-        <item quantity="many">أقرب انتهاء بعد %d يوماً</item>
-        <item quantity="other">أقرب انتهاء بعد %d يوم</item>
-    </plurals>
     <string name="dashboard_new_unpaid_caption">ستظهر هنا مستحقات الأعضاء بزر «تسديد» سريع</string>
 
     <!-- الأعضاء -->

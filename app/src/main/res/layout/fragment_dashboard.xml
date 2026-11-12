@@ -518,287 +518,47 @@
                     android:paddingTop="2dp"
                     android:paddingBottom="14dp" />
 
-                <!-- ===== الصالة فيها أعضاء ولا اشتراك قريب الانتهاء ===== -->
-                <FrameLayout
+                <LinearLayout
                     android:id="@+id/tvEmptyExpiring"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_home_glass_card"
-                    android:clipToOutline="true"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="24dp"
                     android:visibility="gone">
 
-                    <View
-                        android:layout_width="180dp"
-                        android:layout_height="180dp"
-                        android:layout_gravity="top|start"
-                        android:layout_marginTop="-60dp"
-                        android:layout_marginStart="-40dp"
-                        android:background="@drawable/bg_empty_glow"
-                        android:importantForAccessibility="no" />
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_home_empty_circle"
+                        android:importantForAccessibility="no"
+                        android:padding="14dp"
+                        android:src="@drawable/ic_calendar_check2"
+                        app:tint="@color/home_mint" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="16dp"
-                        android:paddingTop="18dp"
-                        android:paddingBottom="16dp">
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/cairo_bold"
+                        android:includeFontPadding="false"
+                        android:text="@string/dashboard_empty_expiring_title"
+                        android:textColor="@color/home_mint"
+                        android:textSize="15sp" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <FrameLayout
-                                android:layout_width="78dp"
-                                android:layout_height="78dp"
-                                android:importantForAccessibility="no">
-
-                                <View
-                                    android:layout_width="72dp"
-                                    android:layout_height="72dp"
-                                    android:layout_gravity="center"
-                                    android:background="@drawable/bg_empty_ring_dashed" />
-
-                                <ImageView
-                                    android:layout_width="78dp"
-                                    android:layout_height="78dp"
-                                    android:src="@drawable/ic_empty_shield_marks" />
-                            </FrameLayout>
-
-                            <LinearLayout
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="14dp"
-                                android:layout_weight="1"
-                                android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_bold"
-                                android:includeFontPadding="false"
-                                android:text="@string/dashboard_empty_expiring_title"
-                                android:textColor="@color/home_ink"
-                                android:textSize="15sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:lineSpacingMultiplier="1.15"
-                                android:text="@string/dashboard_empty_expiring_subtitle"
-                                android:textColor="@color/home_mute"
-                                android:textSize="12sp" />
-
-                                <LinearLayout
-                                    android:id="@+id/chipNextExpiry"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginTop="8dp"
-                                    android:background="@drawable/bg_empty_chip_violet"
-                                    android:gravity="center_vertical"
-                                    android:orientation="horizontal"
-                                    android:paddingHorizontal="10dp"
-                                    android:paddingVertical="4dp"
-                                    android:visibility="gone">
-
-                                    <ImageView
-                                        android:layout_width="11dp"
-                                        android:layout_height="11dp"
-                                        android:importantForAccessibility="no"
-                                        android:src="@drawable/ic_ds_clock"
-                                        app:tint="@color/home_lav" />
-
-                                    <TextView
-                                        android:id="@+id/tvNextExpiry"
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:layout_marginStart="5dp"
-                                        android:fontFamily="@font/cairo_medium"
-                                        android:includeFontPadding="false"
-                                        android:textColor="@color/home_lav"
-                                        android:textSize="10.5sp"
-                                        tools:text="أقرب انتهاء بعد 9 أيام" />
-                                </LinearLayout>
-                            </LinearLayout>
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="14dp"
-                            android:layout_marginHorizontal="-3dp"
-                            android:orientation="horizontal">
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="3dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_empty_day_today"
-                            android:gravity="center_horizontal"
-                            android:importantForAccessibility="no"
-                            android:orientation="vertical"
-                            android:paddingVertical="7dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_bold"
-                                android:includeFontPadding="false"
-                                android:text="@string/day_today"
-                                android:textColor="@color/home_ink"
-                                android:textSize="9.5sp" />
-
-                            <FrameLayout
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginTop="5dp"
-                                android:background="@drawable/bg_empty_day_dot_on">
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:importantForAccessibility="no"
-                                android:padding="3dp"
-                                android:src="@drawable/ic_ds_check"
-                                app:tint="@color/white" />
-                            </FrameLayout>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="3dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_empty_day"
-                            android:gravity="center_horizontal"
-                            android:importantForAccessibility="no"
-                            android:orientation="vertical"
-                            android:paddingVertical="7dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:text="@string/day_tomorrow"
-                                android:textColor="@color/home_mute"
-                                android:textSize="9.5sp" />
-
-                            <FrameLayout
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginTop="5dp"
-                                android:background="@drawable/bg_empty_day_dot_on">
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:importantForAccessibility="no"
-                                android:padding="3dp"
-                                android:src="@drawable/ic_ds_check"
-                                app:tint="@color/white" />
-                            </FrameLayout>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="3dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_empty_day"
-                            android:gravity="center_horizontal"
-                            android:importantForAccessibility="no"
-                            android:orientation="vertical"
-                            android:paddingVertical="7dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:text="+2"
-                                android:textColor="@color/home_mute"
-                                android:textSize="9.5sp" />
-
-                            <FrameLayout
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginTop="5dp"
-                                android:background="@drawable/bg_empty_day_dot_on">
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:importantForAccessibility="no"
-                                android:padding="3dp"
-                                android:src="@drawable/ic_ds_check"
-                                app:tint="@color/white" />
-                            </FrameLayout>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="3dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_empty_day"
-                            android:gravity="center_horizontal"
-                            android:importantForAccessibility="no"
-                            android:orientation="vertical"
-                            android:paddingVertical="7dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:text="+3"
-                                android:textColor="@color/home_mute"
-                                android:textSize="9.5sp" />
-
-                            <FrameLayout
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginTop="5dp"
-                                android:background="@drawable/bg_empty_day_dot_on">
-                            <ImageView
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:importantForAccessibility="no"
-                                android:padding="3dp"
-                                android:src="@drawable/ic_ds_check"
-                                app:tint="@color/white" />
-                            </FrameLayout>
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginHorizontal="3dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_empty_day"
-                            android:gravity="center_horizontal"
-                            android:importantForAccessibility="no"
-                            android:orientation="vertical"
-                            android:paddingVertical="7dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:text="+4"
-                                android:textColor="@color/home_mute"
-                                android:textSize="9.5sp" />
-
-                            <FrameLayout
-                                android:layout_width="14dp"
-                                android:layout_height="14dp"
-                                android:layout_marginTop="5dp"
-                                android:background="@drawable/bg_empty_day_dot_off">
-                            </FrameLayout>
-                        </LinearLayout>
-                        </LinearLayout>
-                    </LinearLayout>
-                </FrameLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/cairo_medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="@string/dashboard_empty_expiring_subtitle"
+                        android:textColor="@color/home_mute"
+                        android:textSize="12sp" />
+                </LinearLayout>
 
                 <!-- ===== صالة جديدة (لا أعضاء بعد): ينتهي اشتراكهم قريباً ===== -->
                 <FrameLayout
@@ -813,8 +573,8 @@
                         android:layout_width="180dp"
                         android:layout_height="180dp"
                         android:layout_gravity="top|start"
-                        android:layout_marginTop="-60dp"
                         android:layout_marginStart="-40dp"
+                        android:layout_marginTop="-60dp"
                         android:background="@drawable/bg_empty_glow"
                         android:importantForAccessibility="no" />
 
@@ -823,8 +583,8 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:paddingHorizontal="16dp"
-                        android:paddingTop="18dp"
-                        android:paddingBottom="16dp">
+                        android:paddingTop="20dp"
+                        android:paddingBottom="18dp">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -868,41 +628,45 @@
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_bold"
-                                android:includeFontPadding="false"
-                                android:text="@string/dashboard_new_expiring_title"
-                                android:textColor="@color/home_lav"
-                                android:textSize="15sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:lineSpacingMultiplier="1.15"
-                                android:text="@string/dashboard_new_expiring_subtitle"
-                                android:textColor="@color/home_mute"
-                                android:textSize="12sp" />
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/cairo_bold"
+                                    android:includeFontPadding="false"
+                                    android:text="@string/dashboard_new_expiring_title"
+                                    android:textColor="@color/home_lav"
+                                    android:textSize="16sp" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="5dp"
+                                    android:fontFamily="@font/cairo_medium"
+                                    android:includeFontPadding="false"
+                                    android:lineSpacingMultiplier="1.2"
+                                    android:text="@string/dashboard_new_expiring_subtitle"
+                                    android:textColor="@color/home_mute"
+                                    android:textSize="12sp" />
                             </LinearLayout>
                         </LinearLayout>
 
                         <LinearLayout
                             android:id="@+id/btnEmptyAddMember"
                             android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:layout_marginTop="16dp"
+                            android:layout_height="48dp"
+                            android:layout_marginTop="18dp"
                             android:background="@drawable/bg_home_cta"
                             android:clickable="true"
+                            android:elevation="6dp"
                             android:focusable="true"
                             android:gravity="center"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:outlineSpotShadowColor="@color/home_vio"
+                            tools:targetApi="p">
 
                             <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
                                 android:importantForAccessibility="no"
                                 android:src="@drawable/ic_user_round_plus"
                                 app:tint="@color/white" />
@@ -915,7 +679,7 @@
                                 android:includeFontPadding="false"
                                 android:text="@string/dashboard_new_add_first_member"
                                 android:textColor="@color/white"
-                                android:textSize="13.5sp" />
+                                android:textSize="14sp" />
                         </LinearLayout>
                     </LinearLayout>
                 </FrameLayout>
@@ -968,82 +732,49 @@
                         android:orientation="vertical" />
                 </LinearLayout>
 
-                <!-- ===== الصالة فيها أعضاء وكلهم سدّد ===== -->
-                <FrameLayout
+                <LinearLayout
                     android:id="@+id/tvEmptyUnpaid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_home_glass_card"
-                    android:clipToOutline="true"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="24dp"
                     android:visibility="gone">
 
-                    <View
-                        android:layout_width="180dp"
-                        android:layout_height="180dp"
-                        android:layout_gravity="top|end"
-                        android:layout_marginTop="-60dp"
-                        android:layout_marginEnd="-40dp"
-                        android:background="@drawable/bg_empty_glow"
-                        android:importantForAccessibility="no" />
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/bg_home_empty_circle"
+                        android:importantForAccessibility="no"
+                        android:padding="14dp"
+                        android:src="@drawable/ic_check_circle"
+                        app:tint="@color/home_mint" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="16dp"
-                        android:paddingVertical="20dp">
+                        android:layout_marginTop="8dp"
+                        android:fontFamily="@font/cairo_bold"
+                        android:includeFontPadding="false"
+                        android:text="@string/dashboard_empty_unpaid_title"
+                        android:textColor="@color/home_mint"
+                        android:textSize="15sp" />
 
-                        <ImageView
-                            android:layout_width="78dp"
-                            android:layout_height="78dp"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_empty_collect_ring" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/cairo_medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="@string/dashboard_empty_unpaid_subtitle"
+                        android:textColor="@color/home_mute"
+                        android:textSize="12sp" />
+                </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="14dp"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_bold"
-                                android:includeFontPadding="false"
-                                android:text="@string/dashboard_empty_unpaid_title"
-                                android:textColor="@color/home_ink"
-                                android:textSize="15sp" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="4dp"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:lineSpacingMultiplier="1.15"
-                                android:text="@string/dashboard_empty_unpaid_subtitle"
-                                android:textColor="@color/home_mute"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/chipCollected"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="8dp"
-                                android:background="@drawable/bg_empty_chip_crim"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:paddingHorizontal="10dp"
-                                android:paddingVertical="4dp"
-                                android:text="@string/dashboard_empty_collected_chip"
-                                android:textColor="@color/home_empty_chip_crim_text"
-                                android:textSize="10.5sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </FrameLayout>
-
-                <!-- ===== صالة جديدة (لا أعضاء بعد): لم يدفعوا بعد — صفوف شبحية ===== -->
+                <!-- ===== صالة جديدة (لا أعضاء بعد): لم يدفعوا بعد — صفوف شبحية بنفس هيكل الصف الحقيقي ===== -->
                 <FrameLayout
                     android:id="@+id/emptyNewUnpaid"
                     android:layout_width="match_parent"
@@ -1056,7 +787,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingTop="4dp"
+                        android:paddingTop="2dp"
                         android:paddingBottom="52dp">
 
                         <LinearLayout
@@ -1064,41 +795,49 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:paddingHorizontal="16dp"
+                            android:paddingHorizontal="14dp"
                             android:paddingVertical="11dp">
 
                             <ImageView
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
                                 android:background="@drawable/bg_ghost_circle"
                                 android:importantForAccessibility="no"
-                                android:padding="8dp"
+                                android:padding="11dp"
                                 android:src="@drawable/ic_ghost_person"
                                 app:tint="@color/home_ghost_stroke" />
 
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
+                                android:layout_marginStart="12dp"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
                                 <View
-                                    android:layout_width="88dp"
-                                    android:layout_height="8dp"
+                                    android:layout_width="84dp"
+                                    android:layout_height="10dp"
                                     android:background="@drawable/bg_ghost_bar" />
 
                                 <View
-                                    android:layout_width="58dp"
+                                    android:layout_width="56dp"
                                     android:layout_height="8dp"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="7dp"
                                     android:alpha="0.55"
                                     android:background="@drawable/bg_ghost_bar" />
                             </LinearLayout>
 
                             <View
-                                android:layout_width="50dp"
-                                android:layout_height="24dp"
+                                android:layout_width="34dp"
+                                android:layout_height="10dp"
+                                android:layout_marginStart="10dp"
+                                android:alpha="0.7"
+                                android:background="@drawable/bg_ghost_bar" />
+
+                            <View
+                                android:layout_width="56dp"
+                                android:layout_height="32dp"
+                                android:layout_marginStart="10dp"
                                 android:background="@drawable/bg_ghost_pill" />
                         </LinearLayout>
                         <View
@@ -1111,48 +850,56 @@
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
                             android:orientation="horizontal"
-                            android:paddingHorizontal="16dp"
+                            android:paddingHorizontal="14dp"
                             android:paddingVertical="11dp">
 
                             <ImageView
-                                android:layout_width="36dp"
-                                android:layout_height="36dp"
+                                android:layout_width="44dp"
+                                android:layout_height="44dp"
                                 android:background="@drawable/bg_ghost_circle"
                                 android:importantForAccessibility="no"
-                                android:padding="8dp"
+                                android:padding="11dp"
                                 android:src="@drawable/ic_ghost_person"
                                 app:tint="@color/home_ghost_stroke" />
 
                             <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
+                                android:layout_marginStart="12dp"
                                 android:layout_weight="1"
                                 android:orientation="vertical">
 
                                 <View
-                                    android:layout_width="72dp"
-                                    android:layout_height="8dp"
+                                    android:layout_width="70dp"
+                                    android:layout_height="10dp"
                                     android:background="@drawable/bg_ghost_bar" />
 
                                 <View
-                                    android:layout_width="50dp"
+                                    android:layout_width="48dp"
                                     android:layout_height="8dp"
-                                    android:layout_marginTop="6dp"
+                                    android:layout_marginTop="7dp"
                                     android:alpha="0.55"
                                     android:background="@drawable/bg_ghost_bar" />
                             </LinearLayout>
 
                             <View
-                                android:layout_width="50dp"
-                                android:layout_height="24dp"
+                                android:layout_width="34dp"
+                                android:layout_height="10dp"
+                                android:layout_marginStart="10dp"
+                                android:alpha="0.7"
+                                android:background="@drawable/bg_ghost_bar" />
+
+                            <View
+                                android:layout_width="56dp"
+                                android:layout_height="32dp"
+                                android:layout_marginStart="10dp"
                                 android:background="@drawable/bg_ghost_pill" />
                         </LinearLayout>
                     </LinearLayout>
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="96dp"
+                        android:layout_height="100dp"
                         android:layout_gravity="bottom"
                         android:background="@drawable/bg_empty_fade_bottom"
                         android:importantForAccessibility="no" />
@@ -1165,7 +912,7 @@
                         android:gravity="center"
                         android:includeFontPadding="false"
                         android:paddingHorizontal="16dp"
-                        android:paddingBottom="16dp"
+                        android:paddingBottom="18dp"
                         android:text="@string/dashboard_new_unpaid_caption"
                         android:textColor="@color/home_mute"
                         android:textSize="12sp" />

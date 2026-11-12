@@ -213,17 +213,8 @@
     <!-- حالة "صالة جديدة" (لا أعضاء بعد) في الشاشة الرئيسية -->
     <color name="home_empty_dash">#A6C9B5FF</color>
     <color name="home_empty_cal_fill">#1F7C4DE8</color>
-    <color name="home_ghost_stroke">#47FFFFFF</color>
-    <color name="home_ghost_bar">#1AFFFFFF</color>
     <color name="home_empty_fade">#E60A0B1E</color>
     <color name="home_empty_glow">#667C4DE8</color>
-    <color name="home_empty_chip_vio">#477C4DE8</color>
-    <color name="home_empty_chip_crim">#40D63A56</color>
-    <color name="home_empty_chip_crim_text">#FFD0DA</color>
-    <color name="home_empty_chip_stroke">#24FFFFFF</color>
-    <color name="home_empty_day_fill">#0DFFFFFF</color>
-    <color name="home_empty_day_stroke">#14FFFFFF</color>
-    <color name="home_empty_day_today_start">#59D63A56</color>
-    <color name="home_empty_day_today_end">#597C4DE8</color>
-    <color name="home_empty_dot_off">#26FFFFFF</color>
+    <color name="home_ghost_stroke">#47FFFFFF</color>
+    <color name="home_ghost_bar">#1AFFFFFF</color>
 </resources>
