@@ -717,4 +717,19 @@
     <string name="notif_count_few">%1$d أعضاء</string>
     <string name="notif_count_many">%1$d عضواً</string>
     <string name="settings_enable_notifications_now">تفعيل الآن</string>
+
+    <!-- نصوص احتياطية لتخطيط bottom_sheet_notification_permission.xml إن وُجد في المشروع (تفادي خطأ الربط) -->
+    <string name="notif_sheet_title">لا تفوّت أي متابعة</string>
+    <string name="notif_sheet_subtitle">تنبيهات ذكية تصلك في الوقت المناسب، بلا إزعاج.</string>
+    <string name="notif_sheet_preview_label">هكذا ستظهر تنبيهاتك</string>
+    <string name="notif_sheet_preview_time">الآن</string>
+    <string name="notif_sheet_preview_title">ينتهي اشتراك أحمد خالد اليوم</string>
+    <string name="notif_sheet_preview_body">اضغط لعرض العضو وإرسال تذكير</string>
+    <string name="notif_benefit_expiring_title">اشتراكات تقترب من الانتهاء</string>
+    <string name="notif_benefit_expiring_desc">تنبيه فوري قبل أن يتوقف اشتراك العضو</string>
+    <string name="notif_benefit_unpaid_title">أعضاء لم يسدّدوا بعد</string>
+    <string name="notif_benefit_unpaid_desc">تذكير بالمبالغ المتبقية حتى لا تضيع</string>
+    <string name="notif_sheet_allow">تفعيل التنبيهات</string>
+    <string name="notif_sheet_later">ليس الآن</string>
+    <string name="notif_sheet_footnote">يمكنك تغيير ذلك في أي وقت من إعدادات الهاتف</string>
 </resources>
