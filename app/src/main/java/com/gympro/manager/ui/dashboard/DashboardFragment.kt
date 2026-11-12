@@ -481,7 +481,7 @@ class DashboardFragment : Fragment() {
                     expiringAdapter.submitList(state.expiringSoon)
                     bindUnpaidRows(state.unpaidMembers)
 
-                    // صالة جديدة (لا أعضاء إطلاقاً): تصميم الفراغ الخاص بها مع زر "إضافة أول عضو".
+                    // صالة جديدة (لا أعضاء إطلاقاً): تصميم الفراغ الخاص بها بدل رسالة "الكل بخير".
                     val isNewGym = state.isLoaded && state.totalCount == 0
                     binding.rvExpiringSoon.visibleIf(state.expiringSoon.isNotEmpty())
                     binding.tvEmptyExpiring.visibleIf(state.expiringSoon.isEmpty() && !isNewGym)
@@ -489,6 +489,16 @@ class DashboardFragment : Fragment() {
                     binding.cardUnpaidList.visibleIf(state.unpaidMembers.isNotEmpty())
                     binding.tvEmptyUnpaid.visibleIf(state.unpaidMembers.isEmpty() && !isNewGym)
                     binding.emptyNewUnpaid.visibleIf(isNewGym)
+
+                    // "اشتراكاتكم في أمان": أقرب انتهاء (يظهر فقط لو يوجد أعضاء نشطون) + شريحة التحصيل
+                    val nextDays = state.nextExpiryDays
+                    binding.chipNextExpiry.visibleIf(nextDays != null && nextDays > 0)
+                    if (nextDays != null && nextDays > 0) {
+                        binding.tvNextExpiry.text = resources.getQuantityString(
+                            R.plurals.dashboard_empty_next_expiry, nextDays, nextDays
+                        )
+                    }
+                    binding.chipCollected.visibleIf(state.activeCount > 0)
 
                     refreshNotificationNudges()
 
