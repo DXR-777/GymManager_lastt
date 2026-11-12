@@ -171,7 +171,10 @@ class SettingsFragment : Fragment() {
         binding.btnExportCsv.setOnSingleClickListener { exportCsv() }
         binding.btnOpenArchive.setOnSingleClickListener { startActivity(Intent(requireContext(), ArchiveActivity::class.java)) }
         binding.btnAbout.setOnSingleClickListener { showAbout() }
-        binding.btnOpenNotificationSettings.setOnSingleClickListener { openSystemNotificationSettings() }
+        binding.btnOpenNotificationSettings.setOnSingleClickListener {
+            val main = activity as? com.gympro.manager.ui.main.MainActivity
+            if (main != null) main.requestEnableNotifications() else openSystemNotificationSettings()
+        }
 
         applyWhatsappPrefixLabels()
         setupSecuritySection()

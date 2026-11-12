@@ -1,8 +1,6 @@
 package com.gympro.manager.ui.main
 
 import android.Manifest
-import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -18,9 +16,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.gympro.manager.R
 import com.gympro.manager.databinding.ActivityMainBinding
 import com.gympro.manager.model.MemberFilter
@@ -31,6 +26,7 @@ import com.gympro.manager.ui.revenue.RevenueFragment
 import com.gympro.manager.ui.settings.SettingsFragment
 import com.gympro.manager.utils.Haptic
 import com.gympro.manager.utils.haptic
+import androidx.core.view.children
 
 private const val PREFS_NAME = "gym_manager_main_prefs"
 private const val KEY_NOTIFICATION_RATIONALE_SHOWN = "notification_rationale_shown"
@@ -72,8 +68,35 @@ class MainActivity : AppCompatActivity() {
     // عبر استدعاء مباشر لـ MembersFragment.applyFilter() على النسخة الحيّة أصلاً.
     private var pendingMembersFilter: MemberFilter? = null
 
+    private var notificationRequestStartedAt = 0L
+
     private val notificationPermissionLauncher =
-        registerForActivityResult(ActivityResultContracts.RequestPermission()) { /* لا حاجة لمعالجة خاصة */ }
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            // إن عاد الرفض فوراً (< 400ms) فلم يظهر حوار النظام أصلاً (رُفض نهائياً سابقاً) فنفتح إعدادات
+            // الإشعارات ليفعّلها يدوياً؛ أما الرفض بعد حوار ظاهر فيُحترم بلا إلحاح.
+            if (!granted && notificationRequestStartedAt > 0L &&
+                System.currentTimeMillis() - notificationRequestStartedAt < 400L
+            ) {
+                com.gympro.manager.utils.NotificationNudge.openSettings(this)
+            }
+            notificationRequestStartedAt = 0L
+        }
+
+    /**
+     * يُستدعى من الجرس وبطاقة الرئيسية وصف الإعدادات: يطلب الإذن إن أمكن، وإلا (معطّل من النظام أو
+     * مرفوض نهائياً) يفتح إعدادات إشعارات التطبيق مباشرة.
+     */
+    fun requestEnableNotifications() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED
+        ) {
+            notificationRequestStartedAt = System.currentTimeMillis()
+            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            com.gympro.manager.utils.NotificationNudge.openSettings(this)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -335,42 +358,66 @@ class MainActivity : AppCompatActivity() {
         // هدفه (شرح الفائدة قبل حوار النظام)؛ تكراره بعد أول ظهور له لا يضيف شيئاً ويُزعج
         // فقط. من يضغط "تفعيل" ثم يرفض حوار النظام يبقى بإمكانه تفعيل الإذن يدوياً من
         // إعدادات النظام لاحقاً، بلا حاجة لعودة هذا الحوار للإلحاح عليه من جديد.
-        prefs.edit().putBoolean(KEY_NOTIFICATION_RATIONALE_SHOWN, true).apply()
-
-        showNotificationPermissionSheet()
+        // نؤخّر العرض قليلاً بعد ظهور الشاشة الرئيسية: يرى المستخدم التطبيق أولاً (سياق) ثم يُطلب منه الإذن،
+        // بدل أن يصطدم بالورقة في أول إطار. العلَم يُسجَّل لحظة العرض الفعلي لا لحظة الجدولة.
+        binding.root.postDelayed({
+            if (!isFinishing && !isDestroyed) showNotificationPrimer()
+        }, 900L)
     }
 
     /**
-     * ورقة تمهيدية (Soft Ask) بتصميم احترافي بدل AlertDialog: جرس 3D + معاينة إشعار + فوائد محددة،
-     * وزر "تفعيل التنبيهات" هو وحده الذي يستدعي حوار إذن النظام الفعلي. "ليس الآن" أو السحب
-     * لأسفل لا يطلبان شيئاً من النظام (فلا يُحرق حوار النظام الذي يظهر مرة واحدة فقط).
+     * Soft Ask بتصميم الهوية الجديدة (ورقة سفلية بدل حوار Material الرمادي): جرس متحرّك + عنوان قصير +
+     * معاينة إشعار + ثلاث فوائد حقيقية + زر "تفعيل" متدرّج + "ليس الآن". حوار النظام لا يُطلب إلا بعد "تفعيل".
      */
-    private fun showNotificationPermissionSheet() {
-        val sheet = BottomSheetDialog(this)
-        val content = layoutInflater.inflate(R.layout.bottom_sheet_notification_permission, null)
-        sheet.setContentView(content)
-        sheet.behavior.skipCollapsed = true
-        sheet.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+    private fun showNotificationPrimer() {
+        prefs.edit().putBoolean(KEY_NOTIFICATION_RATIONALE_SHOWN, true).apply()
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
+        val sheet = com.gympro.manager.databinding.BottomSheetNotificationPrimerBinding.inflate(layoutInflater)
+        dialog.setContentView(sheet.root)
+        dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            ?.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        dialog.behavior.skipCollapsed = true
+        dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
 
-        content.findViewById<View>(R.id.btnNotifAllow).setOnClickListener {
-            sheet.dismiss()
+        sheet.btnNotifAllow.setOnClickListener {
+            it.haptic(Haptic.CONFIRM)
+            dialog.dismiss()
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
-        content.findViewById<View>(R.id.btnNotifLater).setOnClickListener { sheet.dismiss() }
+        sheet.btnNotifLater.setOnClickListener { dialog.dismiss() }
 
-        // اهتزاز خفيف للجرس عند الظهور (يُحترم إعداد إيقاف الحركة في النظام).
-        val bell = content.findViewById<View>(R.id.imgNotifBell)
-        if (ValueAnimator.areAnimatorsEnabled()) {
-            bell.post {
-                bell.pivotX = bell.width / 2f
-                bell.pivotY = bell.height * 0.15f
-                ObjectAnimator.ofFloat(bell, View.ROTATION, 0f, 14f, -12f, 9f, -6f, 3f, 0f).apply {
-                    duration = 900
-                    startDelay = 400
-                    start()
+        // لون شريط التنقّل = نهاية تدرّج الورقة (#0A0B1E) فتلتحم الورقة بحافة الشاشة بلا "صندوق" ظاهر
+        dialog.window?.navigationBarColor = android.graphics.Color.parseColor("#0A0B1E")
+
+        val handler = android.os.Handler(android.os.Looper.getMainLooper())
+        val d = resources.displayMetrics.density
+        dialog.setOnShowListener {
+            if (!android.animation.ValueAnimator.areAnimatorsEnabled()) return@setOnShowListener
+            // دخول متدرّج لعناصر الورقة
+            sheet.notifContent.children.forEachIndexed { i, child ->
+                if (i == 0) return@forEachIndexed
+                child.alpha = 0f
+                child.translationY = 14 * d
+                child.animate().alpha(1f).translationY(0f)
+                    .setStartDelay(80L + i * 60L).setDuration(340)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator()).start()
+            }
+            // الجرس يهتز: تأرجح متخامد حول رأسه، ويتكرر كل ~3 ثوانٍ
+            sheet.notifBell.post {
+                sheet.notifBell.pivotX = sheet.notifBell.width / 2f
+                sheet.notifBell.pivotY = sheet.notifBell.height * 0.12f
+            }
+            val ringBell = object : Runnable {
+                override fun run() {
+                    android.animation.ObjectAnimator.ofFloat(
+                        sheet.notifBell, View.ROTATION, 0f, -20f, 17f, -13f, 9f, -5f, 2f, 0f
+                    ).apply { duration = 1_000; start() }
+                    handler.postDelayed(this, 3_200L)
                 }
             }
+            handler.postDelayed(ringBell, 450L)
+            dialog.setOnDismissListener { handler.removeCallbacksAndMessages(null) }
         }
-        sheet.show()
+        dialog.show()
     }
 }

@@ -297,14 +297,20 @@
                     android:text="@string/settings_notifications_disabled_warning" />
             </LinearLayout>
 
-            <com.google.android.material.button.MaterialButton
+            <TextView
                 android:id="@+id/btnOpenNotificationSettings"
-                style="@style/Widget.Material3.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/spacing_xs"
-                android:text="@string/settings_open_notification_settings"
-                android:textColor="@color/status_warning" />
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:background="@drawable/bg_home_cta"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/settings_enable_notifications_now"
+                android:textColor="@color/white"
+                android:textSize="14sp" />
 
         </LinearLayout>
 

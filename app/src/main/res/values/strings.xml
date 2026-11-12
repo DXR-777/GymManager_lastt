@@ -502,20 +502,6 @@
     <string name="notification_rationale_message">فعّل الإشعارات لتصلك تنبيهات فورية عند اقتراب انتهاء اشتراك أحد الأعضاء أو عند وجود أعضاء لم يسددوا بعد — حتى لا يفوتك متابعتهم.</string>
     <string name="notification_rationale_allow">تفعيل</string>
     <string name="notification_rationale_later">ليس الآن</string>
-    <!-- ورقة تفعيل التنبيهات (Soft Ask) -->
-    <string name="notif_sheet_title">لا تفوّت أي متابعة</string>
-    <string name="notif_sheet_subtitle">تنبيهات ذكية تصلك في الوقت المناسب، بلا إزعاج.</string>
-    <string name="notif_sheet_preview_label">هكذا ستظهر تنبيهاتك</string>
-    <string name="notif_sheet_preview_time">الآن</string>
-    <string name="notif_sheet_preview_title">ينتهي اشتراك أحمد خالد اليوم</string>
-    <string name="notif_sheet_preview_body">اضغط لعرض العضو وإرسال تذكير</string>
-    <string name="notif_benefit_expiring_title">اشتراكات تقترب من الانتهاء</string>
-    <string name="notif_benefit_expiring_desc">تنبيه فوري قبل أن يتوقف اشتراك العضو</string>
-    <string name="notif_benefit_unpaid_title">أعضاء لم يسددوا بعد</string>
-    <string name="notif_benefit_unpaid_desc">تذكير بالمبالغ المتبقية حتى لا تضيع</string>
-    <string name="notif_sheet_allow">تفعيل التنبيهات</string>
-    <string name="notif_sheet_later">ليس الآن</string>
-    <string name="notif_sheet_footnote">يمكنك تغيير ذلك في أي وقت من إعدادات الهاتف</string>
 
     <!-- البند 19: أسماء الأيام المختصرة لعمود الرسم البياني (RevenueFragment.lastSevenDayLabels)
          كانت مصفوفة Kotlin ثابتة داخل الكود، فلا يمكن ترجمتها أو تعديلها مركزياً مثل
@@ -704,4 +690,31 @@
     <string name="crop_reset">إعادة ضبط</string>
     <string name="crop_failed">تعذّر فتح الصورة</string>
     <string name="member_photo_adjust">ضبط الصورة</string>
+
+    <string name="notif_primer_title">لا تفوّت أي متابعة</string>
+    <string name="notif_primer_subtitle">تنبيهات تصلك في الوقت المناسب، بلا إزعاج.</string>
+    <string name="notif_primer_sample_title">ينتهي اشتراك سامي غداً</string>
+    <string name="notif_primer_sample_body">اضغط لفتح ملف العضو ومتابعته.</string>
+    <string name="notif_primer_sample_tag">مثال</string>
+    <string name="notif_primer_b1_title">اشتراكات تقترب من الانتهاء</string>
+    <string name="notif_primer_b1_desc">تنبيه فوري قبل أن يتوقف اشتراك العضو.</string>
+    <string name="notif_primer_b2_title">أعضاء لم يسدّدوا بعد</string>
+    <string name="notif_primer_b2_desc">تذكير بالمبالغ المتبقية حتى لا تضيع.</string>
+    <string name="notif_primer_b3_title">أنت المتحكّم</string>
+    <string name="notif_primer_b3_desc">يمكنك إيقافها في أي وقت من إعدادات الهاتف.</string>
+    <string name="notif_primer_allow">تفعيل التنبيهات</string>
+    <string name="notif_primer_later">ليس الآن</string>
+
+    <string name="notif_bell_off_cd">التنبيهات متوقفة، اضغط لتفعيلها</string>
+    <string name="notif_tip_text">التنبيهات متوقفة. اضغط لتفعيلها</string>
+    <string name="notif_banner_expiring">%1$s ينتهي اشتراكهم قريباً</string>
+    <string name="notif_banner_unpaid">%1$s لم يسدّدوا بعد</string>
+    <string name="notif_banner_sub">فعّل التنبيهات لتصلك قبلهم</string>
+    <string name="notif_banner_enable">تفعيل</string>
+    <string name="notif_banner_close">إغلاق</string>
+    <string name="notif_count_one">عضو واحد</string>
+    <string name="notif_count_two">عضوان</string>
+    <string name="notif_count_few">%1$d أعضاء</string>
+    <string name="notif_count_many">%1$d عضواً</string>
+    <string name="settings_enable_notifications_now">تفعيل الآن</string>
 </resources>

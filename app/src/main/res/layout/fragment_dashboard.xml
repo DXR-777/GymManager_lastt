@@ -46,85 +46,129 @@
                 android:paddingBottom="@dimen/home_bottom_extra">
 
                 <!-- ============ الرأس ============ -->
-                <LinearLayout
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="64dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/tvAvatar"
-                        android:layout_width="46dp"
-                        android:layout_height="46dp"
-                        android:background="@drawable/bg_home_avatar"
-                        android:fontFamily="@font/cairo_bold"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:textColor="@color/home_ink"
-                        android:textSize="18sp"
-                        tools:text="ق" />
-
+                    android:clipChildren="false"
+                    android:elevation="20dp">
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="12dp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tvGreeting"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/cairo_medium"
-                            android:includeFontPadding="false"
-                            android:textColor="@color/home_mute"
-                            android:textSize="12sp"
-                            tools:text="صباح الخير" />
-
-                        <TextView
-                            android:id="@+id/tvGymName"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
+                            android:id="@+id/tvAvatar"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:background="@drawable/bg_home_avatar"
                             android:fontFamily="@font/cairo_bold"
+                            android:gravity="center"
                             android:includeFontPadding="false"
-                            android:maxLines="1"
                             android:textColor="@color/home_ink"
-                            android:textSize="19sp"
-                            tools:text="نادي القوة" />
+                            android:textSize="18sp"
+                            tools:text="ق" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="12dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/tvGreeting"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_medium"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/home_mute"
+                                android:textSize="12sp"
+                                tools:text="صباح الخير" />
+
+                            <TextView
+                                android:id="@+id/tvGymName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/cairo_bold"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/home_ink"
+                                android:textSize="19sp"
+                                tools:text="نادي القوة" />
+                        </LinearLayout>
+
+                        <FrameLayout
+                            android:id="@+id/btnBell"
+                            android:layout_width="46dp"
+                            android:layout_height="46dp"
+                            android:background="@drawable/bg_home_glass_circle"
+                            android:clickable="true"
+                            android:contentDescription="@string/home_notifications"
+                            android:focusable="true"
+                            android:foreground="@drawable/ripple_home_circle">
+
+                            <ImageView
+                                android:id="@+id/bellIcon"
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:layout_gravity="center"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_ds_bell"
+                                app:tint="@color/home_ink" />
+
+                            <View
+                                android:id="@+id/bellDot"
+                                android:layout_width="8dp"
+                                android:layout_height="8dp"
+                                android:layout_gravity="top|end"
+                                android:layout_marginTop="11dp"
+                                android:layout_marginEnd="12dp"
+                                android:background="@drawable/shape_dot"
+                                android:backgroundTint="@color/home_crim"
+                                android:visibility="gone"
+                                tools:visibility="visible" />
+                        </FrameLayout>
                     </LinearLayout>
 
+                    <!-- تلميح الجرس (يظهر حين تكون التنبيهات متوقفة، حتى 3 مرات) -->
                     <FrameLayout
-                        android:id="@+id/btnBell"
-                        android:layout_width="46dp"
-                        android:layout_height="46dp"
-                        android:background="@drawable/bg_home_glass_circle"
+                        android:id="@+id/bellTip"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom|end"
+                        android:layout_marginBottom="-58dp"
+                        android:alpha="0"
                         android:clickable="true"
-                        android:contentDescription="@string/home_notifications"
                         android:focusable="true"
-                        android:foreground="@drawable/ripple_home_circle">
-
-                        <ImageView
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_gravity="center"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_ds_bell"
-                            app:tint="@color/home_ink" />
+                        android:visibility="gone">
 
                         <View
-                            android:id="@+id/bellDot"
-                            android:layout_width="8dp"
-                            android:layout_height="8dp"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
                             android:layout_gravity="top|end"
-                            android:layout_marginTop="11dp"
-                            android:layout_marginEnd="12dp"
-                            android:background="@drawable/shape_dot"
-                            android:backgroundTint="@color/home_crim"
-                            android:visibility="gone"
-                            tools:visibility="visible" />
+                            android:layout_marginTop="2dp"
+                            android:layout_marginEnd="17dp"
+                            android:background="@drawable/bg_notif_tip"
+                            android:rotation="45" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="7dp"
+                            android:background="@drawable/bg_notif_tip"
+                            android:elevation="6dp"
+                            android:fontFamily="@font/cairo_bold"
+                            android:includeFontPadding="false"
+                            android:maxWidth="200dp"
+                            android:paddingHorizontal="14dp"
+                            android:paddingVertical="9dp"
+                            android:text="@string/notif_tip_text"
+                            android:textColor="#2A2433"
+                            android:textSize="12sp" />
                     </FrameLayout>
-                </LinearLayout>
+                </FrameLayout>
 
                 <!-- ============ بطاقة Hero ============ -->
                 <LinearLayout
@@ -335,6 +379,98 @@
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
+                </LinearLayout>
+
+                <!-- ============ بطاقة تفعيل التنبيهات (دائمة، غير مزعجة، تُغلق وتعود بعد أسبوع) ============ -->
+                <LinearLayout
+                    android:id="@+id/cardNotifBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:background="@drawable/bg_notif_banner"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingVertical="12dp"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="8dp"
+                    android:visibility="gone">
+
+                    <FrameLayout
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:clipChildren="false">
+
+                        <ImageView
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:background="@drawable/bg_home_radio_on"
+                            android:importantForAccessibility="no"
+                            android:padding="11dp"
+                            android:src="@drawable/ic_ds_bell"
+                            app:tint="@color/white" />
+
+                        <View
+                            android:id="@+id/notifBannerDot"
+                            android:layout_width="12dp"
+                            android:layout_height="12dp"
+                            android:layout_gravity="top|end"
+                            android:background="@drawable/bg_notif_badge" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvNotifBannerTitle"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/cairo_bold"
+                            android:includeFontPadding="false"
+                            android:textColor="@color/home_ink"
+                            android:textSize="13sp"
+                            tools:text="3 أعضاء ينتهي اشتراكهم قريباً" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="2dp"
+                            android:fontFamily="@font/cairo_regular"
+                            android:includeFontPadding="false"
+                            android:text="@string/notif_banner_sub"
+                            android:textColor="@color/home_mute"
+                            android:textSize="11sp" />
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/btnNotifBannerEnable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="34dp"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/bg_notif_pill_white"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/cairo_bold"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:minWidth="60dp"
+                        android:paddingHorizontal="14dp"
+                        android:text="@string/notif_banner_enable"
+                        android:textColor="#4A1566"
+                        android:textSize="12sp" />
+
+                    <ImageButton
+                        android:id="@+id/btnNotifBannerClose"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/ripple_home_circle"
+                        android:contentDescription="@string/notif_banner_close"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_close"
+                        app:tint="@color/home_mute" />
                 </LinearLayout>
 
                 <!-- ============ ينتهي اشتراكهم قريباً ============ -->

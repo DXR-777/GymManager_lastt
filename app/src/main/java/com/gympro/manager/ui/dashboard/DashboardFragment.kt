@@ -29,6 +29,7 @@ import com.gympro.manager.ui.members.MemberDetailActivity
 import com.gympro.manager.utils.CurrencyFormatter
 import com.gympro.manager.utils.DateUtils
 import com.gympro.manager.utils.Haptic
+import com.gympro.manager.utils.NotificationNudge
 import com.gympro.manager.utils.applySystemBarInsetsPadding
 import com.gympro.manager.utils.haptic
 import com.gympro.manager.utils.setOnSingleClickListener
@@ -162,7 +163,13 @@ class DashboardFragment : Fragment() {
      * الانتهاء)، والنقر يفتح قائمة الأعضاء مفلترة على الأهم (غير المدفوعين أولاً).
      */
     private fun setupBell() {
+        binding.bellTip.setOnClickListener { binding.btnBell.performClick() }
         binding.btnBell.setOnSingleClickListener {
+            if (!NotificationNudge.isEnabled(requireContext())) {
+                hideBellTip()
+                (activity as? MainActivity)?.requestEnableNotifications()
+                return@setOnSingleClickListener
+            }
             val state = viewModel.uiState.value
             val filter = when {
                 state.unpaidCount > 0 -> MemberFilter.UNPAID
@@ -457,8 +464,9 @@ class DashboardFragment : Fragment() {
                     binding.tvUnpaidCount.text = state.unpaidCount.toString()
                     binding.tvExpiringSoonCount.text = state.expiringSoonCount.toString()
                     val hasAlerts = state.unpaidCount + state.expiringSoonCount > 0
-                    binding.bellDot.visibleIf(hasAlerts)
-                    updateDotPulse(hasAlerts)
+                    val notifOff = !NotificationNudge.isEnabled(requireContext())
+                    binding.bellDot.visibleIf(hasAlerts || notifOff)
+                    updateDotPulse(hasAlerts || notifOff)
                     bindRevenueCard(state)
                     updateStatCardAccessibilityLabels(state)
                     bindSectionCount(binding.tvExpiringSectionCount, state.expiringSoonCount)
@@ -471,6 +479,8 @@ class DashboardFragment : Fragment() {
                     binding.tvEmptyExpiring.visibleIf(state.expiringSoon.isEmpty())
                     binding.cardUnpaidList.visibleIf(state.unpaidMembers.isNotEmpty())
                     binding.tvEmptyUnpaid.visibleIf(state.unpaidMembers.isEmpty())
+
+                    refreshNotificationNudges()
 
                     if (entrancePending) {
                         entrancePending = false
@@ -489,7 +499,116 @@ class DashboardFragment : Fragment() {
         const val BAR_MIN_FRACTION = 0.12f
     }
 
+    // ───── تذكير ذكي بتفعيل التنبيهات: جرس + تلميح + بطاقة (تعود المحاولة عند العودة من الإعدادات) ─────
+    private var bellTipHideRunnable: Runnable? = null
+
+    private fun refreshNotificationNudges() {
+        val b = _binding ?: return
+        val ctx = context ?: return
+        val enabled = NotificationNudge.isEnabled(ctx)
+
+        // الجرس: أيقونة "متوقف" + نقطة نابضة حين تكون التنبيهات متوقفة
+        b.bellIcon.setImageResource(if (enabled) R.drawable.ic_ds_bell else R.drawable.ic_ds_bell_off)
+        b.btnBell.contentDescription = getString(if (enabled) R.string.home_notifications else R.string.notif_bell_off_cd)
+        val state = viewModel.uiState.value
+        val hasAlerts = state.unpaidCount + state.expiringSoonCount > 0
+        b.bellDot.visibleIf(hasAlerts || !enabled)
+        updateDotPulse(hasAlerts || !enabled)
+
+        // التلميح فوق الجرس (حتى 3 مرات)
+        if (!enabled && NotificationNudge.shouldShowTip(ctx) && b.bellTip.visibility != View.VISIBLE) showBellTip() else if (enabled) hideBellTip()
+
+        // البطاقة الدائمة: فقط حين توجد أرقام حقيقية تخصّه
+        val alerts = if (state.expiringSoonCount > 0) state.expiringSoonCount else state.unpaidCount
+        val show = NotificationNudge.shouldShowBanner(ctx, state.unpaidCount + state.expiringSoonCount)
+        if (show) {
+            val phrase = countPhrase(alerts)
+            val resId = if (state.expiringSoonCount > 0) R.string.notif_banner_expiring else R.string.notif_banner_unpaid
+            val full = getString(resId, phrase)
+            val spannable = android.text.SpannableString(full)
+            val start = full.indexOf(phrase)
+            if (start >= 0) {
+                spannable.setSpan(
+                    android.text.style.ForegroundColorSpan(androidx.core.content.ContextCompat.getColor(ctx, R.color.home_amber)),
+                    start, start + phrase.length, android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                )
+            }
+            b.tvNotifBannerTitle.text = spannable
+            b.btnNotifBannerEnable.setOnSingleClickListener {
+                it.haptic(Haptic.CONFIRM)
+                (activity as? MainActivity)?.requestEnableNotifications()
+            }
+            b.btnNotifBannerClose.setOnSingleClickListener {
+                NotificationNudge.dismissBanner(requireContext())
+                collapseBanner()
+            }
+            if (b.cardNotifBanner.visibility != View.VISIBLE) {
+                b.cardNotifBanner.alpha = 0f
+                b.cardNotifBanner.translationY = -8 * resources.displayMetrics.density
+                b.cardNotifBanner.visibility = View.VISIBLE
+                b.cardNotifBanner.animate().alpha(1f).translationY(0f)
+                    .setStartDelay(500).setDuration(380)
+                    .setInterpolator(DecelerateInterpolator()).start()
+            }
+        } else if (b.cardNotifBanner.visibility == View.VISIBLE) {
+            collapseBanner()
+        }
+    }
+
+    private fun collapseBanner() {
+        val b = _binding ?: return
+        b.cardNotifBanner.animate().alpha(0f).translationY(-8 * resources.displayMetrics.density)
+            .setStartDelay(0).setDuration(220).withEndAction {
+                _binding?.cardNotifBanner?.visibility = View.GONE
+            }.start()
+    }
+
+    /** "عضو واحد / عضوان / 3 أعضاء / 12 عضواً" بصياغة عربية سليمة. */
+    private fun countPhrase(n: Int): String = when {
+        n == 1 -> getString(R.string.notif_count_one)
+        n == 2 -> getString(R.string.notif_count_two)
+        n in 3..10 -> getString(R.string.notif_count_few, n)
+        else -> getString(R.string.notif_count_many, n)
+    }
+
+    private fun showBellTip() {
+        val b = _binding ?: return
+        NotificationNudge.markTipShown(requireContext())
+        b.bellTip.visibility = View.VISIBLE
+        b.bellTip.alpha = 0f
+        b.bellTip.translationY = -6 * resources.displayMetrics.density
+        b.bellTip.animate().alpha(1f).translationY(0f).setStartDelay(1_200).setDuration(320)
+            .setInterpolator(DecelerateInterpolator()).start()
+        bellTipHideRunnable?.let { b.bellTip.removeCallbacks(it) }
+        bellTipHideRunnable = Runnable { hideBellTip() }.also { b.bellTip.postDelayed(it, 7_500) }
+    }
+
+    private fun hideBellTip() {
+        val b = _binding ?: return
+        bellTipHideRunnable?.let { b.bellTip.removeCallbacks(it) }
+        bellTipHideRunnable = null
+        if (b.bellTip.visibility != View.VISIBLE) return
+        b.bellTip.animate().cancel()
+        b.bellTip.animate().alpha(0f).setStartDelay(0).setDuration(200).withEndAction {
+            _binding?.bellTip?.visibility = View.GONE
+        }.start()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        // عودة من حوار الإذن أو إعدادات النظام: حدّث الجرس والبطاقة فوراً
+        if (_binding != null && !isHidden) refreshNotificationNudges()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (_binding != null) {
+            if (hidden) hideBellTip() else refreshNotificationNudges()
+        }
+    }
+
     override fun onDestroyView() {
+        bellTipHideRunnable = null
         amountAnimator?.cancel()
         amountAnimator = null
         dotPulse?.cancel()
