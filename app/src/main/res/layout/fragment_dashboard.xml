@@ -550,22 +550,11 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <FrameLayout
+                            <com.gympro.manager.ui.widgets.ShieldArtView
+                                android:id="@+id/artShield"
                                 android:layout_width="78dp"
                                 android:layout_height="78dp"
-                                android:importantForAccessibility="no">
-
-                                <View
-                                    android:layout_width="72dp"
-                                    android:layout_height="72dp"
-                                    android:layout_gravity="center"
-                                    android:background="@drawable/bg_empty_ring_dashed" />
-
-                                <ImageView
-                                    android:layout_width="78dp"
-                                    android:layout_height="78dp"
-                                    android:src="@drawable/ic_empty_shield_marks" />
-                            </FrameLayout>
+                                android:importantForAccessibility="no" />
 
                             <LinearLayout
                                 android:layout_width="0dp"
@@ -575,6 +564,7 @@
                                 android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tvSafeTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/cairo_bold"
@@ -583,6 +573,7 @@
                                 android:textColor="@color/home_ink"
                                 android:textSize="15sp" />
                             <TextView
+                                android:id="@+id/tvSafeSub"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -606,6 +597,7 @@
                                     android:visibility="gone">
 
                                     <ImageView
+                                        android:id="@+id/ivNextExpiryClock"
                                         android:layout_width="11dp"
                                         android:layout_height="11dp"
                                         android:importantForAccessibility="no"
@@ -634,6 +626,7 @@
                             android:orientation="horizontal">
 
                         <LinearLayout
+                            android:id="@+id/dayChip0"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="3dp"
@@ -654,6 +647,7 @@
                                 android:textSize="9.5sp" />
 
                             <FrameLayout
+                                android:id="@+id/dayDot0"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginTop="5dp"
@@ -668,6 +662,7 @@
                             </FrameLayout>
                         </LinearLayout>
                         <LinearLayout
+                            android:id="@+id/dayChip1"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="3dp"
@@ -688,6 +683,7 @@
                                 android:textSize="9.5sp" />
 
                             <FrameLayout
+                                android:id="@+id/dayDot1"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginTop="5dp"
@@ -702,6 +698,7 @@
                             </FrameLayout>
                         </LinearLayout>
                         <LinearLayout
+                            android:id="@+id/dayChip2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="3dp"
@@ -722,6 +719,7 @@
                                 android:textSize="9.5sp" />
 
                             <FrameLayout
+                                android:id="@+id/dayDot2"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginTop="5dp"
@@ -736,6 +734,7 @@
                             </FrameLayout>
                         </LinearLayout>
                         <LinearLayout
+                            android:id="@+id/dayChip3"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="3dp"
@@ -756,6 +755,7 @@
                                 android:textSize="9.5sp" />
 
                             <FrameLayout
+                                android:id="@+id/dayDot3"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginTop="5dp"
@@ -770,6 +770,7 @@
                             </FrameLayout>
                         </LinearLayout>
                         <LinearLayout
+                            android:id="@+id/dayChip4"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginHorizontal="3dp"
@@ -790,6 +791,7 @@
                                 android:textSize="9.5sp" />
 
                             <FrameLayout
+                                android:id="@+id/dayDot4"
                                 android:layout_width="14dp"
                                 android:layout_height="14dp"
                                 android:layout_marginTop="5dp"
@@ -832,34 +834,11 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
-                            <FrameLayout
+                            <com.gympro.manager.ui.widgets.CalendarArtView
+                                android:id="@+id/artCalendar"
                                 android:layout_width="78dp"
                                 android:layout_height="78dp"
-                                android:importantForAccessibility="no">
-
-                                <View
-                                    android:layout_width="52dp"
-                                    android:layout_height="48dp"
-                                    android:layout_marginStart="13dp"
-                                    android:layout_marginTop="16dp"
-                                    android:background="@drawable/bg_empty_cal_outline" />
-
-                                <ImageView
-                                    android:layout_width="78dp"
-                                    android:layout_height="78dp"
-                                    android:src="@drawable/ic_empty_cal_marks" />
-
-                                <ImageView
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:layout_gravity="top|start"
-                                    android:layout_marginStart="27dp"
-                                    android:layout_marginTop="36dp"
-                                    android:background="@drawable/bg_empty_cal_badge"
-                                    android:padding="5dp"
-                                    android:src="@drawable/ic_ds_plus"
-                                    app:tint="@color/white" />
-                            </FrameLayout>
+                                android:importantForAccessibility="no" />
 
                             <LinearLayout
                                 android:layout_width="0dp"
@@ -869,6 +848,7 @@
                                 android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tvNewTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/cairo_bold"
@@ -877,6 +857,7 @@
                                 android:textColor="@color/home_lav"
                                 android:textSize="15sp" />
                             <TextView
+                                android:id="@+id/tvNewSub"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -889,34 +870,40 @@
                             </LinearLayout>
                         </LinearLayout>
 
-                        <LinearLayout
+                        <FrameLayout
                             android:id="@+id/btnEmptyAddMember"
                             android:layout_width="match_parent"
                             android:layout_height="44dp"
                             android:layout_marginTop="16dp"
                             android:background="@drawable/bg_home_cta"
                             android:clickable="true"
-                            android:focusable="true"
-                            android:gravity="center"
-                            android:orientation="horizontal">
+                            android:focusable="true">
 
-                            <ImageView
-                                android:layout_width="18dp"
-                                android:layout_height="18dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/ic_user_round_plus"
-                                app:tint="@color/white" />
-
-                            <TextView
+                            <LinearLayout
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="8dp"
-                                android:fontFamily="@font/cairo_bold"
-                                android:includeFontPadding="false"
-                                android:text="@string/dashboard_new_add_first_member"
-                                android:textColor="@color/white"
-                                android:textSize="13.5sp" />
-                        </LinearLayout>
+                                android:layout_height="match_parent"
+                                android:layout_gravity="center"
+                                android:gravity="center"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="18dp"
+                                    android:layout_height="18dp"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_user_round_plus"
+                                    app:tint="@color/white" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:fontFamily="@font/cairo_bold"
+                                    android:includeFontPadding="false"
+                                    android:text="@string/dashboard_new_add_first_member"
+                                    android:textColor="@color/white"
+                                    android:textSize="13.5sp" />
+                            </LinearLayout>
+                        </FrameLayout>
                     </LinearLayout>
                 </FrameLayout>
 
@@ -1008,6 +995,7 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tvCollectTitle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/cairo_bold"
@@ -1016,6 +1004,7 @@
                                 android:textColor="@color/home_ink"
                                 android:textSize="15sp" />
                             <TextView
+                                android:id="@+id/tvCollectSub"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
@@ -1060,6 +1049,7 @@
                         android:paddingBottom="52dp">
 
                         <LinearLayout
+                            android:id="@+id/ghostRow1"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
@@ -1107,6 +1097,7 @@
                             android:background="@color/home_line" />
 
                         <LinearLayout
+                            android:id="@+id/ghostRow2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
@@ -1150,6 +1141,12 @@
                         </LinearLayout>
                     </LinearLayout>
 
+                    <com.gympro.manager.ui.widgets.SheenView
+                        android:id="@+id/ghostSheen"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:importantForAccessibility="no" />
+
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="96dp"
@@ -1158,6 +1155,7 @@
                         android:importantForAccessibility="no" />
 
                     <TextView
+                        android:id="@+id/tvGhostCaption"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"

@@ -56,6 +56,7 @@ class DashboardFragment : Fragment() {
     private var shownAmount = 0.0
     private var amountAnimator: ValueAnimator? = null
     private var dotPulse: ObjectAnimator? = null
+    private var emptyMotion: HomeEmptyMotion? = null
     private var entrancePending = false
 
     override fun onCreateView(
@@ -74,6 +75,7 @@ class DashboardFragment : Fragment() {
         setupBell()
         setupLists()
         setupStatCardClicks()
+        setupEmptyStateMotion()
         observeState()
     }
 
@@ -331,6 +333,15 @@ class DashboardFragment : Fragment() {
     }
 
     /**
+     * حركة الحالات الفارغة (درع/حلقة تحصيل/تقويم/صفوف شبحية): الرسوم الكبيرة ترسم نفسها بنفسها
+     * (ShieldArtView, CollectRingArtView, CalendarArtView, SheenView) والباقي يقوده HomeEmptyMotion.
+     */
+    private fun setupEmptyStateMotion() {
+        binding.ghostSheen.configure(cornerDp = 24f, peakAlpha = 0.09f, periodMs = 4_200L, sweepMs = 1_600L, delayMs = 800L)
+        emptyMotion = HomeEmptyMotion(binding)
+    }
+
+    /**
      * 7.2: وميض خفيف مستمر على هيكل الـ Skeleton (تذبذب alpha بدل شكل ثابت جامد)
      * لإيصال إحساس "جارٍ التحميل" فعلياً، لا مجرد بطاقات رمادية ساكنة.
      */
@@ -499,6 +510,7 @@ class DashboardFragment : Fragment() {
                         )
                     }
                     binding.chipCollected.visibleIf(state.activeCount > 0)
+                    emptyMotion?.refresh()
 
                     refreshNotificationNudges()
 
@@ -618,12 +630,19 @@ class DashboardFragment : Fragment() {
         super.onResume()
         // عودة من حوار الإذن أو إعدادات النظام: حدّث الجرس والبطاقة فوراً
         if (_binding != null && !isHidden) refreshNotificationNudges()
+        emptyMotion?.setActive(!isHidden)
+    }
+
+    override fun onPause() {
+        emptyMotion?.setActive(false)
+        super.onPause()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (_binding != null) {
             if (hidden) hideBellTip() else refreshNotificationNudges()
+            emptyMotion?.setActive(!hidden)
         }
     }
 
@@ -633,6 +652,8 @@ class DashboardFragment : Fragment() {
         amountAnimator = null
         dotPulse?.cancel()
         dotPulse = null
+        emptyMotion?.release()
+        emptyMotion = null
         shownAmount = 0.0
         stopSkeletonPulse()
         super.onDestroyView()
