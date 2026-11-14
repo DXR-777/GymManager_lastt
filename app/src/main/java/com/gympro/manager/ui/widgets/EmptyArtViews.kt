@@ -85,13 +85,13 @@ class ShieldArtView @JvmOverloads constructor(
             12f, 12f, 66f, 66f, Color.parseColor("#FF8FA0"), Color.parseColor("#8B5CF6"), Shader.TileMode.CLAMP
         )
     }
-    private val shieldStroke = paint(Paint.Style.STROKE, width = 2.2f).apply {
+    private val shieldStroke = paint(Paint.Style.STROKE, width = 1.9f).apply {
         shader = LinearGradient(
             28f, 22f, 50f, 52f, Color.parseColor("#FF8FA0"), Color.parseColor("#8B5CF6"), Shader.TileMode.CLAMP
         )
     }
     private val shieldFill = paint(Paint.Style.FILL, Color.parseColor("#8B5CF6"))
-    private val checkPaint = paint(Paint.Style.STROKE, Color.WHITE, 2.4f)
+    private val checkPaint = paint(Paint.Style.STROKE, Color.WHITE, 2.1f)
     private val shinePaint = paint(Paint.Style.FILL).apply {
         shader = LinearGradient(
             0f, 0f, 14f, 0f,
@@ -126,6 +126,10 @@ class ShieldArtView @JvmOverloads constructor(
             val sScale = 1f + 0.05f * beat
 
             canvas.save()
+            // الدرع أكبر (×1.3) ومتمركز تماماً في مركز الدائرة (39,39) بدل مركزه الأصلي (39,37)
+            canvas.translate(39f, 39f)
+            canvas.scale(SHIELD_K, SHIELD_K)
+            canvas.translate(-39f, -37f)
             canvas.scale(sScale, sScale, 39f, 37f)
 
             val fillIn = seg(t, 700, 500)
@@ -156,6 +160,7 @@ class ShieldArtView @JvmOverloads constructor(
 
     private companion object {
         const val IDLE_AT = 1_700L
+        const val SHIELD_K = 1.3f
         const val BEAT_PERIOD = 6_000L
         const val BEAT_DUR = 900L
     }

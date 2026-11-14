@@ -61,12 +61,12 @@
             <!-- أيقونة أرشيف ثلاثية الأبعاد ملوّنة بلا إطار/خلفية: لا tint ولا bg_home_tile. -->
             <ImageButton
                 android:id="@+id/btnArchive"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:background="@null"
                 android:contentDescription="@string/members_archive_cd"
                 android:foreground="@drawable/ripple_home_circle"
-                android:padding="0dp"
+                android:padding="5dp"
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_archive_3d" />
         </LinearLayout>
