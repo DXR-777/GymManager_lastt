@@ -97,7 +97,7 @@
         القائمة المحمَّلة أصلاً في الذاكرة (لا استعلام قاعدة بيانات إضافي) عند الطلب
         فقط. راجع MemberDetailActivity.refreshHistoryList()/HISTORY_PAGE_SIZE.
     -->
-    <string name="detail_history_load_more">تحميل المزيد (%1$d)</string>
+    <string name="detail_history_load_more">عرض المزيد (%1$d)</string>
 
     <!-- شاشات الإعداد الأولي (Onboarding) — معالج إعداد النادي: العملة والأسعار (4.2) -->
     <string name="onboarding_pricing_title">العملة والأسعار</string>
@@ -320,7 +320,7 @@
 
     <!-- تفاصيل العضو -->
     <string name="detail_subscription_status">حالة الاشتراك</string>
-    <string name="detail_total_months">عدد أشهر الاشتراك</string>
+    <string name="detail_total_months">عدد الاشتراكات</string>
     <string name="detail_total_paid">إجمالي ما تم دفعه</string>
     <string name="detail_outstanding">المتبقي غير المدفوع</string>
     <string name="detail_outstanding_banner_sentence">⚠ هذا العضو عليه %1$s ديون سابقة (%2$s)</string>
@@ -363,10 +363,10 @@
 
     <!-- حوار الحذف -->
     <string name="delete_dialog_title">حذف العضو؟</string>
-    <string name="delete_dialog_message">سيتم نقل %1$s إلى الأرشيف. يمكنك استعادته خلال 30 يوماً.</string>
-    <string name="delete_dialog_balance_warning">⚠️ تنبيه: على هذا العضو مبلغ غير مدفوع وقدره %1$s</string>
-    <string name="delete_dialog_days_warning">⚠️ تنبيه: لا يزال للعضو %1$d يوم متبقي من اشتراكه الحالي</string>
-    <string name="delete_dialog_confirm">نعم، حذف العضو</string>
+    <string name="delete_dialog_message">سينتقل إلى الأرشيف ويمكنك استعادته خلال 30 يوماً</string>
+    <string name="delete_dialog_balance_warning">تنبيه: على هذا العضو مبلغ غير مدفوع وقدره %1$s</string>
+    <string name="delete_dialog_days_warning">تنبيه: لا يزال للعضو %1$d يوم متبقي من اشتراكه الحالي</string>
+    <string name="delete_dialog_confirm">نعم، حذف</string>
     <string name="delete_success">تم حذف العضو ونقله إلى الأرشيف</string>
     <!-- البند 27: زر التراجع في Snackbar الحذف — راجع MemberDetailActivity.showDeleteUndoSnackbar -->
     <string name="action_undo">تراجع</string>
@@ -746,4 +746,43 @@
     <string name="notif_sheet_allow">تفعيل التنبيهات</string>
     <string name="notif_sheet_later">ليس الآن</string>
     <string name="notif_sheet_footnote">يمكنك تغيير ذلك في أي وقت من إعدادات الهاتف</string>
+
+    <!-- ===== تفاصيل العضو (إعادة تصميم 2026) ===== -->
+    <string name="detail_action_whatsapp_short">واتساب</string>
+    <string name="detail_no_app">لا يوجد تطبيق مناسب لهذا الإجراء</string>
+    <string name="detail_action_renew_long">تجديد الاشتراك</string>
+    <string name="detail_action_pay_amount">تسديد %1$s</string>
+    <string name="detail_action_sms">رسالة</string>
+    <string name="detail_action_share">مشاركة</string>
+    <string name="detail_more_cd">المزيد</string>
+    <string name="detail_archive_cd">الأرشيف</string>
+    <string name="detail_no_subscription">لا يوجد اشتراك حالي</string>
+    <string name="detail_notes_title">ملاحظات</string>
+    <string name="detail_notes_empty">لا توجد ملاحظات</string>
+    <string name="detail_notes_edit_cd">تعديل الملاحظات</string>
+    <string name="detail_history_empty_hint">ستظهر هنا الاشتراكات المنتهية بعد أول تجديد.</string>
+    <plurals name="detail_days_left">
+        <item quantity="zero">ينتهي اليوم</item>
+        <item quantity="one">باقي يوم واحد</item>
+        <item quantity="two">باقي يومان</item>
+        <item quantity="few">باقي %d أيام</item>
+        <item quantity="many">باقي %d يوماً</item>
+        <item quantity="other">باقي %d يوم</item>
+    </plurals>
+    <plurals name="detail_ends_in">
+        <item quantity="zero">ينتهي اليوم</item>
+        <item quantity="one">ينتهي غداً</item>
+        <item quantity="two">ينتهي بعد يومين</item>
+        <item quantity="few">ينتهي بعد %d أيام</item>
+        <item quantity="many">ينتهي بعد %d يوماً</item>
+        <item quantity="other">ينتهي بعد %d يوم</item>
+    </plurals>
+    <plurals name="detail_expired_since">
+        <item quantity="zero">انتهى اليوم</item>
+        <item quantity="one">انتهى منذ يوم</item>
+        <item quantity="two">انتهى منذ يومين</item>
+        <item quantity="few">انتهى منذ %d أيام</item>
+        <item quantity="many">انتهى منذ %d يوماً</item>
+        <item quantity="other">انتهى منذ %d يوم</item>
+    </plurals>
 </resources>

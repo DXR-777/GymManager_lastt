@@ -50,6 +50,13 @@
         <item name="colorPrimary">@color/brand_accent</item>
     </style>
 
+    <style name="ThemeOverlay.GymManager.DialogDark" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="colorSurface">@color/detail_sheet_fill</item>
+        <item name="colorOnSurface">@color/home_ink</item>
+        <item name="colorOnSurfaceVariant">@color/home_mute</item>
+        <item name="colorPrimary">@color/home_lav</item>
+    </style>
+
     <style name="ThemeOverlay.GymManager.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
         <item name="bottomSheetStyle">@style/Widget.GymManager.BottomSheet</item>
     </style>
@@ -479,5 +486,75 @@
         <item name="helperTextTextColor">@color/home_mute</item>
         <item name="counterTextColor">@color/home_mute</item>
         <item name="endIconTint">@color/home_mute</item>
+    </style>
+
+    <!-- ===== تفاصيل العضو: أنماط صغيرة متكررة ===== -->
+    <style name="DetailActionLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:fontFamily">@font/cairo_medium</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/home_ink</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="DetailVDivider">
+        <item name="android:layout_width">1dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginVertical">8dp</item>
+        <item name="android:background">@color/detail_line</item>
+        <item name="android:importantForAccessibility">no</item>
+    </style>
+    <style name="DetailNumber">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/cairo_extrabold</item>
+        <item name="android:fontFeatureSettings">"tnum"</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+    <style name="DetailNumberCaption">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:fontFamily">@font/cairo_regular</item>
+        <item name="android:gravity">center</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:minLines">2</item>
+        <item name="android:paddingHorizontal">4dp</item>
+        <item name="android:textColor">@color/home_mute</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+    <style name="DetailFilterChip">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:background">@drawable/bg_detail_chip</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">horizontal</item>
+        <item name="android:paddingHorizontal">12dp</item>
+    </style>
+    <style name="DetailFilterChipLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/cairo_medium</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/home_mute</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+    <style name="DetailFilterChipCount">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">20dp</item>
+        <item name="android:layout_marginStart">8dp</item>
+        <item name="android:background">@drawable/bg_detail_count</item>
+        <item name="android:fontFamily">@font/cairo_bold</item>
+        <item name="android:gravity">center</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:minWidth">20dp</item>
+        <item name="android:paddingHorizontal">6dp</item>
+        <item name="android:textColor">@color/home_mute</item>
+        <item name="android:textSize">12sp</item>
     </style>
 </resources>

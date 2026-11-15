@@ -1,15 +1,31 @@
 package com.gympro.manager.ui.members
 
-import com.gympro.manager.utils.bindMemberAvatar
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.view.Menu
+import android.view.View
+import android.view.animation.DecelerateInterpolator
+import android.view.animation.OvershootInterpolator
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
+import androidx.core.animation.doOnEnd
+import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import com.gympro.manager.GymApplication
 import com.gympro.manager.R
 import com.gympro.manager.data.local.entities.GymSettingsEntity
@@ -23,21 +39,32 @@ import com.gympro.manager.model.paidPaymentMethodLabel
 import com.gympro.manager.model.paymentStatus
 import com.gympro.manager.model.remainingAmount
 import com.gympro.manager.model.senderInfoDetailLabel
+import com.gympro.manager.ui.archive.ArchiveActivity
 import com.gympro.manager.utils.CurrencyFormatter
 import com.gympro.manager.utils.DateUtils
+import com.gympro.manager.utils.Haptic
 import com.gympro.manager.utils.WhatsAppHelper
+import com.gympro.manager.utils.applySystemBarInsetsPadding
+import com.gympro.manager.utils.areAnimationsEnabled
+import com.gympro.manager.utils.bindMemberAvatar
+import com.gympro.manager.utils.capContentWidth
+import com.gympro.manager.utils.haptic
 import com.gympro.manager.utils.setOnSingleClickListener
 import com.gympro.manager.utils.toSafePhoneDigits
 import com.gympro.manager.utils.toast
-import androidx.fragment.app.setFragmentResultListener
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import com.gympro.manager.utils.applySystemBarInsetsPadding
-import com.gympro.manager.utils.Haptic
-import com.gympro.manager.utils.haptic
-import com.gympro.manager.utils.capContentWidth
+import kotlin.math.roundToInt
 
+/**
+ * شاشة تفاصيل العضو (إعادة تصميم 2026). المنطق (الاشتراكات، الدفع، الحذف الناعم، واتساب…)
+ * لم يتغيّر؛ تغيّرت طبقة العرض: حلقة تقدّم حول الصورة، بطاقة هيرو بزر إجراء سياقي واحد،
+ * إجراءات سريعة، ملخص مالي، ملاحظات، سجل كخط زمني بفلتر منزلق، ومنطقة حذف هادئة.
+ *
+ * الحركة (تحترم "تقليل الحركة" عبر areAnimationsEnabled): دخول البطاقات بفارق 60ms، رسم الحلقة
+ * خلال 800ms، عدّ الأرقام 700ms، ظهور مدخلات الخط الزمني عند دخولها الشاشة، ومؤشر الفلتر
+ * المنزلق بتجاوز خفيف.
+ */
 class MemberDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMemberDetailBinding
@@ -52,43 +79,67 @@ class MemberDetailActivity : AppCompatActivity() {
     private var currentSubscription: SubscriptionEntity? = null
     private var currentStats: MemberStats = MemberStats(0, 0.0, 0.0)
 
-    // البند 30: سجل الاشتراكات الكامل كما وصل من قاعدة البيانات (غير مُصفّى وغير مُعاد
-    // فرزه) — يُحفَظ منفصلاً عن القائمة المعروضة فعلياً حتى يمكن تطبيق فلتر/فرز جديد
-    // فوراً دون انتظار انبعاث جديد من observeSubscriptionHistory. راجع refreshHistoryList().
+    // سجل الاشتراكات الكامل كما وصل من قاعدة البيانات (غير مُصفّى وغير مُفرز) — منفصل عن
+    // القائمة المعروضة حتى يُطبَّق فلتر/فرز جديد فوراً دون انتظار انبعاث جديد.
     private var fullHistory: List<SubscriptionEntity> = emptyList()
     private var currentHistoryFilter: PaymentStatus? = null
     private var currentHistorySortNewestFirst: Boolean = true
 
     /**
-     * يحدّ عدد سجلات الاشتراك المعروضة فعلياً في rvHistory (وليس المُحمَّلة في الذاكرة —
-     * fullHistory يبقى كاملاً كما هو). راجع تعليق detail_history_load_more في strings.xml
-     * لسبب وجود هذا الحد: عضو باقة يومية منتظم يتراكم له مئات السجلات، وrvHistory هنا
-     * بلا تدوير حقيقي (داخل ScrollView خارجي)، فرسم كل سجل دفعة واحدة عند أول فتح يسبب
-     * تجميداً ملموساً. يُعاد الحد لقيمته الابتدائية عند أي تغيير فلتر/فرز (refreshHistoryList
-     * تستدعي resetHistoryPaging فقط من مصادر التغيير هذه، لا من كل استدعاء).
+     * يحدّ عدد السجلات المعروضة فعلياً في rvHistory (وليس المُحمَّلة في الذاكرة): عضو بباقة
+     * يومية قد يتراكم له مئات السجلات، وrvHistory هنا بلا تدوير حقيقي (داخل ScrollView)،
+     * فرسمها كلها دفعة واحدة يسبب تجمّداً. يُعاد للقيمة الابتدائية عند تغيّر الفلتر/الفرز.
      */
     private var historyVisibleLimit: Int = HISTORY_PAGE_SIZE
+
+    private var firstRenderDone = false
+    private var numbersAnimator: ValueAnimator? = null
+    private var skeletonAnimator: ObjectAnimator? = null
+
+    private class FilterChipRef(
+        val container: View,
+        val label: TextView,
+        val count: TextView,
+        val status: PaymentStatus?
+    )
+    private lateinit var filterChips: List<FilterChipRef>
+    private lateinit var selectedChip: FilterChipRef
+    private var indicatorAnimator: ValueAnimator? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMemberDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.root.applySystemBarInsetsPadding()
-        capContentWidth(binding.root)
+
+        // شاشة داكنة دائماً (نفس الرئيسية والأعضاء): شريطا الحالة والتنقّل بلون الخلفية وأيقونات فاتحة.
+        val barColor = ContextCompat.getColor(this, R.color.home_bg)
+        window.statusBarColor = barColor
+        window.navigationBarColor = barColor
+        WindowCompat.getInsetsController(window, binding.root).apply {
+            isAppearanceLightStatusBars = false
+            isAppearanceLightNavigationBars = false
+        }
+        binding.detailContent.applySystemBarInsetsPadding()
+        capContentWidth(binding.detailContent)
 
         memberId = intent.getLongExtra(EXTRA_MEMBER_ID, -1L)
         if (memberId == -1L) { finish(); return }
 
         binding.btnBack.setOnClickListener { finish() }
-        // LinearLayoutManager داخل ScrollView يقيس فقط العناصر المرئية على الشاشة
-        // عند أول تحميل، مما يُحدّد الارتفاع بعدد العناصر الأولى فقط.
+        // LinearLayoutManager داخل ScrollView يقيس فقط العناصر المرئية عند أول تحميل؛
         // الحل: LayoutManager مخصص يُجبر على قياس كل العناصر دفعة واحدة.
         binding.rvHistory.layoutManager = object : LinearLayoutManager(this) {
             override fun canScrollVertically() = false
             override fun isAutoMeasureEnabled() = true
         }
         binding.rvHistory.adapter = historyAdapter
+        // بلا ItemAnimator: الظهور التدريجي تتحكّم به revealVisibleHistory وحدها، وإلا ظهرت
+        // العناصر خارج الشاشة بحركة الإضافة الافتراضية قبل أن تُكشف أثناء التمرير.
+        binding.rvHistory.itemAnimator = null
+        binding.scrollView.setOnScrollChangeListener { _, _, _, _, _ -> revealVisibleHistory() }
 
+        prepareEntrance()
+        startSkeletonPulse()
         setupActions()
         setupHistoryControls()
         setupFragmentResultListeners()
@@ -96,10 +147,8 @@ class MemberDetailActivity : AppCompatActivity() {
     }
 
     /**
-     * تُسجَّل هنا بدلاً من lambda callback داخل DeleteConfirmBottomSheet، لأن
-     * الـ lambda لا يمكن استعادتها إذا أعاد FragmentManager إنشاء الحوار
-     * بعد قتل العملية في الخلفية. Fragment Result API آمن للاستعادة لأنه
-     * لا يعتمد على أي مرجع تم تمريره وقت الإنشاء.
+     * تُسجَّل هنا بدلاً من lambda داخل DeleteConfirmBottomSheet، لأن الـ lambda لا تُستعاد إذا
+     * أعاد FragmentManager إنشاء الحوار بعد قتل العملية. Fragment Result API آمن للاستعادة.
      */
     private fun setupFragmentResultListeners() {
         supportFragmentManager.setFragmentResultListener(
@@ -117,15 +166,8 @@ class MemberDetailActivity : AppCompatActivity() {
     }
 
     /**
-     * البند 27: الحذف هنا Soft-delete فعلياً (نقل للأرشيف قابل للاستعادة خلال 30 يوماً —
-     * راجع ArchivePurgeWorker)، لكن الشاشة كانت تُغلَق فوراً (finish()) بلا أي طريقة
-     * للتراجع، فيبدو القرار نهائياً بصرياً للمستخدم رغم أنه ليس كذلك فعلياً. الآن:
-     * Snackbar بزر "تراجع" يُبقي هذه الشاشة مفتوحة (finish() يُؤجَّل إلى onDismissed
-     * بدل استدعائه فوراً)؛ إن ضغط المستخدم "تراجع" يُستعاد العضو (restoreMember) وتبقى
-     * الشاشة كما هي؛ إن انتهت مدة الـ Snackbar (أو أُغلقت بأي طريقة أخرى) دون تراجع،
-     * تُغلَق الشاشة كالسابق تماماً. لا حاجة لأي تعديل في render()/observeData(): استعلام
-     * العضو (getById) لا يُصفّي حسب isDeleted أصلاً فتستمر الشاشة بعرضه بشكل طبيعي
-     * طوال دورة الحذف/التراجع هذه.
+     * الحذف Soft-delete (نقل للأرشيف قابل للاستعادة خلال 30 يوماً — ArchivePurgeWorker).
+     * Snackbar بزر "تراجع" يُبقي الشاشة مفتوحة؛ إن انتهت المدة دون تراجع تُغلَق الشاشة.
      */
     private fun showDeleteUndoSnackbar() {
         var undone = false
@@ -145,35 +187,66 @@ class MemberDetailActivity : AppCompatActivity() {
     private fun setupActions() {
         binding.btnWhatsapp.setOnSingleClickListener { sendWhatsapp() }
         binding.btnCall.setOnSingleClickListener { callMember() }
-        binding.btnRenew.setOnClickListener {
-            it.isEnabled = false
-            startActivity(
-                Intent(this, AddEditMemberActivity::class.java)
-                    .putExtra(AddEditMemberActivity.EXTRA_MEMBER_ID, memberId)
-                    .putExtra(AddEditMemberActivity.EXTRA_RENEW, true)
-            )
-        }
-        binding.btnEdit.setOnClickListener {
-            it.isEnabled = false
-            startActivity(
-                Intent(this, AddEditMemberActivity::class.java)
-                    .putExtra(AddEditMemberActivity.EXTRA_MEMBER_ID, memberId)
-            )
-        }
+        binding.btnSms.setOnSingleClickListener { sendSms() }
+        binding.btnShare.setOnSingleClickListener { shareMember() }
         binding.btnDelete.setOnSingleClickListener { showDeleteConfirmation() }
-        binding.cardOutstandingBanner.setOnClickListener {
+        binding.btnNotesEdit.setOnSingleClickListener { openEdit() }
+        binding.btnMore.setOnClickListener { showMoreMenu() }
+        binding.btnHistoryArchive.setOnSingleClickListener {
+            startActivity(Intent(this, ArchiveActivity::class.java))
+        }
+        // شريحة "تسديد" في الملخص المالي: تقود إلى السجل حيث يُسدَّد كل اشتراك بمبلغه الفعلي.
+        binding.btnOutstandingPay.setOnClickListener {
             binding.scrollView.post {
-                binding.scrollView.smoothScrollTo(0, binding.rvHistory.top)
+                binding.scrollView.smoothScrollTo(0, binding.sectionHistory.top)
             }
         }
     }
 
+    /** قائمة "المزيد": تعديل / حذف. */
+    private fun showMoreMenu() {
+        PopupMenu(this, binding.btnMore).apply {
+            menu.add(Menu.NONE, MENU_EDIT, 0, R.string.detail_action_edit)
+            menu.add(Menu.NONE, MENU_DELETE, 1, R.string.detail_action_delete)
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    MENU_EDIT -> openEdit()
+                    MENU_DELETE -> showDeleteConfirmation()
+                }
+                true
+            }
+            show()
+        }
+    }
+
+    private fun openEdit() {
+        startActivity(
+            Intent(this, AddEditMemberActivity::class.java)
+                .putExtra(AddEditMemberActivity.EXTRA_MEMBER_ID, memberId)
+        )
+    }
+
+    private fun openRenew() {
+        binding.btnPrimaryAction.isEnabled = false
+        startActivity(
+            Intent(this, AddEditMemberActivity::class.java)
+                .putExtra(AddEditMemberActivity.EXTRA_MEMBER_ID, memberId)
+                .putExtra(AddEditMemberActivity.EXTRA_RENEW, true)
+        )
+    }
+
     override fun onResume() {
         super.onResume()
-        // يُعاد تفعيلهما هنا (وليس فقط عند الإنشاء) لأن العودة من AddEditMemberActivity
-        // عبر زر الرجوع تُعيد استخدام نفس نسخة هذه الشاشة دون المرور بـ onCreate مجدداً.
-        binding.btnRenew.isEnabled = true
-        binding.btnEdit.isEnabled = true
+        // يُعاد تفعيله هنا لأن العودة من AddEditMemberActivity بزر الرجوع تُعيد استخدام نفس
+        // النسخة دون المرور بـ onCreate.
+        binding.btnPrimaryAction.isEnabled = true
+    }
+
+    override fun onDestroy() {
+        numbersAnimator?.cancel()
+        skeletonAnimator?.cancel()
+        indicatorAnimator?.cancel()
+        super.onDestroy()
     }
 
     private fun observeData() {
@@ -206,135 +279,225 @@ class MemberDetailActivity : AppCompatActivity() {
         stats: MemberStats,
         settings: GymSettingsEntity
     ) {
-        binding.tvInitial.bindMemberAvatar(member.name, member.photoPath, 384)
+        val first = !firstRenderDone
+        bindHero(member, current, settings, animate = first)
+        bindNumbers(stats, settings, animate = first)
+        bindNotes(member)
+
+        fullHistory = history
+        binding.tvHistoryCount.text = history.size.toString()
+        updateChipCounts()
+        refreshHistoryList()
+
+        if (first) {
+            firstRenderDone = true
+            stopSkeleton()
+            playEntrance()
+        }
+    }
+
+    // ───────────────────────── الهيرو ─────────────────────────
+
+    private fun bindHero(member: MemberEntity, current: SubscriptionEntity?, settings: GymSettingsEntity, animate: Boolean) {
+        binding.tvInitial.bindMemberAvatar(member.name, member.photoPath, 312)
         binding.tvName.text = member.name
         binding.tvPhone.text = member.phone
         binding.tvMemberSince.text = getString(R.string.detail_member_since, DateUtils.formatDate(member.createdAt))
 
-        binding.tvTotalMonths.text = stats.totalMonthsSubscribed.toString()
-        binding.tvTotalPaid.text = CurrencyFormatter.formatEmphasized(this, stats.totalPaid, settings.currencySymbol)
-        binding.tvTotalOutstanding.text = CurrencyFormatter.formatEmphasized(this, stats.totalOutstanding, settings.currencySymbol)
+        if (current == null) {
+            // عضو بلا أي اشتراك: حلقة فارغة وعنوان محايد وزر تجديد.
+            val lav = getColor(R.color.home_lav)
+            binding.chipPlan.visibility = View.GONE
+            binding.chipPayment.visibility = View.GONE
+            binding.chipMethod.visibility = View.GONE
+            binding.tvCurrentSenderInfo.visibility = View.GONE
+            binding.tvDaysRemainingBig.text = getString(R.string.detail_no_subscription)
+            binding.tvDaysRemainingBig.setTextColor(lav)
+            binding.tvCurrentDates.text = ""
+            binding.progressSubscription.progress = 0
+            binding.ringSubscription.setRing(0f, lav, animate = false)
+            styleAsPrimary(isCta = true)
+            binding.btnPrimaryAction.text = getString(R.string.detail_action_renew_long)
+            binding.btnPrimaryAction.setOnSingleClickListener { openRenew() }
+            return
+        }
 
-        // بنر الدَّين المتراكم: مستقل تماماً عن current.isPaid (الذي يصف الدورة الحالية فقط).
-        // يظهر فقط عند وجود دَين تاريخي حقيقي > 0، ويُخفى تماماً غير ذلك حتى لا يتحول
-        // إلى "ضوضاء بصرية" دائمة تفقد الموظفين الحساسية تجاهه مع الوقت.
-        // عدد الاشتراكات (وليس "الأشهر"): النظام يدعم اشتراكات يومية/أسبوعية/شهرية،
-        // فاستخدام "أشهر" هنا قد يضلل صاحب الجيم لو كان العضو على باقة يومية.
-        if (stats.totalOutstanding > 0.0) {
-            binding.cardOutstandingBanner.visibility = android.view.View.VISIBLE
-            val amountLabel = CurrencyFormatter.format(stats.totalOutstanding, settings.currencySymbol)
-            val countLabel = resources.getQuantityString(
-                R.plurals.detail_outstanding_banner_count,
-                stats.unpaidSubscriptionsCount,
-                stats.unpaidSubscriptionsCount
-            )
-            binding.tvOutstandingBannerSentence.text =
-                getString(R.string.detail_outstanding_banner_sentence, amountLabel, countLabel)
+        binding.chipPlan.visibility = View.VISIBLE
+        binding.chipPayment.visibility = View.VISIBLE
+        binding.tvCurrentTypeBadge.text = typeLabel(current.type)
+
+        // شارة حالة الدفع: مدفوع (نعناعي) / جزئي (لافندر) / غير مدفوع (مرجاني).
+        val status = current.paymentStatus()
+        val (payLabel, payColor, payBg, payIcon) = when (status) {
+            PaymentStatus.PAID -> PayStyle(R.string.status_paid, R.color.home_mint, R.drawable.bg_detail_pill_mint, R.drawable.ic_pd_check)
+            PaymentStatus.PARTIAL -> PayStyle(R.string.payment_status_partial, R.color.home_lav, R.drawable.bg_detail_pill_lav, R.drawable.ic_pd_alert)
+            PaymentStatus.UNPAID -> PayStyle(R.string.status_unpaid, R.color.home_coral, R.drawable.bg_detail_pill_coral, R.drawable.ic_pd_alert)
+        }
+        binding.tvCurrentPaidBadge.text = getString(payLabel)
+        binding.tvCurrentPaidBadge.setTextColor(getColor(payColor))
+        binding.chipPayment.setBackgroundResource(payBg)
+        binding.ivChipPayment.setImageResource(payIcon)
+        binding.ivChipPayment.imageTintList = ColorStateList.valueOf(getColor(payColor))
+
+        // طريقة الدفع: لا تُعرض إلا بعد أن يُدفع الاشتراك فعلياً (paidPaymentMethodLabel) —
+        // قبل ذلك القيمة المحفوظة مجرد اختيار افتراضي ولا تعني أن تحصيلاً حدث.
+        val methodLabel = current.paidPaymentMethodLabel(this)
+        if (methodLabel != null) {
+            binding.tvCurrentPaymentMethod.text = methodLabel
+            binding.chipMethod.visibility = View.VISIBLE
         } else {
-            binding.cardOutstandingBanner.visibility = android.view.View.GONE
+            binding.chipMethod.visibility = View.GONE
         }
 
-        if (current != null) {
-            binding.tvCurrentTypeBadge.text = typeLabel(current.type)
-            // شارة حالة الدفع: ثلاث حالات الآن (مدفوع/جزئي/غير مدفوع) بدل حالتين، بحسب
-            // ميزة "الدفع الجزئي" الجديدة — راجع PaymentStatus.kt.
-            when (current.paymentStatus()) {
-                PaymentStatus.PAID -> {
-                    binding.tvCurrentPaidBadge.text = getString(R.string.status_paid)
-                    binding.tvCurrentPaidBadge.setBackgroundResource(R.drawable.bg_pill_success)
-                    binding.tvCurrentPaidBadge.setTextColor(getColor(R.color.status_success_text))
-                }
-                PaymentStatus.PARTIAL -> {
-                    binding.tvCurrentPaidBadge.text = getString(R.string.payment_status_partial)
-                    binding.tvCurrentPaidBadge.setBackgroundResource(R.drawable.bg_pill_partial)
-                    binding.tvCurrentPaidBadge.setTextColor(getColor(R.color.status_partial_text))
-                }
-                PaymentStatus.UNPAID -> {
-                    binding.tvCurrentPaidBadge.text = getString(R.string.status_unpaid)
-                    binding.tvCurrentPaidBadge.setBackgroundResource(R.drawable.bg_pill_error)
-                    binding.tvCurrentPaidBadge.setTextColor(getColor(R.color.status_error_text))
-                }
-            }
-
-            val days = DateUtils.daysRemaining(current.endDate)
-            val isFutureSubscription = DateUtils.isFuture(current.startDate)
-            binding.tvDaysRemainingBig.text = when {
-                isFutureSubscription -> getString(R.string.days_remaining_not_started)
-                days < 0 -> getString(R.string.days_remaining_expired, -days)
-                days == 0 -> getString(R.string.days_remaining_today)
-                else -> getString(R.string.days_remaining_format, days)
-            }
-            binding.tvDaysRemainingBig.setTextColor(
-                getColor(
-                    when {
-                        isFutureSubscription -> R.color.text_secondary
-                        days < 0 -> R.color.status_error_text
-                        days <= 3 -> R.color.status_warning
-                        else -> R.color.status_success_text
-                    }
-                )
-            )
-            binding.tvCurrentDates.text = "${DateUtils.formatDate(current.startDate)} ← ${DateUtils.formatDate(current.endDate)}"
-
-            // طريقة الدفع: لا تُعرض إطلاقاً إلا بعد أن يُدفع الاشتراك فعلياً (راجع
-            // paidPaymentMethodLabel في PaymentMethod.kt). قبل ذلك، القيمة المحفوظة في
-            // paymentMethod مجرد اختيار افتراضي من الدروب-داون عند إنشاء العضو ولا تعني
-            // أن أي تحصيل حدث — عرضها كـ"سيتم الدفع عبر: ..." كان يُوهم صاحب الجيم بأن
-            // طريقة دفع معيّنة "محجوزة" أو مؤكدة، بينما لا شيء تأكّد بعد.
-            val currentMethodLabel = current.paidPaymentMethodLabel(this)
-            if (currentMethodLabel != null) {
-                binding.tvCurrentPaymentMethod.text =
-                    getString(R.string.detail_payment_method_paid, currentMethodLabel)
-                binding.tvCurrentPaymentMethod.visibility = android.view.View.VISIBLE
-            } else {
-                binding.tvCurrentPaymentMethod.visibility = android.view.View.GONE
-            }
-
-            // معلومات المُرسِل (اسم صاحب المحفظة/رقم المحفظة): لنفس السبب أعلاه، لا تُعرض
-            // إلا لاشتراك دخل جزء حقيقي منه في الإيراد فعلياً (مدفوع بالكامل أو جزئياً) —
-            // بيانات مُرسِل لدفعة لم تحدث بعد ليست معلومة حقيقية بل توقّع، فتُخفى تماماً
-            // وهي UNPAID (راجع SubscriptionDisplay.kt وPaymentStatus.kt).
-            val senderInfo = if (current.paymentStatus() != PaymentStatus.UNPAID) {
-                current.senderInfoDetailLabel(this)
-            } else null
-            if (senderInfo != null) {
-                binding.tvCurrentSenderInfo.text = senderInfo
-                binding.tvCurrentSenderInfo.visibility = android.view.View.VISIBLE
-            } else {
-                binding.tvCurrentSenderInfo.visibility = android.view.View.GONE
-            }
-
-            val total = (current.endDate - current.startDate).coerceAtLeast(1L)
-            val elapsed = (DateUtils.now() - current.startDate).coerceIn(0L, total)
-            binding.progressSubscription.progress = ((elapsed * 100) / total).toInt()
+        // معلومات المُرسِل: فقط لاشتراك دخل جزء حقيقي منه في الإيراد (ليس UNPAID).
+        val senderInfo = if (status != PaymentStatus.UNPAID) current.senderInfoDetailLabel(this) else null
+        if (senderInfo != null) {
+            binding.tvCurrentSenderInfo.text = senderInfo
+            binding.tvCurrentSenderInfo.visibility = View.VISIBLE
+        } else {
+            binding.tvCurrentSenderInfo.visibility = View.GONE
         }
 
-        fullHistory = history
-        refreshHistoryList()
+        // لون الحالة: نعناعي (نشط) · كهرماني (3 أيام أو أقل) · مرجاني (منتهي) · لافندر (لم يبدأ).
+        val days = DateUtils.daysRemaining(current.endDate)
+        val future = DateUtils.isFuture(current.startDate)
+        val statusColor = getColor(
+            when {
+                future -> R.color.home_lav
+                days < 0 -> R.color.home_coral
+                days <= 3 -> R.color.home_amber
+                else -> R.color.home_mint
+            }
+        )
+        binding.tvDaysRemainingBig.text = when {
+            future -> getString(R.string.days_remaining_not_started)
+            days < 0 -> resources.getQuantityString(R.plurals.detail_expired_since, -days, -days)
+            days == 0 -> getString(R.string.days_remaining_today)
+            days <= 3 -> resources.getQuantityString(R.plurals.detail_ends_in, days, days)
+            else -> resources.getQuantityString(R.plurals.detail_days_left, days, days)
+        }
+        binding.tvDaysRemainingBig.setTextColor(statusColor)
+        binding.tvCurrentDates.text = "${DateUtils.formatDate(current.startDate)} ← ${DateUtils.formatDate(current.endDate)}"
+
+        // الحلقة = المتبقي من المدة، الشريط = المنقضي منها (مجموعهما 100%).
+        val total = (current.endDate - current.startDate).coerceAtLeast(1L)
+        val elapsed = (DateUtils.now() - current.startDate).coerceIn(0L, total)
+        val elapsedShare = elapsed.toFloat() / total
+        val ringFraction = when {
+            future -> 1f
+            days < 0 -> 0f
+            else -> 1f - elapsedShare
+        }
+        binding.ringSubscription.setRing(ringFraction, statusColor, animate = animate && areAnimationsEnabled())
+        binding.progressSubscription.progress = (elapsedShare * 100).toInt()
+        binding.progressSubscription.progressTintList = ColorStateList.valueOf(statusColor)
+
+        // الزر الأساسي الوحيد (سياقي): تسديد إن لم يُدفع، وإلا تجديد (بتدرّج إن قارب/انتهى
+        // الاشتراك، وبشكل زجاجي هادئ إن كان ساري المفعول لتبقى الأولوية البصرية للإجراء المُلحّ).
+        if (status != PaymentStatus.PAID) {
+            val amount = CurrencyFormatter.format(current.remainingAmount(), settings.currencySymbol)
+            styleAsPrimary(isCta = true)
+            binding.btnPrimaryAction.text = getString(R.string.detail_action_pay_amount, amount)
+            binding.btnPrimaryAction.setOnSingleClickListener { confirmSettleDebt(current) }
+        } else {
+            styleAsPrimary(isCta = future.not() && days <= 3)
+            binding.btnPrimaryAction.text = getString(R.string.detail_action_renew_long)
+            binding.btnPrimaryAction.setOnSingleClickListener { openRenew() }
+        }
     }
 
-    /**
-     * البند 30: فلتر حالة الدفع (شرائح) + زر فرز لسجل الاشتراكات — لعضو قديم بعشرات
-     * الاشتراكات كان يظهر كل شيء دفعة واحدة بلا أي طريقة لتضييق أو إعادة ترتيب القائمة.
-     * كلاهما محلي بحت فوق fullHistory (لا استعلام قاعدة بيانات إضافي)، لأن سجل عضو واحد
-     * محدود الحجم عملياً بخلاف قائمة كل الأعضاء (راجع البند 24 لسبب استخدام Paging هناك
-     * تحديداً ولماذا لا حاجة له هنا).
-     */
-    private fun setupHistoryControls() {
-        binding.chipGroupHistoryFilter.setOnCheckedStateChangeListener { _, checkedIds ->
-            binding.chipGroupHistoryFilter.haptic(Haptic.TICK)
-            val id = checkedIds.firstOrNull() ?: return@setOnCheckedStateChangeListener
-            currentHistoryFilter = when (id) {
-                R.id.chipHistoryPaid -> PaymentStatus.PAID
-                R.id.chipHistoryPartial -> PaymentStatus.PARTIAL
-                R.id.chipHistoryUnpaid -> PaymentStatus.UNPAID
-                else -> null
-            }
-            // فلتر جديد = عرض مبدئي جديد بنفس الحد الافتراضي، لا الاستمرار بحد ضخم
-            // تراكم من تصفّح سابق لفلتر مختلف تماماً.
-            historyVisibleLimit = HISTORY_PAGE_SIZE
-            refreshHistoryList()
+    private data class PayStyle(val label: Int, val color: Int, val bg: Int, val icon: Int)
+
+    private fun styleAsPrimary(isCta: Boolean) {
+        binding.btnPrimaryAction.setBackgroundResource(
+            if (isCta) R.drawable.bg_home_cta else R.drawable.bg_detail_btn_glass
+        )
+    }
+
+    // ───────────────────────── الأرقام والملخص المالي ─────────────────────────
+
+    private fun bindNumbers(stats: MemberStats, settings: GymSettingsEntity, animate: Boolean) {
+        val symbol = settings.currencySymbol
+        fun showNumbers(f: Float) {
+            binding.tvTotalMonths.text = (stats.totalMonthsSubscribed * f).roundToInt().toString()
+            binding.tvTotalPaid.text = CurrencyFormatter.formatEmphasized(this, stats.totalPaid * f, symbol)
+            binding.tvTotalOutstanding.text = CurrencyFormatter.formatEmphasized(this, stats.totalOutstanding * f, symbol)
         }
+        numbersAnimator?.cancel()
+        if (animate && areAnimationsEnabled()) {
+            numbersAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+                duration = 700L
+                interpolator = DecelerateInterpolator(1.8f)
+                addUpdateListener { showNumbers(it.animatedValue as Float) }
+                doOnEnd { showNumbers(1f) }
+                start()
+            }
+        } else {
+            showNumbers(1f)
+        }
+
+        // عمود المتبقي: يتوهّج بالمرجاني ويُظهر زر "تسديد" عند وجود دَين فقط.
+        val hasDebt = stats.totalOutstanding > 0.0
+        binding.colOutstanding.background =
+            if (hasDebt) ContextCompat.getDrawable(this, R.drawable.bg_detail_glow_coral) else null
+        binding.tvTotalOutstanding.setShadowLayer(
+            if (hasDebt) 24f else 0f, 0f, 0f, getColor(R.color.detail_glow_coral)
+        )
+        binding.btnOutstandingPay.visibility = if (hasDebt) View.VISIBLE else View.GONE
+
+        // الشريط المكدّس: حصة المدفوع مقابل المتبقي (حدّ أدنى مرئي لأي جزء موجود).
+        val paid = stats.totalPaid
+        val owed = stats.totalOutstanding
+        val paidLp = binding.barPaid.layoutParams as android.widget.LinearLayout.LayoutParams
+        val remLp = binding.barRemaining.layoutParams as android.widget.LinearLayout.LayoutParams
+        when {
+            owed <= 0.0 -> {
+                paidLp.weight = 1f
+                binding.barPaid.visibility = View.VISIBLE
+                binding.barRemaining.visibility = View.GONE
+            }
+            paid <= 0.0 -> {
+                binding.barPaid.visibility = View.GONE
+                remLp.weight = 1f
+                binding.barRemaining.visibility = View.VISIBLE
+            }
+            else -> {
+                val share = (paid / (paid + owed)).toFloat().coerceIn(0.04f, 0.96f)
+                paidLp.weight = share
+                remLp.weight = 1f - share
+                binding.barPaid.visibility = View.VISIBLE
+                binding.barRemaining.visibility = View.VISIBLE
+            }
+        }
+        binding.barPaid.layoutParams = paidLp
+        binding.barRemaining.layoutParams = remLp
+    }
+
+    // ───────────────────────── الملاحظات ─────────────────────────
+
+    private fun bindNotes(member: MemberEntity) {
+        val notes = member.notes.trim()
+        val empty = notes.isEmpty()
+        binding.tvNotes.text = if (empty) getString(R.string.detail_notes_empty) else notes
+        binding.tvNotes.alpha = if (empty) 0.75f else 1f
+        // الحالة الفارغة: إطار متقطع هادئ بلا تعبئة.
+        binding.cardNotes.setBackgroundResource(if (empty) R.drawable.bg_detail_empty else R.drawable.bg_detail_card)
+    }
+
+    // ───────────────────────── فلتر السجل + الخط الزمني ─────────────────────────
+
+    private fun setupHistoryControls() {
+        filterChips = listOf(
+            FilterChipRef(binding.chipHistoryAll, binding.tvChipAllLabel, binding.tvChipAllCount, null),
+            FilterChipRef(binding.chipHistoryPaid, binding.tvChipPaidLabel, binding.tvChipPaidCount, PaymentStatus.PAID),
+            FilterChipRef(binding.chipHistoryPartial, binding.tvChipPartialLabel, binding.tvChipPartialCount, PaymentStatus.PARTIAL),
+            FilterChipRef(binding.chipHistoryUnpaid, binding.tvChipUnpaidLabel, binding.tvChipUnpaidCount, PaymentStatus.UNPAID)
+        )
+        selectedChip = filterChips.first()
+        filterChips.forEach { ref -> ref.container.setOnClickListener { selectHistoryFilter(ref) } }
+        applyChipVisuals()
+        binding.chipRow.post { moveIndicator(selectedChip, animate = false) }
+
         binding.btnHistorySort.setOnSingleClickListener { showHistorySortDialog() }
         binding.btnHistoryLoadMore.setOnSingleClickListener {
             historyVisibleLimit += HISTORY_PAGE_SIZE
@@ -342,14 +505,77 @@ class MemberDetailActivity : AppCompatActivity() {
         }
     }
 
-    /** نفس حوار الفرز المستخدم في شاشة قائمة الأعضاء (MembersFragment.showSortDialog) لكن بخيارين فقط. */
+    private fun selectHistoryFilter(ref: FilterChipRef) {
+        if (ref === selectedChip) return
+        binding.chipRow.haptic(Haptic.TICK)
+        selectedChip = ref
+        currentHistoryFilter = ref.status
+        // فلتر جديد = عرض مبدئي جديد بنفس الحد الافتراضي.
+        historyVisibleLimit = HISTORY_PAGE_SIZE
+        applyChipVisuals()
+        moveIndicator(ref, animate = true)
+        refreshHistoryList()
+    }
+
+    private fun applyChipVisuals() {
+        val ink = getColor(R.color.home_ink)
+        val mute = getColor(R.color.home_mute)
+        filterChips.forEach { ref ->
+            val selected = ref === selectedChip
+            ref.label.setTextColor(if (selected) ink else mute)
+            ref.count.setTextColor(if (selected) ink else mute)
+            // المختارة بلا خلفية: يظهر خلفها المؤشر المتدرّج المنزلق.
+            ref.container.background =
+                if (selected) null else ContextCompat.getDrawable(this, R.drawable.bg_detail_chip)
+            ref.container.isSelected = selected
+        }
+    }
+
+    /** يُحرّك المؤشر المتدرّج إلى الشريحة المختارة: انزلاق 350ms بتجاوز خفيف. */
+    private fun moveIndicator(ref: FilterChipRef, animate: Boolean) {
+        val indicator = binding.chipIndicator
+        val lp = indicator.layoutParams
+        val targetW = ref.container.width
+        val targetX = ref.container.left.toFloat()
+        indicatorAnimator?.cancel()
+        if (!animate || !areAnimationsEnabled() || lp.width <= 0) {
+            lp.width = targetW
+            indicator.layoutParams = lp
+            indicator.translationX = targetX
+            return
+        }
+        val startW = lp.width
+        val startX = indicator.translationX
+        indicatorAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = 350L
+            interpolator = OvershootInterpolator(1.1f)
+            addUpdateListener {
+                val f = it.animatedValue as Float
+                lp.width = (startW + (targetW - startW) * f).toInt().coerceAtLeast(0)
+                indicator.layoutParams = lp
+                indicator.translationX = startX + (targetX - startX) * f
+            }
+            start()
+        }
+    }
+
+    private fun updateChipCounts() {
+        binding.tvChipAllCount.text = fullHistory.size.toString()
+        binding.tvChipPaidCount.text = fullHistory.count { it.paymentStatus() == PaymentStatus.PAID }.toString()
+        binding.tvChipPartialCount.text = fullHistory.count { it.paymentStatus() == PaymentStatus.PARTIAL }.toString()
+        binding.tvChipUnpaidCount.text = fullHistory.count { it.paymentStatus() == PaymentStatus.UNPAID }.toString()
+        // تغيّر عرض الشرائح بتغيّر الأرقام → أعد وضع المؤشر دون حركة.
+        binding.chipRow.post { moveIndicator(selectedChip, animate = false) }
+    }
+
+    /** حوار الفرز (الأحدث/الأقدم أولاً) بنفس الهوية الداكنة. */
     private fun showHistorySortDialog() {
         val labels = arrayOf(
             getString(R.string.detail_history_sort_newest),
             getString(R.string.detail_history_sort_oldest)
         )
         val checkedIndex = if (currentHistorySortNewestFirst) 0 else 1
-        com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_GymManager_DialogDark)
             .setTitle(R.string.members_sort_action)
             .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
                 currentHistorySortNewestFirst = which == 0
@@ -361,50 +587,114 @@ class MemberDetailActivity : AppCompatActivity() {
     }
 
     /**
-     * يطبّق currentHistoryFilter/currentHistorySortNewestFirst على fullHistory ويُحدِّث
-     * القائمة المعروضة فعلياً — نفس منطق تحديث الظهور/الفراغ الذي كان في نهاية render()
-     * سابقاً، بالإضافة لتمييز حالة "لا نتائج بسبب الفلتر" عن "لا اشتراكات إطلاقاً"
-     * (نفس مبدأ البند 16 في شاشة قائمة الأعضاء).
+     * يطبّق الفلتر والفرز الحاليين على fullHistory ويُحدِّث القائمة المعروضة، ويميّز حالة
+     * "لا نتائج بسبب الفلتر" عن "لا اشتراكات إطلاقاً".
      */
     private fun refreshHistoryList() {
         var list = fullHistory
         currentHistoryFilter?.let { status -> list = list.filter { it.paymentStatus() == status } }
-        list = if (currentHistorySortNewestFirst) {
-            list.sortedByDescending { it.startDate }
-        } else {
-            list.sortedBy { it.startDate }
-        }
+        list = if (currentHistorySortNewestFirst) list.sortedByDescending { it.startDate }
+        else list.sortedBy { it.startDate }
 
-        // نرسم فقط أول historyVisibleLimit من القائمة المُفلترة/المُفرزة، لا القائمة كاملة —
-        // راجع تعليق historyVisibleLimit أعلاه. fullHistory وlist المُفلترة يبقيان كاملين
-        // في الذاكرة (بلا أي استعلام إضافي)؛ المحدود فقط ما يُرسَل فعلياً لمحوّل RecyclerView.
+        // نرسم فقط أول historyVisibleLimit من القائمة المُفلترة/المُفرزة (راجع تعليقه أعلاه).
         val visibleCount = list.size.coerceAtMost(historyVisibleLimit)
         val visibleList = list.take(visibleCount)
         val remaining = list.size - visibleCount
 
-        val historyWasEmpty = historyAdapter.itemCount == 0
-        historyAdapter.submitList(visibleList, currentSettings.currencySymbol)
-        if (historyWasEmpty && visibleList.isNotEmpty()) binding.rvHistory.scheduleLayoutAnimation()
-        // بعد تحديث القائمة نُجبر ScrollView الأب على إعادة قياس كامل الشاشة
-        // هذا يحل مشكلة RecyclerView الذي يحسب ارتفاعه مرة واحدة فقط
-        // عند أول تحميل ثم لا يُعيد الحساب عند تغيّر عدد الـ items أو أحجامها
-        binding.rvHistory.post {
-            binding.rvHistory.requestLayout()
-            (binding.rvHistory.parent as? android.view.View)?.requestLayout()
-        }
+        historyAdapter.submitList(visibleList, currentSettings.currencySymbol, Runnable {
+            // بعد التحديث نُجبر ScrollView الأب على إعادة قياس كامل الشاشة (RecyclerView داخل
+            // ScrollView يحسب ارتفاعه مرة واحدة)، ثم نكشف العناصر الظاهرة تدريجياً.
+            binding.rvHistory.post {
+                binding.rvHistory.requestLayout()
+                (binding.rvHistory.parent as? View)?.requestLayout()
+                revealVisibleHistory()
+                binding.rvHistory.postDelayed({ revealVisibleHistory() }, 350L)
+            }
+        })
+
         val isEmpty = visibleList.isEmpty()
-        binding.rvHistory.visibility = if (isEmpty) android.view.View.GONE else android.view.View.VISIBLE
+        binding.rvHistory.visibility = if (isEmpty) View.GONE else View.VISIBLE
         binding.tvEmptyHistory.setText(
             if (fullHistory.isNotEmpty() && isEmpty) R.string.detail_history_no_results
             else R.string.detail_history_empty
         )
-        binding.tvEmptyHistory.visibility = if (isEmpty) android.view.View.VISIBLE else android.view.View.GONE
+        binding.tvEmptyHistoryHint.visibility =
+            if (fullHistory.isEmpty()) View.VISIBLE else View.GONE
+        binding.cardEmptyHistory.visibility = if (isEmpty) View.VISIBLE else View.GONE
 
-        binding.btnHistoryLoadMore.visibility = if (remaining > 0) android.view.View.VISIBLE else android.view.View.GONE
+        binding.btnHistoryLoadMore.visibility = if (remaining > 0) View.VISIBLE else View.GONE
         if (remaining > 0) {
-            binding.btnHistoryLoadMore.text = getString(R.string.detail_history_load_more, remaining.coerceAtMost(HISTORY_PAGE_SIZE))
+            binding.btnHistoryLoadMore.text =
+                getString(R.string.detail_history_load_more, remaining.coerceAtMost(HISTORY_PAGE_SIZE))
         }
     }
+
+    // ───────────────────────── الحركة ─────────────────────────
+
+    private fun contentBlocks(): List<View> = listOf(
+        binding.heroCard, binding.cardQuickActions, binding.cardFinance,
+        binding.cardNotes, binding.sectionHistory, binding.dangerZone
+    )
+
+    /** يُخفي البلوكات قبل أول عرض حتى لا يظهر وميض قبل حركة الدخول. */
+    private fun prepareEntrance() {
+        if (!areAnimationsEnabled()) return
+        contentBlocks().forEach { it.alpha = 0f }
+    }
+
+    /** دخول البطاقات: ترتفع 16dp مع ظهور تدريجي، بفارق 60ms بين كل بطاقة وأخرى. */
+    private fun playEntrance() {
+        val blocks = contentBlocks()
+        if (!areAnimationsEnabled()) {
+            blocks.forEach { it.alpha = 1f; it.translationY = 0f }
+            return
+        }
+        val rise = 16f * resources.displayMetrics.density
+        blocks.forEachIndexed { i, v ->
+            v.translationY = rise
+            v.animate().alpha(1f).translationY(0f)
+                .setStartDelay(i * 60L).setDuration(400L)
+                .setInterpolator(DecelerateInterpolator(1.5f))
+                .start()
+        }
+    }
+
+    /** مدخلات الخط الزمني: تظهر بتلاشي وإزاحة عند دخولها الشاشة (مرة واحدة لكل مدخل). */
+    private fun revealVisibleHistory() {
+        if (!areAnimationsEnabled()) return
+        val rv = binding.rvHistory
+        val rect = Rect()
+        var order = 0
+        for (i in 0 until rv.childCount) {
+            val v = rv.getChildAt(i)
+            val id = v.getTag(R.id.tag_sub_id) as? Long ?: continue
+            if (historyAdapter.isRevealed(id)) continue
+            if (!v.getGlobalVisibleRect(rect) || rect.height() < v.height * 0.2f) continue
+            historyAdapter.markRevealed(id)
+            v.animate().alpha(1f).translationY(0f)
+                .setStartDelay(order * 60L).setDuration(380L)
+                .setInterpolator(DecelerateInterpolator(1.5f))
+                .start()
+            order++
+        }
+    }
+
+    private fun startSkeletonPulse() {
+        if (!areAnimationsEnabled()) return
+        skeletonAnimator = ObjectAnimator.ofFloat(binding.layoutHistorySkeleton, View.ALPHA, 0.5f, 1f).apply {
+            duration = 700L
+            repeatMode = ValueAnimator.REVERSE
+            repeatCount = ValueAnimator.INFINITE
+            start()
+        }
+    }
+
+    private fun stopSkeleton() {
+        skeletonAnimator?.cancel()
+        binding.layoutHistorySkeleton.visibility = View.GONE
+    }
+
+    // ───────────────────────── إجراءات ─────────────────────────
 
     private fun typeLabel(type: SubscriptionType): String = when (type) {
         SubscriptionType.DAILY -> getString(R.string.subscription_daily)
@@ -415,25 +705,14 @@ class MemberDetailActivity : AppCompatActivity() {
 
     private fun callMember() {
         val member = currentMember ?: return
-        // toSafePhoneDigits حماية لبيانات قديمة قد تحتوي أرقاماً عربية-هندية (راجع
-        // AddEditMemberActivity وWhatsAppHelper.toInternationalNumber لنفس المعالجة) —
-        // بدونها قد يفتح تطبيق الاتصال برقم لا يتعرّف عليه صمتاً.
-        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${member.phone.toSafePhoneDigits()}"))
-        startActivity(intent)
+        // toSafePhoneDigits حماية لبيانات قديمة قد تحتوي أرقاماً عربية-هندية.
+        startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:${member.phone.toSafePhoneDigits()}")))
     }
 
-    private fun sendWhatsapp(forcedPrefix: String? = null) {
-        val member = currentMember ?: return
-        // البند 18: نفس تحقّق صيغة الرقم قبل الإرسال المُضاف في MembersFragment.
-        if (!WhatsAppHelper.isSendableNumber(member.phone)) {
-            Snackbar.make(binding.root, getString(R.string.whatsapp_invalid_phone), Snackbar.LENGTH_LONG).show()
-            return
-        }
+    /** نص الفاتورة/الملخص المشترك بين واتساب والرسائل والمشاركة. */
+    private fun invoiceMessage(): String? {
+        val member = currentMember ?: return null
         val sub = currentSubscription
-        val candidates = forcedPrefix?.let { listOf(it) } ?: WhatsAppHelper.candidatePrefixes(currentSettings.whatsappPrefix)
-        val prefix = candidates.first()
-        val number = WhatsAppHelper.toInternationalNumber(member.phone, prefix)
-
         val typeLabel = sub?.let { typeLabel(it.type) } ?: "—"
         val startLabel = sub?.let { DateUtils.formatDate(it.startDate) } ?: "—"
         val endLabel = sub?.let { DateUtils.formatDate(it.endDate) } ?: "—"
@@ -448,22 +727,48 @@ class MemberDetailActivity : AppCompatActivity() {
             val d = DateUtils.daysRemaining(it.endDate)
             if (d < 0) getString(R.string.days_remaining_expired, -d) else d.toString()
         } ?: "—"
-
         val debtLine = if (currentStats.totalOutstanding > 0.0)
             getString(R.string.whatsapp_debt_line,
                 CurrencyFormatter.format(currentStats.totalOutstanding, currentSettings.currencySymbol))
         else ""
-
-        val message = WhatsAppHelper.buildInvoiceMessage(
+        return WhatsAppHelper.buildInvoiceMessage(
             this, currentSettings.gymName, member.name, typeLabel, startLabel, endLabel,
             priceLabel, paidLabel, daysLabel, debtLine
         )
+    }
+
+    private fun sendSms() {
+        val member = currentMember ?: return
+        val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:${member.phone.toSafePhoneDigits()}"))
+            .putExtra("sms_body", invoiceMessage().orEmpty())
+        try {
+            startActivity(intent)
+        } catch (e: ActivityNotFoundException) {
+            Snackbar.make(binding.root, R.string.detail_no_app, Snackbar.LENGTH_LONG).show()
+        }
+    }
+
+    private fun shareMember() {
+        val message = invoiceMessage() ?: return
+        val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, message)
+        startActivity(Intent.createChooser(send, null))
+    }
+
+    private fun sendWhatsapp(forcedPrefix: String? = null) {
+        val member = currentMember ?: return
+        // البند 18: تحقّق صيغة الرقم قبل الإرسال.
+        if (!WhatsAppHelper.isSendableNumber(member.phone)) {
+            Snackbar.make(binding.root, getString(R.string.whatsapp_invalid_phone), Snackbar.LENGTH_LONG).show()
+            return
+        }
+        val candidates = forcedPrefix?.let { listOf(it) } ?: WhatsAppHelper.candidatePrefixes(currentSettings.whatsappPrefix)
+        val prefix = candidates.first()
+        val number = WhatsAppHelper.toInternationalNumber(member.phone, prefix)
+        val message = invoiceMessage().orEmpty()
         val result = WhatsAppHelper.openChat(this, number, message)
 
-        // البند 17 و20: نعرض رسالة نجاح واثقة فقط إذا فُتح تطبيق واتساب فعلياً. إذا
-        // فُتح المتصفح كحل أخير فقط (واتساب غير مثبت)، نعرض رسالة أقل ثقة توضّح أن
-        // الإرسال غير مضمون بدل الإيحاء بنجاح مؤكَّد. الفشل الكامل لا يعرض شيئاً هنا
-        // لأن openChat() يعرض Toast "واتساب غير مثبت" بنفسه في تلك الحالة.
+        // البند 17 و20: رسالة نجاح واثقة فقط إذا فُتح واتساب فعلياً؛ المتصفح كحل أخير يعرض
+        // رسالة أقل ثقة. الفشل الكامل يعرض openChat() Toast بنفسه.
         when (result) {
             WhatsAppHelper.SendResult.AppOpened -> {
                 Snackbar.make(binding.root, getString(R.string.whatsapp_sending_to, number), Snackbar.LENGTH_LONG)
@@ -484,27 +789,19 @@ class MemberDetailActivity : AppCompatActivity() {
     }
 
     /**
-     * نافذة تأكيد تسديد الدَّين المتبقي (سواء كان الاشتراك غير مدفوع بالكامل أو مدفوعاً
-     * جزئياً — راجع GymRepository.togglePaidStatus). المبلغ المعروض هنا هو المتبقي
-     * الفعلي فقط (remainingAmount)، وليس سعر الاشتراك كاملاً: لاشتراك بدفعة جزئية، جزء من
-     * السعر دخل الإيراد فعلاً من قبل، فعرض السعر الكامل هنا كان سيُضلِّل صاحب الجيم بأنه
-     * سيُحصِّل مبلغاً أكبر مما تبقّى فعلياً.
-     * تستدعي togglePaidStatus() (الموجودة أصلاً في Repository) فقط بعد موافقة صاحب الجيم
-     * — لمنع التسديد العرضي بضغطة واحدة.
+     * نافذة تأكيد تسديد الدَّين المتبقي (غير مدفوع بالكامل أو جزئي — GymRepository.togglePaidStatus).
+     * المبلغ المعروض هو المتبقي الفعلي (remainingAmount) لا السعر الكامل، ولا يُستدعى
+     * togglePaidStatus() إلا بعد موافقة صاحب الجيم لمنع التسديد العرضي.
      */
     private fun confirmSettleDebt(subscription: SubscriptionEntity) {
         val member = currentMember ?: return
         val amount = CurrencyFormatter.format(subscription.remainingAmount(), currentSettings.currencySymbol)
-        val dialog = com.google.android.material.dialog.MaterialAlertDialogBuilder(this)
+        val dialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_GymManager_DialogDark)
             .setTitle(getString(R.string.settle_debt_confirm_title))
             .setMessage(getString(R.string.settle_debt_confirm_message, amount, member.name))
             .setNegativeButton(R.string.action_cancel, null)
-            // البند 5: بلا مُعرِّف نصّي (null) هنا عمداً — منطق التأكيد الفعلي يُربَط أدناه
-            // عبر setOnShowListener على زر الحوار الحقيقي (View)، لا عبر مستمع الزر القياسي
-            // لـ AlertDialog، لأن ذاك الأخير (DialogInterface.OnClickListener) ليس View ولا
-            // يمكن حمايته بـsetOnSingleClickListener الموجودة أصلاً في Extensions.kt. ضغطة
-            // مزدوجة سريعة على "تأكيد" كانت قد تُطلق togglePaidStatus() مرتين لنفس الاشتراك
-            // قبل أن يُغلق الحوار فعلياً.
+            // بلا مُعرِّف نصّي هنا عمداً: التأكيد الفعلي يُربط في setOnShowListener على زر الحوار
+            // (View) ليُحمى بـ setOnSingleClickListener ضد الضغط المزدوج (البند 5).
             .setPositiveButton(R.string.action_confirm, null)
             .create()
         dialog.setOnShowListener {
@@ -533,8 +830,10 @@ class MemberDetailActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_MEMBER_ID = "extra_member_id"
 
-        /** راجع تعليق historyVisibleLimit أعلاه — نفس قيمة pageSize المستخدمة في
-         *  GymRepository لقائمة الأعضاء (30)، للاتساق فقط، لا لأي سبب تقني مشترك. */
+        private const val MENU_EDIT = 1
+        private const val MENU_DELETE = 2
+
+        /** نفس pageSize لقائمة الأعضاء (30) في GymRepository — للاتساق فقط. */
         private const val HISTORY_PAGE_SIZE = 30
     }
 }

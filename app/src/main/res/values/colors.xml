@@ -226,4 +226,27 @@
     <color name="home_empty_day_today_start">#59D63A56</color>
     <color name="home_empty_day_today_end">#597C4DE8</color>
     <color name="home_empty_dot_off">#26FFFFFF</color>
+
+    <!-- ===== شاشة تفاصيل العضو (إعادة تصميم 2026): داكنة دائماً مثل home_* ===== -->
+    <color name="detail_hero_fill">#14152F</color>
+    <color name="detail_hero_edge_start">#B3D63A56</color>
+    <color name="detail_hero_edge_end">#B37C4DE8</color>
+    <color name="detail_badge_fill">#1AE4D9FF</color>
+    <color name="detail_badge_stroke">#38E4D9FF</color>
+    <color name="detail_avatar_start">#40E4D9FF</color>
+    <color name="detail_avatar_end">#477C4DE8</color>
+    <color name="detail_lav_fill">#24E4D9FF</color>
+    <color name="detail_lav_stroke">#4DE4D9FF</color>
+    <color name="detail_mint_stroke">#4D6EE7B7</color>
+    <color name="detail_coral_fill">#1FFFB8B8</color>
+    <color name="detail_coral_stroke">#73FFB8B8</color>
+    <color name="detail_track">#1AFFFFFF</color>
+    <color name="detail_dash">#38FFFFFF</color>
+    <color name="detail_line">#1FFFFFFF</color>
+    <color name="detail_dot_halo">#4DFFFFFF</color>
+    <color name="detail_glow_coral">#42FFB8B8</color>
+    <color name="detail_glow_coral_end">#00FFB8B8</color>
+    <color name="detail_sheet_fill">#FF15163A</color>
+    <color name="detail_on_coral">#2A0A12</color>
+    <color name="detail_on_mint">#0A0B1E</color>
 </resources>

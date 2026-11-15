@@ -6,4 +6,6 @@
     <item name="tag_avatar_bg" type="id" />
     <item name="tag_avatar_ready" type="id" />
     <item name="tag_avatar_path" type="id" />
+    <!-- معرّف اشتراك عنصر السجل (الظهور التدريجي أثناء التمرير) -->
+    <item name="tag_sub_id" type="id" />
 </resources>

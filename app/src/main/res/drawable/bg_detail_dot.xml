@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- نقطة الخط الزمني: هالة شبه شفافة + نواة (تُلوَّن برمجياً بلون الحالة عبر backgroundTint) -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:width="19dp" android:height="19dp" android:gravity="center"><shape android:shape="oval"><solid android:color="@color/detail_dot_halo"/></shape></item>
+    <item android:width="11dp" android:height="11dp" android:gravity="center"><shape android:shape="oval"><solid android:color="#FFFFFFFF"/></shape></item>
+</layer-list>

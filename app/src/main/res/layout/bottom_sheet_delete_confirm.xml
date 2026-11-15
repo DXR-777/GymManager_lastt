@@ -1,92 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    ورقة تأكيد حذف العضو (تصميم 2026): أيقونة مرجانية، عنوان، نص قصير، تنبيهات اختيارية،
+    زر مرجاني أساسي "نعم، حذف" وزر نصي "إلغاء". المعرِّفات القديمة محفوظة كلها.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_bottom_sheet_glass"
+    android:background="@drawable/bg_detail_sheet"
     android:orientation="vertical"
-    android:padding="@dimen/spacing_lg">
+    android:paddingHorizontal="20dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
 
     <View
         android:layout_width="40dp"
         android:layout_height="4dp"
-        android:layout_marginBottom="@dimen/spacing_md"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/divider_line" />
+        android:background="@drawable/bg_home_grabber"
+        android:importantForAccessibility="no" />
 
     <ImageView
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_gravity="center_horizontal"
-        android:background="@drawable/bg_action_button_error_glass"
-        android:contentDescription="@null"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_detail_sheet_icon"
+        android:importantForAccessibility="no"
         android:padding="14dp"
-        android:src="@drawable/ic_warning"
-        app:tint="@color/status_error" />
+        android:src="@drawable/ic_pd_trash"
+        app:tint="@color/home_coral" />
 
     <TextView
         android:id="@+id/tvDeleteTitle"
-        style="@style/Text.SectionTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_md"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/cairo_extrabold"
         android:gravity="center"
-        android:text="@string/delete_dialog_title" />
+        android:includeFontPadding="false"
+        android:text="@string/delete_dialog_title"
+        android:textColor="@color/home_ink"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/tvDeleteMessage"
-        style="@style/Text.Body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/cairo_regular"
         android:gravity="center"
         android:lineSpacingExtra="4dp"
-        tools:text="سيتم نقل محمد أحمد إلى الأرشيف…" />
+        android:textColor="@color/home_mute"
+        android:textSize="14sp"
+        tools:text="سينتقل إلى الأرشيف ويمكنك استعادته خلال 30 يوماً" />
 
     <TextView
         android:id="@+id/tvBalanceWarning"
-        style="@style/Text.Body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_md"
-        android:background="@drawable/bg_banner_error_glass"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_detail_pill_coral_card"
+        android:fontFamily="@font/cairo_medium"
         android:gravity="center"
-        android:padding="@dimen/spacing_md"
-        android:textColor="@color/status_error_text"
-        android:visibility="gone"
         android:lineSpacingExtra="4dp"
-        tools:text="⚠️ تنبيه: على هذا العضو مبلغ غير مدفوع وقدره 60 ₪" />
+        android:padding="16dp"
+        android:textColor="@color/home_coral"
+        android:textSize="13sp"
+        android:visibility="gone"
+        tools:text="تنبيه: على هذا العضو مبلغ غير مدفوع وقدره 60 ₪" />
 
     <TextView
         android:id="@+id/tvDaysWarning"
-        style="@style/Text.Body"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:background="@drawable/bg_warning_banner"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_detail_pill_amber_card"
+        android:fontFamily="@font/cairo_medium"
         android:gravity="center"
-        android:padding="@dimen/spacing_md"
-        android:textColor="@color/status_warning"
-        android:visibility="gone"
         android:lineSpacingExtra="4dp"
-        tools:text="⚠️ تنبيه: لا يزال للعضو 12 يوم متبقي" />
+        android:padding="16dp"
+        android:textColor="@color/home_amber"
+        android:textSize="13sp"
+        android:visibility="gone"
+        tools:text="تنبيه: لا يزال للعضو 12 يوم متبقي من اشتراكه الحالي" />
 
-    <com.google.android.material.button.MaterialButton
+    <TextView
         android:id="@+id/btnConfirmDelete"
-        style="@style/Widget.GymManager.Button.Primary"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_lg"
-        app:backgroundTint="@color/status_error"
-        android:text="@string/delete_dialog_confirm" />
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_detail_sheet_btn_coral"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/cairo_extrabold"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/delete_dialog_confirm"
+        android:textColor="@color/detail_on_coral"
+        android:textSize="17sp" />
 
-    <com.google.android.material.button.MaterialButton
+    <TextView
         android:id="@+id/btnCancelDelete"
-        style="@style/Widget.GymManager.Button.Outlined"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_sm"
-        android:text="@string/action_cancel" />
-
+        android:layout_height="48dp"
+        android:layout_marginTop="8dp"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/cairo_medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/action_cancel"
+        android:textColor="@color/home_ink"
+        android:textSize="15sp" />
 </LinearLayout>

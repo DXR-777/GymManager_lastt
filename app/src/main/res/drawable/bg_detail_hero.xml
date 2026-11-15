@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- بطاقة الهيرو: حد متدرّج رفيع (قرمزي إلى بنفسجي) بنصف قطر 32dp فوق تعبئة زجاجية داكنة -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><shape android:shape="rectangle">
+        <gradient android:type="linear" android:angle="315" android:startColor="@color/detail_hero_edge_start" android:endColor="@color/detail_hero_edge_end"/>
+        <corners android:radius="32dp"/></shape></item>
+    <item android:top="1dp" android:bottom="1dp" android:left="1dp" android:right="1dp">
+        <shape android:shape="rectangle"><solid android:color="@color/detail_hero_fill"/><corners android:radius="31dp"/></shape></item>
+    <item android:height="1dp" android:gravity="top" android:start="24dp" android:end="24dp">
+        <shape android:shape="rectangle"><gradient android:type="linear" android:angle="0" android:startColor="@color/transparent" android:centerColor="@color/home_glass_top" android:endColor="@color/transparent"/></shape>
+    </item>
+</layer-list>
