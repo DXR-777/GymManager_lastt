@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
@@ -39,7 +40,6 @@ import com.gympro.manager.model.paidPaymentMethodLabel
 import com.gympro.manager.model.paymentStatus
 import com.gympro.manager.model.remainingAmount
 import com.gympro.manager.model.senderInfoDetailLabel
-import com.gympro.manager.ui.archive.ArchiveActivity
 import com.gympro.manager.utils.CurrencyFormatter
 import com.gympro.manager.utils.DateUtils
 import com.gympro.manager.utils.Haptic
@@ -49,12 +49,12 @@ import com.gympro.manager.utils.areAnimationsEnabled
 import com.gympro.manager.utils.bindMemberAvatar
 import com.gympro.manager.utils.capContentWidth
 import com.gympro.manager.utils.haptic
+import com.gympro.manager.utils.moneyText
 import com.gympro.manager.utils.setOnSingleClickListener
 import com.gympro.manager.utils.toSafePhoneDigits
 import com.gympro.manager.utils.toast
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 /**
  * شاشة تفاصيل العضو (إعادة تصميم 2026). المنطق (الاشتراكات، الدفع، الحذف الناعم، واتساب…)
@@ -93,7 +93,6 @@ class MemberDetailActivity : AppCompatActivity() {
     private var historyVisibleLimit: Int = HISTORY_PAGE_SIZE
 
     private var firstRenderDone = false
-    private var numbersAnimator: ValueAnimator? = null
     private var skeletonAnimator: ObjectAnimator? = null
 
     private class FilterChipRef(
@@ -142,6 +141,7 @@ class MemberDetailActivity : AppCompatActivity() {
         startSkeletonPulse()
         setupActions()
         setupHistoryControls()
+        setupTabs()
         setupFragmentResultListeners()
         observeData()
     }
@@ -192,15 +192,6 @@ class MemberDetailActivity : AppCompatActivity() {
         binding.btnDelete.setOnSingleClickListener { showDeleteConfirmation() }
         binding.btnNotesEdit.setOnSingleClickListener { openEdit() }
         binding.btnMore.setOnClickListener { showMoreMenu() }
-        binding.btnHistoryArchive.setOnSingleClickListener {
-            startActivity(Intent(this, ArchiveActivity::class.java))
-        }
-        // شريحة "تسديد" في الملخص المالي: تقود إلى السجل حيث يُسدَّد كل اشتراك بمبلغه الفعلي.
-        binding.btnOutstandingPay.setOnClickListener {
-            binding.scrollView.post {
-                binding.scrollView.smoothScrollTo(0, binding.sectionHistory.top)
-            }
-        }
     }
 
     /** قائمة "المزيد": تعديل / حذف. */
@@ -243,7 +234,7 @@ class MemberDetailActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        numbersAnimator?.cancel()
+        moneyAnimator?.cancel()
         skeletonAnimator?.cancel()
         indicatorAnimator?.cancel()
         super.onDestroy()
@@ -280,12 +271,17 @@ class MemberDetailActivity : AppCompatActivity() {
         settings: GymSettingsEntity
     ) {
         val first = !firstRenderDone
-        bindHero(member, current, settings, animate = first)
-        bindNumbers(stats, settings, animate = first)
+        val state = stateOf(current)
+        bindPass(member, current, state, animate = first)
+        bindStrip(current, state, stats, settings, animate = first)
         bindNotes(member)
 
         fullHistory = history
-        binding.tvHistoryCount.text = history.size.toString()
+        binding.tvHistorySummary.text = getString(
+            R.string.detail_history_summary,
+            history.size.toString(),
+            CurrencyFormatter.format(stats.totalPaid, settings.currencySymbol)
+        )
         updateChipCounts()
         refreshHistoryList()
 
@@ -296,58 +292,90 @@ class MemberDetailActivity : AppCompatActivity() {
         }
     }
 
-    // ───────────────────────── الهيرو ─────────────────────────
+    // ───────────────────────── بطاقة العضوية ─────────────────────────
 
-    private fun bindHero(member: MemberEntity, current: SubscriptionEntity?, settings: GymSettingsEntity, animate: Boolean) {
+    /** حالة الاشتراك الحالي: تحدّد تدرّج البطاقة ونص الأيام والشريط السياقي. */
+    private enum class PassState { ACTIVE, SOON, EXPIRED, FUTURE, NONE }
+
+    private fun stateOf(current: SubscriptionEntity?): PassState {
+        if (current == null) return PassState.NONE
+        if (DateUtils.isFuture(current.startDate)) return PassState.FUTURE
+        val days = DateUtils.daysRemaining(current.endDate)
+        return when {
+            days < 0 -> PassState.EXPIRED
+            days <= 3 -> PassState.SOON // يشمل "ينتهي اليوم" (days == 0)
+            else -> PassState.ACTIVE
+        }
+    }
+
+    private fun bindPass(member: MemberEntity, current: SubscriptionEntity?, state: PassState, animate: Boolean) {
         binding.tvInitial.bindMemberAvatar(member.name, member.photoPath, 312)
         binding.tvName.text = member.name
         binding.tvPhone.text = member.phone
         binding.tvMemberSince.text = getString(R.string.detail_member_since, DateUtils.formatDate(member.createdAt))
 
+        // تدرّج البطاقة يتبع الحالة: هوية التطبيق (ساري) · دفء كهرماني (قريب الانتهاء) · خافت (منتهي) · لافندر (لم يبدأ).
+        binding.passCard.setBackgroundResource(
+            when (state) {
+                PassState.ACTIVE -> R.drawable.bg_detail_pass_active
+                PassState.SOON -> R.drawable.bg_detail_pass_soon
+                PassState.EXPIRED -> R.drawable.bg_detail_pass_expired
+                PassState.FUTURE, PassState.NONE -> R.drawable.bg_detail_pass_future
+            }
+        )
+
         if (current == null) {
-            // عضو بلا أي اشتراك: حلقة فارغة وعنوان محايد وزر تجديد.
-            val lav = getColor(R.color.home_lav)
-            binding.chipPlan.visibility = View.GONE
+            // عضو بلا أي اشتراك.
+            binding.tvPlanLabel.text = getString(R.string.detail_no_subscription)
             binding.chipPayment.visibility = View.GONE
-            binding.chipMethod.visibility = View.GONE
-            binding.tvCurrentSenderInfo.visibility = View.GONE
-            binding.tvDaysRemainingBig.text = getString(R.string.detail_no_subscription)
-            binding.tvDaysRemainingBig.setTextColor(lav)
-            binding.tvCurrentDates.text = ""
+            binding.blockExpires.visibility = View.INVISIBLE
+            setDaysText(number = null, unit = getString(R.string.detail_no_subscription))
             binding.progressSubscription.progress = 0
-            binding.ringSubscription.setRing(0f, lav, animate = false)
-            styleAsPrimary(isCta = true)
-            binding.btnPrimaryAction.text = getString(R.string.detail_action_renew_long)
-            binding.btnPrimaryAction.setOnSingleClickListener { openRenew() }
+            binding.tvCurrentSenderInfo.visibility = View.GONE
             return
         }
 
-        binding.chipPlan.visibility = View.VISIBLE
-        binding.chipPayment.visibility = View.VISIBLE
-        binding.tvCurrentTypeBadge.text = typeLabel(current.type)
+        // سطر الخطة: "عضوية شهرية · بال باي" (طريقة الدفع لا تظهر إلا بعد الدفع الفعلي).
+        val planBase = getString(
+            when (current.type) {
+                SubscriptionType.DAILY -> R.string.detail_pass_daily
+                SubscriptionType.WEEKLY -> R.string.detail_pass_weekly
+                SubscriptionType.MONTHLY -> R.string.detail_pass_monthly
+                SubscriptionType.CUSTOM -> R.string.detail_pass_custom
+            }
+        )
+        val method = current.paidPaymentMethodLabel(this)
+        binding.tvPlanLabel.text =
+            if (method != null) getString(R.string.detail_pass_with_method, planBase, method) else planBase
 
         // شارة حالة الدفع: مدفوع (نعناعي) / جزئي (لافندر) / غير مدفوع (مرجاني).
         val status = current.paymentStatus()
-        val (payLabel, payColor, payBg, payIcon) = when (status) {
-            PaymentStatus.PAID -> PayStyle(R.string.status_paid, R.color.home_mint, R.drawable.bg_detail_pill_mint, R.drawable.ic_pd_check)
-            PaymentStatus.PARTIAL -> PayStyle(R.string.payment_status_partial, R.color.home_lav, R.drawable.bg_detail_pill_lav, R.drawable.ic_pd_alert)
-            PaymentStatus.UNPAID -> PayStyle(R.string.status_unpaid, R.color.home_coral, R.drawable.bg_detail_pill_coral, R.drawable.ic_pd_alert)
+        val (label, colorRes) = when (status) {
+            PaymentStatus.PAID -> R.string.status_paid to R.color.home_mint
+            PaymentStatus.PARTIAL -> R.string.payment_status_partial to R.color.home_lav
+            PaymentStatus.UNPAID -> R.string.status_unpaid to R.color.home_coral
         }
-        binding.tvCurrentPaidBadge.text = getString(payLabel)
-        binding.tvCurrentPaidBadge.setTextColor(getColor(payColor))
-        binding.chipPayment.setBackgroundResource(payBg)
-        binding.ivChipPayment.setImageResource(payIcon)
-        binding.ivChipPayment.imageTintList = ColorStateList.valueOf(getColor(payColor))
+        binding.chipPayment.visibility = View.VISIBLE
+        binding.tvCurrentPaidBadge.text = getString(label)
+        // نص محايد + نقطة ملوّنة (مدفوع/جزئي/غير مدفوع): يتجنّب تنافر النعناعي مع تدرّج البطاقة.
+        binding.tvCurrentPaidBadge.compoundDrawableTintList = ColorStateList.valueOf(getColor(colorRes))
 
-        // طريقة الدفع: لا تُعرض إلا بعد أن يُدفع الاشتراك فعلياً (paidPaymentMethodLabel) —
-        // قبل ذلك القيمة المحفوظة مجرد اختيار افتراضي ولا تعني أن تحصيلاً حدث.
-        val methodLabel = current.paidPaymentMethodLabel(this)
-        if (methodLabel != null) {
-            binding.tvCurrentPaymentMethod.text = methodLabel
-            binding.chipMethod.visibility = View.VISIBLE
-        } else {
-            binding.chipMethod.visibility = View.GONE
+        binding.blockExpires.visibility = View.VISIBLE
+        binding.tvCurrentDates.text = DateUtils.formatDate(current.endDate)
+
+        val days = DateUtils.daysRemaining(current.endDate)
+        when {
+            state == PassState.FUTURE -> setDaysText(null, getString(R.string.detail_pass_not_started))
+            days < 0 -> setDaysText((-days).toString(), resources.getQuantityString(R.plurals.detail_unit_expired, -days))
+            days == 0 -> setDaysText(null, getString(R.string.days_remaining_today))
+            else -> setDaysText(days.toString(), resources.getQuantityString(R.plurals.detail_unit_left, days))
         }
+
+        // الشريط = المنقضي من مدة الاشتراك.
+        val total = (current.endDate - current.startDate).coerceAtLeast(1L)
+        val elapsed = (DateUtils.now() - current.startDate).coerceIn(0L, total)
+        val share = if (state == PassState.EXPIRED) 100 else ((elapsed.toFloat() / total) * 100).toInt()
+        progressTo(share, animate)
 
         // معلومات المُرسِل: فقط لاشتراك دخل جزء حقيقي منه في الإيراد (ليس UNPAID).
         val senderInfo = if (status != PaymentStatus.UNPAID) current.senderInfoDetailLabel(this) else null
@@ -357,120 +385,212 @@ class MemberDetailActivity : AppCompatActivity() {
         } else {
             binding.tvCurrentSenderInfo.visibility = View.GONE
         }
-
-        // لون الحالة: نعناعي (نشط) · كهرماني (3 أيام أو أقل) · مرجاني (منتهي) · لافندر (لم يبدأ).
-        val days = DateUtils.daysRemaining(current.endDate)
-        val future = DateUtils.isFuture(current.startDate)
-        val statusColor = getColor(
-            when {
-                future -> R.color.home_lav
-                days < 0 -> R.color.home_coral
-                days <= 3 -> R.color.home_amber
-                else -> R.color.home_mint
-            }
-        )
-        binding.tvDaysRemainingBig.text = when {
-            future -> getString(R.string.days_remaining_not_started)
-            days < 0 -> resources.getQuantityString(R.plurals.detail_expired_since, -days, -days)
-            days == 0 -> getString(R.string.days_remaining_today)
-            days <= 3 -> resources.getQuantityString(R.plurals.detail_ends_in, days, days)
-            else -> resources.getQuantityString(R.plurals.detail_days_left, days, days)
-        }
-        binding.tvDaysRemainingBig.setTextColor(statusColor)
-        binding.tvCurrentDates.text = "${DateUtils.formatDate(current.startDate)} ← ${DateUtils.formatDate(current.endDate)}"
-
-        // الحلقة = المتبقي من المدة، الشريط = المنقضي منها (مجموعهما 100%).
-        val total = (current.endDate - current.startDate).coerceAtLeast(1L)
-        val elapsed = (DateUtils.now() - current.startDate).coerceIn(0L, total)
-        val elapsedShare = elapsed.toFloat() / total
-        val ringFraction = when {
-            future -> 1f
-            days < 0 -> 0f
-            else -> 1f - elapsedShare
-        }
-        binding.ringSubscription.setRing(ringFraction, statusColor, animate = animate && areAnimationsEnabled())
-        binding.progressSubscription.progress = (elapsedShare * 100).toInt()
-        binding.progressSubscription.progressTintList = ColorStateList.valueOf(statusColor)
-
-        // الزر الأساسي الوحيد (سياقي): تسديد إن لم يُدفع، وإلا تجديد (بتدرّج إن قارب/انتهى
-        // الاشتراك، وبشكل زجاجي هادئ إن كان ساري المفعول لتبقى الأولوية البصرية للإجراء المُلحّ).
-        if (status != PaymentStatus.PAID) {
-            val amount = CurrencyFormatter.format(current.remainingAmount(), settings.currencySymbol)
-            styleAsPrimary(isCta = true)
-            binding.btnPrimaryAction.text = getString(R.string.detail_action_pay_amount, amount)
-            binding.btnPrimaryAction.setOnSingleClickListener { confirmSettleDebt(current) }
-        } else {
-            styleAsPrimary(isCta = future.not() && days <= 3)
-            binding.btnPrimaryAction.text = getString(R.string.detail_action_renew_long)
-            binding.btnPrimaryAction.setOnSingleClickListener { openRenew() }
-        }
     }
 
-    private data class PayStyle(val label: Int, val color: Int, val bg: Int, val icon: Int)
-
-    private fun styleAsPrimary(isCta: Boolean) {
-        binding.btnPrimaryAction.setBackgroundResource(
-            if (isCta) R.drawable.bg_home_cta else R.drawable.bg_detail_btn_glass
+    /** رقم الأيام الضخم + الوحدة؛ عند غياب الرقم تكبر الوحدة لتصبح هي العنوان. */
+    private fun setDaysText(number: String?, unit: String) {
+        binding.tvDaysNumber.visibility = if (number != null) View.VISIBLE else View.GONE
+        binding.tvDaysNumber.text = number.orEmpty()
+        binding.tvDaysUnit.text = unit
+        binding.tvDaysUnit.setTextSize(
+            android.util.TypedValue.COMPLEX_UNIT_SP, if (number != null) 14f else 22f
         )
+        binding.tvDaysUnit.setTextColor(getColor(R.color.home_ink))
+        val lp = binding.tvDaysUnit.layoutParams as android.widget.LinearLayout.LayoutParams
+        lp.bottomMargin = if (number != null) (8 * resources.displayMetrics.density).toInt() else 0
+        binding.tvDaysUnit.layoutParams = lp
     }
 
-    // ───────────────────────── الأرقام والملخص المالي ─────────────────────────
-
-    private fun bindNumbers(stats: MemberStats, settings: GymSettingsEntity, animate: Boolean) {
-        val symbol = settings.currencySymbol
-        fun showNumbers(f: Float) {
-            binding.tvTotalMonths.text = (stats.totalMonthsSubscribed * f).roundToInt().toString()
-            binding.tvTotalPaid.text = CurrencyFormatter.formatEmphasized(this, stats.totalPaid * f, symbol)
-            binding.tvTotalOutstanding.text = CurrencyFormatter.formatEmphasized(this, stats.totalOutstanding * f, symbol)
-        }
-        numbersAnimator?.cancel()
+    private fun progressTo(target: Int, animate: Boolean) {
+        val bar = binding.progressSubscription
         if (animate && areAnimationsEnabled()) {
-            numbersAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
-                duration = 700L
-                interpolator = DecelerateInterpolator(1.8f)
-                addUpdateListener { showNumbers(it.animatedValue as Float) }
-                doOnEnd { showNumbers(1f) }
+            bar.progress = 0
+            ObjectAnimator.ofInt(bar, "progress", 0, target).apply {
+                duration = 800L
+                interpolator = DecelerateInterpolator(1.6f)
                 start()
             }
         } else {
-            showNumbers(1f)
+            bar.progress = target
         }
+    }
 
-        // عمود المتبقي: يتوهّج بالمرجاني ويُظهر زر "تسديد" عند وجود دَين فقط.
-        val hasDebt = stats.totalOutstanding > 0.0
-        binding.colOutstanding.background =
-            if (hasDebt) ContextCompat.getDrawable(this, R.drawable.bg_detail_glow_coral) else null
-        binding.tvTotalOutstanding.setShadowLayer(
-            if (hasDebt) 24f else 0f, 0f, 0f, getColor(R.color.detail_glow_coral)
-        )
-        binding.btnOutstandingPay.visibility = if (hasDebt) View.VISIBLE else View.GONE
+    // ───────────────────────── الشريط السياقي: تسديد / تجديد ─────────────────────────
 
-        // الشريط المكدّس: حصة المدفوع مقابل المتبقي (حدّ أدنى مرئي لأي جزء موجود).
-        val paid = stats.totalPaid
-        val owed = stats.totalOutstanding
-        val paidLp = binding.barPaid.layoutParams as android.widget.LinearLayout.LayoutParams
-        val remLp = binding.barRemaining.layoutParams as android.widget.LinearLayout.LayoutParams
+    private var moneyAnimator: ValueAnimator? = null
+
+    private fun bindStrip(
+        current: SubscriptionEntity?,
+        state: PassState,
+        stats: MemberStats,
+        settings: GymSettingsEntity,
+        animate: Boolean
+    ) {
+        val strip = binding.cardStrip
+        val btn = binding.btnPrimaryAction
+        val debt = stats.totalOutstanding > 0.0
+        moneyAnimator?.cancel()
+
         when {
-            owed <= 0.0 -> {
-                paidLp.weight = 1f
-                binding.barPaid.visibility = View.VISIBLE
-                binding.barRemaining.visibility = View.GONE
+            // 1) يوجد مبلغ غير مدفوع: "المتبقي غير المدفوع" فوق المبلغ المرجاني + زر تسديد.
+            debt -> {
+                strip.setBackgroundResource(R.drawable.bg_detail_strip_coral)
+                styleStripIcon(R.drawable.ic_pd_alert, R.color.home_coral)
+                binding.tvStripCaption.visibility = View.VISIBLE
+                binding.tvStripCaption.setText(R.string.detail_strip_outstanding)
+                styleStripValue(R.color.home_coral, 26f, extraBold = true)
+                val coralSoft = ColorUtils.setAlphaComponent(getColor(R.color.home_coral), 0xB3)
+                val symbol = settings.currencySymbol
+                if (animate && areAnimationsEnabled()) {
+                    moneyAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+                        duration = 700L
+                        interpolator = DecelerateInterpolator(1.8f)
+                        addUpdateListener {
+                            binding.tvStripValue.text = moneyText(stats.totalOutstanding * (it.animatedValue as Float), symbol, coralSoft)
+                        }
+                        doOnEnd { binding.tvStripValue.text = moneyText(stats.totalOutstanding, symbol, coralSoft) }
+                        start()
+                    }
+                } else {
+                    binding.tvStripValue.text = moneyText(stats.totalOutstanding, symbol, coralSoft)
+                }
+                btn.setBackgroundResource(R.drawable.bg_home_cta)
+                btn.setText(R.string.action_settle_debt)
+                btn.setOnSingleClickListener {
+                    if (current != null && current.paymentStatus() != PaymentStatus.PAID) confirmSettleDebt(current)
+                    else showUnpaidHistory() // الدَّين على اشتراك أقدم: نعرضه في السجل لتسديده.
+                }
             }
-            paid <= 0.0 -> {
-                binding.barPaid.visibility = View.GONE
-                remLp.weight = 1f
-                binding.barRemaining.visibility = View.VISIBLE
-            }
+            // 2) بقية الحالات: أيقونة + جملة واحدة في سطر واحد (بلا عنوان فرعي مكرّر) + زر.
             else -> {
-                val share = (paid / (paid + owed)).toFloat().coerceIn(0.04f, 0.96f)
-                paidLp.weight = share
-                remLp.weight = 1f - share
-                binding.barPaid.visibility = View.VISIBLE
-                binding.barRemaining.visibility = View.VISIBLE
+                val urgent = state == PassState.SOON || state == PassState.EXPIRED || state == PassState.NONE
+                // سطران متلاصقان: عنوان صغير خافت + قيمة بارزة (القيمة وحدها حين لا يلزم عنوان).
+                fun caption(resId: Int?) {
+                    if (resId == null) binding.tvStripCaption.visibility = View.GONE
+                    else {
+                        binding.tvStripCaption.visibility = View.VISIBLE
+                        binding.tvStripCaption.setText(resId)
+                    }
+                }
+                when (state) {
+                    PassState.SOON -> {
+                        val days = DateUtils.daysRemaining(current!!.endDate)
+                        strip.setBackgroundResource(R.drawable.bg_detail_strip_amber)
+                        styleStripIcon(R.drawable.ic_pd_alert, R.color.home_amber)
+                        caption(R.string.detail_strip_expiring)
+                        styleStripValue(R.color.home_amber, 16f)
+                        binding.tvStripValue.text = if (days == 0) getString(R.string.days_remaining_today)
+                        else resources.getQuantityString(R.plurals.detail_ends_in, days, days.toString())
+                    }
+                    PassState.EXPIRED -> {
+                        val ago = -DateUtils.daysRemaining(current!!.endDate)
+                        strip.setBackgroundResource(R.drawable.bg_detail_strip_coral)
+                        styleStripIcon(R.drawable.ic_pd_alert, R.color.home_coral)
+                        caption(R.string.detail_strip_expired)
+                        styleStripValue(R.color.home_coral, 16f)
+                        binding.tvStripValue.text = resources.getQuantityString(R.plurals.detail_expired_since, ago, ago.toString())
+                    }
+                    PassState.NONE -> {
+                        strip.setBackgroundResource(R.drawable.bg_detail_strip_coral)
+                        styleStripIcon(R.drawable.ic_pd_calendar, R.color.home_coral)
+                        caption(null)
+                        styleStripValue(R.color.home_ink, 16f)
+                        binding.tvStripValue.setText(R.string.detail_strip_none)
+                    }
+                    PassState.FUTURE -> {
+                        strip.setBackgroundResource(R.drawable.bg_detail_strip_neutral)
+                        styleStripIcon(R.drawable.ic_pd_calendar, R.color.home_lav)
+                        caption(null)
+                        styleStripValue(R.color.home_ink, 16f)
+                        binding.tvStripValue.setText(R.string.detail_pass_not_started)
+                    }
+                    PassState.ACTIVE -> {
+                        // ساري ومدفوع: اللون النعناعي في الأيقونة والهالة والحدّ فقط، والنص أبيض هادئ.
+                        strip.setBackgroundResource(R.drawable.bg_detail_strip_ok)
+                        styleStripIcon(R.drawable.ic_pd_check, R.color.home_mint)
+                        caption(R.string.detail_strip_ok)
+                        styleStripValue(R.color.home_ink, 16f)
+                        binding.tvStripValue.setText(R.string.detail_strip_paid)
+                    }
+                }
+                // تجديد بتدرّج عند الإلحاح، وبزر زجاجي هادئ عندما يكون كل شيء سليماً.
+                btn.setBackgroundResource(if (urgent) R.drawable.bg_home_cta else R.drawable.bg_detail_btn_glass)
+                btn.setText(R.string.detail_action_renew_short)
+                btn.setOnSingleClickListener { openRenew() }
             }
         }
-        binding.barPaid.layoutParams = paidLp
-        binding.barRemaining.layoutParams = remLp
+    }
+
+    private fun styleStripIcon(iconRes: Int, colorRes: Int) {
+        val color = getColor(colorRes)
+        binding.ivStripIcon.setImageResource(iconRes)
+        binding.ivStripIcon.imageTintList = ColorStateList.valueOf(color)
+        binding.ivStripIcon.backgroundTintList = ColorStateList.valueOf(ColorUtils.setAlphaComponent(color, 0x29))
+    }
+
+    private fun styleStripValue(colorRes: Int, sizeSp: Float, extraBold: Boolean = false) {
+        val tv = binding.tvStripValue
+        tv.setTextColor(getColor(colorRes))
+        // القيمة النصية تتقلّص تلقائياً (12–16sp) كي لا تلتفّ على سطرين؛ المبلغ الكبير ثابت الحجم.
+        if (sizeSp > 16f) {
+            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(
+                tv, androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
+            )
+            tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, sizeSp)
+        } else {
+            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
+                tv, 12, sizeSp.toInt(), 1, android.util.TypedValue.COMPLEX_UNIT_SP
+            )
+        }
+        tv.typeface = androidx.core.content.res.ResourcesCompat.getFont(
+            this, if (extraBold) R.font.cairo_extrabold else R.font.cairo_bold
+        )
+    }
+
+    /** ينتقل إلى تبويب السجل ويفلتر على "غير مدفوع" ثم يمرّر إليه. */
+    private fun showUnpaidHistory() {
+        selectTab(notes = false, animate = false)
+        val ref = filterChips.first { it.status == PaymentStatus.UNPAID }
+        if (ref !== selectedChip) selectHistoryFilter(ref)
+        binding.scrollView.post {
+            binding.scrollView.smoothScrollTo(0, binding.tabs.top)
+        }
+    }
+
+    // ───────────────────────── التبويبان ─────────────────────────
+
+    private var notesTabSelected = false
+
+    private fun setupTabs() {
+        binding.tabHistory.setOnClickListener { if (notesTabSelected) selectTab(notes = false, animate = true) }
+        binding.tabNotes.setOnClickListener { if (!notesTabSelected) selectTab(notes = true, animate = true) }
+    }
+
+    private fun selectTab(notes: Boolean, animate: Boolean) {
+        notesTabSelected = notes
+        val ink = getColor(R.color.home_ink)
+        val mute = getColor(R.color.home_mute)
+        binding.tabHistory.setBackgroundResource(if (notes) R.drawable.bg_detail_tab else R.drawable.bg_home_cta)
+        binding.tabNotes.setBackgroundResource(if (notes) R.drawable.bg_home_cta else R.drawable.bg_detail_tab)
+        binding.tabHistory.setTextColor(if (notes) mute else ink)
+        binding.tabNotes.setTextColor(if (notes) ink else mute)
+
+        val show = if (notes) binding.sectionNotes else binding.sectionHistory
+        val hide = if (notes) binding.sectionHistory else binding.sectionNotes
+        if (!animate || !areAnimationsEnabled()) {
+            hide.visibility = View.GONE
+            show.alpha = 1f
+            show.visibility = View.VISIBLE
+        } else {
+            hide.animate().alpha(0f).setDuration(120L).withEndAction {
+                hide.visibility = View.GONE
+                hide.alpha = 1f
+                show.alpha = 0f
+                show.visibility = View.VISIBLE
+                show.animate().alpha(1f).setDuration(160L).start()
+            }.start()
+        }
+        if (!notes) binding.rvHistory.postDelayed({ revealVisibleHistory() }, 200L)
     }
 
     // ───────────────────────── الملاحظات ─────────────────────────
@@ -479,10 +599,11 @@ class MemberDetailActivity : AppCompatActivity() {
         val notes = member.notes.trim()
         val empty = notes.isEmpty()
         binding.tvNotes.text = if (empty) getString(R.string.detail_notes_empty) else notes
-        binding.tvNotes.alpha = if (empty) 0.75f else 1f
+        binding.tvNotes.setTextColor(getColor(if (empty) R.color.home_mute else R.color.home_ink))
         // الحالة الفارغة: إطار متقطع هادئ بلا تعبئة.
         binding.cardNotes.setBackgroundResource(if (empty) R.drawable.bg_detail_empty else R.drawable.bg_detail_card)
     }
+
 
     // ───────────────────────── فلتر السجل + الخط الزمني ─────────────────────────
 
@@ -496,7 +617,11 @@ class MemberDetailActivity : AppCompatActivity() {
         selectedChip = filterChips.first()
         filterChips.forEach { ref -> ref.container.setOnClickListener { selectHistoryFilter(ref) } }
         applyChipVisuals()
-        binding.chipRow.post { moveIndicator(selectedChip, animate = false) }
+        // الشريحة قد تظهر لاحقاً (شرائح الفلتر مخفية حتى 3 اشتراكات) أو تتغيّر أرقامها فيتغيّر عرضها:
+        // أعد وضع المؤشر عند كل تغيّر في تخطيط الصف.
+        binding.chipRow.addOnLayoutChangeListener { _, _, _, _, _, _, _, _, _ ->
+            if (indicatorAnimator?.isRunning != true) moveIndicator(selectedChip, animate = false)
+        }
 
         binding.btnHistorySort.setOnSingleClickListener { showHistorySortDialog() }
         binding.btnHistoryLoadMore.setOnSingleClickListener {
@@ -539,8 +664,11 @@ class MemberDetailActivity : AppCompatActivity() {
         val targetX = ref.container.left.toFloat()
         indicatorAnimator?.cancel()
         if (!animate || !areAnimationsEnabled() || lp.width <= 0) {
-            lp.width = targetW
-            indicator.layoutParams = lp
+            // الحماية من إعادة التخطيط اللانهائية: لا نعيد ضبط العرض إن لم يتغيّر.
+            if (lp.width != targetW) {
+                lp.width = targetW
+                indicator.layoutParams = lp
+            }
             indicator.translationX = targetX
             return
         }
@@ -622,6 +750,10 @@ class MemberDetailActivity : AppCompatActivity() {
             if (fullHistory.isEmpty()) View.VISIBLE else View.GONE
         binding.cardEmptyHistory.visibility = if (isEmpty) View.VISIBLE else View.GONE
 
+        // شرائح الفلتر لا تظهر إلا عند وجود 3 اشتراكات فأكثر (أو فلتر مفعّل) كي يبقى السجل القصير نظيفاً.
+        binding.chipRowScroll.visibility =
+            if (fullHistory.size >= 3 || currentHistoryFilter != null) View.VISIBLE else View.GONE
+
         binding.btnHistoryLoadMore.visibility = if (remaining > 0) View.VISIBLE else View.GONE
         if (remaining > 0) {
             binding.btnHistoryLoadMore.text =
@@ -632,8 +764,8 @@ class MemberDetailActivity : AppCompatActivity() {
     // ───────────────────────── الحركة ─────────────────────────
 
     private fun contentBlocks(): List<View> = listOf(
-        binding.heroCard, binding.cardQuickActions, binding.cardFinance,
-        binding.cardNotes, binding.sectionHistory, binding.dangerZone
+        binding.passCard, binding.cardStrip, binding.rowActions,
+        binding.tabs, binding.tabContent, binding.dangerZone
     )
 
     /** يُخفي البلوكات قبل أول عرض حتى لا يظهر وميض قبل حركة الدخول. */

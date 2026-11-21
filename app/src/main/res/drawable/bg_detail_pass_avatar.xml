@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- صورة العضو على البطاقة: تعبئة داكنة شبه شفافة + حلقة لافندر 2dp -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="#73240A3C"/><stroke android:width="2dp" android:color="#CCE4D9FF"/>
+</shape>

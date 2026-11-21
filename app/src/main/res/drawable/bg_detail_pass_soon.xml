@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- بطاقة العضوية: ينتهي قريباً (دفء كهرماني). تدرّج قطري + لمعة ناعمة في الزاوية العلوية + حدّ داخلي رفيع. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><shape android:shape="rectangle">
+        <gradient android:angle="315" android:startColor="#F0A45C" android:centerColor="#D6455F" android:endColor="#7A35C4" android:type="linear"/>
+        <corners android:radius="32dp"/></shape></item>
+    <item><shape android:shape="rectangle">
+        <gradient android:type="radial" android:centerX="0.12" android:centerY="0.0" android:gradientRadius="260dp" android:startColor="#38FFFFFF" android:endColor="#00FFFFFF"/>
+        <corners android:radius="32dp"/></shape></item>
+    <item><shape android:shape="rectangle"><solid android:color="@color/transparent"/><stroke android:width="1dp" android:color="#2EFFFFFF"/><corners android:radius="32dp"/></shape></item>
+</layer-list>

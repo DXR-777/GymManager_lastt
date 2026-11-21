@@ -785,4 +785,43 @@
         <item quantity="many">انتهى منذ %d يوماً</item>
         <item quantity="other">انتهى منذ %d يوم</item>
     </plurals>
+
+    <!-- ===== تفاصيل العضو: بطاقة العضوية (Membership Pass) ===== -->
+    <string name="detail_pass_daily">عضوية يومية</string>
+    <string name="detail_pass_weekly">عضوية أسبوعية</string>
+    <string name="detail_pass_monthly">عضوية شهرية</string>
+    <string name="detail_pass_custom">عضوية بمدة مخصصة</string>
+    <string name="detail_pass_with_method">%1$s · %2$s</string>
+    <string name="detail_pass_expires">ينتهي</string>
+    <string name="detail_pass_not_started">لم يبدأ بعد</string>
+    <string name="detail_pass_today">اليوم</string>
+    <string name="detail_pass_today_unit">آخر يوم</string>
+    <string name="detail_strip_outstanding">المتبقي غير المدفوع</string>
+    <string name="detail_strip_expiring">ينتهي الاشتراك قريباً</string>
+    <string name="detail_strip_expired">الاشتراك منتهي</string>
+    <string name="detail_strip_none">لا يوجد اشتراك حالي</string>
+    <string name="detail_strip_ok_paid">الاشتراك ساري · مدفوع بالكامل</string>
+    <string name="detail_strip_ok">الاشتراك ساري</string>
+    <string name="detail_strip_paid">مدفوع بالكامل</string>
+    <string name="detail_action_renew_short">تجديد</string>
+    <string name="detail_tab_history">السجل</string>
+    <string name="detail_tab_notes">الملاحظات</string>
+    <string name="detail_history_summary">الاشتراكات %1$s · إجمالي المدفوع %2$s</string>
+    <string name="detail_notes_add">إضافة ملاحظة</string>
+    <plurals name="detail_unit_left">
+        <item quantity="zero">آخر يوم</item>
+        <item quantity="one">يوم متبقٍ</item>
+        <item quantity="two">يومان متبقيان</item>
+        <item quantity="few">أيام متبقية</item>
+        <item quantity="many">يوماً متبقياً</item>
+        <item quantity="other">يوم متبقٍ</item>
+    </plurals>
+    <plurals name="detail_unit_expired">
+        <item quantity="zero">انتهى اليوم</item>
+        <item quantity="one">يوم منذ الانتهاء</item>
+        <item quantity="two">يومان منذ الانتهاء</item>
+        <item quantity="few">أيام منذ الانتهاء</item>
+        <item quantity="many">يوماً منذ الانتهاء</item>
+        <item quantity="other">يوم منذ الانتهاء</item>
+    </plurals>
 </resources>

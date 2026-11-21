@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- الشريط السياقي · حالة سليمة: زجاج محايد + هالة نعناعية خافتة خلف الأيقونة + حدّ نعناعي رفيع. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><shape android:shape="rectangle"><solid android:color="@color/home_glass_fill"/><corners android:radius="28dp"/></shape></item>
+    <item><shape android:shape="rectangle">
+        <gradient android:type="radial" android:centerX="0.94" android:centerY="0.5" android:gradientRadius="170dp" android:startColor="#246EE7B7" android:endColor="#006EE7B7"/>
+        <corners android:radius="28dp"/></shape></item>
+    <item><shape android:shape="rectangle"><stroke android:width="1dp" android:color="#2E6EE7B7"/><corners android:radius="28dp"/></shape></item>
+</layer-list>

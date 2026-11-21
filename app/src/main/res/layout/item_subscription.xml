@@ -1,40 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    عنصر سجل الاشتراك كمدخل في خط زمني: خط رفيع + نقطة متوهجة بلون الحالة (تُلوَّن برمجياً)،
-    وبطاقة زجاجية: الخطة · الشارة، المدى الزمني، المبلغ · طريقة الدفع، وللجزئي "المتبقي" + شريط،
-    وزر "تسديد" للجزئي وغير المدفوع. الفراغ بين البطاقات حشوة سفلية (لا margin) ليبقى الخط متصلاً.
+    بطاقة اشتراك في تبويب "السجل": الخطة + شارة الحالة، المدى الزمني + طريقة الدفع (شريحة صغيرة)،
+    المبلغ + زر "تسديد" (للجزئي وغير المدفوع). للجزئي شريط + "المتبقي".
+    الفراغ بين البطاقات حشوة سفلية (لا margin).
 -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="16dp">
-
-    <View
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start|top"
-        android:layout_marginStart="5dp"
-        android:background="@drawable/bg_detail_line"
-        android:importantForAccessibility="no" />
-
-    <View
-        android:id="@+id/dotTimeline"
-        android:layout_width="19dp"
-        android:layout_height="19dp"
-        android:layout_gravity="start|top"
-        android:layout_marginStart="-4dp"
-        android:layout_marginTop="18dp"
-        android:background="@drawable/bg_detail_dot"
-        android:importantForAccessibility="no" />
+    android:orientation="vertical"
+    android:paddingBottom="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
         android:background="@drawable/bg_detail_card"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -50,8 +32,8 @@
                 android:fontFamily="@font/cairo_bold"
                 android:includeFontPadding="false"
                 android:textColor="@color/home_ink"
-                android:textSize="15sp"
-                tools:text="مدة مخصصة" />
+                android:textSize="16sp"
+                tools:text="شهري" />
 
             <TextView
                 android:id="@+id/tvSubPaid"
@@ -61,28 +43,62 @@
                 android:fontFamily="@font/cairo_bold"
                 android:gravity="center"
                 android:includeFontPadding="false"
-                android:paddingHorizontal="10dp"
+                android:paddingHorizontal="12dp"
                 android:textColor="@color/home_mint"
                 android:textSize="12sp"
                 tools:text="مدفوع" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvSubDates"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:fontFamily="@font/cairo_regular"
+                android:includeFontPadding="false"
+                android:textColor="@color/home_mute"
+                android:textSize="13sp"
+                tools:text="15 نوفمبر ← 14 ديسمبر 2026" />
+
+            <!-- طريقة الدفع: شريحة صغيرة بأيقونة محفظة (تظهر فقط بعد الدفع الفعلي) -->
+            <TextView
+                android:id="@+id/tvSubPaymentMethod"
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/bg_detail_pill_neutral"
+                android:drawableStart="@drawable/ic_pd_wallet_14"
+                android:drawablePadding="6dp"
+                android:drawableTint="@color/home_mute"
+                android:fontFamily="@font/cairo_medium"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="10dp"
+                android:textColor="@color/home_mute"
+                android:textSize="12sp"
+                tools:text="بال باي" />
+        </LinearLayout>
+
+        <!-- لا يُعرض إطلاقاً في السجل المختصر (راجع SubscriptionHistoryAdapter) -->
         <TextView
-            android:id="@+id/tvSubDates"
+            android:id="@+id/tvSubSenderInfo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:fontFamily="@font/cairo_regular"
-            android:includeFontPadding="false"
-            android:textColor="@color/home_mute"
-            android:textSize="13sp"
-            tools:text="12 نوفمبر 2026 ← 16 نوفمبر 2026" />
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="8dp"
             android:gravity="center_vertical"
+            android:minHeight="48dp"
             android:orientation="horizontal">
 
             <TextView
@@ -95,36 +111,34 @@
                 android:includeFontPadding="false"
                 android:textColor="@color/home_ink"
                 android:textSize="22sp"
-                tools:text="₪10" />
+                tools:text="₪ 5" />
 
+            <!-- زر "تسديد": مرئي 32dp داخل لمس 48dp؛ يظهر للجزئي وغير المدفوع (يضبطه المحوّل). -->
             <TextView
-                android:id="@+id/tvSubPaymentMethod"
+                android:id="@+id/btnSettleDebt"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_pd_wallet"
-                android:drawablePadding="6dp"
-                android:drawableTint="@color/home_mute"
-                android:fontFamily="@font/cairo_regular"
-                android:gravity="center_vertical"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_detail_pay_mint_inset"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
                 android:includeFontPadding="false"
-                android:textColor="@color/home_mute"
+                android:minWidth="80dp"
+                android:paddingHorizontal="20dp"
+                android:text="@string/action_settle_debt"
+                android:textColor="@color/home_mint"
                 android:textSize="13sp"
-                tools:text="بال باي" />
+                android:visibility="gone"
+                tools:visibility="visible" />
         </LinearLayout>
-
-        <!-- لا يُعرض إطلاقاً في السجل المختصر (راجع SubscriptionHistoryAdapter) -->
-        <TextView
-            android:id="@+id/tvSubSenderInfo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
 
         <ProgressBar
             android:id="@+id/pbSubPaid"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="6dp"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="4dp"
             android:max="100"
             android:maxHeight="6dp"
             android:minHeight="6dp"
@@ -134,43 +148,17 @@
             tools:progress="50"
             tools:visibility="visible" />
 
-        <LinearLayout
-            android:id="@+id/rowSubAction"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvSubRemaining"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
+            android:fontFamily="@font/cairo_bold"
+            android:includeFontPadding="false"
+            android:textColor="@color/home_lav"
+            android:textSize="12sp"
             android:visibility="gone"
-            tools:visibility="visible">
-
-            <TextView
-                android:id="@+id/tvSubRemaining"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:fontFamily="@font/cairo_bold"
-                android:includeFontPadding="false"
-                android:textColor="@color/home_lav"
-                android:textSize="13sp"
-                tools:text="المتبقي: ₪5" />
-
-            <!-- زر "تسديد": مرئي 40dp داخل منطقة لمس 48dp؛ يظهر للجزئي وغير المدفوع (يضبطه المحوّل). -->
-            <TextView
-                android:id="@+id/btnSettleDebt"
-                android:layout_width="wrap_content"
-                android:layout_height="48dp"
-                android:background="@drawable/bg_detail_pay_inset"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="@font/cairo_bold"
-                android:gravity="center"
-                android:includeFontPadding="false"
-                android:minWidth="88dp"
-                android:paddingHorizontal="24dp"
-                android:text="@string/action_settle_debt"
-                android:textColor="@color/detail_on_mint"
-                android:textSize="14sp" />
-        </LinearLayout>
+            tools:text="المتبقي: ₪ 5"
+            tools:visibility="visible" />
     </LinearLayout>
-</FrameLayout>
+</LinearLayout>

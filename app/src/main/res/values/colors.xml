@@ -174,9 +174,9 @@
     <color name="home_seg_active_text">#4A1566</color>
     <color name="home_bar_dim">#57FFFFFF</color>
     <color name="home_count_vio_bg">#4D7C4DE8</color>
-    <color name="home_count_coral_bg">#33FF8A8A</color>
-    <color name="home_pill_amber_bg">#29F5B544</color>
-    <color name="home_pill_coral_bg">#33FF8A8A</color>
+    <color name="home_count_coral_bg">#33FFB8B8</color>
+    <color name="home_pill_amber_bg">#26FFD27A</color>
+    <color name="home_pill_coral_bg">#26FFB8B8</color>
     <color name="home_nav_fill">#99161734</color>
     <color name="home_nav_stroke">#24FFFFFF</color>
     <color name="home_nav_idle">#9097C2</color>
@@ -191,9 +191,9 @@
     <color name="home_fab_glow">#737C4DE8</color>
 
     <!-- شاشة الأعضاء (إعادة تصميم 2026) — ألوان ثابتة داكنة مثل home_* لأن الشاشة داكنة دائماً -->
-    <color name="home_pill_mint_bg">#2434D399</color>
-    <color name="home_wa_fill">#2934D399</color>
-    <color name="home_wa_stroke">#4D34D399</color>
+    <color name="home_pill_mint_bg">#226EE7B7</color>
+    <color name="home_wa_fill">#1F6EE7B7</color>
+    <color name="home_wa_stroke">#406EE7B7</color>
     <color name="home_progress_track">#1AFFFFFF</color>
     <color name="home_search_focus">#807C4DE8</color>
     <color name="home_ring_soft">#1FFFFFFF</color>
@@ -237,9 +237,9 @@
     <color name="detail_avatar_end">#477C4DE8</color>
     <color name="detail_lav_fill">#24E4D9FF</color>
     <color name="detail_lav_stroke">#4DE4D9FF</color>
-    <color name="detail_mint_stroke">#4D6EE7B7</color>
+    <color name="detail_mint_stroke">#406EE7B7</color>
     <color name="detail_coral_fill">#1FFFB8B8</color>
-    <color name="detail_coral_stroke">#73FFB8B8</color>
+    <color name="detail_coral_stroke">#40FFB8B8</color>
     <color name="detail_track">#1AFFFFFF</color>
     <color name="detail_dash">#38FFFFFF</color>
     <color name="detail_line">#1FFFFFFF</color>

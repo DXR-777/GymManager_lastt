@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- بطاقة العضوية: لم يبدأ بعد (لافندر). تدرّج قطري + لمعة ناعمة في الزاوية العلوية + حدّ داخلي رفيع. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><shape android:shape="rectangle">
+        <gradient android:angle="315" android:startColor="#7C86EE" android:centerColor="#5B4FD0" android:endColor="#3A2F9E" android:type="linear"/>
+        <corners android:radius="32dp"/></shape></item>
+    <item><shape android:shape="rectangle">
+        <gradient android:type="radial" android:centerX="0.12" android:centerY="0.0" android:gradientRadius="260dp" android:startColor="#38FFFFFF" android:endColor="#00FFFFFF"/>
+        <corners android:radius="32dp"/></shape></item>
+    <item><shape android:shape="rectangle"><solid android:color="@color/transparent"/><stroke android:width="1dp" android:color="#2EFFFFFF"/><corners android:radius="32dp"/></shape></item>
+</layer-list>

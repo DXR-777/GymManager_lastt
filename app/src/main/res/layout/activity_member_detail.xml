@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    شاشة "تفاصيل العضو" (إعادة تصميم 2026، نفس لغة الرئيسية والأعضاء): خلفية #0A0B1E + كرات ضبابية.
-    الأقسام (من الأعلى): شريط علوي، بطاقة الهيرو (حلقة التقدّم + الحالة + زر الإجراء الأساسي)،
-    الإجراءات السريعة، الملخص المالي، الملاحظات، سجل الاشتراكات (فلتر + خط زمني)، منطقة الحذف.
-    كل أهداف اللمس ≥ 48dp (الشكل المرئي الأصغر يُحاط بـ inset داخل منطقة لمس 48dp).
-    المعرِّفات المستخدمة في MemberDetailActivity محفوظة قدر الإمكان.
+    شاشة "تفاصيل العضو" — تصميم Membership Pass (2026):
+    1) بطاقة العضوية بتدرّج الهوية: الخطة وحالة الدفع، الصورة والاسم والهاتف، تاريخ الانتهاء والأيام المتبقية + شريط التقدّم
+    2) شريط سياقي: المتبقي غير المدفوع + تسديد، أو تنبيه الانتهاء + تجديد
+    3) إجراءات سريعة دائرية (اتصال · واتساب · رسالة · مشاركة)
+    4) تبويبان: السجل (بطاقات الاشتراكات مع طريقة الدفع) والملاحظات
+    5) منطقة حذف هادئة في الأسفل.
+    كل أهداف اللمس ≥ 48dp. الفراغات من شبكة 8dp وهوامش جانبية 20dp.
 -->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -81,285 +83,334 @@
                 android:id="@+id/contentColumn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:clipChildren="false"
                 android:orientation="vertical"
                 android:paddingHorizontal="@dimen/home_pad"
                 android:paddingTop="8dp"
-                android:paddingBottom="120dp">
+                android:paddingBottom="48dp">
 
-                <!-- ======== 1) الهيرو ======== -->
+                <!-- ======== 1) بطاقة العضوية ======== -->
                 <LinearLayout
-                    android:id="@+id/heroCard"
+                    android:id="@+id/passCard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/bg_detail_hero"
-                    android:gravity="center_horizontal"
+                    android:background="@drawable/bg_detail_pass_active"
                     android:orientation="vertical"
-                    android:paddingHorizontal="20dp"
-                    android:paddingTop="28dp"
-                    android:paddingBottom="20dp">
-
-                    <FrameLayout
-                        android:layout_width="128dp"
-                        android:layout_height="128dp">
-
-                        <com.gympro.manager.ui.widgets.SubscriptionRingView
-                            android:id="@+id/ringSubscription"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-
-                        <TextView
-                            android:id="@+id/tvInitial"
-                            android:layout_width="104dp"
-                            android:layout_height="104dp"
-                            android:layout_gravity="center"
-                            android:background="@drawable/bg_detail_avatar"
-                            android:fontFamily="@font/cairo_extrabold"
-                            android:gravity="center"
-                            android:includeFontPadding="false"
-                            android:textColor="@color/home_lav"
-                            android:textSize="44sp"
-                            tools:text="ح" />
-                    </FrameLayout>
-
-                    <TextView
-                        android:id="@+id/tvName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        android:fontFamily="@font/cairo_bold"
-                        android:includeFontPadding="false"
-                        android:textColor="@color/home_ink"
-                        android:textSize="24sp"
-                        tools:text="حمود" />
+                    android:padding="20dp">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="36dp"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_detail_pill_neutral"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:gravity="center_vertical"
-                        android:orientation="horizontal"
-                        android:paddingHorizontal="14dp">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_pd_phone"
-                            app:tint="@color/home_mute" />
+                        android:minHeight="32dp"
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/tvPhone"
-                            android:layout_width="wrap_content"
+                            android:id="@+id/tvPlanLabel"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
                             android:fontFamily="@font/cairo_medium"
                             android:includeFontPadding="false"
-                            android:textColor="@color/home_ink"
-                            android:textDirection="ltr"
-                            android:textSize="15sp"
-                            tools:text="9879979797" />
-                    </LinearLayout>
+                            android:maxLines="1"
+                            android:textColor="#E6F5F6FF"
+                            android:textSize="14sp"
+                            tools:text="عضوية شهرية · بال باي" />
 
-                    <TextView
-                        android:id="@+id/tvMemberSince"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:fontFamily="@font/cairo_regular"
-                        android:includeFontPadding="false"
-                        android:textColor="@color/home_mute"
-                        android:textSize="13sp"
-                        tools:text="عضو منذ 12 نوفمبر 2026" />
-
-                    <!-- ثلاث شرائح: الخطة · حالة الدفع · طريقة الدفع (تلتفّ عند ضيق المساحة) -->
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/groupHeroChips"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
-                        app:chipSpacingHorizontal="8dp"
-                        app:chipSpacingVertical="8dp">
-
-                        <LinearLayout
-                            android:id="@+id/chipPlan"
-                            android:layout_width="wrap_content"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_detail_pill_neutral"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="12dp">
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/ic_pd_calendar"
-                                app:tint="@color/home_mute" />
-
-                            <TextView
-                                android:id="@+id/tvCurrentTypeBadge"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:textColor="@color/home_mute"
-                                android:textSize="13sp"
-                                tools:text="مدة مخصصة" />
-                        </LinearLayout>
-
-                        <LinearLayout
+                        <FrameLayout
                             android:id="@+id/chipPayment"
                             android:layout_width="wrap_content"
                             android:layout_height="32dp"
-                            android:background="@drawable/bg_detail_pill_mint"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="12dp">
-
-                            <ImageView
-                                android:id="@+id/ivChipPayment"
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/ic_pd_check"
-                                app:tint="@color/home_mint" />
+                            android:layout_marginStart="8dp"
+                            android:background="@drawable/bg_detail_pass_chip">
 
                             <TextView
                                 android:id="@+id/tvCurrentPaidBadge"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
-                                android:fontFamily="@font/cairo_medium"
+                                android:layout_height="match_parent"
+                                android:drawableStart="@drawable/bg_detail_dot8"
+                                android:drawablePadding="8dp"
+                                android:fontFamily="@font/cairo_bold"
+                                android:gravity="center"
                                 android:includeFontPadding="false"
-                                android:textColor="@color/home_mint"
+                                android:paddingHorizontal="14dp"
+                                android:textColor="@color/home_ink"
                                 android:textSize="13sp"
                                 tools:text="مدفوع" />
-                        </LinearLayout>
+                        </FrameLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tvInitial"
+                            android:layout_width="72dp"
+                            android:layout_height="72dp"
+                            android:background="@drawable/bg_detail_pass_avatar"
+                            android:fontFamily="@font/cairo_extrabold"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:textColor="@color/home_ink"
+                            android:textSize="30sp"
+                            tools:text="ي" />
 
                         <LinearLayout
-                            android:id="@+id/chipMethod"
-                            android:layout_width="wrap_content"
-                            android:layout_height="32dp"
-                            android:background="@drawable/bg_detail_pill_neutral"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="12dp">
-
-                            <ImageView
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/ic_pd_wallet"
-                                app:tint="@color/home_mute" />
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/tvCurrentPaymentMethod"
-                                android:layout_width="wrap_content"
+                                android:id="@+id/tvName"
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="6dp"
+                                android:ellipsize="end"
+                                android:fontFamily="@font/cairo_extrabold"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/home_ink"
+                                android:textSize="24sp"
+                                tools:text="يس" />
+
+                            <TextView
+                                android:id="@+id/tvPhone"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
                                 android:fontFamily="@font/cairo_medium"
                                 android:includeFontPadding="false"
-                                android:textColor="@color/home_mute"
-                                android:textSize="13sp"
-                                tools:text="بال باي" />
-                        </LinearLayout>
-                    </com.google.android.material.chip.ChipGroup>
+                                android:textAlignment="viewStart"
+                                android:textColor="#D9F5F6FF"
+                                android:textDirection="ltr"
+                                android:textSize="15sp"
+                                tools:text="0858885858" />
 
-                    <!-- العنوان الكبير: بطل البطاقة -->
-                    <TextView
-                        android:id="@+id/tvDaysRemainingBig"
-                        android:layout_width="wrap_content"
+                            <TextView
+                                android:id="@+id/tvMemberSince"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="4dp"
+                                android:fontFamily="@font/cairo_regular"
+                                android:includeFontPadding="false"
+                                android:textColor="#B3F5F6FF"
+                                android:textSize="12sp"
+                                tools:text="عضو منذ 15 نوفمبر 2026" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="24dp"
-                        android:fontFamily="@font/cairo_extrabold"
-                        android:includeFontPadding="false"
-                        android:textColor="@color/home_mint"
-                        android:textSize="32sp"
-                        tools:text="باقي 4 أيام" />
+                        android:gravity="bottom"
+                        android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/tvCurrentDates"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="6dp"
-                        android:fontFamily="@font/cairo_regular"
-                        android:includeFontPadding="false"
-                        android:textColor="@color/home_mute"
-                        android:textSize="13sp"
-                        tools:text="12 نوفمبر 2026 ← 16 نوفمبر 2026" />
+                        <LinearLayout
+                            android:id="@+id/blockExpires"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_regular"
+                                android:includeFontPadding="false"
+                                android:text="@string/detail_pass_expires"
+                                android:textColor="#CCF5F6FF"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvCurrentDates"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:fontFamily="@font/cairo_bold"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/home_ink"
+                                android:textSize="17sp"
+                                tools:text="14 ديسمبر 2026" />
+                        </LinearLayout>
+
+                        <Space
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:layout_weight="1" />
+
+                        <!-- الأيام المتبقية: رقم ضخم + وحدة صغيرة -->
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="bottom"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvDaysNumber"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_extrabold"
+                                android:fontFeatureSettings="tnum"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/home_ink"
+                                android:textSize="52sp"
+                                tools:text="29" />
+
+                            <TextView
+                                android:id="@+id/tvDaysUnit"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:fontFamily="@font/cairo_medium"
+                                android:includeFontPadding="false"
+                                android:textColor="#E6F5F6FF"
+                                android:textSize="14sp"
+                                tools:text="يوماً متبقياً" />
+                        </LinearLayout>
+                    </LinearLayout>
 
                     <ProgressBar
                         android:id="@+id/progressSubscription"
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
-                        android:layout_height="8dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_height="6dp"
+                        android:layout_marginTop="12dp"
                         android:max="100"
-                        android:maxHeight="8dp"
-                        android:minHeight="8dp"
-                        android:progressDrawable="@drawable/progress_detail_status"
+                        android:maxHeight="6dp"
+                        android:minHeight="6dp"
+                        android:progressDrawable="@drawable/progress_detail_pass"
                         tools:progress="30" />
 
                     <TextView
                         android:id="@+id/tvCurrentSenderInfo"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:fontFamily="@font/cairo_regular"
-                        android:gravity="center"
                         android:lineSpacingExtra="2dp"
-                        android:textColor="@color/home_mute"
+                        android:textColor="#CCF5F6FF"
                         android:textSize="12sp"
                         android:visibility="gone"
-                        tools:text="أحمد\n0599999999" />
+                        tools:text="أحمد · 0599999999" />
+                </LinearLayout>
 
-                    <!-- الزر الأساسي الوحيد (سياقي): تجديد الاشتراك / تسديد -->
+                <!-- ======== 2) الشريط السياقي: أيقونة حالة + نص في سطر واحد + زر ======== -->
+                <LinearLayout
+                    android:id="@+id/cardStrip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:background="@drawable/bg_detail_strip_coral"
+                    android:gravity="center_vertical"
+                    android:minHeight="80dp"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
+
+                    <ImageView
+                        android:id="@+id/ivStripIcon"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_detail_strip_icon"
+                        android:importantForAccessibility="no"
+                        android:padding="11dp"
+                        android:src="@drawable/ic_pd_alert" />
+
+                    <!-- كتلة النص: سطران متلاصقان ومحاذيان للبداية، متوسّطان رأسياً مع الزر، ولا تلتفّ أبداً. -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|start"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvStripCaption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/cairo_regular"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/home_mute"
+                            android:textSize="12sp"
+                            tools:text="ينتهي الاشتراك قريباً" />
+
+                        <TextView
+                            android:id="@+id/tvStripValue"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:ellipsize="end"
+                            android:fontFamily="@font/cairo_bold"
+                            android:fontFeatureSettings="tnum"
+                            android:gravity="start"
+                            android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textAlignment="viewStart"
+                            android:textColor="@color/home_coral"
+                            android:textSize="16sp"
+                            app:autoSizeMaxTextSize="16sp"
+                            app:autoSizeMinTextSize="12sp"
+                            app:autoSizeStepGranularity="1sp"
+                            app:autoSizeTextType="uniform"
+                            tools:text="ينتهي بعد يومين" />
+                    </LinearLayout>
+
                     <TextView
                         android:id="@+id/btnPrimaryAction"
-                        android:layout_width="match_parent"
-                        android:layout_height="56dp"
-                        android:layout_marginTop="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="48dp"
+                        android:layout_marginStart="12dp"
                         android:background="@drawable/bg_home_cta"
                         android:clickable="true"
                         android:focusable="true"
                         android:fontFamily="@font/cairo_bold"
                         android:gravity="center"
                         android:includeFontPadding="false"
-                        android:text="@string/detail_action_renew_long"
+                        android:minWidth="96dp"
+                        android:paddingHorizontal="20dp"
+                        android:text="@string/action_settle_debt"
                         android:textColor="@color/home_ink"
-                        android:textSize="17sp" />
+                        android:textSize="15sp" />
                 </LinearLayout>
 
-                <!-- ======== 2) الإجراءات السريعة: بطاقة واحدة بأربعة أعمدة متساوية ======== -->
+                <!-- ======== 3) الإجراءات السريعة ======== -->
                 <LinearLayout
-                    android:id="@+id/cardQuickActions"
+                    android:id="@+id/rowActions"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_detail_card"
-                    android:orientation="horizontal"
-                    android:padding="20dp">
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:id="@+id/btnCall"
                         android:layout_width="0dp"
-                        android:layout_height="88dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:gravity="center_horizontal"
+                        android:minHeight="88dp"
+                        android:orientation="vertical"
+                        android:paddingVertical="4dp">
 
                         <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_detail_badge"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_detail_action_circle"
                             android:importantForAccessibility="no"
-                            android:padding="12dp"
+                            android:padding="16dp"
                             android:src="@drawable/ic_pd_phone"
                             app:tint="@color/home_lav" />
 
@@ -368,52 +419,52 @@
                             android:text="@string/detail_action_call" />
                     </LinearLayout>
 
-                    <View style="@style/DetailVDivider" />
-
                     <LinearLayout
                         android:id="@+id/btnWhatsapp"
                         android:layout_width="0dp"
-                        android:layout_height="88dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:gravity="center_horizontal"
+                        android:minHeight="88dp"
+                        android:orientation="vertical"
+                        android:paddingVertical="4dp">
 
                         <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_detail_badge_wa"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_detail_action_circle_wa"
                             android:importantForAccessibility="no"
-                            android:padding="12dp"
+                            android:padding="16dp"
                             android:src="@drawable/ic_pd_whatsapp"
-                            app:tint="#34D399" />
+                            app:tint="#6EE7B7" />
 
                         <TextView
                             style="@style/DetailActionLabel"
                             android:text="@string/detail_action_whatsapp_short" />
                     </LinearLayout>
 
-                    <View style="@style/DetailVDivider" />
-
                     <LinearLayout
                         android:id="@+id/btnSms"
                         android:layout_width="0dp"
-                        android:layout_height="88dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:gravity="center_horizontal"
+                        android:minHeight="88dp"
+                        android:orientation="vertical"
+                        android:paddingVertical="4dp">
 
                         <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_detail_badge"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_detail_action_circle"
                             android:importantForAccessibility="no"
-                            android:padding="12dp"
+                            android:padding="16dp"
                             android:src="@drawable/ic_pd_sms"
                             app:tint="@color/home_lav" />
 
@@ -422,25 +473,25 @@
                             android:text="@string/detail_action_sms" />
                     </LinearLayout>
 
-                    <View style="@style/DetailVDivider" />
-
                     <LinearLayout
                         android:id="@+id/btnShare"
                         android:layout_width="0dp"
-                        android:layout_height="88dp"
+                        android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:background="?attr/selectableItemBackgroundBorderless"
                         android:clickable="true"
                         android:focusable="true"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                        android:gravity="center_horizontal"
+                        android:minHeight="88dp"
+                        android:orientation="vertical"
+                        android:paddingVertical="4dp">
 
                         <ImageView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_detail_badge"
+                            android:layout_width="56dp"
+                            android:layout_height="56dp"
+                            android:background="@drawable/bg_detail_action_circle"
                             android:importantForAccessibility="no"
-                            android:padding="12dp"
+                            android:padding="16dp"
                             android:src="@drawable/ic_pd_share"
                             app:tint="@color/home_lav" />
 
@@ -450,428 +501,309 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <!-- ======== 3) الملخص المالي ======== -->
+                <!-- ======== 4) التبويبان: السجل · الملاحظات ======== -->
                 <LinearLayout
-                    android:id="@+id/cardFinance"
+                    android:id="@+id/tabs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_detail_card"
-                    android:clipChildren="false"
-                    android:orientation="vertical"
-                    android:padding="20dp">
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
 
+                    <TextView
+                        android:id="@+id/tabHistory"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_home_cta"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/cairo_bold"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="@string/detail_tab_history"
+                        android:textColor="@color/home_ink"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tabNotes"
+                        android:layout_width="0dp"
+                        android:layout_height="52dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/bg_detail_tab"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:fontFamily="@font/cairo_bold"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:text="@string/detail_tab_notes"
+                        android:textColor="@color/home_mute"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/tabContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp">
+
+                    <!-- تبويب السجل -->
                     <LinearLayout
+                        android:id="@+id/sectionHistory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:clipChildren="false"
-                        android:orientation="horizontal">
+                        android:orientation="vertical">
 
                         <LinearLayout
-                            android:layout_width="0dp"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
 
                             <TextView
-                                android:id="@+id/tvTotalMonths"
-                                style="@style/DetailNumber"
-                                android:textColor="@color/home_ink"
-                                tools:text="0" />
+                                android:id="@+id/tvHistorySummary"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/cairo_regular"
+                                android:includeFontPadding="false"
+                                android:textColor="@color/home_mute"
+                                android:textSize="13sp"
+                                tools:text="الاشتراكات 1 · إجمالي المدفوع ₪ 0" />
 
-                            <TextView
-                                style="@style/DetailNumberCaption"
-                                android:text="@string/detail_total_months" />
-                        </LinearLayout>
-
-                        <View style="@style/DetailVDivider" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvTotalPaid"
-                                style="@style/DetailNumber"
-                                android:textColor="@color/home_mint"
-                                tools:text="₪10" />
-
-                            <TextView
-                                style="@style/DetailNumberCaption"
-                                android:text="@string/detail_total_paid" />
-                        </LinearLayout>
-
-                        <View style="@style/DetailVDivider" />
-
-                        <!-- عمود المتبقي: يتوهّج بالمرجاني ويظهر فيه زر "تسديد" عندما يكون المبلغ > 0 -->
-                        <LinearLayout
-                            android:id="@+id/colOutstanding"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:clipChildren="false"
-                            android:gravity="center_horizontal"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/tvTotalOutstanding"
-                                style="@style/DetailNumber"
-                                android:textColor="@color/home_coral"
-                                tools:text="₪150" />
-
-                            <TextView
-                                style="@style/DetailNumberCaption"
-                                android:text="@string/detail_outstanding" />
-
-                            <TextView
-                                android:id="@+id/btnOutstandingPay"
-                                android:layout_width="wrap_content"
+                            <ImageView
+                                android:id="@+id/btnHistorySort"
+                                android:layout_width="48dp"
                                 android:layout_height="48dp"
-                                android:background="@drawable/bg_detail_pay_chip"
-                                android:clickable="true"
-                                android:focusable="true"
+                                android:background="@drawable/bg_detail_circle40"
+                                android:contentDescription="@string/members_sort_action"
+                                android:foreground="@drawable/ripple_home_circle"
+                                android:padding="12dp"
+                                android:src="@drawable/ic_pd_sort"
+                                app:tint="@color/home_ink" />
+                        </LinearLayout>
+
+                        <!-- شرائح الفلتر (تظهر فقط عند وجود 3 اشتراكات أو أكثر) + مؤشر منزلق -->
+                        <HorizontalScrollView
+                            android:id="@+id/chipRowScroll"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:clipToPadding="false"
+                            android:scrollbars="none"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <FrameLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp">
+
+                                <View
+                                    android:id="@+id/chipIndicator"
+                                    android:layout_width="0dp"
+                                    android:layout_height="36dp"
+                                    android:layout_gravity="left|top"
+                                    android:layout_marginTop="6dp"
+                                    android:background="@drawable/bg_home_chip_active"
+                                    android:importantForAccessibility="no"
+                                    tools:ignore="RtlHardcoded" />
+
+                                <LinearLayout
+                                    android:id="@+id/chipRow"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="48dp"
+                                    android:orientation="horizontal">
+
+                                    <LinearLayout
+                                        android:id="@+id/chipHistoryAll"
+                                        style="@style/DetailFilterChip">
+
+                                        <TextView
+                                            android:id="@+id/tvChipAllLabel"
+                                            style="@style/DetailFilterChipLabel"
+                                            android:text="@string/members_filter_all" />
+
+                                        <TextView
+                                            android:id="@+id/tvChipAllCount"
+                                            style="@style/DetailFilterChipCount" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/chipHistoryPaid"
+                                        style="@style/DetailFilterChip">
+
+                                        <TextView
+                                            android:id="@+id/tvChipPaidLabel"
+                                            style="@style/DetailFilterChipLabel"
+                                            android:text="@string/status_paid" />
+
+                                        <TextView
+                                            android:id="@+id/tvChipPaidCount"
+                                            style="@style/DetailFilterChipCount" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/chipHistoryPartial"
+                                        style="@style/DetailFilterChip">
+
+                                        <TextView
+                                            android:id="@+id/tvChipPartialLabel"
+                                            style="@style/DetailFilterChipLabel"
+                                            android:text="@string/payment_status_partial" />
+
+                                        <TextView
+                                            android:id="@+id/tvChipPartialCount"
+                                            style="@style/DetailFilterChipCount" />
+                                    </LinearLayout>
+
+                                    <LinearLayout
+                                        android:id="@+id/chipHistoryUnpaid"
+                                        style="@style/DetailFilterChip">
+
+                                        <TextView
+                                            android:id="@+id/tvChipUnpaidLabel"
+                                            style="@style/DetailFilterChipLabel"
+                                            android:text="@string/members_filter_unpaid" />
+
+                                        <TextView
+                                            android:id="@+id/tvChipUnpaidCount"
+                                            style="@style/DetailFilterChipCount" />
+                                    </LinearLayout>
+                                </LinearLayout>
+                            </FrameLayout>
+                        </HorizontalScrollView>
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvHistory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:nestedScrollingEnabled="false" />
+
+                        <!-- حالة التحميل: هيكل عظمي لبطاقتين -->
+                        <LinearLayout
+                            android:id="@+id/layoutHistorySkeleton"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:importantForAccessibility="no"
+                            android:orientation="vertical">
+
+                            <include layout="@layout/item_subscription_skeleton" />
+
+                            <include layout="@layout/item_subscription_skeleton" />
+                        </LinearLayout>
+
+                        <TextView
+                            android:id="@+id/btnHistoryLoadMore"
+                            android:layout_width="wrap_content"
+                            android:layout_height="48dp"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@drawable/bg_detail_btn_glass"
+                            android:clickable="true"
+                            android:drawableEnd="@drawable/ic_pd_chevron_down"
+                            android:drawablePadding="8dp"
+                            android:drawableTint="@color/home_mute"
+                            android:focusable="true"
+                            android:fontFamily="@font/cairo_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:minWidth="160dp"
+                            android:paddingHorizontal="20dp"
+                            android:text="@string/detail_history_load_more"
+                            android:textColor="@color/home_mute"
+                            android:textSize="14sp"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <LinearLayout
+                            android:id="@+id/cardEmptyHistory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_detail_empty"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical"
+                            android:paddingHorizontal="20dp"
+                            android:paddingVertical="32dp"
+                            android:visibility="gone"
+                            tools:visibility="visible">
+
+                            <ImageView
+                                android:layout_width="96dp"
+                                android:layout_height="96dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_pd_empty" />
+
+                            <TextView
+                                android:id="@+id/tvEmptyHistory"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
                                 android:fontFamily="@font/cairo_bold"
                                 android:gravity="center"
                                 android:includeFontPadding="false"
-                                android:minWidth="64dp"
-                                android:paddingHorizontal="14dp"
-                                android:text="@string/action_settle_debt"
-                                android:textColor="@color/home_coral"
-                                android:textSize="12sp"
-                                android:visibility="gone"
-                                tools:visibility="visible" />
+                                android:text="@string/detail_history_empty"
+                                android:textColor="@color/home_ink"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/tvEmptyHistoryHint"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:fontFamily="@font/cairo_regular"
+                                android:gravity="center"
+                                android:lineSpacingExtra="4dp"
+                                android:text="@string/detail_history_empty_hint"
+                                android:textColor="@color/home_mute"
+                                android:textSize="13sp" />
                         </LinearLayout>
                     </LinearLayout>
 
-                    <!-- شريط مكدّس: المدفوع مقابل المتبقي -->
+                    <!-- تبويب الملاحظات -->
                     <LinearLayout
-                        android:id="@+id/stackBar"
-                        android:layout_width="match_parent"
-                        android:layout_height="8dp"
-                        android:layout_marginTop="16dp"
-                        android:background="@drawable/bg_detail_bar_track"
-                        android:contentDescription="@string/detail_total_paid"
-                        android:orientation="horizontal"
-                        android:weightSum="1">
-
-                        <View
-                            android:id="@+id/barPaid"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_weight="1"
-                            android:background="@drawable/bg_detail_bar_mint" />
-
-                        <View
-                            android:id="@+id/barRemaining"
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="2dp"
-                            android:layout_weight="0"
-                            android:background="@drawable/bg_detail_bar_coral"
-                            android:visibility="gone" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- ======== 4) الملاحظات ======== -->
-                <LinearLayout
-                    android:id="@+id/cardNotes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:background="@drawable/bg_detail_card"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-
-                    <LinearLayout
+                        android:id="@+id/sectionNotes"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:orientation="vertical"
+                        android:visibility="gone">
 
-                        <TextView
-                            android:layout_width="0dp"
+                        <LinearLayout
+                            android:id="@+id/cardNotes"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:fontFamily="@font/cairo_bold"
-                            android:includeFontPadding="false"
-                            android:text="@string/detail_notes_title"
-                            android:textColor="@color/home_ink"
-                            android:textSize="16sp" />
+                            android:background="@drawable/bg_detail_card"
+                            android:gravity="center_vertical"
+                            android:minHeight="88dp"
+                            android:orientation="horizontal"
+                            android:paddingVertical="16dp"
+                            android:paddingStart="20dp"
+                            android:paddingEnd="8dp">
 
-                        <ImageView
-                            android:id="@+id/btnNotesEdit"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_marginVertical="-14dp"
-                            android:layout_marginEnd="-14dp"
-                            android:background="?attr/selectableItemBackgroundBorderless"
-                            android:contentDescription="@string/detail_notes_edit_cd"
-                            android:padding="14dp"
-                            android:src="@drawable/ic_pd_edit"
-                            app:tint="@color/home_mute" />
-                    </LinearLayout>
-
-                    <TextView
-                        android:id="@+id/tvNotes"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:fontFamily="@font/cairo_regular"
-                        android:lineSpacingExtra="4dp"
-                        android:textColor="@color/home_mute"
-                        android:textSize="14sp"
-                        tools:text="لا توجد ملاحظات" />
-                </LinearLayout>
-
-                <!-- ======== 5) سجل الاشتراكات ======== -->
-                <LinearLayout
-                    android:id="@+id/sectionHistory"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/cairo_bold"
-                            android:includeFontPadding="false"
-                            android:text="@string/detail_history_title"
-                            android:textColor="@color/home_ink"
-                            android:textSize="17sp" />
-
-                        <TextView
-                            android:id="@+id/tvHistoryCount"
-                            android:layout_width="wrap_content"
-                            android:layout_height="24dp"
-                            android:layout_marginStart="8dp"
-                            android:background="@drawable/bg_detail_pill_lav"
-                            android:fontFamily="@font/cairo_bold"
-                            android:gravity="center"
-                            android:includeFontPadding="false"
-                            android:minWidth="28dp"
-                            android:paddingHorizontal="8dp"
-                            android:textColor="@color/home_lav"
-                            android:textSize="13sp"
-                            tools:text="4" />
-
-                        <Space
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_weight="1" />
-
-                        <ImageView
-                            android:id="@+id/btnHistorySort"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_detail_circle40"
-                            android:contentDescription="@string/members_sort_action"
-                            android:foreground="@drawable/ripple_home_circle"
-                            android:padding="12dp"
-                            android:src="@drawable/ic_pd_sort"
-                            app:tint="@color/home_ink" />
-
-                        <ImageView
-                            android:id="@+id/btnHistoryArchive"
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_detail_circle40"
-                            android:contentDescription="@string/detail_archive_cd"
-                            android:foreground="@drawable/ripple_home_circle"
-                            android:padding="12dp"
-                            android:src="@drawable/ic_pd_archive"
-                            app:tint="@color/home_ink" />
-                    </LinearLayout>
-
-                    <!-- شرائح الفلتر + مؤشر منزلق خلف الشريحة المختارة -->
-                    <HorizontalScrollView
-                        android:id="@+id/chipRowScroll"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="@dimen/home_pad_negative"
-                        android:clipToPadding="false"
-                        android:paddingHorizontal="@dimen/home_pad"
-                        android:scrollbars="none">
-
-                        <FrameLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp">
-
-                            <View
-                                android:id="@+id/chipIndicator"
+                            <TextView
+                                android:id="@+id/tvNotes"
                                 android:layout_width="0dp"
-                                android:layout_height="40dp"
-                                android:layout_gravity="left|top"
-                                android:layout_marginTop="4dp"
-                                android:background="@drawable/bg_home_chip_active"
-                                android:importantForAccessibility="no"
-                                tools:ignore="RtlHardcoded" />
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/cairo_regular"
+                                android:lineSpacingExtra="4dp"
+                                android:textColor="@color/home_ink"
+                                android:textSize="14sp"
+                                tools:text="لا توجد ملاحظات" />
 
-                            <LinearLayout
-                                android:id="@+id/chipRow"
-                                android:layout_width="wrap_content"
+                            <ImageView
+                                android:id="@+id/btnNotesEdit"
+                                android:layout_width="48dp"
                                 android:layout_height="48dp"
-                                android:orientation="horizontal">
-
-                                <LinearLayout
-                                    android:id="@+id/chipHistoryAll"
-                                    style="@style/DetailFilterChip">
-
-                                    <TextView
-                                        android:id="@+id/tvChipAllLabel"
-                                        style="@style/DetailFilterChipLabel"
-                                        android:text="@string/members_filter_all" />
-
-                                    <TextView
-                                        android:id="@+id/tvChipAllCount"
-                                        style="@style/DetailFilterChipCount" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/chipHistoryPaid"
-                                    style="@style/DetailFilterChip">
-
-                                    <TextView
-                                        android:id="@+id/tvChipPaidLabel"
-                                        style="@style/DetailFilterChipLabel"
-                                        android:text="@string/status_paid" />
-
-                                    <TextView
-                                        android:id="@+id/tvChipPaidCount"
-                                        style="@style/DetailFilterChipCount" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/chipHistoryPartial"
-                                    style="@style/DetailFilterChip">
-
-                                    <TextView
-                                        android:id="@+id/tvChipPartialLabel"
-                                        style="@style/DetailFilterChipLabel"
-                                        android:text="@string/payment_status_partial" />
-
-                                    <TextView
-                                        android:id="@+id/tvChipPartialCount"
-                                        style="@style/DetailFilterChipCount" />
-                                </LinearLayout>
-
-                                <LinearLayout
-                                    android:id="@+id/chipHistoryUnpaid"
-                                    style="@style/DetailFilterChip">
-
-                                    <TextView
-                                        android:id="@+id/tvChipUnpaidLabel"
-                                        style="@style/DetailFilterChipLabel"
-                                        android:text="@string/members_filter_unpaid" />
-
-                                    <TextView
-                                        android:id="@+id/tvChipUnpaidCount"
-                                        style="@style/DetailFilterChipCount" />
-                                </LinearLayout>
-                            </LinearLayout>
-                        </FrameLayout>
-                    </HorizontalScrollView>
-
-                    <!-- الخط الزمني -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/rvHistory"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:nestedScrollingEnabled="false" />
-
-                    <!-- حالة التحميل: هيكل عظمي لبطاقتين -->
-                    <LinearLayout
-                        android:id="@+id/layoutHistorySkeleton"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:orientation="vertical"
-                        android:importantForAccessibility="no">
-
-                        <include layout="@layout/item_subscription_skeleton" />
-                        <include layout="@layout/item_subscription_skeleton" />
+                                android:background="?attr/selectableItemBackgroundBorderless"
+                                android:contentDescription="@string/detail_notes_edit_cd"
+                                android:padding="12dp"
+                                android:src="@drawable/ic_pd_edit"
+                                app:tint="@color/home_mute" />
+                        </LinearLayout>
                     </LinearLayout>
+                </FrameLayout>
 
-                    <TextView
-                        android:id="@+id/btnHistoryLoadMore"
-                        android:layout_width="wrap_content"
-                        android:layout_height="48dp"
-                        android:layout_gravity="center_horizontal"
-                        android:background="@drawable/bg_detail_btn_glass"
-                        android:clickable="true"
-                        android:drawableEnd="@drawable/ic_pd_chevron_down"
-                        android:drawablePadding="8dp"
-                        android:drawableTint="@color/home_mute"
-                        android:focusable="true"
-                        android:fontFamily="@font/cairo_medium"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:minWidth="160dp"
-                        android:paddingHorizontal="20dp"
-                        android:text="@string/detail_history_load_more"
-                        android:textColor="@color/home_mute"
-                        android:textSize="14sp"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
-
-                    <!-- حالة الفراغ: رسم هادئ + نص -->
-                    <LinearLayout
-                        android:id="@+id/cardEmptyHistory"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_detail_empty"
-                        android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="20dp"
-                        android:paddingVertical="32dp"
-                        android:visibility="gone"
-                        tools:visibility="visible">
-
-                        <ImageView
-                            android:layout_width="96dp"
-                            android:layout_height="96dp"
-                            android:importantForAccessibility="no"
-                            android:src="@drawable/ic_pd_empty" />
-
-                        <TextView
-                            android:id="@+id/tvEmptyHistory"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="16dp"
-                            android:fontFamily="@font/cairo_bold"
-                            android:gravity="center"
-                            android:includeFontPadding="false"
-                            android:text="@string/detail_history_empty"
-                            android:textColor="@color/home_ink"
-                            android:textSize="16sp" />
-
-                        <TextView
-                            android:id="@+id/tvEmptyHistoryHint"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="6dp"
-                            android:fontFamily="@font/cairo_regular"
-                            android:gravity="center"
-                            android:lineSpacingExtra="4dp"
-                            android:text="@string/detail_history_empty_hint"
-                            android:textColor="@color/home_mute"
-                            android:textSize="13sp" />
-                    </LinearLayout>
-                </LinearLayout>
-
-                <!-- ======== 6) منطقة الحذف: مفصولة وهادئة (زر بحدّ مرجاني لا كتلة حمراء) ======== -->
+                <!-- ======== 5) منطقة الحذف ======== -->
                 <LinearLayout
                     android:id="@+id/dangerZone"
                     android:layout_width="match_parent"

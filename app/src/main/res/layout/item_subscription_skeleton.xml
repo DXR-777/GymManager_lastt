@@ -1,33 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- هيكل عظمي لبطاقة سجل اشتراك (حالة التحميل) -->
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- هيكل عظمي لبطاقة اشتراك (حالة التحميل) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="16dp">
-
-    <View android:layout_width="1dp" android:layout_height="match_parent" android:layout_gravity="start|top"
-        android:layout_marginStart="5dp" android:background="@drawable/bg_detail_line" />
-    <View android:layout_width="11dp" android:layout_height="11dp" android:layout_gravity="start|top"
-        android:layout_marginTop="22dp" android:background="@drawable/bg_ghost_circle" />
+    android:orientation="vertical"
+    android:paddingBottom="12dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
         android:background="@drawable/bg_detail_card"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="16dp">
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
             <View android:layout_width="96dp" android:layout_height="16dp" android:background="@drawable/bg_detail_skel" />
             <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-            <View android:layout_width="56dp" android:layout_height="24dp" android:background="@drawable/bg_detail_skel" />
+            <View android:layout_width="64dp" android:layout_height="26dp" android:background="@drawable/bg_detail_skel" />
         </LinearLayout>
         <View android:layout_width="200dp" android:layout_height="12dp" android:layout_marginTop="12dp" android:background="@drawable/bg_detail_skel" />
-        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:gravity="center_vertical" android:orientation="horizontal">
-            <View android:layout_width="64dp" android:layout_height="24dp" android:background="@drawable/bg_detail_skel" />
-            <Space android:layout_width="0dp" android:layout_height="0dp" android:layout_weight="1" />
-            <View android:layout_width="80dp" android:layout_height="14dp" android:background="@drawable/bg_detail_skel" />
-        </LinearLayout>
+        <View android:layout_width="72dp" android:layout_height="24dp" android:layout_marginTop="20dp" android:layout_marginBottom="12dp" android:background="@drawable/bg_detail_skel" />
     </LinearLayout>
-</FrameLayout>
+</LinearLayout>

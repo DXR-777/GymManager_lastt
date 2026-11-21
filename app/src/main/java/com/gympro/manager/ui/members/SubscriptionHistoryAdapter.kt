@@ -1,6 +1,5 @@
 package com.gympro.manager.ui.members
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,10 +17,11 @@ import com.gympro.manager.model.remainingAmount
 import com.gympro.manager.utils.CurrencyFormatter
 import com.gympro.manager.utils.DateUtils
 import com.gympro.manager.utils.areAnimationsEnabled
+import com.gympro.manager.utils.moneyText
 import com.gympro.manager.utils.setOnSingleClickListener
 
 /**
- * سجل الاشتراكات كخط زمني (تصميم 2026): كل عنصر = نقطة متوهجة بلون الحالة + بطاقة زجاجية.
+ * سجل الاشتراكات كبطاقات زجاجية (تصميم Membership Pass): شارة الحالة وطريقة الدفع وزر التسديد.
  *
  * ListAdapter بـ DiffUtil (بدل notifyDataSetChanged) لأن القائمة داخل ScrollView: إعادة
  * البناء الكاملة كانت تُسبّب حساب ارتفاع خاطئ لـ RecyclerView بعد التسديد. DiffUtil يحدّث
@@ -75,7 +75,7 @@ class SubscriptionHistoryAdapter(
             }
             binding.tvSubDates.text =
                 "${DateUtils.formatDate(sub.startDate)} ← ${DateUtils.formatDate(sub.endDate)}"
-            binding.tvSubPrice.text = CurrencyFormatter.format(sub.price, currencySymbol)
+            binding.tvSubPrice.text = moneyText(sub.price, currencySymbol, context.getColor(R.color.home_mute))
 
             // طريقة الدفع لا تُعرض إطلاقاً إن لم يُدفَع الاشتراك بعد (paidPaymentMethodLabel):
             // القيمة المحفوظة حينها مجرد "توقّع" من الدروب-داون وعرضها يُضلل صاحب الجيم.
@@ -96,12 +96,12 @@ class SubscriptionHistoryAdapter(
             binding.tvSubPaid.text = context.getString(label)
             binding.tvSubPaid.setBackgroundResource(pillRes)
             binding.tvSubPaid.setTextColor(color)
-            binding.dotTimeline.backgroundTintList = ColorStateList.valueOf(color)
 
             when (status) {
                 PaymentStatus.PAID -> {
                     binding.pbSubPaid.visibility = View.GONE
-                    binding.rowSubAction.visibility = View.GONE
+                    binding.tvSubRemaining.visibility = View.GONE
+                    binding.btnSettleDebt.visibility = View.GONE
                 }
                 PaymentStatus.PARTIAL -> {
                     binding.tvSubRemaining.text = context.getString(
@@ -114,14 +114,17 @@ class SubscriptionHistoryAdapter(
                     binding.pbSubPaid.visibility = View.VISIBLE
                     // زر "تسديد" متاح للجزئي أيضاً: يُحصّل كامل المتبقي ويحوّله إلى "مدفوع"
                     // (راجع GymRepository.togglePaidStatus).
-                    binding.rowSubAction.visibility = View.VISIBLE
+                    binding.btnSettleDebt.visibility = View.VISIBLE
+                    binding.btnSettleDebt.setBackgroundResource(R.drawable.bg_detail_pay_lav_inset)
+                    binding.btnSettleDebt.setTextColor(context.getColor(R.color.home_lav))
                     binding.btnSettleDebt.setOnSingleClickListener { onSettleDebt(sub) }
                 }
                 PaymentStatus.UNPAID -> {
-                    binding.tvSubRemaining.visibility = View.INVISIBLE
-                    binding.tvSubRemaining.text = ""
+                    binding.tvSubRemaining.visibility = View.GONE
                     binding.pbSubPaid.visibility = View.GONE
-                    binding.rowSubAction.visibility = View.VISIBLE
+                    binding.btnSettleDebt.visibility = View.VISIBLE
+                    binding.btnSettleDebt.setBackgroundResource(R.drawable.bg_detail_pay_coral_inset)
+                    binding.btnSettleDebt.setTextColor(context.getColor(R.color.home_coral))
                     binding.btnSettleDebt.setOnSingleClickListener { onSettleDebt(sub) }
                 }
             }

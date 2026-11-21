@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- الشريط السياقي · حالة تنبيه (coral): زجاج محايد (بدل تعبئة ملوّنة تتّسخ فوق الخلفية الداكنة) + هالة لونية خافتة عند الأيقونة + حدّ رفيع. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><shape android:shape="rectangle"><solid android:color="@color/home_glass_fill"/><corners android:radius="28dp"/></shape></item>
+    <item><shape android:shape="rectangle">
+        <gradient android:type="radial" android:centerX="0.94" android:centerY="0.5" android:gradientRadius="170dp" android:startColor="#2EFFB8B8" android:endColor="#00FFB8B8"/>
+        <corners android:radius="28dp"/></shape></item>
+    <item><shape android:shape="rectangle"><stroke android:width="1dp" android:color="#38FFB8B8"/><corners android:radius="28dp"/></shape></item>
+</layer-list>
