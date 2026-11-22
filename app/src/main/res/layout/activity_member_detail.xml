@@ -359,10 +359,6 @@
                             android:textAlignment="viewStart"
                             android:textColor="@color/home_coral"
                             android:textSize="16sp"
-                            app:autoSizeMaxTextSize="16sp"
-                            app:autoSizeMinTextSize="12sp"
-                            app:autoSizeStepGranularity="1sp"
-                            app:autoSizeTextType="uniform"
                             tools:text="ينتهي بعد يومين" />
                     </LinearLayout>
 

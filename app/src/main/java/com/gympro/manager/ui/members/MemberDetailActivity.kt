@@ -531,17 +531,7 @@ class MemberDetailActivity : AppCompatActivity() {
     private fun styleStripValue(colorRes: Int, sizeSp: Float, extraBold: Boolean = false) {
         val tv = binding.tvStripValue
         tv.setTextColor(getColor(colorRes))
-        // القيمة النصية تتقلّص تلقائياً (12–16sp) كي لا تلتفّ على سطرين؛ المبلغ الكبير ثابت الحجم.
-        if (sizeSp > 16f) {
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeWithDefaults(
-                tv, androidx.core.widget.TextViewCompat.AUTO_SIZE_TEXT_TYPE_NONE
-            )
-            tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, sizeSp)
-        } else {
-            androidx.core.widget.TextViewCompat.setAutoSizeTextTypeUniformWithConfiguration(
-                tv, 12, sizeSp.toInt(), 1, android.util.TypedValue.COMPLEX_UNIT_SP
-            )
-        }
+        tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, sizeSp)
         tv.typeface = androidx.core.content.res.ResourcesCompat.getFont(
             this, if (extraBold) R.font.cairo_extrabold else R.font.cairo_bold
         )
