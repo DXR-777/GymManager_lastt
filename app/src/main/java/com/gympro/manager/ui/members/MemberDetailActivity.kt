@@ -480,7 +480,7 @@ class MemberDetailActivity : AppCompatActivity() {
                         caption(R.string.detail_strip_expiring)
                         styleStripValue(R.color.home_amber, 16f)
                         binding.tvStripValue.text = if (days == 0) getString(R.string.days_remaining_today)
-                        else resources.getQuantityString(R.plurals.detail_ends_in, days, days.toString())
+                        else resources.getQuantityString(R.plurals.detail_ends_in, days, days)
                     }
                     PassState.EXPIRED -> {
                         val ago = -DateUtils.daysRemaining(current!!.endDate)
@@ -488,7 +488,7 @@ class MemberDetailActivity : AppCompatActivity() {
                         styleStripIcon(R.drawable.ic_pd_alert, R.color.home_coral)
                         caption(R.string.detail_strip_expired)
                         styleStripValue(R.color.home_coral, 16f)
-                        binding.tvStripValue.text = resources.getQuantityString(R.plurals.detail_expired_since, ago, ago.toString())
+                        binding.tvStripValue.text = resources.getQuantityString(R.plurals.detail_expired_since, ago, ago)
                     }
                     PassState.NONE -> {
                         strip.setBackgroundResource(R.drawable.bg_detail_strip_coral)
