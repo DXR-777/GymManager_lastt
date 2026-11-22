@@ -463,21 +463,13 @@ class MemberDetailActivity : AppCompatActivity() {
             }
             // 2) بقية الحالات: أيقونة + جملة واحدة في سطر واحد (بلا عنوان فرعي مكرّر) + زر.
             else -> {
+                binding.tvStripCaption.visibility = View.GONE
                 val urgent = state == PassState.SOON || state == PassState.EXPIRED || state == PassState.NONE
-                // سطران متلاصقان: عنوان صغير خافت + قيمة بارزة (القيمة وحدها حين لا يلزم عنوان).
-                fun caption(resId: Int?) {
-                    if (resId == null) binding.tvStripCaption.visibility = View.GONE
-                    else {
-                        binding.tvStripCaption.visibility = View.VISIBLE
-                        binding.tvStripCaption.setText(resId)
-                    }
-                }
                 when (state) {
                     PassState.SOON -> {
                         val days = DateUtils.daysRemaining(current!!.endDate)
                         strip.setBackgroundResource(R.drawable.bg_detail_strip_amber)
                         styleStripIcon(R.drawable.ic_pd_alert, R.color.home_amber)
-                        caption(R.string.detail_strip_expiring)
                         styleStripValue(R.color.home_amber, 16f)
                         binding.tvStripValue.text = if (days == 0) getString(R.string.days_remaining_today)
                         else resources.getQuantityString(R.plurals.detail_ends_in, days, days)
@@ -486,31 +478,27 @@ class MemberDetailActivity : AppCompatActivity() {
                         val ago = -DateUtils.daysRemaining(current!!.endDate)
                         strip.setBackgroundResource(R.drawable.bg_detail_strip_coral)
                         styleStripIcon(R.drawable.ic_pd_alert, R.color.home_coral)
-                        caption(R.string.detail_strip_expired)
                         styleStripValue(R.color.home_coral, 16f)
                         binding.tvStripValue.text = resources.getQuantityString(R.plurals.detail_expired_since, ago, ago)
                     }
                     PassState.NONE -> {
                         strip.setBackgroundResource(R.drawable.bg_detail_strip_coral)
-                        styleStripIcon(R.drawable.ic_pd_calendar, R.color.home_coral)
-                        caption(null)
+                        styleStripIcon(R.drawable.ic_pd_calendar, R.color.home_lav)
                         styleStripValue(R.color.home_ink, 16f)
                         binding.tvStripValue.setText(R.string.detail_strip_none)
                     }
                     PassState.FUTURE -> {
                         strip.setBackgroundResource(R.drawable.bg_detail_strip_neutral)
                         styleStripIcon(R.drawable.ic_pd_calendar, R.color.home_lav)
-                        caption(null)
                         styleStripValue(R.color.home_ink, 16f)
                         binding.tvStripValue.setText(R.string.detail_pass_not_started)
                     }
                     PassState.ACTIVE -> {
-                        // ساري ومدفوع: اللون النعناعي في الأيقونة والهالة والحدّ فقط، والنص أبيض هادئ.
-                        strip.setBackgroundResource(R.drawable.bg_detail_strip_ok)
+                        // ساري ومدفوع: الأخضر محصور في أيقونة صغيرة، والنص محايد هادئ.
+                        strip.setBackgroundResource(R.drawable.bg_detail_strip_neutral)
                         styleStripIcon(R.drawable.ic_pd_check, R.color.home_mint)
-                        caption(R.string.detail_strip_ok)
                         styleStripValue(R.color.home_ink, 16f)
-                        binding.tvStripValue.setText(R.string.detail_strip_paid)
+                        binding.tvStripValue.setText(R.string.detail_strip_ok_paid)
                     }
                 }
                 // تجديد بتدرّج عند الإلحاح، وبزر زجاجي هادئ عندما يكون كل شيء سليماً.
@@ -529,10 +517,9 @@ class MemberDetailActivity : AppCompatActivity() {
     }
 
     private fun styleStripValue(colorRes: Int, sizeSp: Float, extraBold: Boolean = false) {
-        val tv = binding.tvStripValue
-        tv.setTextColor(getColor(colorRes))
-        tv.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, sizeSp)
-        tv.typeface = androidx.core.content.res.ResourcesCompat.getFont(
+        binding.tvStripValue.setTextColor(getColor(colorRes))
+        binding.tvStripValue.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, sizeSp)
+        binding.tvStripValue.typeface = androidx.core.content.res.ResourcesCompat.getFont(
             this, if (extraBold) R.font.cairo_extrabold else R.font.cairo_bold
         )
     }
