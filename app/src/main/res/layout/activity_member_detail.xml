@@ -310,52 +310,62 @@
                     android:gravity="center_vertical"
                     android:minHeight="80dp"
                     android:orientation="horizontal"
-                    android:padding="16dp">
+                    android:paddingHorizontal="16dp"
+                    android:paddingVertical="14dp">
 
                     <ImageView
                         android:id="@+id/ivStripIcon"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
                         android:background="@drawable/bg_detail_strip_icon"
                         android:importantForAccessibility="no"
-                        android:padding="9dp"
+                        android:padding="11dp"
                         android:src="@drawable/ic_pd_alert" />
 
+                    <!-- كتلة النص: سطران متلاصقان ومحاذيان للبداية، متوسّطان رأسياً مع الزر، ولا تلتفّ أبداً. -->
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="12dp"
                         android:layout_weight="1"
+                        android:gravity="center_vertical|start"
                         android:orientation="vertical">
 
                         <TextView
                             android:id="@+id/tvStripCaption"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginBottom="2dp"
+                            android:ellipsize="end"
                             android:fontFamily="@font/cairo_regular"
+                            android:gravity="start"
                             android:includeFontPadding="false"
+                            android:maxLines="1"
+                            android:textAlignment="viewStart"
                             android:textColor="@color/home_mute"
-                            android:textSize="13sp"
-                            tools:text="المتبقي غير المدفوع" />
+                            android:textSize="12sp"
+                            tools:text="ينتهي الاشتراك قريباً" />
 
                         <TextView
                             android:id="@+id/tvStripValue"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="3dp"
+                            android:ellipsize="end"
                             android:fontFamily="@font/cairo_bold"
                             android:fontFeatureSettings="tnum"
+                            android:gravity="start"
                             android:includeFontPadding="false"
-                            android:lineSpacingExtra="2dp"
+                            android:maxLines="1"
+                            android:textAlignment="viewStart"
                             android:textColor="@color/home_coral"
                             android:textSize="16sp"
-                            tools:text="₪ 5" />
+                            tools:text="ينتهي بعد يومين" />
                     </LinearLayout>
 
                     <TextView
                         android:id="@+id/btnPrimaryAction"
                         android:layout_width="wrap_content"
-                        android:layout_height="52dp"
+                        android:layout_height="48dp"
                         android:layout_marginStart="12dp"
                         android:background="@drawable/bg_home_cta"
                         android:clickable="true"
@@ -363,11 +373,11 @@
                         android:fontFamily="@font/cairo_bold"
                         android:gravity="center"
                         android:includeFontPadding="false"
-                        android:minWidth="112dp"
-                        android:paddingHorizontal="24dp"
+                        android:minWidth="96dp"
+                        android:paddingHorizontal="20dp"
                         android:text="@string/action_settle_debt"
                         android:textColor="@color/home_ink"
-                        android:textSize="16sp" />
+                        android:textSize="15sp" />
                 </LinearLayout>
 
                 <!-- ======== 3) الإجراءات السريعة ======== -->
@@ -425,7 +435,7 @@
                             android:importantForAccessibility="no"
                             android:padding="16dp"
                             android:src="@drawable/ic_pd_whatsapp"
-                            app:tint="#34D399" />
+                            app:tint="#6EE7B7" />
 
                         <TextView
                             style="@style/DetailActionLabel"
