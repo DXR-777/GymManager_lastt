@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- صف خيار الترتيب: عادي شفاف، مختار = تعبئة لافندر خفيفة + حدّ لافندر. -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true"><shape android:shape="rectangle"><solid android:color="#1FE4D9FF"/><stroke android:width="1dp" android:color="#59E4D9FF"/><corners android:radius="20dp"/></shape></item>
+    <item><shape android:shape="rectangle"><solid android:color="#0DFFFFFF"/><stroke android:width="1dp" android:color="#14FFFFFF"/><corners android:radius="20dp"/></shape></item>
+</selector>

@@ -722,20 +722,30 @@ class MemberDetailActivity : AppCompatActivity() {
 
     /** حوار الفرز (الأحدث/الأقدم أولاً) بنفس الهوية الداكنة. */
     private fun showHistorySortDialog() {
-        val labels = arrayOf(
-            getString(R.string.detail_history_sort_newest),
-            getString(R.string.detail_history_sort_oldest)
-        )
-        val checkedIndex = if (currentHistorySortNewestFirst) 0 else 1
-        MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_GymManager_DialogDark)
-            .setTitle(R.string.members_sort_action)
-            .setSingleChoiceItems(labels, checkedIndex) { dialog, which ->
-                currentHistorySortNewestFirst = which == 0
-                historyVisibleLimit = HISTORY_PAGE_SIZE
-                refreshHistoryList()
-                dialog.dismiss()
-            }
-            .show()
+        val view = layoutInflater.inflate(R.layout.dialog_history_sort, null)
+        val rowNewest = view.findViewById<View>(R.id.rowSortNewest)
+        val rowOldest = view.findViewById<View>(R.id.rowSortOldest)
+        val checkNewest = view.findViewById<View>(R.id.checkSortNewest)
+        val checkOldest = view.findViewById<View>(R.id.checkSortOldest)
+        rowNewest.isSelected = currentHistorySortNewestFirst
+        rowOldest.isSelected = !currentHistorySortNewestFirst
+        checkNewest.visibility = if (currentHistorySortNewestFirst) View.VISIBLE else View.INVISIBLE
+        checkOldest.visibility = if (currentHistorySortNewestFirst) View.INVISIBLE else View.VISIBLE
+
+        val dialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_GymManager_DialogDark)
+            .setView(view)
+            .create()
+        fun choose(newestFirst: Boolean) {
+            currentHistorySortNewestFirst = newestFirst
+            historyVisibleLimit = HISTORY_PAGE_SIZE
+            refreshHistoryList()
+            dialog.dismiss()
+        }
+        rowNewest.setOnClickListener { choose(true) }
+        rowOldest.setOnClickListener { choose(false) }
+        // الخلفية تُرسم من تخطيط الحوار نفسه (زوايا 28dp + توهج)، فنجعل نافذة النظام شفافة.
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        dialog.show()
     }
 
     /**

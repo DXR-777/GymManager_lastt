@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_pd_dialog"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/cairo_bold"
+        android:gravity="start"
+        android:includeFontPadding="false"
+        android:text="@string/members_sort_action"
+        android:textColor="@color/home_ink"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/cairo_regular"
+        android:gravity="start"
+        android:includeFontPadding="false"
+        android:text="@string/detail_sort_subtitle"
+        android:textColor="@color/home_mute"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:id="@+id/rowSortNewest"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:background="@drawable/bg_pd_sort_row"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_pd_action_lav"
+            android:importantForAccessibility="no"
+            android:padding="9dp"
+            android:src="@drawable/ic_pd_sort_newest"
+            app:tint="@color/home_lav" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/cairo_bold"
+            android:gravity="start"
+            android:includeFontPadding="false"
+            android:text="@string/detail_history_sort_newest"
+            android:textColor="@color/home_ink"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/checkSortNewest"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_pd_check"
+            app:tint="@color/home_lav" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/rowSortOldest"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_pd_sort_row"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="12dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_pd_action_sky"
+            android:importantForAccessibility="no"
+            android:padding="9dp"
+            android:src="@drawable/ic_pd_sort_oldest"
+            app:tint="#9CC7FF" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/cairo_bold"
+            android:gravity="start"
+            android:includeFontPadding="false"
+            android:text="@string/detail_history_sort_oldest"
+            android:textColor="@color/home_ink"
+            android:textSize="15sp" />
+
+        <ImageView
+            android:id="@+id/checkSortOldest"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_pd_check"
+            app:tint="@color/home_lav" />
+    </LinearLayout>
+</LinearLayout>

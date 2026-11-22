@@ -824,4 +824,5 @@
         <item quantity="many">يوماً منذ الانتهاء</item>
         <item quantity="other">يوم منذ الانتهاء</item>
     </plurals>
+    <string name="detail_sort_subtitle">رتّب سجل الاشتراكات حسب التاريخ</string>
 </resources>

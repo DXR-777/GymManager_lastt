@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- نافذة الحوار: سطح داكن بهوية التطبيق + توهج بنفسجي علوي + حدّ زجاجي رفيع. -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item><shape android:shape="rectangle"><solid android:color="#FF15163A"/><corners android:radius="28dp"/></shape></item>
+    <item><shape android:shape="rectangle">
+        <gradient android:type="radial" android:centerX="0.85" android:centerY="0.0" android:gradientRadius="260dp" android:startColor="#337C4DE8" android:endColor="#007C4DE8"/>
+        <corners android:radius="28dp"/></shape></item>
+    <item><shape android:shape="rectangle"><stroke android:width="1dp" android:color="#2EFFFFFF"/><corners android:radius="28dp"/></shape></item>
+</layer-list>

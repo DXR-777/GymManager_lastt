@@ -39,7 +39,7 @@
                 android:id="@+id/btnBack"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@drawable/bg_home_glass_circle"
+                android:background="@drawable/bg_pd_glass_circle"
                 android:contentDescription="@string/action_back"
                 android:foreground="@drawable/ripple_home_circle"
                 android:padding="12dp"
@@ -64,7 +64,7 @@
                 android:id="@+id/btnMore"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
-                android:background="@drawable/bg_home_glass_circle"
+                android:background="@drawable/bg_pd_glass_circle"
                 android:contentDescription="@string/detail_more_cd"
                 android:foreground="@drawable/ripple_home_circle"
                 android:padding="12dp"
@@ -404,7 +404,7 @@
                         <ImageView
                             android:layout_width="56dp"
                             android:layout_height="56dp"
-                            android:background="@drawable/bg_detail_action_circle"
+                            android:background="@drawable/bg_pd_action_lav"
                             android:importantForAccessibility="no"
                             android:padding="16dp"
                             android:src="@drawable/ic_pd_phone"
@@ -431,7 +431,7 @@
                         <ImageView
                             android:layout_width="56dp"
                             android:layout_height="56dp"
-                            android:background="@drawable/bg_detail_action_circle_wa"
+                            android:background="@drawable/bg_pd_action_mint"
                             android:importantForAccessibility="no"
                             android:padding="16dp"
                             android:src="@drawable/ic_pd_whatsapp"
@@ -458,11 +458,11 @@
                         <ImageView
                             android:layout_width="56dp"
                             android:layout_height="56dp"
-                            android:background="@drawable/bg_detail_action_circle"
+                            android:background="@drawable/bg_pd_action_sky"
                             android:importantForAccessibility="no"
                             android:padding="16dp"
                             android:src="@drawable/ic_pd_sms"
-                            app:tint="@color/home_lav" />
+                            app:tint="#9CC7FF" />
 
                         <TextView
                             style="@style/DetailActionLabel"
@@ -485,11 +485,11 @@
                         <ImageView
                             android:layout_width="56dp"
                             android:layout_height="56dp"
-                            android:background="@drawable/bg_detail_action_circle"
+                            android:background="@drawable/bg_pd_action_amber"
                             android:importantForAccessibility="no"
                             android:padding="16dp"
                             android:src="@drawable/ic_pd_share"
-                            app:tint="@color/home_lav" />
+                            app:tint="#FFD27A" />
 
                         <TextView
                             style="@style/DetailActionLabel"
@@ -571,7 +571,7 @@
                                 android:id="@+id/btnHistorySort"
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
-                                android:background="@drawable/bg_detail_circle40"
+                                android:background="@drawable/bg_pd_glass_circle"
                                 android:contentDescription="@string/members_sort_action"
                                 android:foreground="@drawable/ripple_home_circle"
                                 android:padding="12dp"
