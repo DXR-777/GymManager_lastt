@@ -286,18 +286,6 @@
                         android:minHeight="6dp"
                         android:progressDrawable="@drawable/progress_detail_pass"
                         tools:progress="30" />
-
-                    <TextView
-                        android:id="@+id/tvCurrentSenderInfo"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:fontFamily="@font/cairo_regular"
-                        android:lineSpacingExtra="2dp"
-                        android:textColor="#CCF5F6FF"
-                        android:textSize="12sp"
-                        android:visibility="gone"
-                        tools:text="أحمد · 0599999999" />
                 </LinearLayout>
 
                 <!-- ======== 2) الشريط السياقي: أيقونة حالة + نص في سطر واحد + زر ======== -->
@@ -668,12 +656,14 @@
                             </FrameLayout>
                         </HorizontalScrollView>
 
-                        <androidx.recyclerview.widget.RecyclerView
+                        <!-- حاوية السجل: LinearLayout عادية (بدل RecyclerView داخل ScrollView التي كانت تقيس عنصراً واحداً فقط
+                             فتختفي بقية الاشتراكات)؛ تُملأ برمجياً من SubscriptionHistoryAdapter وارتفاعها يتبع عدد العناصر دائماً. -->
+                        <LinearLayout
                             android:id="@+id/rvHistory"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:nestedScrollingEnabled="false" />
+                            android:orientation="vertical" />
 
                         <!-- حالة التحميل: هيكل عظمي لبطاقتين -->
                         <LinearLayout

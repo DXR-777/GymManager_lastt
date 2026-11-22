@@ -24,7 +24,6 @@ import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.gympro.manager.GymApplication
@@ -148,16 +147,8 @@ class MemberDetailActivity : AppCompatActivity() {
         if (memberId == -1L) { finish(); return }
 
         binding.btnBack.setOnClickListener { finish() }
-        // LinearLayoutManager داخل ScrollView يقيس فقط العناصر المرئية عند أول تحميل؛
-        // الحل: LayoutManager مخصص يُجبر على قياس كل العناصر دفعة واحدة.
-        binding.rvHistory.layoutManager = object : LinearLayoutManager(this) {
-            override fun canScrollVertically() = false
-            override fun isAutoMeasureEnabled() = true
-        }
-        binding.rvHistory.adapter = historyAdapter
-        // بلا ItemAnimator: الظهور التدريجي تتحكّم به revealVisibleHistory وحدها، وإلا ظهرت
-        // العناصر خارج الشاشة بحركة الإضافة الافتراضية قبل أن تُكشف أثناء التمرير.
-        binding.rvHistory.itemAnimator = null
+        // السجل = LinearLayout تُملأ برمجياً من historyAdapter (راجع rebuildHistoryViews)؛ لا RecyclerView
+        // لأن RecyclerView داخل ScrollView كان يقيس عنصراً واحداً فقط ويُخفي بقية الاشتراكات.
         binding.scrollView.setOnScrollChangeListener { _, _, _, _, _ -> revealVisibleHistory() }
 
         prepareEntrance()
@@ -217,19 +208,41 @@ class MemberDetailActivity : AppCompatActivity() {
         binding.btnMore.setOnClickListener { showMoreMenu() }
     }
 
-    /** قائمة "المزيد": تعديل / حذف. */
+    /** قائمة "المزيد": بطاقة زجاجية صغيرة (تعديل / حذف) تنبثق تحت الزر بحركة قصيرة. */
     private fun showMoreMenu() {
-        PopupMenu(this, binding.btnMore).apply {
-            menu.add(Menu.NONE, MENU_EDIT, 0, R.string.detail_action_edit)
-            menu.add(Menu.NONE, MENU_DELETE, 1, R.string.detail_action_delete)
-            setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    MENU_EDIT -> openEdit()
-                    MENU_DELETE -> showDeleteConfirmation()
-                }
-                true
+        val content = layoutInflater.inflate(R.layout.popup_member_more, null)
+        val popup = android.widget.PopupWindow(
+            content,
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+            android.view.ViewGroup.LayoutParams.WRAP_CONTENT,
+            true
+        ).apply {
+            setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+            isOutsideTouchable = true
+            elevation = 0f
+        }
+        content.findViewById<View>(R.id.menuEdit).setOnClickListener {
+            popup.dismiss()
+            openEdit()
+        }
+        content.findViewById<View>(R.id.menuDelete).setOnClickListener {
+            popup.dismiss()
+            showDeleteConfirmation()
+        }
+        // Gravity.END: يحاذي نهاية القائمة مع نهاية الزر (في RTL = الحافة اليسرى) فتمتد القائمة نحو داخل الشاشة.
+        popup.showAsDropDown(binding.btnMore, 0, 0, android.view.Gravity.END)
+        val card = content.findViewById<View>(R.id.menuCard)
+        if (android.animation.ValueAnimator.areAnimatorsEnabled()) {
+            card.pivotX = if (card.layoutDirection == View.LAYOUT_DIRECTION_RTL) 0f else card.width.toFloat()
+            card.alpha = 0f
+            card.scaleX = 0.9f
+            card.scaleY = 0.9f
+            card.post {
+                card.pivotX = if (card.layoutDirection == View.LAYOUT_DIRECTION_RTL) 0f else card.width.toFloat()
+                card.pivotY = 0f
+                card.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(160)
+                    .setInterpolator(android.view.animation.DecelerateInterpolator()).start()
             }
-            show()
         }
     }
 
@@ -358,7 +371,6 @@ class MemberDetailActivity : AppCompatActivity() {
             binding.blockExpires.visibility = View.INVISIBLE
             setDaysText(number = null, unit = getString(R.string.detail_no_subscription))
             binding.progressSubscription.progress = 0
-            binding.tvCurrentSenderInfo.visibility = View.GONE
             return
         }
 
@@ -403,15 +415,6 @@ class MemberDetailActivity : AppCompatActivity() {
         val elapsed = (DateUtils.now() - current.startDate).coerceIn(0L, total)
         val share = if (state == PassState.EXPIRED) 100 else ((elapsed.toFloat() / total) * 100).toInt()
         progressTo(share, animate)
-
-        // معلومات المُرسِل: فقط لاشتراك دخل جزء حقيقي منه في الإيراد (ليس UNPAID).
-        val senderInfo = if (status != PaymentStatus.UNPAID) current.senderInfoDetailLabel(this) else null
-        if (senderInfo != null) {
-            binding.tvCurrentSenderInfo.text = senderInfo
-            binding.tvCurrentSenderInfo.visibility = View.VISIBLE
-        } else {
-            binding.tvCurrentSenderInfo.visibility = View.GONE
-        }
     }
 
     /** رقم الأيام الضخم + الوحدة؛ عند غياب الرقم تكبر الوحدة لتصبح هي العنوان. */
@@ -764,11 +767,8 @@ class MemberDetailActivity : AppCompatActivity() {
         val remaining = list.size - visibleCount
 
         historyAdapter.submitList(visibleList, currentSettings.currencySymbol, Runnable {
-            // بعد التحديث نُجبر ScrollView الأب على إعادة قياس كامل الشاشة (RecyclerView داخل
-            // ScrollView يحسب ارتفاعه مرة واحدة)، ثم نكشف العناصر الظاهرة تدريجياً.
+            rebuildHistoryViews()
             binding.rvHistory.post {
-                binding.rvHistory.requestLayout()
-                (binding.rvHistory.parent as? View)?.requestLayout()
                 revealVisibleHistory()
                 binding.rvHistory.postDelayed({ revealVisibleHistory() }, 350L)
             }
@@ -822,6 +822,17 @@ class MemberDetailActivity : AppCompatActivity() {
                 .setStartDelay(i * 60L).setDuration(400L)
                 .setInterpolator(DecelerateInterpolator(1.5f))
                 .start()
+        }
+    }
+
+    /** يبني بطاقات السجل كلها داخل الحاوية من عناصر الـ adapter (قائمة قصيرة ≤ historyVisibleLimit). */
+    private fun rebuildHistoryViews() {
+        val container = binding.rvHistory
+        container.removeAllViews()
+        for (i in 0 until historyAdapter.itemCount) {
+            val holder = historyAdapter.createViewHolder(container, 0)
+            historyAdapter.bindViewHolder(holder, i)
+            container.addView(holder.itemView)
         }
     }
 
