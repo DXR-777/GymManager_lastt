@@ -107,6 +107,30 @@ class MemberDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        try {
+            initScreen()
+        } catch (t: Throwable) {
+            showFatal(t)
+        }
+    }
+
+    /** بدل أن يُغلق التطبيق: يعرض نص الخطأ على الشاشة ليُنسخ ويُرسل للمطوّر. */
+    private fun showFatal(t: Throwable) {
+        val tv = android.widget.TextView(this).apply {
+            text = "خطأ في شاشة العضو (صوّر هذه الشاشة أو انسخ النص وأرسله):\n\n" +
+                android.util.Log.getStackTraceString(t).take(4000)
+            setTextIsSelectable(true)
+            textSize = 12f
+            setTextColor(android.graphics.Color.WHITE)
+            setPadding(32, 96, 32, 32)
+        }
+        setContentView(android.widget.ScrollView(this).apply {
+            setBackgroundColor(android.graphics.Color.BLACK)
+            addView(tv)
+        })
+    }
+
+    private fun initScreen() {
         binding = ActivityMemberDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -257,7 +281,11 @@ class MemberDetailActivity : AppCompatActivity() {
                         currentSettings = settings ?: GymSettingsEntity()
                         currentSubscription = history.maxByOrNull { it.endDate }
                         currentStats = repository.getMemberStats(memberId)
-                        render(member, history, currentSubscription, currentStats, currentSettings)
+                        try {
+                            render(member, history, currentSubscription, currentStats, currentSettings)
+                        } catch (t: Throwable) {
+                            showFatal(t)
+                        }
                     }
             }
         }
