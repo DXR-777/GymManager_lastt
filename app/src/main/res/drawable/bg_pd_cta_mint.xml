@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- زر التأكيد الإيجابي: تدرّج نعناعي هادئ مع نص داكن (تباين عالٍ) + ريبل. -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android" android:color="#33FFFFFF">
+    <item><shape android:shape="rectangle">
+        <gradient android:angle="0" android:startColor="#8DF3CB" android:endColor="#5EDDB0"/>
+        <corners android:radius="99dp"/></shape></item>
+</ripple>

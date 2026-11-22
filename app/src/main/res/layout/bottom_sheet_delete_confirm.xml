@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    ورقة تأكيد حذف العضو (تصميم 2026): أيقونة مرجانية، عنوان، نص قصير، تنبيهات اختيارية،
-    زر مرجاني أساسي "نعم، حذف" وزر نصي "إلغاء". المعرِّفات القديمة محفوظة كلها.
+    ورقة تأكيد حذف العضو: نفس هوية نافذة الدفع (سطح داكن + توهج لوني علوي + أيقونة بدائرة نغمية)،
+    لكن بنبرة مرجانية لأن الحذف عملية خطرة. المعرِّفات القديمة محفوظة كلها.
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_detail_sheet"
+    android:background="@drawable/bg_pd_sheet_danger"
     android:orientation="vertical"
-    android:paddingHorizontal="20dp"
+    android:paddingHorizontal="24dp"
     android:paddingTop="12dp"
-    android:paddingBottom="24dp">
+    android:paddingBottom="28dp">
 
     <View
         android:layout_width="40dp"
@@ -22,13 +22,13 @@
         android:importantForAccessibility="no" />
 
     <ImageView
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="20dp"
-        android:background="@drawable/bg_detail_sheet_icon"
+        android:background="@drawable/bg_pd_action_coral"
         android:importantForAccessibility="no"
-        android:padding="14dp"
+        android:padding="16dp"
         android:src="@drawable/ic_pd_trash"
         app:tint="@color/home_coral" />
 
@@ -36,7 +36,7 @@
         android:id="@+id/tvDeleteTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="14dp"
         android:fontFamily="@font/cairo_extrabold"
         android:gravity="center"
         android:includeFontPadding="false"
@@ -60,12 +60,16 @@
         android:id="@+id/tvBalanceWarning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/bg_detail_pill_coral_card"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_pd_warn_coral"
+        android:drawablePadding="10dp"
+        android:drawableStart="@drawable/ic_pd_alert"
+        android:drawableTint="@color/home_coral"
         android:fontFamily="@font/cairo_medium"
-        android:gravity="center"
-        android:lineSpacingExtra="4dp"
-        android:padding="16dp"
+        android:gravity="center_vertical|start"
+        android:lineSpacingExtra="3dp"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="12dp"
         android:textColor="@color/home_coral"
         android:textSize="13sp"
         android:visibility="gone"
@@ -75,12 +79,16 @@
         android:id="@+id/tvDaysWarning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/bg_detail_pill_amber_card"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_pd_warn_amber"
+        android:drawablePadding="10dp"
+        android:drawableStart="@drawable/ic_pd_alert"
+        android:drawableTint="@color/home_amber"
         android:fontFamily="@font/cairo_medium"
-        android:gravity="center"
-        android:lineSpacingExtra="4dp"
-        android:padding="16dp"
+        android:gravity="center_vertical|start"
+        android:lineSpacingExtra="3dp"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="12dp"
         android:textColor="@color/home_amber"
         android:textSize="13sp"
         android:visibility="gone"
@@ -89,27 +97,27 @@
     <TextView
         android:id="@+id/btnConfirmDelete"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="54dp"
         android:layout_marginTop="24dp"
-        android:background="@drawable/bg_detail_sheet_btn_coral"
+        android:background="@drawable/bg_pd_cta_coral"
         android:clickable="true"
         android:focusable="true"
         android:fontFamily="@font/cairo_extrabold"
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="@string/delete_dialog_confirm"
-        android:textColor="@color/detail_on_coral"
-        android:textSize="17sp" />
+        android:textColor="@color/home_bg"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/btnCancelDelete"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="8dp"
-        android:background="?attr/selectableItemBackground"
+        android:layout_height="50dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/bg_pd_btn_outline"
         android:clickable="true"
         android:focusable="true"
-        android:fontFamily="@font/cairo_medium"
+        android:fontFamily="@font/cairo_bold"
         android:gravity="center"
         android:includeFontPadding="false"
         android:text="@string/action_cancel"

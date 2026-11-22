@@ -825,4 +825,10 @@
         <item quantity="other">يوم منذ الانتهاء</item>
     </plurals>
     <string name="detail_sort_subtitle">رتّب سجل الاشتراكات حسب التاريخ</string>
+    <string name="settle_debt_amount_label">المبلغ المستلم</string>
+    <string name="settle_debt_from_label">من العضو</string>
+    <string name="settle_debt_note">سيُسجَّل المبلغ في إيرادات اليوم</string>
+    <string name="settle_debt_confirm_action">تأكيد الاستلام</string>
+    <string name="settle_debt_plan_label">الاشتراك</string>
+    <string name="settle_debt_period_label">الفترة</string>
 </resources>

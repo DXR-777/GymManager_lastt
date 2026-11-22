@@ -961,24 +961,31 @@ class MemberDetailActivity : AppCompatActivity() {
      */
     private fun confirmSettleDebt(subscription: SubscriptionEntity) {
         val member = currentMember ?: return
-        val amount = CurrencyFormatter.format(subscription.remainingAmount(), currentSettings.currencySymbol)
+        val view = layoutInflater.inflate(R.layout.dialog_settle_debt, null)
+        view.findViewById<android.widget.TextView>(R.id.tvSettleAmount).text = moneyText(
+            subscription.remainingAmount(), currentSettings.currencySymbol, getColor(R.color.home_mint)
+        )
+        view.findViewById<android.widget.TextView>(R.id.tvSettleInitial).text =
+            member.name.trim().firstOrNull()?.uppercase() ?: "?"
+        view.findViewById<android.widget.TextView>(R.id.tvSettleMember).text = member.name
+        view.findViewById<android.widget.TextView>(R.id.tvSettlePlan).text = typeLabel(subscription.type)
+        view.findViewById<android.widget.TextView>(R.id.tvSettleDates).text =
+            "${DateUtils.formatDate(subscription.startDate)} \u2190 ${DateUtils.formatDate(subscription.endDate)}"
+
         val dialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_GymManager_DialogDark)
-            .setTitle(getString(R.string.settle_debt_confirm_title))
-            .setMessage(getString(R.string.settle_debt_confirm_message, amount, member.name))
-            .setNegativeButton(R.string.action_cancel, null)
-            // بلا مُعرِّف نصّي هنا عمداً: التأكيد الفعلي يُربط في setOnShowListener على زر الحوار
-            // (View) ليُحمى بـ setOnSingleClickListener ضد الضغط المزدوج (البند 5).
-            .setPositiveButton(R.string.action_confirm, null)
+            .setView(view)
             .create()
-        dialog.setOnShowListener {
-            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnSingleClickListener {
-                lifecycleScope.launch {
-                    repository.togglePaidStatus(subscription)
-                    toast(getString(R.string.settle_debt_success))
-                }
-                dialog.dismiss()
+        // التأكيد الفعلي محمي بـ setOnSingleClickListener ضد الضغط المزدوج (البند 5)، ولا يُستدعى
+        // togglePaidStatus() إلا بعد موافقة صاحب الجيم لمنع التسديد العرضي.
+        view.findViewById<View>(R.id.btnSettleConfirm).setOnSingleClickListener {
+            lifecycleScope.launch {
+                repository.togglePaidStatus(subscription)
+                toast(getString(R.string.settle_debt_success))
             }
+            dialog.dismiss()
         }
+        view.findViewById<View>(R.id.btnSettleCancel).setOnClickListener { dialog.dismiss() }
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
         dialog.show()
     }
 
