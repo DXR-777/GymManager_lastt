@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- رسم الحالة الفارغة للسجل: ثلاث بطاقات زجاجية متراصّة بقاعدة داكنة صلبة (بلا تداخل شفاف)، بأسلوب بطاقات التطبيق؛ autoMirrored لدعم RTL. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="160dp"
+    android:height="112dp"
+    android:autoMirrored="true"
+    android:viewportWidth="160"
+    android:viewportHeight="112">
+    <path android:fillColor="#FF121337" android:pathData="M42 4H118A12 12 0 0 1 130 16V26A12 12 0 0 1 118 38H42A12 12 0 0 1 30 26V16A12 12 0 0 1 42 4Z"/>
+    <path android:fillColor="#0DFFFFFF" android:strokeColor="#1AFFFFFF" android:strokeWidth="1" android:pathData="M42 4H118A12 12 0 0 1 130 16V26A12 12 0 0 1 118 38H42A12 12 0 0 1 30 26V16A12 12 0 0 1 42 4Z"/>
+    <path android:fillColor="#FF16173D" android:pathData="M33 22H127A14 14 0 0 1 141 36V48A14 14 0 0 1 127 62H33A14 14 0 0 1 19 48V36A14 14 0 0 1 33 22Z"/>
+    <path android:fillColor="#14FFFFFF" android:strokeColor="#26FFFFFF" android:strokeWidth="1" android:pathData="M33 22H127A14 14 0 0 1 141 36V48A14 14 0 0 1 127 62H33A14 14 0 0 1 19 48V36A14 14 0 0 1 33 22Z"/>
+    <path android:fillColor="#FF1B1C45" android:pathData="M26 42H134A18 18 0 0 1 152 60V86A18 18 0 0 1 134 104H26A18 18 0 0 1 8 86V60A18 18 0 0 1 26 42Z"/>
+    <path android:fillColor="#1CFFFFFF" android:strokeColor="#38FFFFFF" android:strokeWidth="1" android:pathData="M26 42H134A18 18 0 0 1 152 60V86A18 18 0 0 1 134 104H26A18 18 0 0 1 8 86V60A18 18 0 0 1 26 42Z"/>
+    <path android:fillColor="#2EE4D9FF" android:strokeColor="#73E4D9FF" android:strokeWidth="1.2" android:pathData="M36 62a13 13 0 1 0 0 26a13 13 0 1 0 0-26z"/>
+    <path android:fillColor="#8CFFFFFF" android:pathData="M62 63H108A4 4 0 0 1 112 67V67A4 4 0 0 1 108 71H62A4 4 0 0 1 58 67V67A4 4 0 0 1 62 63Z"/>
+    <path android:fillColor="#38FFFFFF" android:pathData="M61.5 78H88.5A3.5 3.5 0 0 1 92 81.5V81.5A3.5 3.5 0 0 1 88.5 85H61.5A3.5 3.5 0 0 1 58 81.5V81.5A3.5 3.5 0 0 1 61.5 78Z"/>
+    <path android:fillColor="#2EE4D9FF" android:strokeColor="#59E4D9FF" android:strokeWidth="1" android:pathData="M125 61H135A7 7 0 0 1 142 68V68A7 7 0 0 1 135 75H125A7 7 0 0 1 118 68V68A7 7 0 0 1 125 61Z"/>
+</vector>

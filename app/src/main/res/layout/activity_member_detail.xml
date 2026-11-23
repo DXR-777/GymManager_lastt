@@ -701,29 +701,31 @@
                             android:visibility="gone"
                             tools:visibility="visible" />
 
+                        <!-- حالة فارغة: بطاقة زجاجية هادئة (أيقونة نغمية + عنوان + تلميح + زر "عرض الكل" عند الفلتر) -->
                         <LinearLayout
                             android:id="@+id/cardEmptyHistory"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:background="@drawable/bg_detail_empty"
+                            android:background="@drawable/bg_pd_receipt"
                             android:gravity="center_horizontal"
                             android:orientation="vertical"
                             android:paddingHorizontal="20dp"
-                            android:paddingVertical="32dp"
+                            android:paddingVertical="28dp"
                             android:visibility="gone"
                             tools:visibility="visible">
 
-                            <ImageView
-                                android:layout_width="96dp"
-                                android:layout_height="96dp"
-                                android:importantForAccessibility="no"
-                                android:src="@drawable/ic_pd_empty" />
+                            <!-- رسم متحرّك (ارتفاع البطاقات + لمعة + تنفّس)؛ شارة البحث تُرسم داخله عند الفلتر -->
+                            <com.gympro.manager.ui.widgets.EmptyHistoryArtView
+                                android:id="@+id/artEmptyHistory"
+                                android:layout_width="160dp"
+                                android:layout_height="112dp"
+                                android:importantForAccessibility="no" />
 
                             <TextView
                                 android:id="@+id/tvEmptyHistory"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="16dp"
+                                android:layout_marginTop="12dp"
                                 android:fontFamily="@font/cairo_bold"
                                 android:gravity="center"
                                 android:includeFontPadding="false"
@@ -742,6 +744,24 @@
                                 android:text="@string/detail_history_empty_hint"
                                 android:textColor="@color/home_mute"
                                 android:textSize="13sp" />
+
+                            <TextView
+                                android:id="@+id/btnHistoryShowAll"
+                                android:layout_width="wrap_content"
+                                android:layout_height="42dp"
+                                android:layout_marginTop="18dp"
+                                android:background="@drawable/bg_pd_btn_outline"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:fontFamily="@font/cairo_bold"
+                                android:gravity="center"
+                                android:includeFontPadding="false"
+                                android:minWidth="140dp"
+                                android:paddingHorizontal="22dp"
+                                android:text="@string/detail_history_show_all"
+                                android:textColor="@color/home_ink"
+                                android:textSize="14sp"
+                                android:visibility="gone" />
                         </LinearLayout>
                     </LinearLayout>
 

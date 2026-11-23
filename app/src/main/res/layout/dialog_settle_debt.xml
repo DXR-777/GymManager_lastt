@@ -1,11 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_pd_dialog"
-    android:gravity="center_horizontal"
+    android:overScrollMode="never"
+    android:scrollbars="none">
+
+    <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
     android:orientation="vertical"
     android:padding="22dp">
 
@@ -166,6 +172,91 @@
         </LinearLayout>
     </LinearLayout>
 
+
+    <!-- طريقة الدفع: يختارها المستخدم بنفسه (لا اختيار افتراضي) ولا يُفعَّل التأكيد قبل الاختيار -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/cairo_bold"
+        android:gravity="start"
+        android:includeFontPadding="false"
+        android:text="@string/settle_debt_method_label"
+        android:textColor="@color/home_ink"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+            <TextView
+                android:id="@+id/chipMethodPalpay"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_pd_sort_row"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:textColor="@color/home_mute"
+                android:textSize="14sp" />
+        <Space android:layout_width="10dp" android:layout_height="0dp" />
+            <TextView
+                android:id="@+id/chipMethodJawwal"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_pd_sort_row"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:textColor="@color/home_mute"
+                android:textSize="14sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+            <TextView
+                android:id="@+id/chipMethodBank"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_pd_sort_row"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:textColor="@color/home_mute"
+                android:textSize="14sp" />
+        <Space android:layout_width="10dp" android:layout_height="0dp" />
+            <TextView
+                android:id="@+id/chipMethodCash"
+                android:layout_width="0dp"
+                android:layout_height="46dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_pd_sort_row"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:textColor="@color/home_mute"
+                android:textSize="14sp" />
+    </LinearLayout>
+
     <!-- ملاحظة: أين سيُسجَّل المبلغ -->
     <LinearLayout
         android:layout_width="match_parent"
@@ -224,3 +315,4 @@
         android:textColor="@color/home_mute"
         android:textSize="15sp" />
 </LinearLayout>
+</ScrollView>

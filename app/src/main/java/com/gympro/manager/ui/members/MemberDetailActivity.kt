@@ -33,7 +33,10 @@ import com.gympro.manager.data.local.entities.MemberEntity
 import com.gympro.manager.data.local.entities.SubscriptionEntity
 import com.gympro.manager.databinding.ActivityMemberDetailBinding
 import com.gympro.manager.model.MemberStats
+import com.gympro.manager.utils.normalizeDigitsToLatin
+import com.gympro.manager.model.PaymentMethod
 import com.gympro.manager.model.PaymentStatus
+import com.gympro.manager.model.label
 import com.gympro.manager.model.SubscriptionType
 import com.gympro.manager.model.paidPaymentMethodLabel
 import com.gympro.manager.model.paymentStatus
@@ -651,6 +654,9 @@ class MemberDetailActivity : AppCompatActivity() {
         }
 
         binding.btnHistorySort.setOnSingleClickListener { showHistorySortDialog() }
+        binding.btnHistoryShowAll.setOnClickListener {
+            filterChips.firstOrNull { it.status == null }?.let { selectHistoryFilter(it) }
+        }
         binding.btnHistoryLoadMore.setOnSingleClickListener {
             historyVisibleLimit += HISTORY_PAGE_SIZE
             refreshHistoryList()
@@ -776,12 +782,15 @@ class MemberDetailActivity : AppCompatActivity() {
 
         val isEmpty = visibleList.isEmpty()
         binding.rvHistory.visibility = if (isEmpty) View.GONE else View.VISIBLE
+        val filterEmpty = fullHistory.isNotEmpty() && isEmpty
         binding.tvEmptyHistory.setText(
-            if (fullHistory.isNotEmpty() && isEmpty) R.string.detail_history_no_results
-            else R.string.detail_history_empty
+            if (filterEmpty) R.string.detail_history_no_results else R.string.detail_history_empty
         )
-        binding.tvEmptyHistoryHint.visibility =
-            if (fullHistory.isEmpty()) View.VISIBLE else View.GONE
+        binding.tvEmptyHistoryHint.setText(
+            if (filterEmpty) R.string.detail_history_no_results_hint else R.string.detail_history_empty_hint
+        )
+        binding.artEmptyHistory.showBadge = filterEmpty
+        binding.btnHistoryShowAll.visibility = if (filterEmpty) View.VISIBLE else View.GONE
         binding.cardEmptyHistory.visibility = if (isEmpty) View.VISIBLE else View.GONE
 
         // شرائح الفلتر لا تظهر إلا عند وجود 3 اشتراكات فأكثر (أو فلتر مفعّل) كي يبقى السجل القصير نظيفاً.
@@ -966,37 +975,117 @@ class MemberDetailActivity : AppCompatActivity() {
     }
 
     /**
-     * نافذة تأكيد تسديد الدَّين المتبقي (غير مدفوع بالكامل أو جزئي — GymRepository.togglePaidStatus).
-     * المبلغ المعروض هو المتبقي الفعلي (remainingAmount) لا السعر الكامل، ولا يُستدعى
-     * togglePaidStatus() إلا بعد موافقة صاحب الجيم لمنع التسديد العرضي.
+     * ورقة "تسجيل دفعة": تسديد المتبقي كاملاً (بلا دفع جزئي) مع اختيار طريقة الدفع وبيانات المُرسِل
+     * للمحافظ/البنك. زر التأكيد معطَّل حتى تكتمل البيانات الصحيحة (نفس قواعد نموذج إضافة العضو).
      */
     private fun confirmSettleDebt(subscription: SubscriptionEntity) {
         val member = currentMember ?: return
-        val view = layoutInflater.inflate(R.layout.dialog_settle_debt, null)
-        view.findViewById<android.widget.TextView>(R.id.tvSettleAmount).text = moneyText(
-            subscription.remainingAmount(), currentSettings.currencySymbol, getColor(R.color.home_mint)
-        )
-        view.findViewById<android.widget.TextView>(R.id.tvSettleInitial).text =
-            member.name.trim().firstOrNull()?.uppercase() ?: "?"
-        view.findViewById<android.widget.TextView>(R.id.tvSettleMember).text = member.name
-        view.findViewById<android.widget.TextView>(R.id.tvSettlePlan).text = typeLabel(subscription.type)
-        view.findViewById<android.widget.TextView>(R.id.tvSettleDates).text =
-            "${DateUtils.formatDate(subscription.startDate)} \u2190 ${DateUtils.formatDate(subscription.endDate)}"
+        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_settle_payment, null)
+        dialog.setContentView(view)
+        dialog.setOnShowListener {
+            dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+                ?.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+            dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
+            dialog.behavior.skipCollapsed = true
+        }
 
-        val dialog = MaterialAlertDialogBuilder(this, R.style.ThemeOverlay_GymManager_DialogDark)
-            .setView(view)
-            .create()
-        // التأكيد الفعلي محمي بـ setOnSingleClickListener ضد الضغط المزدوج (البند 5)، ولا يُستدعى
-        // togglePaidStatus() إلا بعد موافقة صاحب الجيم لمنع التسديد العرضي.
-        view.findViewById<View>(R.id.btnSettleConfirm).setOnSingleClickListener {
+        val amountText = CurrencyFormatter.format(subscription.remainingAmount(), currentSettings.currencySymbol)
+        view.findViewById<android.widget.TextView>(R.id.tvPayAmount).text = amountText
+        view.findViewById<android.widget.TextView>(R.id.tvPaySubtitle).text =
+            "${member.name} \u00B7 ${typeLabel(subscription.type)}"
+
+        val cards = mapOf(
+            PaymentMethod.PALPAY to Triple(R.id.payCardPalpay, R.id.palpayCheck, R.id.palpayLabel),
+            PaymentMethod.JAWWAL_PAY to Triple(R.id.payCardJawwal, R.id.jawwalCheck, R.id.jawwalLabel),
+            PaymentMethod.BANK_OF_PALESTINE to Triple(R.id.payCardBank, R.id.bankCheck, R.id.bankLabel),
+            PaymentMethod.CASH to Triple(R.id.payCardCash, R.id.cashCheck, R.id.cashLabel)
+        )
+        val senderSection = view.findViewById<View>(R.id.paySenderSection)
+        val senderFields = view.findViewById<View>(R.id.paySenderFields)
+        val sameBtn = view.findViewById<android.widget.TextView>(R.id.paySenderSame)
+        val otherBtn = view.findViewById<android.widget.TextView>(R.id.paySenderOther)
+        val tilName = view.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilPaySenderName)
+        val tilPhone = view.findViewById<com.google.android.material.textfield.TextInputLayout>(R.id.tilPaySenderPhone)
+        val etName = view.findViewById<android.widget.EditText>(R.id.etPaySenderName)
+        val etPhone = view.findViewById<android.widget.EditText>(R.id.etPaySenderPhone)
+        val summary = view.findViewById<android.widget.TextView>(R.id.tvPaySummary)
+        val confirmBtn = view.findViewById<View>(R.id.btnPayConfirm)
+
+        var selected: PaymentMethod? = null
+        var senderOther = false
+
+        fun nameValid() = etName.text.toString().trim().length >= 2
+        fun phoneValid(): Boolean {
+            val d = etPhone.text.toString().trim().normalizeDigitsToLatin()
+            return d.isNotEmpty() && d.all { it.isDigit() } && d.length >= 9
+        }
+        fun valid(): Boolean {
+            val m = selected ?: return false
+            if (m == PaymentMethod.CASH || !senderOther) return true
+            return nameValid() && phoneValid()
+        }
+        fun refresh() {
+            cards.forEach { (m, ids) ->
+                val on = m == selected
+                view.findViewById<View>(ids.first).isSelected = on
+                view.findViewById<View>(ids.second).visibility = if (on) View.VISIBLE else View.GONE
+                view.findViewById<android.widget.TextView>(ids.third)
+                    .setTextColor(getColor(if (on) R.color.home_ink else R.color.home_mute))
+            }
+            val needsSender = selected != null && selected != PaymentMethod.CASH
+            if (needsSender && senderSection.visibility != View.VISIBLE) {
+                senderSection.alpha = 0f
+                senderSection.visibility = View.VISIBLE
+                senderSection.animate().alpha(1f).setDuration(220).start()
+            } else if (!needsSender) {
+                senderSection.visibility = View.GONE
+            }
+            sameBtn.isSelected = !senderOther
+            otherBtn.isSelected = senderOther
+            sameBtn.setTextColor(getColor(if (!senderOther) R.color.home_ink else R.color.home_mute))
+            otherBtn.setTextColor(getColor(if (senderOther) R.color.home_ink else R.color.home_mute))
+            senderFields.visibility = if (senderOther) View.VISIBLE else View.GONE
+            summary.text = selected?.let {
+                getString(R.string.pay_sheet_summary, amountText, it.label(this))
+            } ?: getString(R.string.pay_sheet_summary_empty)
+            val ok = valid()
+            confirmBtn.isEnabled = ok
+            confirmBtn.alpha = if (ok) 1f else 0.4f
+        }
+        cards.forEach { (m, ids) ->
+            view.findViewById<View>(ids.first).setOnClickListener { selected = m; refresh() }
+        }
+        sameBtn.setOnClickListener { senderOther = false; refresh() }
+        otherBtn.setOnClickListener { senderOther = true; refresh() }
+        val watcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) = Unit
+            override fun afterTextChanged(s: android.text.Editable?) {
+                tilName.error = if (etName.text.isNullOrBlank() || nameValid()) null
+                else getString(R.string.member_sender_name_error_invalid)
+                refresh()
+            }
+        }
+        etName.addTextChangedListener(watcher)
+        etPhone.addTextChangedListener(watcher)
+        refresh()
+
+        confirmBtn.setOnSingleClickListener {
+            val method = selected ?: return@setOnSingleClickListener
+            if (!valid()) return@setOnSingleClickListener
+            val (sName, sPhone) = when {
+                method == PaymentMethod.CASH -> null to null
+                senderOther -> etName.text.toString().trim() to etPhone.text.toString().trim().normalizeDigitsToLatin()
+                else -> member.name to member.phone
+            }
             lifecycleScope.launch {
-                repository.togglePaidStatus(subscription)
+                repository.settleDebt(subscription, method, sName, sPhone)
                 toast(getString(R.string.settle_debt_success))
             }
             dialog.dismiss()
         }
-        view.findViewById<View>(R.id.btnSettleCancel).setOnClickListener { dialog.dismiss() }
-        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        view.findViewById<View>(R.id.btnPayCancel).setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
 

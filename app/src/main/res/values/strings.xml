@@ -831,4 +831,14 @@
     <string name="settle_debt_confirm_action">تأكيد الاستلام</string>
     <string name="settle_debt_plan_label">الاشتراك</string>
     <string name="settle_debt_period_label">الفترة</string>
+    <string name="detail_history_show_all">عرض كل الاشتراكات</string>
+    <string name="detail_history_no_results_hint">جرّب فلتراً آخر أو اعرض كل الاشتراكات.</string>
+    <string name="settle_debt_method_label">طريقة الدفع</string>
+    <string name="pay_sheet_title">تسجيل دفعة</string>
+    <string name="pay_sheet_remaining">المبلغ المتبقي</string>
+    <string name="pay_sheet_sender_title">بيانات المُرسِل</string>
+    <string name="pay_sheet_sender_same">نفس العضو</string>
+    <string name="pay_sheet_sender_other">شخص آخر</string>
+    <string name="pay_sheet_summary_empty">اختر طريقة الدفع للمتابعة</string>
+    <string name="pay_sheet_summary">سيُسجَّل %1$s عبر %2$s في إيرادات اليوم</string>
 </resources>

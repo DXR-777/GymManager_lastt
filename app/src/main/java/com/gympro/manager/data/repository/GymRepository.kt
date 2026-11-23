@@ -322,6 +322,34 @@ class GymRepository(private val db: AppDatabase) {
      * عن تصحيح خطأ إدخال، وليس لتحويل اشتراك PAID إلى PARTIAL (ذلك يمرّ عبر
      * updateSubscriptionDetails من شاشة التعديل الكاملة فقط).
      */
+    /**
+     * تسديد المتبقي كاملاً بطريقة دفع يختارها المستخدم (بدل الإبقاء على طريقة الاشتراك الأصلية/الافتراضية).
+     * النقد لا مُرسِل له، فنمسح بيانات المُرسِل عند اختياره حتى لا يبقى اسم/رقم محفظة قديم بلا معنى.
+     */
+    suspend fun settleDebt(
+        subscription: SubscriptionEntity,
+        method: PaymentMethod,
+        senderName: String? = null,
+        senderPhone: String? = null
+    ) {
+        subscriptionDao.update(
+            subscription.copy(
+                isPaid = true,
+                paidAmount = null,
+                paymentMethod = method,
+                senderName = if (method == PaymentMethod.CASH) null else (senderName ?: subscription.senderName),
+                senderPhone = if (method == PaymentMethod.CASH) null else (senderPhone ?: subscription.senderPhone),
+                paidAt = resolvePaidAt(
+                    newIsPaid = true,
+                    newPaidAmount = null,
+                    previousIsPaid = subscription.isPaid,
+                    previousPaidAmount = subscription.paidAmount,
+                    previousPaidAt = subscription.paidAt
+                )
+            )
+        )
+    }
+
     suspend fun togglePaidStatus(subscription: SubscriptionEntity) {
         val newIsPaid = subscription.paymentStatus() != PaymentStatus.PAID
         subscriptionDao.update(
