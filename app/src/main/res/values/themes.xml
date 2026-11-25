@@ -557,4 +557,10 @@
         <item name="android:textColor">@color/home_mute</item>
         <item name="android:textSize">12sp</item>
     </style>
+
+    <!-- حقل البحث: لون المؤشر/التحديد لافندر ساطع (colorControlActivated يلوّن المؤشر على كل الإصدارات). -->
+    <style name="ThemeOverlay.GymManager.SearchField" parent="">
+        <item name="colorControlActivated">@color/home_lav</item>
+        <item name="colorAccent">@color/home_lav</item>
+    </style>
 </resources>

@@ -107,7 +107,7 @@
                 android:textColor="@color/home_ink"
                 android:textColorHint="@color/home_mute"
                 android:textColorHighlight="#557C4DE8"
-                android:textCursorDrawable="@drawable/cursor_search"
+                android:theme="@style/ThemeOverlay.GymManager.SearchField"
                 android:textSize="15sp" />
 
             <ImageButton

@@ -289,6 +289,11 @@ class MembersFragment : Fragment() {
     }
 
     private fun setupSearch() {
+        // مؤشر أسمك (2.5dp) على Android 10+؛ على الأقدم يكفي لون colorControlActivated من سمة الحقل.
+        if (android.os.Build.VERSION.SDK_INT >= 29) {
+            binding.etSearch.textCursorDrawable =
+                androidx.core.content.ContextCompat.getDrawable(requireContext(), R.drawable.cursor_search)
+        }
         binding.etSearch.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
