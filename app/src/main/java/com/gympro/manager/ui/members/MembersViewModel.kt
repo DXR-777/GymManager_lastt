@@ -117,8 +117,13 @@ class MembersViewModel(private val repository: GymRepository) : ViewModel() {
      *  استخدام واجهة آخر مثل رسالة "لا نتائج لبحثك" في MembersFragment. */
     val currentQuery: StateFlow<String> = query.asStateFlow()
 
+    /**
+     * إصلاح: المسافات الطرفية (تضيفها لوحة المفاتيح العربية تلقائياً بعد الكلمة) كانت تُمرَّر كما هي
+     * إلى LIKE '%...%' فلا تطابق أي اسم من كلمة واحدة، بينما الواجهة تعدّ النص "فارغاً" (isNotBlank)
+     * فتعرض شاشة "لا يوجد أعضاء" رغم وجودهم. لذا نقصّ الطرفين هنا ليبقى البحث والواجهة متسقين.
+     */
     fun setQuery(text: String) {
-        query.value = text
+        query.value = text.trim()
     }
 
     fun setFilter(newFilter: MemberFilter) {

@@ -223,7 +223,7 @@
     <string name="days_remaining_format">باقي %1$d يوم</string>
     <string name="days_remaining_today">ينتهي اليوم</string>
     <string name="days_remaining_expired">منتهي منذ %1$d يوم</string>
-    <string name="days_remaining_not_started">لم يبدأ بعد</string>
+    <string name="days_remaining_not_started">مُجدَّد · لم يبدأ بعد</string>
     <string name="action_settle_debt">تسديد</string>
     <string name="settle_debt_success">تم تسجيل الدفع بنجاح ✅</string>
     <string name="settle_debt_confirm_title">تأكيد استلام الدفع</string>
@@ -793,7 +793,7 @@
     <string name="detail_pass_custom">عضوية بمدة مخصصة</string>
     <string name="detail_pass_with_method">%1$s · %2$s</string>
     <string name="detail_pass_expires">ينتهي</string>
-    <string name="detail_pass_not_started">لم يبدأ بعد</string>
+    <string name="detail_pass_not_started">مُجدَّد · يبدأ قريباً</string>
     <string name="detail_pass_today">اليوم</string>
     <string name="detail_pass_today_unit">آخر يوم</string>
     <string name="detail_strip_outstanding">المتبقي غير المدفوع</string>
@@ -841,4 +841,21 @@
     <string name="pay_sheet_sender_other">شخص آخر</string>
     <string name="pay_sheet_summary_empty">اختر طريقة الدفع للمتابعة</string>
     <string name="pay_sheet_summary">سيُسجَّل %1$s عبر %2$s في إيرادات اليوم</string>
+    <string name="pay_sheet_sender_question">من قام بالتحويل؟</string>
+    <string name="pay_sheet_sender_other_sub">أدخل اسم ورقم محفظة الشخص المُرسِل</string>
+    <string name="member_sender_phone_error_invalid">رقم الجوال غير صالح</string>
+    <string name="renew_sheet_subtitle_active">%1$s · ينتهي الحالي %2$s</string>
+    <string name="renew_sheet_subtitle_expired">%1$s · انتهى اشتراكه</string>
+    <string name="renew_sheet_change_plan">تغيير الباقة أو السعر</string>
+    <string name="renew_sheet_note_after">يبدأ بعد انتهاء الحالي مباشرةً — لا يضيع أي يوم</string>
+    <string name="renew_sheet_note_today">يبدأ اليوم</string>
+    <string name="renew_sheet_pay_title">الدفع</string>
+    <string name="renew_sheet_pay_now">دُفع الآن</string>
+    <string name="renew_sheet_pay_later">دفع لاحقًا (دَين)</string>
+    <string name="renew_sheet_confirm">تأكيد التجديد</string>
+    <string name="renew_sheet_summary_pick">اختر حالة الدفع للمتابعة</string>
+    <string name="renew_sheet_summary_later">سيُسجَّل %1$s كدَين على العضو ويُقيَّد بعد التحصيل</string>
+    <string name="renew_sheet_summary_now_pick">اختر طريقة الدفع للمتابعة</string>
+    <string name="renew_sheet_summary_now">سيُسجَّل %1$s عبر %2$s في إيرادات اليوم</string>
+    <string name="renew_sheet_success">تم تجديد الاشتراك ✅</string>
 </resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- مؤشر الكتابة في البحث: خط لافندر ساطع بسماكة 2.5dp يظهر بوضوح على الخلفية الداكنة. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <solid android:color="@color/home_lav"/>
+    <size android:width="2.5dp"/>
+</shape>

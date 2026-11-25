@@ -48,6 +48,7 @@ import com.gympro.manager.utils.showSnack
 import com.gympro.manager.utils.Haptic
 import com.gympro.manager.utils.haptic
 import com.gympro.manager.utils.MemberHighlight
+import com.gympro.manager.utils.hideKeyboard
 import com.gympro.manager.utils.setOnSingleClickListener
 import com.gympro.manager.utils.applySystemBarInsetsPadding
 import com.google.android.material.chip.Chip
@@ -215,6 +216,7 @@ class MembersFragment : Fragment() {
         programmaticFilterChange = false
         binding.chipGroupFilter.post { moveChipIndicator(animate = true) }
         viewModel.setFilter(filter)
+        scrollListToTop()
     }
 
     /**
@@ -241,6 +243,7 @@ class MembersFragment : Fragment() {
             row.isSelected = selected
             row.setOnSingleClickListener {
                 viewModel.setSort(sort)
+                scrollListToTop()
                 dialog.dismiss()
             }
         }
@@ -291,10 +294,44 @@ class MembersFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 viewModel.setQuery(s?.toString().orEmpty())
                 binding.btnClearSearch.visibleIf(!s.isNullOrEmpty())
+                scrollListToTop()
             }
             override fun afterTextChanged(s: Editable?) {}
         })
-        binding.btnClearSearch.setOnClickListener { binding.etSearch.text?.clear() }
+        // زر البحث في لوحة المفاتيح: إنهاء الكتابة (إخفاء اللوحة وإزالة المؤشر) مع إبقاء النتائج.
+        binding.etSearch.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+                endSearchTyping(); true
+            } else false
+        }
+        // زر X: يمسح النص وينهي الكتابة بالكامل — لا يبقى المؤشر يومض ولا لوحة المفاتيح مفتوحة.
+        binding.btnClearSearch.setOnClickListener {
+            binding.etSearch.text?.clear()
+            endSearchTyping()
+        }
+    }
+
+    /** يُسقط التركيز عن حقل البحث (يختفي المؤشر) ويُخفي لوحة المفاتيح. */
+    private fun endSearchTyping() {
+        val b = _binding ?: return
+        b.etSearch.hideKeyboard()
+        b.etSearch.clearFocus()
+        // نقل التركيز لحاوية الشاشة حتى لا يقفز لأول حقل قابل للتركيز (الحقل نفسه).
+        b.root.isFocusableInTouchMode = true
+        b.root.requestFocus()
+    }
+
+    /**
+     * واجهة ذكية: أي تغيير في البحث/الفلتر/الترتيب يعيد القائمة لأعلاها فوراً (وبعد وصول النتائج الجديدة)،
+     * بدل أن يبقى المستخدم في منتصف قائمة جديدة ويضطر لرفعها بيده. نافذة زمنية قصيرة بدل علَم دائم
+     * حتى لا يحدث قفز غير مرغوب لاحقاً (مثلاً عند تعديل عضو) إن لم تتغير النتائج فعلاً.
+     */
+    private var scrollTopUntil = 0L
+    private fun scrollListToTop() {
+        val b = _binding ?: return
+        scrollTopUntil = android.os.SystemClock.uptimeMillis() + 900L
+        b.rvMembers.stopScroll()
+        b.rvMembers.scrollToPosition(0)
     }
 
     private var chipIndicatorAnimator: ValueAnimator? = null
@@ -362,6 +399,7 @@ class MembersFragment : Fragment() {
                 else -> MemberFilter.ALL
             }
             viewModel.setFilter(newFilter)
+            scrollListToTop()
         }
     }
 
@@ -388,13 +426,19 @@ class MembersFragment : Fragment() {
                             binding.rvMembers.visibility = View.VISIBLE
                             binding.rvMembers.alpha = 1f
                             binding.rvMembers.requestLayout()
+                            if (android.os.SystemClock.uptimeMillis() < scrollTopUntil) {
+                                binding.rvMembers.scrollToPosition(0)
+                            }
                             highlightPendingMember()
                         }
                     }
                     setSkeleton(false)
                     val isEmpty = list.isEmpty()
                     val isFiltered = viewModel.currentQuery.value.isNotBlank() ||
-                        viewModel.currentFilter.value != MemberFilter.ALL
+                        viewModel.currentFilter.value != MemberFilter.ALL ||
+                        // حماية: إن كان هناك أعضاء فعلاً (العدّاد > 0) فلا تُعرض شاشة البداية أبداً،
+                        // بل "لا نتائج" مع زر المسح — أفضل من إيهام المستخدم أن بياناته اختفت.
+                        (viewModel.counts.value?.all ?: 0) > 0
                     // فراغ بلا بحث/فلتر = لا يوجد أي عضو أصلاً → شاشة البداية؛ فراغ مع بحث/فلتر → "لا نتائج".
                     setFirstRun(isEmpty && !isFiltered)
                     binding.emptyMembersContainer.visibleIf(isEmpty && isFiltered)
