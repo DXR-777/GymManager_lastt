@@ -256,123 +256,13 @@ class MemberDetailActivity : AppCompatActivity() {
         )
     }
 
-    /** التجديد السريع (ورقة سفلية) بنفس باقة العضو؛ لا اشتراك سابق → شاشة التجديد الكاملة. */
     private fun openRenew() {
-        val member = currentMember ?: return
-        val last = currentSubscription ?: return openRenewFull()
-        lifecycleScope.launch {
-            val anchor = repository.getInheritedMonthlyAnchor(memberId)
-            showRenewSheet(member, last, anchor)
-        }
-    }
-
-    /** الشاشة الكاملة: لتغيير الباقة أو السعر أو تاريخ البدء يدوياً. */
-    private fun openRenewFull() {
         binding.btnPrimaryAction.isEnabled = false
         startActivity(
             Intent(this, AddEditMemberActivity::class.java)
                 .putExtra(AddEditMemberActivity.EXTRA_MEMBER_ID, memberId)
                 .putExtra(AddEditMemberActivity.EXTRA_RENEW, true)
         )
-    }
-
-    /**
-     * تمديد متتالي: يبدأ التجديد بعد انتهاء الاشتراك الحالي مباشرة (لا يخسر العضو أي يوم)،
-     * أو اليوم إن كان الحالي منتهياً. لكل فترة سجلّها ودفعها المستقل.
-     */
-    private fun showRenewSheet(member: MemberEntity, last: SubscriptionEntity, anchor: Int?) {
-        val dialog = com.google.android.material.bottomsheet.BottomSheetDialog(this)
-        val view = layoutInflater.inflate(R.layout.bottom_sheet_renew, null)
-        dialog.setContentView(view)
-        dialog.setOnShowListener {
-            dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
-                ?.setBackgroundColor(android.graphics.Color.TRANSPARENT)
-            dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
-            dialog.behavior.skipCollapsed = true
-        }
-
-        val remaining = DateUtils.daysRemaining(last.endDate)
-        val chained = remaining > 0
-        val start = if (chained) DateUtils.startOfDay(DateUtils.addDays(last.endDate, 1))
-        else DateUtils.startOfDay(DateUtils.now())
-        val customDays = if (last.type == SubscriptionType.CUSTOM)
-            DateUtils.daysBetween(last.startDate, last.endDate) + 1 else 1
-        val endAnchor = if (last.type == SubscriptionType.MONTHLY) (anchor ?: DateUtils.dayOfMonth(start)) else 0
-        val end = DateUtils.calculateEndDate(start, last.type, endAnchor, customDays)
-        val priceText = CurrencyFormatter.format(last.price, currentSettings.currencySymbol)
-
-        view.findViewById<android.widget.TextView>(R.id.tvRenewSubtitle).text = if (chained)
-            getString(R.string.renew_sheet_subtitle_active, member.name, DateUtils.formatDate(last.endDate))
-        else getString(R.string.renew_sheet_subtitle_expired, member.name)
-        view.findViewById<android.widget.TextView>(R.id.tvRenewPlan).text = typeLabel(last.type)
-        view.findViewById<android.widget.TextView>(R.id.tvRenewPrice).text = priceText
-        view.findViewById<android.widget.TextView>(R.id.tvRenewRange).text =
-            "${DateUtils.formatDate(start)} \u2190 ${DateUtils.formatDate(end)}"
-        view.findViewById<android.widget.TextView>(R.id.tvRenewNote).setText(
-            if (chained) R.string.renew_sheet_note_after else R.string.renew_sheet_note_today
-        )
-        view.findViewById<View>(R.id.btnRenewChange).setOnClickListener {
-            dialog.dismiss()
-            openRenewFull()
-        }
-
-        val payNow = view.findViewById<android.widget.TextView>(R.id.rnPayNow)
-        val payLater = view.findViewById<android.widget.TextView>(R.id.rnPayLater)
-        val summary = view.findViewById<android.widget.TextView>(R.id.tvRenewSummary)
-        val confirmBtn = view.findViewById<View>(R.id.btnRenewConfirm)
-        var mode: Boolean? = null // true = دُفع الآن، false = لاحقاً، null = لم يختر
-        var picker: PaymentMethodPicker? = null
-
-        fun refresh() {
-            payNow.isSelected = mode == true
-            payLater.isSelected = mode == false
-            payNow.setTextColor(getColor(if (mode == true) R.color.home_ink else R.color.home_mute))
-            payLater.setTextColor(getColor(if (mode == false) R.color.home_ink else R.color.home_mute))
-            val p = picker
-            p?.setVisible(mode == true)
-            val method = p?.selected
-            summary.text = when {
-                mode == null -> getString(R.string.renew_sheet_summary_pick)
-                mode == false -> getString(R.string.renew_sheet_summary_later, priceText)
-                method == null -> getString(R.string.renew_sheet_summary_now_pick)
-                else -> getString(R.string.renew_sheet_summary_now, priceText, method.label(this))
-            }
-            val ok = mode == false || (mode == true && p?.isValid() == true)
-            confirmBtn.isEnabled = ok
-            confirmBtn.alpha = if (ok) 1f else 0.4f
-        }
-        picker = PaymentMethodPicker(view.findViewById(R.id.renewPicker), member) { refresh() }
-        // طريقة آخر دفعة فعلية تتكرر غالباً: نقترحها مسبقاً (تظهر فقط إن اختار "دُفع الآن").
-        if (last.isPaid || last.paidAmount != null) {
-            picker?.prefill(last.paymentMethod, last.senderName, last.senderPhone)
-        }
-        payNow.setOnClickListener { mode = true; refresh() }
-        payLater.setOnClickListener { mode = false; refresh() }
-        refresh()
-
-        confirmBtn.setOnSingleClickListener {
-            val paidNow = mode ?: return@setOnSingleClickListener
-            val p = picker ?: return@setOnSingleClickListener
-            if (paidNow && !p.isValid()) return@setOnSingleClickListener
-            lifecycleScope.launch {
-                repository.addSubscription(
-                    memberId = member.id,
-                    type = last.type,
-                    price = last.price,
-                    startDate = start,
-                    isPaid = paidNow,
-                    customDays = customDays,
-                    paymentMethod = if (paidNow) p.selected ?: last.paymentMethod else last.paymentMethod,
-                    senderName = if (paidNow) p.senderName() else null,
-                    senderPhone = if (paidNow) p.senderPhone() else null,
-                    paidAmount = null
-                )
-                toast(getString(R.string.renew_sheet_success))
-            }
-            dialog.dismiss()
-        }
-        view.findViewById<View>(R.id.btnRenewCancel).setOnClickListener { dialog.dismiss() }
-        dialog.show()
     }
 
     override fun onResume() {
@@ -1086,7 +976,7 @@ class MemberDetailActivity : AppCompatActivity() {
 
     /**
      * ورقة "تسجيل دفعة": تسديد المتبقي كاملاً (بلا دفع جزئي) مع اختيار طريقة الدفع وبيانات المُرسِل
-     * للمحافظ/البنك (PaymentMethodPicker). زر التأكيد معطَّل حتى تكتمل البيانات الصحيحة.
+     * للمحافظ/البنك. زر التأكيد معطَّل حتى تكتمل البيانات الصحيحة (نفس قواعد نموذج إضافة العضو).
      */
     private fun confirmSettleDebt(subscription: SubscriptionEntity) {
         val member = currentMember ?: return
@@ -1099,37 +989,127 @@ class MemberDetailActivity : AppCompatActivity() {
             dialog.behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED
             dialog.behavior.skipCollapsed = true
         }
+
         val amountText = CurrencyFormatter.format(subscription.remainingAmount(), currentSettings.currencySymbol)
         view.findViewById<android.widget.TextView>(R.id.tvPayAmount).text = amountText
         view.findViewById<android.widget.TextView>(R.id.tvPaySubtitle).text =
             "${member.name} \u00B7 ${typeLabel(subscription.type)}"
+
+        val cards = mapOf(
+            PaymentMethod.PALPAY to Triple(R.id.payCardPalpay, R.id.palpayCheck, R.id.palpayLabel),
+            PaymentMethod.JAWWAL_PAY to Triple(R.id.payCardJawwal, R.id.jawwalCheck, R.id.jawwalLabel),
+            PaymentMethod.BANK_OF_PALESTINE to Triple(R.id.payCardBank, R.id.bankCheck, R.id.bankLabel),
+            PaymentMethod.CASH to Triple(R.id.payCardCash, R.id.cashCheck, R.id.cashLabel)
+        )
+        val senderSection = view.findViewById<View>(R.id.paySenderSection)
+        val senderFields = view.findViewById<View>(R.id.paySenderFields)
+        val sameBtn = view.findViewById<View>(R.id.paySenderSame)
+        val otherBtn = view.findViewById<View>(R.id.paySenderOther)
+        val sameRadio = view.findViewById<View>(R.id.paySenderSameRadio)
+        val otherRadio = view.findViewById<View>(R.id.paySenderOtherRadio)
+        view.findViewById<android.widget.TextView>(R.id.paySenderSameSub).text =
+            "${member.name} \u00B7 ${member.phone}"
+        val nameErr = view.findViewById<android.widget.TextView>(R.id.tvPayNameError)
+        val phoneErr = view.findViewById<android.widget.TextView>(R.id.tvPayPhoneError)
+        val etName = view.findViewById<android.widget.EditText>(R.id.etPaySenderName)
+        val etPhone = view.findViewById<android.widget.EditText>(R.id.etPaySenderPhone)
         val summary = view.findViewById<android.widget.TextView>(R.id.tvPaySummary)
         val confirmBtn = view.findViewById<View>(R.id.btnPayConfirm)
-        var picker: PaymentMethodPicker? = null
 
+        var selected: PaymentMethod? = null
+        var senderOther = false
+
+        // دفعة جزئية سابقة: الطريقة وبيانات المُرسِل معروفة أصلاً، فلا نسأل عنها ثانية — نعبّئها مسبقاً
+        // (يبقى التعديل ممكناً). أما غير المدفوع فطريقته الافتراضية لم يخترها أحد، فيبقى بلا اختيار.
+        if (subscription.paymentStatus() == PaymentStatus.PARTIAL) {
+            selected = subscription.paymentMethod
+            val sn = subscription.senderName?.trim().orEmpty()
+            val sp = subscription.senderPhone?.trim().orEmpty()
+            if (selected != PaymentMethod.CASH && sn.isNotEmpty() && sp.isNotEmpty() &&
+                !(sn == member.name.trim() && sp == member.phone.trim())
+            ) {
+                senderOther = true
+                etName.setText(sn)
+                etPhone.setText(sp)
+            }
+        }
+
+        fun nameValid() = etName.text.toString().trim().length >= 2
+        fun phoneValid(): Boolean {
+            val d = etPhone.text.toString().trim().normalizeDigitsToLatin()
+            return d.isNotEmpty() && d.all { it.isDigit() } && d.length >= 9
+        }
+        fun valid(): Boolean {
+            val m = selected ?: return false
+            if (m == PaymentMethod.CASH || !senderOther) return true
+            return nameValid() && phoneValid()
+        }
         fun refresh() {
-            val p = picker
-            val m = p?.selected
-            summary.text = m?.let { getString(R.string.pay_sheet_summary, amountText, it.label(this)) }
-                ?: getString(R.string.pay_sheet_summary_empty)
-            val ok = p?.isValid() == true
+            cards.forEach { (m, ids) ->
+                val on = m == selected
+                view.findViewById<View>(ids.first).isSelected = on
+                view.findViewById<View>(ids.second).visibility = if (on) View.VISIBLE else View.GONE
+                view.findViewById<android.widget.TextView>(ids.third)
+                    .setTextColor(getColor(if (on) R.color.home_ink else R.color.home_mute))
+            }
+            val needsSender = selected != null && selected != PaymentMethod.CASH
+            if (needsSender && senderSection.visibility != View.VISIBLE) {
+                senderSection.alpha = 0f
+                senderSection.visibility = View.VISIBLE
+                senderSection.animate().alpha(1f).setDuration(220).start()
+            } else if (!needsSender) {
+                senderSection.visibility = View.GONE
+            }
+            sameBtn.isSelected = !senderOther
+            otherBtn.isSelected = senderOther
+            sameRadio.isSelected = !senderOther
+            otherRadio.isSelected = senderOther
+            if (senderOther && senderFields.visibility != View.VISIBLE) {
+                senderFields.alpha = 0f
+                senderFields.visibility = View.VISIBLE
+                senderFields.animate().alpha(1f).setDuration(200).start()
+            } else if (!senderOther) {
+                senderFields.visibility = View.GONE
+            }
+            summary.text = selected?.let {
+                getString(R.string.pay_sheet_summary, amountText, it.label(this))
+            } ?: getString(R.string.pay_sheet_summary_empty)
+            val ok = valid()
             confirmBtn.isEnabled = ok
             confirmBtn.alpha = if (ok) 1f else 0.4f
         }
-        picker = PaymentMethodPicker(view, member) { refresh() }
-        // دفعة جزئية سابقة: الطريقة وبيانات المُرسِل معروفة أصلاً فنعبّئها مسبقاً (التعديل ممكن).
-        // أما غير المدفوع فطريقته الافتراضية لم يخترها أحد، فيبقى بلا اختيار.
-        if (subscription.paymentStatus() == PaymentStatus.PARTIAL) {
-            picker?.prefill(subscription.paymentMethod, subscription.senderName, subscription.senderPhone)
+        cards.forEach { (m, ids) ->
+            view.findViewById<View>(ids.first).setOnClickListener { selected = m; refresh() }
         }
+        sameBtn.setOnClickListener { senderOther = false; refresh() }
+        otherBtn.setOnClickListener { senderOther = true; refresh() }
+        val watcher = object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, st: Int, c: Int, a: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, st: Int, b: Int, c: Int) = Unit
+            override fun afterTextChanged(s: android.text.Editable?) {
+                val nameBad = !etName.text.isNullOrBlank() && !nameValid()
+                nameErr.text = getString(R.string.member_sender_name_error_invalid)
+                nameErr.visibility = if (nameBad) View.VISIBLE else View.GONE
+                val phoneBad = !etPhone.text.isNullOrBlank() && etPhone.text.length >= 9 && !phoneValid()
+                phoneErr.text = getString(R.string.member_sender_phone_error_invalid)
+                phoneErr.visibility = if (phoneBad) View.VISIBLE else View.GONE
+                refresh()
+            }
+        }
+        etName.addTextChangedListener(watcher)
+        etPhone.addTextChangedListener(watcher)
         refresh()
 
         confirmBtn.setOnSingleClickListener {
-            val p = picker ?: return@setOnSingleClickListener
-            val method = p.selected ?: return@setOnSingleClickListener
-            if (!p.isValid()) return@setOnSingleClickListener
+            val method = selected ?: return@setOnSingleClickListener
+            if (!valid()) return@setOnSingleClickListener
+            val (sName, sPhone) = when {
+                method == PaymentMethod.CASH -> null to null
+                senderOther -> etName.text.toString().trim() to etPhone.text.toString().trim().normalizeDigitsToLatin()
+                else -> member.name to member.phone
+            }
             lifecycleScope.launch {
-                repository.settleDebt(subscription, method, p.senderName(), p.senderPhone())
+                repository.settleDebt(subscription, method, sName, sPhone)
                 toast(getString(R.string.settle_debt_success))
             }
             dialog.dismiss()

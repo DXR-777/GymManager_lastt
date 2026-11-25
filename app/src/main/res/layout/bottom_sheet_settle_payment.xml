@@ -104,7 +104,456 @@
             tools:text="₪ 150" />
     </LinearLayout>
 
-    <include layout="@layout/include_payment_picker" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:fontFamily="@font/cairo_bold"
+        android:gravity="start"
+        android:includeFontPadding="false"
+        android:text="@string/settle_debt_method_label"
+        android:textColor="@color/home_ink"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/payCardPalpay"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_pd_sort_row"
+            android:clickable="true"
+            android:contentDescription="@string/payment_method_palpay"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_pay_palpay" />
+
+                <TextView
+                    android:id="@+id/palpayLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/cairo_bold"
+                    android:includeFontPadding="false"
+                    android:text="@string/payment_method_palpay"
+                    android:textColor="@color/home_mute"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/palpayCheck"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="8dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_pd_check"
+                android:visibility="gone"
+                app:tint="@color/home_lav" />
+        </FrameLayout>
+        <Space android:layout_width="10dp" android:layout_height="0dp" />
+
+        <FrameLayout
+            android:id="@+id/payCardJawwal"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_pd_sort_row"
+            android:clickable="true"
+            android:contentDescription="@string/payment_method_jawwal_pay"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_pay_jawwal" />
+
+                <TextView
+                    android:id="@+id/jawwalLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/cairo_bold"
+                    android:includeFontPadding="false"
+                    android:text="@string/payment_method_jawwal_pay"
+                    android:textColor="@color/home_mute"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/jawwalCheck"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="8dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_pd_check"
+                android:visibility="gone"
+                app:tint="@color/home_lav" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <FrameLayout
+            android:id="@+id/payCardBank"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_pd_sort_row"
+            android:clickable="true"
+            android:contentDescription="@string/payment_method_bank_of_palestine"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_pay_bank" />
+
+                <TextView
+                    android:id="@+id/bankLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/cairo_bold"
+                    android:includeFontPadding="false"
+                    android:text="@string/payment_method_bank_of_palestine"
+                    android:textColor="@color/home_mute"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/bankCheck"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="8dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_pd_check"
+                android:visibility="gone"
+                app:tint="@color/home_lav" />
+        </FrameLayout>
+        <Space android:layout_width="10dp" android:layout_height="0dp" />
+
+        <FrameLayout
+            android:id="@+id/payCardCash"
+            android:layout_width="0dp"
+            android:layout_height="84dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_pd_sort_row"
+            android:clickable="true"
+            android:contentDescription="@string/payment_method_cash"
+            android:focusable="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_pay_cash" />
+
+                <TextView
+                    android:id="@+id/cashLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/cairo_bold"
+                    android:includeFontPadding="false"
+                    android:text="@string/payment_method_cash"
+                    android:textColor="@color/home_mute"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/cashCheck"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_gravity="top|end"
+                android:layout_margin="8dp"
+                android:importantForAccessibility="no"
+                android:src="@drawable/ic_pd_check"
+                android:visibility="gone"
+                app:tint="@color/home_lav" />
+        </FrameLayout>
+    </LinearLayout>
+
+    <!-- بيانات المُرسِل: تظهر بحركة للمحافظ/البنك فقط -->
+    <LinearLayout
+        android:id="@+id/paySenderSection"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:fontFamily="@font/cairo_bold"
+            android:gravity="start"
+            android:includeFontPadding="false"
+            android:text="@string/pay_sheet_sender_question"
+            android:textColor="@color/home_ink"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/paySenderSame"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_pd_sort_row"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="60dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp">
+
+            <View
+                android:id="@+id/paySenderSameRadio"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:background="@drawable/bg_pd_radio"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_bold"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:text="@string/pay_sheet_sender_same"
+                    android:textColor="@color/home_ink"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/paySenderSameSub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/cairo_regular"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:text=""
+                    android:textColor="@color/home_mute"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+            <Space android:layout_width="0dp" android:layout_height="8dp" />
+
+        <LinearLayout
+            android:id="@+id/paySenderOther"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_pd_sort_row"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:minHeight="60dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="10dp">
+
+            <View
+                android:id="@+id/paySenderOtherRadio"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:background="@drawable/bg_pd_radio"
+                android:importantForAccessibility="no" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/cairo_bold"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:text="@string/pay_sheet_sender_other"
+                    android:textColor="@color/home_ink"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/paySenderOtherSub"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:fontFamily="@font/cairo_regular"
+                    android:gravity="start"
+                    android:includeFontPadding="false"
+                    android:text="@string/pay_sheet_sender_other_sub"
+                    android:textColor="@color/home_mute"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/paySenderFields"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/boxPayName"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="10dp"
+                android:addStatesFromChildren="true"
+                android:background="@drawable/bg_pd_field"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_pd_user"
+                    app:tint="@color/home_mute" />
+
+                <EditText
+                    android:id="@+id/etPaySenderName"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:fontFamily="@font/cairo_regular"
+                    android:gravity="center_vertical|start"
+                    android:hint="@string/member_sender_name_label"
+                    android:imeOptions="actionNext"
+                    android:importantForAutofill="no"
+                    android:inputType="textPersonName|textCapWords"
+                    android:maxLength="60"
+                    android:maxLines="1"
+                    android:textColor="@color/home_ink"
+                    android:textColorHint="#66B4B9DB"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPayNameError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:textColor="@color/home_coral"
+                android:textSize="11sp"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/boxPayPhone"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="10dp"
+                android:addStatesFromChildren="true"
+                android:background="@drawable/bg_pd_field"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_pd_phone"
+                    app:tint="@color/home_mute" />
+
+                <EditText
+                    android:id="@+id/etPaySenderPhone"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:fontFamily="@font/cairo_regular"
+                    android:gravity="center_vertical|start"
+                    android:hint="@string/member_sender_phone_label"
+                    android:imeOptions="actionNext"
+                    android:importantForAutofill="no"
+                    android:inputType="phone"
+                    android:maxLength="20"
+                    android:maxLines="1"
+                    android:textColor="@color/home_ink"
+                    android:textColorHint="#66B4B9DB"
+                    android:textSize="15sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvPayPhoneError"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="6dp"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:textColor="@color/home_coral"
+                android:textSize="11sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tvPaySummary"
