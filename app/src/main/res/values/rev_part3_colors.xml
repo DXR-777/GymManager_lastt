@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة الإيرادات — الجزء 3: ألوان جديدة بالبادئة rev_ فقط (داكنة دائماً مثل home_*). -->
+<resources>
+    <!-- ذروة لمعان الـ Skeleton: أبيض شفاف يُرسم فوق أشكال الهيكل فقط (SRC_ATOP) -->
+    <color name="rev_skel_shine">#2EFFFFFF</color>
+</resources>

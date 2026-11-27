@@ -1,22 +1,26 @@
 package com.gympro.manager.ui.revenue
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.DecelerateInterpolator
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
+import androidx.core.view.doOnLayout
+import androidx.core.view.updateLayoutParams
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.gympro.manager.ui.widgets.RevenueShareBarView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.github.mikephil.charting.components.XAxis
-import com.github.mikephil.charting.data.BarData
-import com.github.mikephil.charting.data.BarDataSet
-import com.github.mikephil.charting.data.BarEntry
-import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointBackward
 import com.google.android.material.datepicker.MaterialDatePicker
@@ -29,11 +33,16 @@ import com.gympro.manager.utils.BackupManager
 import com.gympro.manager.utils.CurrencyFormatter
 import com.gympro.manager.utils.DateUtils
 import com.gympro.manager.utils.XlsxWriter
+import com.gympro.manager.utils.areAnimationsEnabled
+import com.gympro.manager.utils.attachPressScale
 import com.gympro.manager.utils.setOnSingleClickListener
 import com.gympro.manager.utils.toast
 import com.gympro.manager.utils.visibleIf
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.roundToInt
 import com.gympro.manager.utils.SnackType
@@ -43,6 +52,26 @@ class RevenueFragment : Fragment() {
 
     private var _binding: FragmentRevenueBinding? = null
     private val binding get() = _binding!!
+
+    /** فترة بطاقة Hero المعروضة (الافتراضي: الشهر — الأكثر فائدة لصاحب النادي). */
+    private enum class RevPeriod { DAY, WEEK, MONTH, YEAR }
+
+    private var period = RevPeriod.MONTH
+    private var shownAmount = 0.0
+    private var amountAnimator: ValueAnimator? = null
+    private var entrancePlayed = false
+    private var lastState: RevenueUiState? = null
+
+    /** false حتى وصول أول حالة محمَّلة: الهيكل ظاهر والمحتوى مخفي. يُعاد ضبطه مع كل View جديد. */
+    private var revealed = false
+    private var previewDialog: BottomSheetDialog? = null
+
+    /** الرسوم تبدأ حركتها عند ظهور قسمها فعلاً (لا والمحتوى مخفي)؛ true بعد أول تشغيل. */
+    private var barsShown = false
+    private var donutShown = false
+
+    /** مهام الحركة المؤجَّلة (بداية العدّ/نمو الأعمدة/sweep). تُلغى عند onStop وonDestroyView. */
+    private val motionJobs = mutableListOf<Job>()
 
     private val viewModel: RevenueViewModel by viewModels {
         RevenueViewModel.Factory((requireActivity().application as GymApplication).repository)
@@ -55,52 +84,35 @@ class RevenueFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupChartStyle()
+        shownAmount = 0.0
+        selectedType = null
+        revealed = false
+        barsShown = false
+        donutShown = false
         setupDots()
+        setupDonutInteraction()
+        setupPeriodSwitch()
+        binding.revBtnShare.setOnSingleClickListener { shareReport() }
         binding.btnShareReport.setOnSingleClickListener { shareReport() }
         binding.rowCustomRange.setOnSingleClickListener { showCustomRangePicker() }
-        binding.btnClearCustomRange.setOnClickListener {
-            binding.containerCustomRangeResult.visibleIf(false)
-        }
+        binding.btnClearCustomRange.setOnClickListener { hideCustomRangeResult() }
+        setupPressFeedback()
         observeState()
     }
 
-    private fun setupDots() {
-        binding.dotDaily.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.chart_daily))
-        binding.dotWeekly.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.chart_weekly))
-        binding.dotMonthly.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.chart_monthly))
-        binding.dotCustom.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.chart_custom))
+    /** استجابة اللمس 0.97 على كل عنصر قابل للنقر في الشاشة (الحلقة والمخطط لهما إبرازهما الخاص). */
+    private fun setupPressFeedback() {
+        listOf(
+            binding.revBtnShare, binding.revSegDay, binding.revSegWeek, binding.revSegMonth, binding.revSegYear,
+            binding.rowCustomRange, binding.btnClearCustomRange, binding.btnShareReport
+        ).forEach { it.attachPressScale() }
+        typeRows.forEach { it.row().attachPressScale() }
     }
 
-    private fun setupChartStyle() {
-        val secondary = ContextCompat.getColor(requireContext(), R.color.text_secondary)
-        // QA (Dark Glassmorphism 2026): شبكة المحور Y كانت بلون @color/divider الصلب
-        // (رمادي عادي)، استُبدل بـ glass_border_strong (أبيض شفاف 25%) مع خط متقطع
-        // رفيع ليتماشى مع سطوح الزجاج المستخدمة في بطاقة الرسم نفسها (bg_card_glass)
-        // بدل خط شبكة صلب غير متّسق مع الهوية الجديدة.
-        val gridColor = ContextCompat.getColor(requireContext(), R.color.glass_border_strong)
-        binding.barChartLast7Days.apply {
-            description.isEnabled = false
-            legend.isEnabled = false
-            setTouchEnabled(false)
-            setDrawGridBackground(false)
-            axisRight.isEnabled = false
-            axisLeft.axisMinimum = 0f
-            axisLeft.textColor = secondary
-            axisLeft.textSize = 10f
-            axisLeft.setLabelCount(4, true)
-            axisLeft.gridColor = gridColor
-            axisLeft.gridLineWidth = 0.6f
-            axisLeft.enableGridDashedLine(4f, 4f, 0f)
-            axisLeft.setDrawAxisLine(false)
-            xAxis.position = XAxis.XAxisPosition.BOTTOM
-            xAxis.setDrawGridLines(false)
-            xAxis.setDrawAxisLine(false)
-            xAxis.granularity = 1f
-            // مكتبة الرسم البياني (MPAndroidChart) لا تعرض النص العربي بشكل صحيح على محورها أصلاً
-            // (تظهر رموزاً غير مفهومة)، لذا نُعطّل تسمياتها هنا ونعرض أيام الأسبوع بعناصر
-            // TextView عربية طبيعية أسفل الرسم مباشرة (في lastSevenDayLabels/renderDayLabels).
-            xAxis.setDrawLabels(false)
+    private fun setupDots() {
+        // نفس ألوان شرائح الحلقة (بدائل rev_type_* لـ chart_*) لتتطابق النقطة مع شريحتها.
+        typeRows.forEach { row ->
+            row.dot().backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), row.colorRes))
         }
     }
 
@@ -116,110 +128,493 @@ class RevenueFragment : Fragment() {
         return result
     }
 
-    /** يبني صفّ تسميات الأيام بعناصر TextView عربية طبيعية (بدل تسميات المخطط المعطوبة) */
-    private fun renderDayLabels(labels: List<String>) {
-        binding.llDayLabels.removeAllViews()
-        labels.forEachIndexed { index, day ->
-            val isToday = index == labels.lastIndex
-            val textView = android.widget.TextView(requireContext()).apply {
-                text = day
-                textSize = 11f
-                gravity = android.view.Gravity.CENTER
-                setTextColor(
-                    ContextCompat.getColor(
-                        requireContext(),
-                        if (isToday) R.color.brand_accent_text else R.color.text_secondary
-                    )
-                )
-                setTypeface(typeface, if (isToday) android.graphics.Typeface.BOLD else android.graphics.Typeface.NORMAL)
-                layoutParams = android.widget.LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f)
-            }
-            binding.llDayLabels.addView(textView)
-        }
-    }
+    // ------------------------------------------------------------------ الجزء 2: مخطط 7 أيام + حلقة التوزيع
 
-    private fun updateChart(values: List<Double>, currency: String) {
-        val entries = values.mapIndexed { index, value -> BarEntry(index.toFloat(), value.toFloat()) }
-        // QA (Dark Glassmorphism 2026): الأعمدة كانت بلون brand_accent الأحمر المصمت
-        // الواحد. MPAndroidChart v3.1.0 يدعم BarDataSet.setGradientColor(start, end)
-        // (تدرّج عمودي جاهز على مستوى الـ dataSet بالكامل) بلا أي تبعية إضافية، فاستُبدل
-        // اللون المصمت بتدرّج brand_gradient (brand_gradient_start → brand_gradient_end)
-        // ليطابق هوية التدرّج المعتمدة في بقية الشاشة. ملاحظة: هذه النسخة من المكتبة لا
-        // تدعم حدوداً دائرية (rounded corners) للأعمدة أصلاً بدون Renderer مخصّص، فلم تُطبَّق
-        // تجنباً لتوسيع النطاق خارج تنسيق المخطط.
-        val gradientStart = ContextCompat.getColor(requireContext(), R.color.brand_gradient_start)
-        val gradientEnd = ContextCompat.getColor(requireContext(), R.color.brand_gradient_end)
-        val valueTextColor = ContextCompat.getColor(requireContext(), R.color.text_primary)
-        val dataSet = BarDataSet(entries, "").apply {
-            setGradientColor(gradientStart, gradientEnd)
-            // البند 22: كانت القيم مخفية تماماً (setDrawValues(false)) مع touch معطّل
-            // (setTouchEnabled(false))، فلا توجد أي طريقة لمعرفة القيمة الدقيقة ليوم
-            // معيّن من الأيام السبعة — فقط ارتفاع نسبي بالعين. الآن تُعرض القيمة
-            // المُنسَّقة بالعملة فوق كل عمود مباشرة، فتُقرأ القيمة الدقيقة لأي يوم
-            // بنظرة واحدة دون الحاجة لأي تفاعل باللمس.
-            setDrawValues(true)
-            this.valueTextColor = valueTextColor
-            valueTextSize = 9f
-            valueFormatter = object : ValueFormatter() {
-                override fun getBarLabel(barEntry: BarEntry?): String =
-                    CurrencyFormatter.format((barEntry?.y ?: 0f).toDouble(), currency)
-            }
-        }
-        binding.barChartLast7Days.data = BarData(dataSet).apply { barWidth = 0.55f }
-        // مساحة إضافية أعلى المخطط كي لا تُقصّ تسمية القيمة فوق أطول عمود؛ لو كانت كل
-        // القيم صفراً نترك المحور بلا حدّ أقصى مفروض (auto) بدل ضبطه على صفر.
-        val maxValue = values.maxOrNull() ?: 0.0
-        if (maxValue > 0.0) {
-            binding.barChartLast7Days.axisLeft.axisMaximum = maxValue.toFloat() * 1.2f
-        } else {
-            binding.barChartLast7Days.axisLeft.resetAxisMaximum()
-        }
-        binding.barChartLast7Days.invalidate()
-        renderDayLabels(lastSevenDayLabels())
-        binding.tvNoChartData.visibleIf(values.all { it == 0.0 })
-        // وصف للوصول: المخطط عرض مرسوم لا يقرؤه TalkBack، فنلخّص قيمه نصاً (يوم: مبلغ).
-        val labels = lastSevenDayLabels()
-        binding.barChartLast7Days.contentDescription =
+    /** مخطط الأعمدة (Canvas): تسميات الأيام والفقاعة والمتوسط تُرسم داخل الـ View نفسه. */
+    private fun updateBars(state: RevenueUiState, animate: Boolean = true) {
+        val values = state.last7Days
+        val days = lastSevenDayLabels()
+        val last = days.lastIndex
+        val axis = days.mapIndexed { i, d -> if (i == last) getString(R.string.rev_today) else d }
+        val titles = days.mapIndexed { i, d -> if (i == last) getString(R.string.rev_today_named, d) else d }
+        val amounts = values.map { CurrencyFormatter.format(it, state.currency) }
+        val avg = if (values.isEmpty()) 0.0 else values.sum() / values.size
+        binding.revBars.setData(
+            values = values,
+            axisLabels = axis,
+            tooltipTitles = titles,
+            tooltipAmounts = amounts,
+            averageText = getString(R.string.rev_avg_chip, CurrencyFormatter.format(avg, state.currency)),
+            emptyMessage = getString(R.string.rev_chart_empty),
+            animate = animate
+        )
+        // وصف للوصول: المخطط مرسوم على Canvas لا يقرؤه TalkBack، فنلخّص قيمه نصاً (يوم: مبلغ).
+        binding.revBars.contentDescription =
             if (values.all { it == 0.0 }) {
                 getString(R.string.revenue_chart_content_description_empty)
             } else {
                 getString(
                     R.string.revenue_chart_content_description,
-                    values.mapIndexed { i, v -> "${labels.getOrElse(i) { "" }} ${CurrencyFormatter.format(v, currency)}" }
+                    values.mapIndexed { i, v -> "${days.getOrElse(i) { "" }} ${CurrencyFormatter.format(v, state.currency)}" }
                         .joinToString("، ")
                 )
             }
+    }
+
+    private class TypeRow(
+        val type: SubscriptionType,
+        val colorRes: Int,
+        val nameRes: Int,
+        val row: () -> View,
+        val dot: () -> View,
+        val amount: () -> android.widget.TextView,
+        val pct: () -> android.widget.TextView,
+        val bar: () -> RevenueShareBarView
+    )
+
+    /** الأنواع الأربعة بترتيب الحلقة والأسطورة (نفس ترتيب SubscriptionType). */
+    private val typeRows: List<TypeRow> by lazy {
+        listOf(
+            TypeRow(SubscriptionType.DAILY, R.color.rev_type_daily, R.string.subscription_daily,
+                { binding.revRowDaily }, { binding.dotDaily }, { binding.tvRevenueDaily }, { binding.revTvPctDaily }, { binding.revBarDaily }),
+            TypeRow(SubscriptionType.WEEKLY, R.color.rev_type_weekly, R.string.subscription_weekly,
+                { binding.revRowWeekly }, { binding.dotWeekly }, { binding.tvRevenueWeekly }, { binding.revTvPctWeekly }, { binding.revBarWeekly }),
+            TypeRow(SubscriptionType.MONTHLY, R.color.rev_type_monthly, R.string.subscription_monthly,
+                { binding.revRowMonthly }, { binding.dotMonthly }, { binding.tvRevenueMonthly }, { binding.revTvPctMonthly }, { binding.revBarMonthly }),
+            TypeRow(SubscriptionType.CUSTOM, R.color.rev_type_custom, R.string.subscription_custom,
+                { binding.revRowCustom }, { binding.dotCustom }, { binding.tvRevenueCustom }, { binding.revTvPctCustom }, { binding.revBarCustom })
+        )
+    }
+
+    /** الشريحة المُبرَزة حالياً (null = لا شيء). تتزامن بين الحلقة وصفوف الأسطورة. */
+    private var selectedType: SubscriptionType? = null
+
+    private fun setupDonutInteraction() {
+        typeRows.forEach { row ->
+            row.row().setOnClickListener {
+                it.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                toggleType(row.type)
+            }
+        }
+        binding.revDonut.onSliceSelected = { index ->
+            val row = typeRows.getOrNull(index)
+            if (row != null) {
+                binding.revDonut.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                toggleType(row.type)
+            } else {
+                selectType(null)
+            }
+        }
+    }
+
+    private fun toggleType(type: SubscriptionType) = selectType(if (selectedType == type) null else type)
+
+    private fun selectType(type: SubscriptionType?) {
+        selectedType = type
+        val index = typeRows.indexOfFirst { it.type == type }
+        binding.revDonut.setSelected(index)
+        typeRows.forEach { it.row().isSelected = it.type == type }
+        lastState?.let { renderDonutCenter(it) }
+    }
+
+    private fun typeAmount(state: RevenueUiState, type: SubscriptionType): Double = state.byType[type] ?: 0.0
+
+    private fun percentText(value: Double, total: Double): String {
+        if (total <= 0.0 || value <= 0.0) return getString(R.string.rev_pct, 0)
+        val pct = ((value / total) * 100).roundToInt()
+        return if (pct == 0) getString(R.string.rev_pct_lt1) else getString(R.string.rev_pct, pct)
+    }
+
+    /** وسط الحلقة: إجمالي الشهر، أو مبلغ ونسبة النوع المُبرَز. */
+    private fun renderDonutCenter(state: RevenueUiState) {
+        val total = state.byType.values.sum()
+        val sel = typeRows.firstOrNull { it.type == selectedType }
+        if (sel == null) {
+            binding.revDonut.setCenter(CurrencyFormatter.format(total, state.currency), getString(R.string.rev_donut_total))
+        } else {
+            val v = typeAmount(state, sel.type)
+            binding.revDonut.setCenter(
+                CurrencyFormatter.format(v, state.currency),
+                getString(R.string.rev_donut_selected, getString(sel.nameRes), percentText(v, total))
+            )
+        }
+    }
+
+    private fun updateDonut(state: RevenueUiState, animate: Boolean = true) {
+        val ctx = requireContext()
+        val total = state.byType.values.sum()
+        val values = DoubleArray(typeRows.size) { typeAmount(state, typeRows[it].type) }
+        val colors = IntArray(typeRows.size) { ContextCompat.getColor(ctx, typeRows[it].colorRes) }
+        binding.revDonut.setData(values, colors, animate)
+        renderDonutCenter(state)
+
+        val parts = ArrayList<String>(typeRows.size)
+        typeRows.forEachIndexed { i, row ->
+            val v = values[i]
+            val amountText = CurrencyFormatter.format(v, state.currency)
+            val pctText = percentText(v, total)
+            row.amount().text = amountText
+            row.pct().text = pctText
+            row.bar().setShare(if (total > 0.0) (v / total).toFloat() else 0f, colors[i], animate = animate, delayMs = i * 90L)
+            row.row().contentDescription = getString(R.string.rev_row_cd, getString(row.nameRes), amountText, pctText)
+            parts.add("${getString(row.nameRes)} $amountText ($pctText)")
+        }
+        binding.revDonut.contentDescription =
+            if (total <= 0.0) getString(R.string.rev_donut_cd_empty)
+            else getString(R.string.rev_donut_cd, parts.joinToString("، "))
     }
 
     private fun observeState() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
-                    binding.tvRevenueToday.text = CurrencyFormatter.formatEmphasized(requireContext(), state.today, state.currency)
-                    binding.tvRevenueWeek.text = CurrencyFormatter.formatEmphasized(requireContext(), state.week, state.currency)
-                    binding.tvRevenueMonth.text = CurrencyFormatter.formatEmphasized(requireContext(), state.month, state.currency)
-                    binding.tvRevenueYear.text = CurrencyFormatter.formatEmphasized(requireContext(), state.year, state.currency)
-
-                    binding.tvCompareLastMonth.text = buildCompareText(state.month, state.lastMonth)
-
-                    updateChart(state.last7Days, state.currency)
-
-                    binding.tvRevenueDaily.text = CurrencyFormatter.format(state.byType[SubscriptionType.DAILY] ?: 0.0, state.currency)
-                    binding.tvRevenueWeekly.text = CurrencyFormatter.format(state.byType[SubscriptionType.WEEKLY] ?: 0.0, state.currency)
-                    binding.tvRevenueMonthly.text = CurrencyFormatter.format(state.byType[SubscriptionType.MONTHLY] ?: 0.0, state.currency)
-                    binding.tvRevenueCustom.text = CurrencyFormatter.format(state.byType[SubscriptionType.CUSTOM] ?: 0.0, state.currency)
+                    lastState = state
+                    // قبل أول حساب حقيقي: يبقى الهيكل ظاهراً (لا وميض أصفار ولا «لا إيرادات» خاطئ).
+                    if (!state.loaded) return@collect
+                    renderScreenState(state)
+                    renderHero(state)
+                    renderIndicators(state)
+                    // الرسوم تُملأ بحركتها عند ظهور قسمها (scheduleReveal)؛ بعدها تتحدّث مباشرة.
+                    if (barsShown) updateBars(state)
+                    if (donutShown) updateDonut(state)
+                    revealContent()
                 }
             }
         }
     }
 
-    private fun buildCompareText(month: Double, lastMonth: Double): String {
-        if (lastMonth <= 0.0) return getString(R.string.revenue_compare_no_data)
-        val diffPercent = (((month - lastMonth) / lastMonth) * 100).roundToInt()
-        return when {
-            diffPercent > 0 -> "📈 ${getString(R.string.revenue_compare_last_month)}: +$diffPercent%"
-            diffPercent < 0 -> "📉 ${getString(R.string.revenue_compare_last_month)}: $diffPercent%"
-            else -> "➖ ${getString(R.string.revenue_compare_last_month)}: 0%"
+    // ------------------------------------------------------------------ الجزء 3أ: حالات الشاشة
+
+    /** true إن وُجد أي إيراد في أي فترة نعرضها أو نقارن بها؛ غير ذلك = «لا إيرادات بعد». */
+    private fun hasAnyRevenue(s: RevenueUiState): Boolean =
+        s.today > 0.0 || s.week > 0.0 || s.month > 0.0 || s.year > 0.0 || s.lastMonth > 0.0 ||
+            s.prevDay > 0.0 || s.prevWeek > 0.0 || s.prevMonth > 0.0 || s.prevYear > 0.0 ||
+            s.last7Days.any { it > 0.0 } || s.byType.values.any { it > 0.0 }
+
+    /**
+     * عادي ↔ فارغ. في الحالة الفارغة يبقى الرأس ومفتاح الفترة وبطاقة Hero (بصفر نظيف ومقارنة محايدة)،
+     * وتُستبدل بقية الأقسام ببطاقة طمأنة واحدة؛ ويُخفى زرّا المشاركة لأن لا شيء يستحق المشاركة بعد.
+     */
+    private fun renderScreenState(state: RevenueUiState) {
+        val empty = !hasAnyRevenue(state)
+        binding.revEmptyCard.visibleIf(empty)
+        binding.revIndicators.visibleIf(!empty)
+        binding.revSecTrendGroup.visibleIf(!empty)
+        binding.revSecSplitGroup.visibleIf(!empty)
+        binding.revSecDetailsGroup.visibleIf(!empty)
+        binding.revShareGroup.visibleIf(!empty)
+        binding.revBtnShare.visibleIf(!empty)
+    }
+
+    /** ينقل من الهيكل إلى المحتوى مرة واحدة لكل View: المحتوى يبدأ بالدخول المتتابع والهيكل يتلاشى. */
+    private fun revealContent() {
+        if (revealed) return
+        revealed = true
+        binding.revScroll.visibility = View.VISIBLE
+        val delays = if (!entrancePlayed) {
+            entrancePlayed = true
+            playEntrance()
+        } else emptyMap()
+        scheduleReveal(delays)
+        val skeleton = binding.revSkeleton
+        skeleton.animate().cancel()
+        skeleton.animate().alpha(0f).setDuration(200L).withEndAction {
+            _binding?.let {
+                it.revSkeleton.visibility = View.GONE
+                it.revSkeleton.alpha = 1f
+            }
+        }.start()
+    }
+
+    // ------------------------------------------------------------------ الجزء 1: Hero + المؤشرات
+
+    private fun setupPeriodSwitch() {
+        val items = listOf(
+            binding.revSegDay to RevPeriod.DAY,
+            binding.revSegWeek to RevPeriod.WEEK,
+            binding.revSegMonth to RevPeriod.MONTH,
+            binding.revSegYear to RevPeriod.YEAR
+        )
+        fun markSelected() = items.forEach { (view, p) -> view.isSelected = p == period }
+        markSelected()
+        items.forEach { (view, p) ->
+            view.setOnClickListener {
+                if (period == p) return@setOnClickListener
+                period = p
+                markSelected()
+                lastState?.let { renderHero(it) }
+            }
+        }
+    }
+
+    private fun heroAmount(state: RevenueUiState): Double = when (period) {
+        RevPeriod.DAY -> state.today
+        RevPeriod.WEEK -> state.week
+        RevPeriod.MONTH -> state.month
+        RevPeriod.YEAR -> state.year
+    }
+
+    /** يملأ بطاقة Hero بالفترة المختارة: الرقم (بعدّ تصاعدي)، التسمية، النطاق، وشارة المقارنة. */
+    private fun renderHero(state: RevenueUiState) {
+        val now = DateUtils.now()
+        val amount: Double
+        val prev: Double
+        val labelRes: Int
+        val vsRes: Int
+        val range: String
+        when (period) {
+            RevPeriod.DAY -> {
+                amount = state.today; prev = state.prevDay
+                labelRes = R.string.rev_hero_day; vsRes = R.string.rev_vs_day
+                range = DateUtils.formatDateRangeShort(now, now)
+            }
+            RevPeriod.WEEK -> {
+                amount = state.week; prev = state.prevWeek
+                labelRes = R.string.rev_hero_week; vsRes = R.string.rev_vs_week
+                range = DateUtils.formatDateRangeShort(DateUtils.startOfWeek(), now)
+            }
+            RevPeriod.MONTH -> {
+                amount = state.month; prev = state.prevMonth
+                labelRes = R.string.rev_hero_month; vsRes = R.string.rev_vs_month
+                range = DateUtils.formatDateRangeShort(DateUtils.startOfMonth(), now)
+            }
+            RevPeriod.YEAR -> {
+                amount = state.year; prev = state.prevYear
+                labelRes = R.string.rev_hero_year; vsRes = R.string.rev_vs_year
+                range = DateUtils.formatDateRangeShort(DateUtils.startOfYear(), now)
+            }
+        }
+        binding.revTvGym.text = state.gymName.ifBlank { getString(R.string.app_name) }
+        binding.revTvSymbol.text = state.currency
+        binding.revTvHeroLabel.setText(labelRes)
+        binding.revTvHeroRange.text = range
+        if (revealed) {
+            showAmount(amount, PERIOD_COUNT_MS)
+        } else {
+            // قبل الظهور: الرقم يبدأ من صفر ويبدأ عدّه مع دخول البطاقة (scheduleReveal).
+            applyAmountSize(formatAmount(amount))
+            binding.revTvAmount.text = formatAmount(shownAmount)
+        }
+
+        val vs = getString(vsRes)
+        val ctx = requireContext()
+        if (prev <= 0.0) {
+            // لا بيانات سابقة: محايد (لا سهم ولا نسبة مضلِّلة).
+            binding.revTvDelta.text = getString(R.string.rev_delta_none)
+            binding.revTvDelta.setTextColor(ContextCompat.getColor(ctx, R.color.home_hero_title))
+            binding.revTvPrev.text = ""
+        } else {
+            val pct = (((amount - prev) / prev) * 100).roundToInt()
+            when {
+                pct > 0 -> {
+                    binding.revTvDelta.text = getString(R.string.rev_delta_up, pct, vs)
+                    binding.revTvDelta.setTextColor(ContextCompat.getColor(ctx, R.color.home_mint))
+                }
+                pct < 0 -> {
+                    binding.revTvDelta.text = getString(R.string.rev_delta_down, -pct, vs)
+                    binding.revTvDelta.setTextColor(ContextCompat.getColor(ctx, R.color.home_coral))
+                }
+                else -> {
+                    binding.revTvDelta.text = getString(R.string.rev_delta_flat, vs)
+                    binding.revTvDelta.setTextColor(ContextCompat.getColor(ctx, R.color.home_hero_title))
+                }
+            }
+            binding.revTvPrev.text = getString(R.string.rev_prev_amount, CurrencyFormatter.format(prev, state.currency))
+        }
+        // وصف واحد مجمّع للبطاقة بالقيم النهائية (لا يتأثر بمرحلة العدّ التصاعدي).
+        binding.revHeroCard.contentDescription = getString(
+            R.string.rev_hero_cd, getString(labelRes), CurrencyFormatter.format(amount, state.currency),
+            binding.revTvDelta.text, binding.revTvPrev.text
+        ).trim()
+    }
+
+    private fun formatAmount(value: Double): String {
+        val rounded = Math.round(value * 100) / 100.0
+        return if (rounded == Math.rint(rounded) && Math.abs(rounded) < 1e15) {
+            String.format(Locale.US, "%,d", rounded.toLong())
+        } else {
+            String.format(Locale.US, "%,.2f", rounded)
+        }
+    }
+
+    private fun applyAmountSize(text: String) {
+        // مع خط 1.3× يتسع الرقم أكثر: نحتسب الطول الفعلي بمعامل تكبير الخط حتى لا يُقصّ.
+        val len = text.length * resources.configuration.fontScale.coerceAtLeast(1f)
+        binding.revTvAmount.setTextSize(
+            android.util.TypedValue.COMPLEX_UNIT_SP,
+            when {
+                len > 10f -> 30f
+                len > 8f -> 38f
+                len > 6f -> 46f
+                else -> 54f
+            }
+        )
+    }
+
+    /**
+     * يعدّ الرقم البطل تصاعدياً من القيمة المعروضة إلى الجديدة: [durationMs] (650ms عند أول ظهور،
+     * 450ms عند تبديل الفترة حتى لا يبطؤ التبديل). بلا عدّ مع [animate]=false أو تقليل الحركة.
+     */
+    private fun showAmount(target: Double, durationMs: Long = PERIOD_COUNT_MS, animate: Boolean = true) {
+        amountAnimator?.cancel()
+        amountAnimator = null
+        val finalText = formatAmount(target)
+        applyAmountSize(finalText)
+        val from = shownAmount
+        shownAmount = target
+        if (!animate || !areAnimationsEnabled() || from == target) {
+            binding.revTvAmount.text = finalText
+            return
+        }
+        val whole = target == Math.rint(target)
+        amountAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
+            duration = durationMs
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { a ->
+                if (_binding == null) return@addUpdateListener
+                val v = from + (target - from) * (a.animatedValue as Float)
+                binding.revTvAmount.text = formatAmount(if (whole) Math.rint(v) else v)
+            }
+            start()
+        }
+    }
+
+    /**
+     * المؤشرات الثلاثة تُحسب من البيانات الموجودة فقط:
+     *  - متوسط الإيراد اليومي = إيراد الشهر ÷ عدد أيامه المنقضية (حتى اليوم).
+     *  - أفضل يوم في آخر 7 أيام (إن تساوت القيم فالأحدث).
+     *  - حصة نوع الاشتراك الأعلى من إيراد الشهر.
+     */
+    private fun renderIndicators(state: RevenueUiState) {
+        val none = getString(R.string.rev_none_value)
+
+        // الصفر يُعرض هادئاً (لون muted) لا كقيمة ملوّنة لامعة — فلا تبدو الشاشة معطّلة.
+        val ctx = requireContext()
+        val mute = ContextCompat.getColor(ctx, R.color.home_mute)
+
+        val daysElapsed = DateUtils.dayOfMonth(DateUtils.now()).coerceAtLeast(1)
+        binding.revTvAvgValue.text = CurrencyFormatter.format(state.month / daysElapsed, state.currency)
+        binding.revTvAvgValue.setTextColor(if (state.month > 0.0) ContextCompat.getColor(ctx, R.color.home_mint) else mute)
+
+        val last7 = state.last7Days
+        val best = last7.maxOrNull() ?: 0.0
+        if (best <= 0.0) {
+            binding.revTvBestValue.text = none
+            binding.revTvBestValue.setTextColor(mute)
+            binding.revTvBestLabel.setText(R.string.rev_ind_best_none)
+        } else {
+            binding.revTvBestValue.setTextColor(ContextCompat.getColor(ctx, R.color.home_amber))
+            val labels = lastSevenDayLabels()
+            val day = labels.getOrElse(last7.indexOfLast { it == best }) { "" }
+            binding.revTvBestValue.text = CurrencyFormatter.format(best, state.currency)
+            binding.revTvBestLabel.text = getString(R.string.rev_ind_best_label, day)
+        }
+
+        val total = state.byType.values.sum()
+        val top = state.byType.maxByOrNull { it.value }
+        if (total <= 0.0 || top == null || top.value <= 0.0) {
+            binding.revTvTopValue.text = none
+            binding.revTvTopValue.setTextColor(mute)
+            binding.revTvTopLabel.setText(R.string.rev_ind_top_none)
+        } else {
+            binding.revTvTopValue.setTextColor(ContextCompat.getColor(ctx, R.color.home_lav))
+            val typeName = getString(
+                when (top.key) {
+                    SubscriptionType.DAILY -> R.string.subscription_daily
+                    SubscriptionType.WEEKLY -> R.string.subscription_weekly
+                    SubscriptionType.MONTHLY -> R.string.subscription_monthly
+                    SubscriptionType.CUSTOM -> R.string.subscription_custom
+                }
+            )
+            binding.revTvTopValue.text = "${((top.value / total) * 100).roundToInt()}%"
+            binding.revTvTopLabel.text = getString(R.string.rev_ind_top_label, typeName)
+        }
+
+        // كل بطاقة مؤشر تُقرأ كعنصر وصول واحد: «التسمية: القيمة، النطاق».
+        fun cd(label: CharSequence, value: CharSequence, scopeRes: Int): String = getString(
+            R.string.rev_ind_cd, label, if (value.toString() == none) getString(R.string.rev_none_cd) else value, getString(scopeRes)
+        )
+        binding.revIndAvg.contentDescription = cd(getString(R.string.rev_ind_avg_label), binding.revTvAvgValue.text, R.string.rev_scope_month)
+        binding.revIndBest.contentDescription = cd(binding.revTvBestLabel.text, binding.revTvBestValue.text, R.string.rev_scope_7d)
+        binding.revIndTop.contentDescription = cd(binding.revTvTopLabel.text, binding.revTvTopValue.text, R.string.rev_scope_month)
+    }
+
+    /**
+     * دخول متتابع: كل ابن مرئي من rev_content يتلاشى ويصعد 20dp بفارق [STAGGER_MS] عن سابقه.
+     * يُرجع تأخير بدء كل ابن ليبدأ عدّ البطل ونمو الرسوم مع ظهور قسمها بالضبط.
+     * مع تقليل الحركة: لا إزاحة ولا تلاشٍ (المحتوى يظهر نهائياً فوراً).
+     */
+    private fun playEntrance(): Map<View, Long> {
+        val targets = binding.revContent.children.filter { it.visibility == View.VISIBLE }.toList()
+        val delays = HashMap<View, Long>(targets.size)
+        val animate = areAnimationsEnabled()
+        val density = resources.displayMetrics.density
+        targets.forEachIndexed { i, child ->
+            val startDelay = if (animate) i * STAGGER_MS else 0L
+            delays[child] = startDelay
+            if (!animate) return@forEachIndexed
+            child.alpha = 0f
+            child.translationY = 20 * density
+            child.animate().alpha(1f).translationY(0f)
+                .setStartDelay(startDelay).setDuration(ENTER_DUR_MS)
+                .setInterpolator(DecelerateInterpolator()).start()
+        }
+        return delays
+    }
+
+    /** يجدول بداية عدّ البطل ونمو أعمدة الاتجاه وsweep الحلقة عند ظهور كل منها (وليس والمحتوى مخفي). */
+    private fun scheduleReveal(delays: Map<View, Long>) {
+        fun lead(v: View) = (delays[v] ?: 0L) + CHART_LEAD_MS
+        schedule(lead(binding.revHeroCard)) {
+            lastState?.let { showAmount(heroAmount(it), HERO_COUNT_MS) }
+        }
+        schedule(lead(binding.revSecTrendGroup)) {
+            barsShown = true
+            lastState?.let { updateBars(it) }
+        }
+        schedule(lead(binding.revSecSplitGroup)) {
+            donutShown = true
+            lastState?.let { updateDonut(it) }
+        }
+    }
+
+    private fun schedule(delayMs: Long, block: () -> Unit) {
+        motionJobs += viewLifecycleOwner.lifecycleScope.launch {
+            if (delayMs > 0L && areAnimationsEnabled()) delay(delayMs)
+            if (_binding != null) block()
+        }
+    }
+
+    /** يثبّت كل الأبناء على حالتهم النهائية (يُستعمل عند الإيقاف حتى لا يبقى نصف مرسوم). */
+    private fun finishEntrance() {
+        val b = _binding ?: return
+        b.revContent.children.forEach {
+            it.animate().cancel()
+            it.alpha = 1f
+            it.translationY = 0f
+        }
+    }
+
+    /**
+     * onStop: إلغاء كل حركة جارية أو مؤجَّلة والانتقال فوراً إلى القيم النهائية
+     * (لا مؤقتات ولا animators تعمل والشاشة غير مرئية).
+     */
+    override fun onStop() {
+        super.onStop()
+        val b = _binding ?: return
+        motionJobs.forEach { it.cancel() }
+        motionJobs.clear()
+        finishEntrance()
+        if (!revealed) return
+        b.revSkeleton.animate().cancel()
+        b.revSkeleton.visibility = View.GONE
+        b.revSkeleton.alpha = 1f
+        lastState?.takeIf { it.loaded }?.let { s ->
+            showAmount(heroAmount(s), animate = false)
+            barsShown = true
+            donutShown = true
+            updateBars(s, animate = false)
+            updateDonut(s, animate = false)
         }
     }
 
@@ -275,8 +670,34 @@ class RevenueFragment : Fragment() {
                 DateUtils.formatDate(end)
             )
             binding.tvCustomRangeTotal.text = CurrencyFormatter.format(total, currency)
-            binding.containerCustomRangeResult.visibleIf(true)
+            showCustomRangeResult()
         }
+    }
+
+    /** ظهور بطاقة نتيجة النطاق بتلاشٍ + صعود خفيف (نفس إيقاع بقية الشاشة). */
+    private fun showCustomRangeResult() {
+        val card = binding.containerCustomRangeResult
+        card.animate().cancel()
+        if (card.visibility != View.VISIBLE) {
+            card.alpha = 0f
+            card.translationY = 12 * resources.displayMetrics.density
+            card.visibleIf(true)
+        }
+        card.animate().alpha(1f).translationY(0f).setDuration(320)
+            .setInterpolator(DecelerateInterpolator()).start()
+    }
+
+    private fun hideCustomRangeResult() {
+        val card = binding.containerCustomRangeResult
+        card.animate().cancel()
+        card.animate().alpha(0f).translationY(8 * resources.displayMetrics.density).setDuration(180)
+            .withEndAction {
+                if (_binding != null) {
+                    card.visibleIf(false)
+                    card.alpha = 1f
+                    card.translationY = 0f
+                }
+            }.start()
     }
 
     /**
@@ -362,15 +783,35 @@ class RevenueFragment : Fragment() {
      * الرجوع للخلف يُغلق الحوار بلا أي إرسال.
      */
     private fun showReportPreview(content: String, hintRes: Int = R.string.revenue_report_preview_hint, onConfirmed: () -> Unit) {
+        previewDialog?.dismiss()
+        val dialog = BottomSheetDialog(requireContext())
         val view = layoutInflater.inflate(R.layout.dialog_report_preview, null)
         view.findViewById<android.widget.TextView>(R.id.tvReportPreviewHint).setText(hintRes)
         view.findViewById<android.widget.TextView>(R.id.tvReportPreviewContent).text = content
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(R.string.revenue_report_preview_title)
-            .setView(view)
-            .setPositiveButton(R.string.revenue_report_preview_action_share) { _, _ -> onConfirmed() }
-            .setNegativeButton(R.string.revenue_report_preview_action_cancel, null)
-            .show()
+        view.findViewById<View>(R.id.btnReportPreviewShare).setOnSingleClickListener {
+            dialog.dismiss()
+            onConfirmed()
+        }
+        view.findViewById<View>(R.id.btnReportPreviewCancel).setOnClickListener { dialog.dismiss() }
+        view.findViewById<View>(R.id.btnReportPreviewShare).attachPressScale()
+        view.findViewById<View>(R.id.btnReportPreviewCancel).attachPressScale()
+
+        dialog.setContentView(view)
+        // نفس معالجة ورقة «ترتيب القائمة»: حاوية Material شفافة، والزجاج مرسوم من خلفية الجذر (bg_home_sheet).
+        dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            ?.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        dialog.behavior.skipCollapsed = true
+        dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+
+        // android:maxHeight لا يعمل على ScrollView: نقيّد ارتفاع الورقة بنحو 42% من الشاشة ويتمرّر الباقي.
+        val maxHeight = (resources.displayMetrics.heightPixels * 0.42f).toInt()
+        view.findViewById<View>(R.id.scrollReportPreview).doOnLayout {
+            if (it.height > maxHeight) it.updateLayoutParams { height = maxHeight }
+        }
+
+        dialog.setOnDismissListener { if (previewDialog === dialog) previewDialog = null }
+        previewDialog = dialog
+        dialog.show()
     }
 
     /**
@@ -460,6 +901,25 @@ class RevenueFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        // المعاينة قد تحمل onConfirmed يستخدم viewLifecycleOwner: نغلقها قبل تدمير الـ View.
+        previewDialog?.dismiss()
+        previewDialog = null
+        motionJobs.forEach { it.cancel() }
+        motionJobs.clear()
+        _binding?.revSkeleton?.animate()?.cancel()
+        amountAnimator?.cancel()
+        amountAnimator = null
         _binding = null
+    }
+
+    private companion object {
+        /** فارق الدخول المتتابع بين الأقسام. */
+        const val STAGGER_MS = 60L
+        const val ENTER_DUR_MS = 420L
+        /** عدّ البطل عند أول ظهور / عند تبديل الفترة. */
+        const val HERO_COUNT_MS = 650L
+        const val PERIOD_COUNT_MS = 450L
+        /** يبدأ العدّ والنمو بعد بدء تلاشي قسمهما بقليل ليُرى من أوله. */
+        const val CHART_LEAD_MS = 140L
     }
 }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة الإيرادات — الجزء 2 (الرسوم): ألوان جديدة بالبادئة rev_ فقط، متناسقة مع home_* (داكنة دائماً). -->
+<resources>
+    <!-- ألوان أنواع الاشتراك: بدائل home_* لـ chart_daily/weekly/monthly/custom (تُستخدم في الحلقة والأسطورة) -->
+    <color name="rev_type_daily">#8CC4FF</color>
+    <color name="rev_type_weekly">#FFD27A</color>
+    <color name="rev_type_monthly">#FF6F94</color>
+    <color name="rev_type_custom">#A98BFF</color>
+
+    <!-- أعمدة آخر 7 أيام: تدرّج قرمزي → بنفسجي (من هوية home_hero)، وعمود اليوم أفتح -->
+    <color name="rev_bar_top">@color/home_hero_start</color>
+    <color name="rev_bar_bottom">@color/home_vio</color>
+    <color name="rev_bar_today_top">#FF9DB8</color>
+    <color name="rev_bar_today_bottom">#9E7CFF</color>
+
+    <color name="rev_grid_dot">#38FFFFFF</color>
+    <color name="rev_avg_line">#B36EE7B7</color>
+    <color name="rev_tip_fill">#FF211E4D</color>
+    <color name="rev_tip_stroke">#FFFFFFFF</color>
+
+    <color name="rev_row_sel_fill">#14FFFFFF</color>
+    <color name="rev_row_sel_stroke">#33FFFFFF</color>
+</resources>

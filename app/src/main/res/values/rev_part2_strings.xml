@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة الإيرادات — الجزء 2 (الرسوم والتفاصيل): كل الموارد الجديدة بالبادئة rev_ -->
+<resources>
+    <!-- عناوين الأقسام: الرقم (Hero) ← الاتجاه ← التوزيع ← التفاصيل -->
+    <string name="rev_sec_trend">اتجاه الإيراد</string>
+    <string name="rev_sec_split">توزيع الإيراد</string>
+    <string name="rev_sec_details">التفاصيل</string>
+
+    <!-- مخطط آخر 7 أيام -->
+    <string name="rev_today">اليوم</string>
+    <string name="rev_today_named">اليوم · %1$s</string>
+    <string name="rev_avg_chip">المتوسط %1$s</string>
+    <string name="rev_chart_empty">لا إيرادات في آخر 7 أيام</string>
+
+    <!-- حلقة التوزيع والأسطورة -->
+    <string name="rev_donut_total">إجمالي الشهر</string>
+    <string name="rev_donut_selected">%1$s · %2$s</string>
+    <string name="rev_pct">%1$d%%</string>
+    <string name="rev_pct_lt1" formatted="false">أقل من 1%</string>
+    <string name="rev_donut_cd">توزيع إيراد هذا الشهر حسب نوع الاشتراك: %1$s</string>
+    <string name="rev_donut_cd_empty">توزيع إيراد هذا الشهر: لا توجد إيرادات</string>
+    <string name="rev_row_cd">%1$s: %2$s، %3$s من الإجمالي</string>
+
+    <!-- النطاق المخصص -->
+    <string name="rev_custom_hint">اختر شهراً سابقاً أو نطاق تواريخ من التقويم</string>
+    <string name="rev_custom_result_title">إيراد الفترة المختارة</string>
+</resources>

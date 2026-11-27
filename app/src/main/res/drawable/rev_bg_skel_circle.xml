@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- دائرة هيكل التحميل (حلقة الـ Donut) بنفس لون bg_home_skeleton -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <solid android:color="@color/home_skeleton"/>
+</shape>

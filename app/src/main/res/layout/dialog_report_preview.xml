@@ -1,48 +1,142 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    البند 31: كانت مشاركة تقرير الإيرادات (نص أو Excel) تُنشئ المحتوى وتفتح شيت
-    المشاركة مباشرة بلا أي معاينة — فقد يُرسَل التقرير لجهة خاطئة (رقم واتساب/محادثة
-    غير مقصودة) دون أن يرى صاحب النادي أرقامه أولاً. هذا الـ layout يُستخدم كمعاينة
-    مشتركة بين مسار النص ومسار Excel (RevenueFragment.showReportPreview) قبل استدعاء
-    intent المشاركة الفعلي، بنفس أسلوب البطاقات الزجاجية الداكنة المستخدم في باقي
-    التطبيق (bg_card_glass) بدل نافذة AlertDialog البيضاء الافتراضية.
+    معاينة التقرير قبل المشاركة (البند 31) — إعادة تصميم 2026 بنفس ورقة الرئيسية الزجاجية (bg_home_sheet):
+    مقبض + ترويسة (بلاطة + عنوان + تلميح) + «ورقة التقرير» زجاجية قابلة للتمرير والتحديد + زر مشاركة
+    بنمط bg_home_cta + إلغاء نصّي. يُعرض داخل BottomSheetDialog (RevenueFragment.showReportPreview).
+    المعرّفات القديمة (tvReportPreviewHint / tvReportPreviewContent) محفوظة كما هي.
 -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_home_sheet"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:orientation="vertical"
-    android:paddingHorizontal="@dimen/spacing_lg"
-    android:paddingTop="@dimen/spacing_sm">
+    android:paddingHorizontal="20dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="20dp">
 
-    <TextView
-        android:id="@+id/tvReportPreviewHint"
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_home_grabber"
+        android:importantForAccessibility="no" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/spacing_sm"
-        android:text="@string/revenue_report_preview_hint"
-        android:textColor="@color/text_secondary"
-        android:textSize="@dimen/text_card_description" />
+        android:layout_marginTop="18dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
+        <ImageView
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:background="@drawable/rev_bg_tile_lav"
+            android:importantForAccessibility="no"
+            android:padding="10dp"
+            android:src="@drawable/ic_pd_share"
+            app:tint="@color/home_lav" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvReportPreviewTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_extrabold"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="@string/revenue_report_preview_title"
+                android:textColor="@color/home_ink"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvReportPreviewHint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="@string/revenue_report_preview_hint"
+                android:textColor="@color/home_mute"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ورقة التقرير: بطاقة زجاجية بنفس نصف قطر 24dp؛ الارتفاع يُقيَّد برمجياً (maxHeight غير مدعوم في ScrollView) -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollReportPreview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxHeight="360dp"
-        android:background="@drawable/bg_card_glass_compact"
-        android:padding="@dimen/spacing_md">
+        android:layout_marginTop="16dp"
+        android:background="@drawable/bg_home_glass_card"
+        android:overScrollMode="never"
+        android:scrollbars="none">
 
         <TextView
             android:id="@+id/tvReportPreviewContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="monospace"
-            android:lineSpacingExtra="2dp"
-            android:textColor="@color/text_primary"
+            android:fontFamily="@font/cairo_medium"
+            android:fontFeatureSettings="tnum"
+            android:gravity="start"
+            android:includeFontPadding="false"
+            android:lineSpacingMultiplier="1.3"
+            android:padding="16dp"
+            android:textColor="@color/home_ink"
             android:textIsSelectable="true"
             android:textSize="13sp"
             tools:text="نادي المثال — الإيرادات والأرباح" />
-
     </androidx.core.widget.NestedScrollView>
+
+    <TextView
+        android:id="@+id/btnReportPreviewShare"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_home_cta"
+        android:clickable="true"
+        android:drawablePadding="8dp"
+        android:drawableStart="@drawable/ic_pd_share"
+        android:drawableTint="@color/white"
+        android:elevation="8dp"
+        android:focusable="true"
+        android:fontFamily="@font/cairo_bold"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:outlineAmbientShadowColor="@android:color/transparent"
+        android:outlineSpotShadowColor="@color/home_fab_glow"
+        android:paddingHorizontal="20dp"
+        android:text="@string/revenue_report_preview_action_share"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        tools:targetApi="p" />
+
+    <TextView
+        android:id="@+id/btnReportPreviewCancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:focusable="true"
+        android:fontFamily="@font/cairo_medium"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:minHeight="48dp"
+        android:text="@string/revenue_report_preview_action_cancel"
+        android:textColor="@color/home_mute"
+        android:textSize="14sp" />
 
 </LinearLayout>

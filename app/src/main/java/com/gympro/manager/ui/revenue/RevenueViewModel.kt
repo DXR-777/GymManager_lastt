@@ -25,7 +25,18 @@ data class RevenueUiState(
     val year: Double = 0.0,
     val lastMonth: Double = 0.0,
     val last7Days: List<Double> = emptyList(),
-    val byType: Map<SubscriptionType, Double> = emptyMap()
+    val byType: Map<SubscriptionType, Double> = emptyMap(),
+    /**
+     * (الجزء 1 — إضافات فقط) إيراد الفترة السابقة المقابلة، لشارة المقارنة في بطاقة Hero.
+     * المقارنة بنفس المدة المنقضية (عدالة): الأسبوع/الشهر/السنة الحالية حتى اليوم ضد نفس الأيام من
+     * الفترة السابقة، لا ضد فترة سابقة كاملة؛ أما اليوم فمقابل الأمس. تُحسب بـ repository.revenueForRange.
+     */
+    val prevDay: Double = 0.0,
+    val prevWeek: Double = 0.0,
+    val prevMonth: Double = 0.0,
+    val prevYear: Double = 0.0,
+    /** (الجزء 2 — إضافة فقط) false حتى وصول أول حساب حقيقي، فلا تُرسم الرسوم بقيم صفرية مؤقتة. */
+    val loaded: Boolean = false
 )
 
 class RevenueViewModel(private val repository: GymRepository) : ViewModel() {
@@ -73,10 +84,45 @@ class RevenueViewModel(private val repository: GymRepository) : ViewModel() {
                         year = repository.revenueThisYear(),
                         lastMonth = repository.revenueLastMonth(),
                         last7Days = repository.revenueLast7Days(),
-                        byType = repository.revenueByType(monthStart, monthEnd)
+                        byType = repository.revenueByType(monthStart, monthEnd),
+                        prevDay = prevDayRevenue(),
+                        prevWeek = prevWeekRevenue(),
+                        prevMonth = prevMonthRevenue(),
+                        prevYear = prevYearRevenue(),
+                        loaded = true
                     )
                 }
         }
+    }
+
+    private suspend fun prevDayRevenue(): Double {
+        val y = DateUtils.addDays(DateUtils.now(), -1)
+        return repository.revenueForRange(DateUtils.startOfDay(y), DateUtils.endOfDay(y))
+    }
+
+    /** الأسبوع الحالي حتى اليوم مقابل نفس الأيام من الأسبوع الماضي. */
+    private suspend fun prevWeekRevenue(): Double {
+        val start = DateUtils.addDays(DateUtils.startOfWeek(), -7)
+        val end = DateUtils.endOfDay(DateUtils.addDays(DateUtils.now(), -7))
+        return repository.revenueForRange(start, end)
+    }
+
+    /** الشهر الحالي حتى اليوم مقابل نفس الأيام من الشهر الماضي (مقصوصاً عند نهاية الشهر الماضي). */
+    private suspend fun prevMonthRevenue(): Double {
+        val thisStart = DateUtils.startOfMonth()
+        val start = DateUtils.addMonths(thisStart, -1)
+        val lastMonthEnd = DateUtils.addDays(thisStart, -1)
+        val elapsedDays = DateUtils.dayOfMonth(DateUtils.now()) - 1
+        val sameSpanEnd = DateUtils.addDays(start, elapsedDays)
+        val end = DateUtils.endOfDay(minOf(sameSpanEnd, lastMonthEnd))
+        return repository.revenueForRange(start, end)
+    }
+
+    /** السنة الحالية حتى اليوم مقابل نفس المدة من السنة الماضية. */
+    private suspend fun prevYearRevenue(): Double {
+        val start = DateUtils.addMonths(DateUtils.startOfYear(), -12)
+        val end = DateUtils.endOfDay(DateUtils.addMonths(DateUtils.startOfDay(DateUtils.now()), -12))
+        return repository.revenueForRange(start, end)
     }
 
     /**

@@ -859,4 +859,38 @@
     <string name="renew_sheet_summary_now_pick">اختر طريقة الدفع للمتابعة</string>
     <string name="renew_sheet_summary_now">سيُسجَّل %1$s عبر %2$s في إيرادات اليوم</string>
     <string name="renew_sheet_success">تم تجديد الاشتراك ✅</string>
+
+    <!-- شاشة الإيرادات (إعادة تصميم 2026 — الجزء 1): كل الموارد الجديدة بالبادئة rev_ -->
+    <string name="rev_screen_title">الإيرادات</string>
+    <string name="rev_share_desc">مشاركة التقرير</string>
+    <string name="rev_period_day">اليوم</string>
+    <string name="rev_period_week">الأسبوع</string>
+    <string name="rev_period_month">الشهر</string>
+    <string name="rev_period_year">السنة</string>
+    <string name="rev_hero_day">إيراد اليوم</string>
+    <string name="rev_hero_week">إيراد الأسبوع</string>
+    <string name="rev_hero_month">إيراد الشهر</string>
+    <string name="rev_hero_year">إيراد السنة</string>
+    <string name="rev_vs_day">عن أمس</string>
+    <string name="rev_vs_week">عن الأسبوع الماضي</string>
+    <string name="rev_vs_month">عن الشهر الماضي</string>
+    <string name="rev_vs_year">عن العام الماضي</string>
+    <string name="rev_delta_up">▲ %1$d%% %2$s</string>
+    <string name="rev_delta_down">▼ %1$d%% %2$s</string>
+    <string name="rev_delta_flat">● دون تغيير %1$s</string>
+    <string name="rev_delta_none">لا بيانات سابقة للمقارنة</string>
+    <string name="rev_prev_amount">مقابل %1$s</string>
+    <string name="rev_ind_avg_label">متوسط الإيراد اليومي</string>
+    <string name="rev_ind_best_label">أفضل يوم · %1$s</string>
+    <string name="rev_ind_best_none">أفضل يوم</string>
+    <string name="rev_ind_top_label">الأعلى حصة · %1$s</string>
+    <string name="rev_ind_top_none">النوع الأعلى حصة</string>
+    <string name="rev_scope_month">هذا الشهر</string>
+    <string name="rev_scope_7d">آخر 7 أيام</string>
+    <string name="rev_none_value">—</string>
+    <!-- 3ب: أوصاف الوصول المجمّعة (بطاقة Hero وبطاقات المؤشرات تُقرأ كعنصر واحد) -->
+    <string name="rev_hero_cd">%1$s: %2$s. %3$s %4$s</string>
+    <string name="rev_ind_cd">%1$s: %2$s، %3$s</string>
+    <string name="rev_none_cd">لا بيانات</string>
+    <string name="rev_period_desc">اختيار فترة الإيراد</string>
 </resources>
