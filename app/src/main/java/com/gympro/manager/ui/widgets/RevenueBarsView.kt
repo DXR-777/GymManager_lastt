@@ -343,7 +343,7 @@ class RevenueBarsView @JvmOverloads constructor(
         if (width == 0 || height == 0 || n == 0) return
         plotLeft = dp(6f)
         plotRight = width - dp(6f)
-        plotTop = dp(58f)
+        plotTop = dp(46f)
         plotBottom = height - dp(30f)
         plotH = max(plotBottom - plotTop, 1f)
         slotW = (plotRight - plotLeft) / n
@@ -370,7 +370,7 @@ class RevenueBarsView @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val desiredH = dp(232f).toInt()
+        val desiredH = dp(176f).toInt()
         val h = resolveSize(desiredH, heightMeasureSpec)
         setMeasuredDimension(resolveSize(dp(280f).toInt(), widthMeasureSpec), h)
     }

@@ -15,7 +15,6 @@ import androidx.core.view.doOnLayout
 import androidx.core.view.updateLayoutParams
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.gympro.manager.ui.widgets.RevenueShareBarView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -96,8 +95,7 @@ class RevenueFragment : Fragment() {
         setupDonutInteraction()
         setupPeriodSwitch()
         binding.revBtnShare.setOnSingleClickListener { shareReport() }
-        binding.btnShareReport.setOnSingleClickListener { shareReport() }
-        binding.rowCustomRange.setOnSingleClickListener { showCustomRangePicker() }
+        binding.rowCustomRange.setOnSingleClickListener { showRangeSheet() }
         binding.revUnpaidCard.setOnSingleClickListener {
             (requireActivity() as? MainActivity)?.openMembersFiltered(MemberFilter.UNPAID)
         }
@@ -111,7 +109,7 @@ class RevenueFragment : Fragment() {
     private fun setupPressFeedback() {
         listOf(
             binding.revBtnShare, binding.revSegDay, binding.revSegWeek, binding.revSegMonth, binding.revSegYear,
-            binding.rowCustomRange, binding.btnClearCustomRange, binding.btnShareReport
+            binding.rowCustomRange, binding.btnClearCustomRange
         ).forEach { it.attachPressScale() }
         typeRows.forEach { it.row().attachPressScale() }
     }
@@ -175,21 +173,20 @@ class RevenueFragment : Fragment() {
         val row: () -> View,
         val dot: () -> View,
         val amount: () -> android.widget.TextView,
-        val pct: () -> android.widget.TextView,
-        val bar: () -> RevenueShareBarView
+        val pct: () -> android.widget.TextView
     )
 
     /** الأنواع الأربعة بترتيب الحلقة والأسطورة (نفس ترتيب SubscriptionType). */
     private val typeRows: List<TypeRow> by lazy {
         listOf(
             TypeRow(SubscriptionType.DAILY, R.color.rev_type_daily, R.string.subscription_daily,
-                { binding.revRowDaily }, { binding.dotDaily }, { binding.tvRevenueDaily }, { binding.revTvPctDaily }, { binding.revBarDaily }),
+                { binding.revRowDaily }, { binding.dotDaily }, { binding.tvRevenueDaily }, { binding.revTvPctDaily }),
             TypeRow(SubscriptionType.WEEKLY, R.color.rev_type_weekly, R.string.subscription_weekly,
-                { binding.revRowWeekly }, { binding.dotWeekly }, { binding.tvRevenueWeekly }, { binding.revTvPctWeekly }, { binding.revBarWeekly }),
+                { binding.revRowWeekly }, { binding.dotWeekly }, { binding.tvRevenueWeekly }, { binding.revTvPctWeekly }),
             TypeRow(SubscriptionType.MONTHLY, R.color.rev_type_monthly, R.string.subscription_monthly,
-                { binding.revRowMonthly }, { binding.dotMonthly }, { binding.tvRevenueMonthly }, { binding.revTvPctMonthly }, { binding.revBarMonthly }),
+                { binding.revRowMonthly }, { binding.dotMonthly }, { binding.tvRevenueMonthly }, { binding.revTvPctMonthly }),
             TypeRow(SubscriptionType.CUSTOM, R.color.rev_type_custom, R.string.subscription_custom,
-                { binding.revRowCustom }, { binding.dotCustom }, { binding.tvRevenueCustom }, { binding.revTvPctCustom }, { binding.revBarCustom })
+                { binding.revRowCustom }, { binding.dotCustom }, { binding.tvRevenueCustom }, { binding.revTvPctCustom })
         )
     }
 
@@ -313,7 +310,6 @@ class RevenueFragment : Fragment() {
             row.pct().text = pctText
             // الأنواع الصفرية تُخفَّت فيتركّز النظر على ما فيه إيراد فعلاً
             row.row().alpha = if (v > 0.0) 1f else 0.45f
-            row.bar().setShare(if (total > 0.0) (v / total).toFloat() else 0f, colors[i], animate = animate, delayMs = i * 90L)
             row.row().contentDescription = getString(R.string.rev_row_cd, getString(row.nameRes), amountText, pctText)
             parts.add("${getString(row.nameRes)} $amountText ($pctText)")
         }
@@ -362,7 +358,6 @@ class RevenueFragment : Fragment() {
         binding.revSecTrendGroup.visibleIf(!empty)
         binding.revSecSplitGroup.visibleIf(!empty)
         binding.revSecDetailsGroup.visibleIf(!empty)
-        binding.revShareGroup.visibleIf(!empty)
         binding.revBtnShare.visibleIf(!empty)
     }
 
@@ -556,18 +551,17 @@ class RevenueFragment : Fragment() {
      * المؤشرات الثلاثة تُحسب من البيانات الموجودة فقط:
      *  - متوسط الإيراد اليومي = إيراد الشهر ÷ عدد أيامه المنقضية (حتى اليوم).
      *  - أفضل يوم في آخر 7 أيام (إن تساوت القيم فالأحدث).
-     *  - حصة نوع الاشتراك الأعلى من إيراد الشهر.
      */
     private fun renderIndicators(state: RevenueUiState) {
         val none = getString(R.string.rev_none_value)
 
         // الصفر يُعرض هادئاً (لون muted) لا كقيمة ملوّنة لامعة — فلا تبدو الشاشة معطّلة.
         val ctx = requireContext()
-        val mute = ContextCompat.getColor(ctx, R.color.home_mute)
+        val mute = ContextCompat.getColor(ctx, R.color.home_hero_title)
 
         val daysElapsed = DateUtils.dayOfMonth(DateUtils.now()).coerceAtLeast(1)
         binding.revTvAvgValue.text = CurrencyFormatter.formatGrouped(state.month / daysElapsed, state.currency)
-        binding.revTvAvgValue.setTextColor(if (state.month > 0.0) ContextCompat.getColor(ctx, R.color.home_mint) else mute)
+        binding.revTvAvgValue.setTextColor(if (state.month > 0.0) ContextCompat.getColor(ctx, R.color.home_ink) else mute)
 
         val last7 = state.last7Days
         val best = last7.maxOrNull() ?: 0.0
@@ -576,31 +570,11 @@ class RevenueFragment : Fragment() {
             binding.revTvBestValue.setTextColor(mute)
             binding.revTvBestLabel.setText(R.string.rev_ind_best_none)
         } else {
-            binding.revTvBestValue.setTextColor(ContextCompat.getColor(ctx, R.color.home_amber))
+            binding.revTvBestValue.setTextColor(ContextCompat.getColor(ctx, R.color.home_ink))
             val labels = lastSevenDayLabels()
             val day = labels.getOrElse(last7.indexOfLast { it == best }) { "" }
             binding.revTvBestValue.text = CurrencyFormatter.formatGrouped(best, state.currency)
             binding.revTvBestLabel.text = getString(R.string.rev_ind_best_label, day)
-        }
-
-        val total = state.byType.values.sum()
-        val top = state.byType.maxByOrNull { it.value }
-        if (total <= 0.0 || top == null || top.value <= 0.0) {
-            binding.revTvTopValue.text = none
-            binding.revTvTopValue.setTextColor(mute)
-            binding.revTvTopLabel.setText(R.string.rev_ind_top_none)
-        } else {
-            binding.revTvTopValue.setTextColor(ContextCompat.getColor(ctx, R.color.home_lav))
-            val typeName = getString(
-                when (top.key) {
-                    SubscriptionType.DAILY -> R.string.subscription_daily
-                    SubscriptionType.WEEKLY -> R.string.subscription_weekly
-                    SubscriptionType.MONTHLY -> R.string.subscription_monthly
-                    SubscriptionType.CUSTOM -> R.string.subscription_custom
-                }
-            )
-            binding.revTvTopValue.text = "${((top.value / total) * 100).roundToInt()}%"
-            binding.revTvTopLabel.text = getString(R.string.rev_ind_top_label, typeName)
         }
 
         // كل بطاقة مؤشر تُقرأ كعنصر وصول واحد: «التسمية: القيمة، النطاق».
@@ -609,7 +583,6 @@ class RevenueFragment : Fragment() {
         )
         binding.revIndAvg.contentDescription = cd(getString(R.string.rev_ind_avg_label), binding.revTvAvgValue.text, R.string.rev_scope_month)
         binding.revIndBest.contentDescription = cd(binding.revTvBestLabel.text, binding.revTvBestValue.text, R.string.rev_scope_7d)
-        binding.revIndTop.contentDescription = cd(binding.revTvTopLabel.text, binding.revTvTopValue.text, R.string.rev_scope_month)
     }
 
     /**
@@ -692,6 +665,63 @@ class RevenueFragment : Fragment() {
     }
 
     /**
+     * ورقة اختيار الفترة: اختصارات جاهزة بتواريخها الظاهرة (فيفهم المستخدم ما سيُعرض قبل الضغط)،
+     * وخيار أخير يفتح التقويم الحرّ. النتيجة تظهر في نفس بطاقة نطاق التاريخ (loadCustomRange).
+     */
+    private var rangeSheet: BottomSheetDialog? = null
+
+    private fun showRangeSheet() {
+        rangeSheet?.dismiss()
+        val now = DateUtils.now()
+        val today = DateUtils.startOfDay(now)
+        val thisMonthStart = DateUtils.startOfMonth(now)
+        val thisYearStart = DateUtils.startOfYear(now)
+        // (معرّف الصف، معرّف سطر التواريخ، البداية، النهاية)
+        data class Preset(val rowId: Int, val subId: Int, val start: Long, val end: Long)
+        val presets = listOf(
+            Preset(R.id.rev_sheet_row_last_month, R.id.rev_sheet_sub_last_month,
+                DateUtils.startOfMonth(DateUtils.addMonths(thisMonthStart, -1)),
+                DateUtils.endOfDay(DateUtils.addDays(thisMonthStart, -1))),
+            Preset(R.id.rev_sheet_row_30d, R.id.rev_sheet_sub_30d, DateUtils.addDays(today, -29), DateUtils.endOfDay(now)),
+            Preset(R.id.rev_sheet_row_90d, R.id.rev_sheet_sub_90d, DateUtils.addDays(today, -89), DateUtils.endOfDay(now)),
+            Preset(R.id.rev_sheet_row_last_year, R.id.rev_sheet_sub_last_year,
+                DateUtils.startOfYear(DateUtils.addMonths(thisYearStart, -12)),
+                DateUtils.endOfDay(DateUtils.addDays(thisYearStart, -1)))
+        )
+
+        val dialog = BottomSheetDialog(requireContext())
+        val view = layoutInflater.inflate(R.layout.bottom_sheet_revenue_range, null)
+        presets.forEach { preset ->
+            view.findViewById<android.widget.TextView>(preset.subId).text =
+                DateUtils.formatDateRangeShort(preset.start, preset.end)
+            view.findViewById<View>(preset.rowId).apply {
+                attachPressScale()
+                setOnSingleClickListener {
+                    dialog.dismiss()
+                    loadCustomRange(preset.start, preset.end)
+                }
+            }
+        }
+        view.findViewById<View>(R.id.rev_sheet_row_pick).apply {
+            attachPressScale()
+            setOnSingleClickListener {
+                dialog.dismiss()
+                showCustomRangePicker()
+            }
+        }
+
+        dialog.setContentView(view)
+        // نفس معالجة بقية الأوراق: حاوية Material شفافة، والزجاج مرسوم من خلفية الجذر (bg_home_sheet).
+        dialog.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            ?.setBackgroundColor(android.graphics.Color.TRANSPARENT)
+        dialog.behavior.skipCollapsed = true
+        dialog.behavior.state = BottomSheetBehavior.STATE_EXPANDED
+        dialog.setOnDismissListener { if (rangeSheet === dialog) rangeSheet = null }
+        rangeSheet = dialog
+        dialog.show()
+    }
+
+    /**
      * منتقي نطاق تاريخ حرّ — راجع البند 23. يُقيَّد بـ"اليوم أو قبله" (لا معنى لإيراد
      * مستقبلي)، ولا حدّ أدنى: صاحب النادي قد يريد إيراد شهر بعيد أو نطاق قصير داخل
      * الشهر الحالي على حدّ سواء.
@@ -701,7 +731,10 @@ class RevenueFragment : Fragment() {
             .setValidator(DateValidatorPointBackward.now())
             .build()
         val picker = MaterialDatePicker.Builder.dateRangePicker()
-            .setTitleText(R.string.revenue_custom_range_action)
+            .setTitleText(R.string.rev_range_picker_title)
+            .setTheme(R.style.ThemeOverlay_GymManager_DatePicker)
+            .setPositiveButtonText(R.string.rev_range_apply)
+            .setNegativeButtonText(R.string.rev_range_cancel)
             .setCalendarConstraints(constraints)
             .build()
         picker.addOnPositiveButtonClickListener { selection ->
@@ -964,12 +997,9 @@ class RevenueFragment : Fragment() {
      * Bar دوّار يظهر مكانه).
      */
     private fun setShareReportBusy(isBusy: Boolean) {
-        // الوهج (frameShareGlow) يتبع حالة التعطيل بنفس نمط frameSaveGlow في AddEditMemberActivity.setSaving()،
-        // حتى لا تبقى هالة زاهية خلف زر معطَّل.
-        binding.frameShareGlow.isEnabled = !isBusy
-        binding.btnShareReport.isEnabled = !isBusy
-        binding.btnShareReport.text = if (isBusy) "" else getString(R.string.revenue_share_report)
-        binding.progressShareReport.visibility = if (isBusy) View.VISIBLE else View.GONE
+        // زر المشاركة الوحيد صار في الرأس (الدائرة الزجاجية): نعطّله ونخفّف شفافيته أثناء بناء الملف.
+        binding.revBtnShare.isEnabled = !isBusy
+        binding.revBtnShare.alpha = if (isBusy) 0.5f else 1f
     }
 
     override fun onDestroyView() {
@@ -977,6 +1007,8 @@ class RevenueFragment : Fragment() {
         // المعاينة قد تحمل onConfirmed يستخدم viewLifecycleOwner: نغلقها قبل تدمير الـ View.
         previewDialog?.dismiss()
         previewDialog = null
+        rangeSheet?.dismiss()
+        rangeSheet = null
         motionJobs.forEach { it.cancel() }
         motionJobs.clear()
         _binding?.revSkeleton?.animate()?.cancel()

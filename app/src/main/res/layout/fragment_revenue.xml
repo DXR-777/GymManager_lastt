@@ -149,7 +149,7 @@
                     android:importantForAccessibility="yes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
+                    android:layout_marginTop="12dp"
                     android:background="@drawable/bg_home_hero"
                     android:clipToOutline="true"
                     android:elevation="14dp"
@@ -157,8 +157,8 @@
                     android:orientation="vertical"
                     android:outlineSpotShadowColor="@color/home_hero_end"
                     android:paddingHorizontal="20dp"
-                    android:paddingTop="18dp"
-                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="14dp"
                     tools:targetApi="p">
 
                     <LinearLayout
@@ -264,194 +264,137 @@
                             android:textSize="11.5sp"
                             tools:text="مقابل ₪ 4085" />
                     </LinearLayout>
-                </LinearLayout>
+                    <!-- المؤشرات داخل البطاقة (بدل ثلاث بطاقات منفصلة): المتوسط اليومي | أفضل يوم.
+                         المعرّفات كما هي لأن RevenueFragment يعبّئها؛ الحصة الأعلى صارت في قسم التوزيع. -->
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="12dp"
+                        android:background="#33FFFFFF"
+                        android:importantForAccessibility="no" />
 
-                <!-- ============ المؤشرات الذكية (محسوبة من البيانات الموجودة فقط) ============ -->
-                <LinearLayout
-                    android:id="@+id/rev_indicators"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:baselineAligned="false"
-                    android:orientation="horizontal">
+                    <LinearLayout
+                        android:id="@+id/rev_indicators"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:baselineAligned="false"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
 
-            <LinearLayout
-                android:id="@+id/rev_ind_avg"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:importantForAccessibility="yes"
-                android:background="@drawable/bg_home_glass_card"
-                android:orientation="vertical"
-                android:paddingHorizontal="11dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="11dp">
+                        <LinearLayout
+                            android:id="@+id/rev_ind_avg"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:focusable="true"
+                            android:importantForAccessibility="yes"
+                            android:orientation="vertical">
 
-                <ImageView android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/rev_bg_tile_mint" android:importantForAccessibility="no" android:padding="7dp" android:src="@drawable/ic_pd_wallet" app:tint="@color/home_mint" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_medium"
+                                android:gravity="start"
+                                android:importantForAccessibility="no"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:text="@string/rev_ind_avg_label"
+                                android:textColor="@color/home_hero_title"
+                                android:textSize="11.5sp" />
 
-                <TextView android:importantForAccessibility="no"
-                    android:id="@+id/rev_tv_avg_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp"
-                    android:autoSizeMaxTextSize="15sp"
-                    android:autoSizeMinTextSize="9sp"
-                    android:autoSizeStepGranularity="1sp"
-                    android:autoSizeTextType="uniform"
-                    android:fontFamily="@font/cairo_bold"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:maxLines="1"
-                    android:textColor="@color/home_mint"
-                    tools:text="₪ 185" />
+                            <TextView
+                                android:id="@+id/rev_tv_avg_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:autoSizeMaxTextSize="17sp"
+                                android:autoSizeMinTextSize="10sp"
+                                android:autoSizeStepGranularity="1sp"
+                                android:autoSizeTextType="uniform"
+                                android:fontFamily="@font/cairo_bold"
+                                android:gravity="start"
+                                android:importantForAccessibility="no"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/home_ink"
+                                tools:text="₪ 185" />
 
-                <TextView android:importantForAccessibility="no"
-                    
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/cairo_medium"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:lineSpacingExtra="1dp"
-                    android:minLines="2"
-                    android:textColor="@color/home_ink"
-                    android:textSize="11sp"
-                    android:text="@string/rev_ind_avg_label"
-                    tools:text="متوسط الإيراد اليومي" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:alpha="0.8"
+                                android:fontFamily="@font/cairo_regular"
+                                android:gravity="start"
+                                android:importantForAccessibility="no"
+                                android:includeFontPadding="false"
+                                android:text="@string/rev_scope_month"
+                                android:textColor="@color/home_hero_symbol"
+                                android:textSize="10sp" />
+                        </LinearLayout>
 
-                <TextView android:importantForAccessibility="no"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="@font/cairo_regular"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:text="@string/rev_scope_month"
-                    android:textColor="@color/home_mute"
-                    android:textSize="10sp" />
-            </LinearLayout>
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="36dp"
+                            android:layout_marginHorizontal="14dp"
+                            android:background="#33FFFFFF"
+                            android:importantForAccessibility="no" />
 
-                    <Space android:layout_width="10dp" android:layout_height="0dp" />
+                        <LinearLayout
+                            android:id="@+id/rev_ind_best"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:focusable="true"
+                            android:importantForAccessibility="yes"
+                            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/rev_ind_best"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:importantForAccessibility="yes"
-                android:background="@drawable/bg_home_glass_card"
-                android:orientation="vertical"
-                android:paddingHorizontal="11dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="11dp">
+                            <TextView
+                                android:id="@+id/rev_tv_best_label"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/cairo_medium"
+                                android:gravity="start"
+                                android:importantForAccessibility="no"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/home_hero_title"
+                                android:textSize="11.5sp"
+                                tools:text="أفضل يوم · أحد" />
 
-                <ImageView android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/rev_bg_tile_amber" android:importantForAccessibility="no" android:padding="7dp" android:src="@drawable/rev_ic_star" app:tint="@color/home_amber" />
+                            <TextView
+                                android:id="@+id/rev_tv_best_value"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="3dp"
+                                android:autoSizeMaxTextSize="17sp"
+                                android:autoSizeMinTextSize="10sp"
+                                android:autoSizeStepGranularity="1sp"
+                                android:autoSizeTextType="uniform"
+                                android:fontFamily="@font/cairo_bold"
+                                android:gravity="start"
+                                android:importantForAccessibility="no"
+                                android:includeFontPadding="false"
+                                android:maxLines="1"
+                                android:textColor="@color/home_ink"
+                                tools:text="₪ 620" />
 
-                <TextView android:importantForAccessibility="no"
-                    android:id="@+id/rev_tv_best_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp"
-                    android:autoSizeMaxTextSize="15sp"
-                    android:autoSizeMinTextSize="9sp"
-                    android:autoSizeStepGranularity="1sp"
-                    android:autoSizeTextType="uniform"
-                    android:fontFamily="@font/cairo_bold"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:maxLines="1"
-                    android:textColor="@color/home_amber"
-                    tools:text="₪ 620" />
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="1dp"
+                                android:alpha="0.8"
+                                android:fontFamily="@font/cairo_regular"
+                                android:gravity="start"
+                                android:importantForAccessibility="no"
+                                android:includeFontPadding="false"
+                                android:text="@string/rev_scope_7d"
+                                android:textColor="@color/home_hero_symbol"
+                                android:textSize="10sp" />
+                        </LinearLayout>
+                    </LinearLayout>
 
-                <TextView android:importantForAccessibility="no"
-                    android:id="@+id/rev_tv_best_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/cairo_medium"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:lineSpacingExtra="1dp"
-                    android:minLines="2"
-                    android:textColor="@color/home_ink"
-                    android:textSize="11sp"
-                    
-                    tools:text="أفضل يوم · أحد" />
-
-                <TextView android:importantForAccessibility="no"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="@font/cairo_regular"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:text="@string/rev_scope_7d"
-                    android:textColor="@color/home_mute"
-                    android:textSize="10sp" />
-            </LinearLayout>
-
-                    <Space android:layout_width="10dp" android:layout_height="0dp" />
-
-            <LinearLayout
-                android:id="@+id/rev_ind_top"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:focusable="true"
-                android:importantForAccessibility="yes"
-                android:background="@drawable/bg_home_glass_card"
-                android:orientation="vertical"
-                android:paddingHorizontal="11dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="11dp">
-
-                <ImageView android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/rev_bg_tile_lav" android:importantForAccessibility="no" android:padding="7dp" android:src="@drawable/rev_ic_pie" app:tint="@color/home_lav" />
-
-                <TextView android:importantForAccessibility="no"
-                    android:id="@+id/rev_tv_top_value"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="9dp"
-                    android:autoSizeMaxTextSize="15sp"
-                    android:autoSizeMinTextSize="9sp"
-                    android:autoSizeStepGranularity="1sp"
-                    android:autoSizeTextType="uniform"
-                    android:fontFamily="@font/cairo_bold"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:maxLines="1"
-                    android:textColor="@color/home_lav"
-                    tools:text="72%" />
-
-                <TextView android:importantForAccessibility="no"
-                    android:id="@+id/rev_tv_top_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/cairo_medium"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:lineSpacingExtra="1dp"
-                    android:minLines="2"
-                    android:textColor="@color/home_ink"
-                    android:textSize="11sp"
-                    
-                    tools:text="الأعلى حصة · شهري" />
-
-                <TextView android:importantForAccessibility="no"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:fontFamily="@font/cairo_regular"
-                    android:gravity="start"
-                    android:includeFontPadding="false"
-                    android:text="@string/rev_scope_month"
-                    android:textColor="@color/home_mute"
-                    android:textSize="10sp" />
-            </LinearLayout>
                 </LinearLayout>
 
                 <!-- ============ بطاقة المستحقات غير المحصّلة: تحوّل الشاشة من عرض أرقام إلى أداة إجراء (تفتح الأعضاء المتأخرين) ============ -->
@@ -664,8 +607,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -690,7 +633,7 @@
                     <com.gympro.manager.ui.widgets.RevenueBarsView
                         android:id="@+id/rev_bars"
                         android:layout_width="match_parent"
-                        android:layout_height="208dp" />
+                        android:layout_height="176dp" />
                 </FrameLayout>
 
                 </LinearLayout>
@@ -706,8 +649,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -728,285 +671,354 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/bg_home_glass_card"
                     android:orientation="vertical"
-                    android:padding="12dp">
+                    android:padding="14dp">
 
                     <com.gympro.manager.ui.widgets.RevenueDonutView
                         android:id="@+id/rev_donut"
-                        android:layout_width="184dp"
-                        android:layout_height="184dp"
+                        android:layout_width="176dp"
+                        android:layout_height="176dp"
                         android:layout_gravity="center_horizontal"
-                        android:layout_marginTop="6dp"
-                        android:layout_marginBottom="10dp" />
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="12dp" />
 
-                    <!-- يومي -->
+                    <!-- بطاقات زجاجية 2×2 (تصميم أ): لمس البطاقة يُبرز شريحتها كما كانت الصفوف -->
                     <LinearLayout
-                        android:id="@+id/rev_row_daily"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/rev_bg_row"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="@drawable/ripple_home_row"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="10dp">
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:id="@+id/rev_row_daily"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                            android:layout_weight="1"
+                            android:background="@drawable/rev_bg_split_tile"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="@drawable/rev_ripple_tile"
+                            android:minHeight="56dp"
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <View
-                                android:id="@+id/dotDaily"
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:background="@drawable/shape_dot"
-                                android:importantForAccessibility="no" />
-
-                            <TextView
-                                android:layout_width="0dp"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:text="@string/subscription_daily"
-                                android:textColor="@color/home_ink"
-                                android:textSize="13sp" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/tvRevenueDaily"
-                                android:maxLines="1"
-                                android:layout_width="wrap_content"
+                                <View
+                                    android:id="@+id/dotDaily"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:background="@drawable/shape_dot"
+                                    android:importantForAccessibility="no" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:fontFamily="@font/cairo_medium"
+                                    android:gravity="start"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@string/subscription_daily"
+                                    android:textColor="@color/home_mute"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_bold"
-                                android:includeFontPadding="false"
-                                android:textColor="@color/home_ink"
-                                android:textSize="13sp"
-                                tools:text="₪ 90" />
+                                android:layout_marginTop="6dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/rev_tv_pct_daily"
-                                style="@style/rev_SectionChip"
-                                android:layout_marginStart="8dp"
-                                android:minWidth="46dp"
-                                android:gravity="center"
-                                android:paddingVertical="3dp"
-                                android:textColor="@color/home_mute"
-                                android:textSize="10.5sp"
-                                tools:text="12%" />
+                                <TextView
+                                    android:id="@+id/tvRevenueDaily"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:autoSizeMaxTextSize="15sp"
+                                    android:autoSizeMinTextSize="10sp"
+                                    android:autoSizeStepGranularity="1sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFamily="@font/cairo_bold"
+                                    android:gravity="start"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/home_ink"
+                                    tools:text="₪ 2,170" />
+
+                                <TextView
+                                    android:id="@+id/rev_tv_pct_daily"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="6dp"
+                                    android:fontFamily="@font/cairo_medium"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/home_mute"
+                                    android:textSize="11sp"
+                                    tools:text="72%" />
+                            </LinearLayout>
                         </LinearLayout>
 
-                        <com.gympro.manager.ui.widgets.RevenueShareBarView
-                            android:id="@+id/rev_bar_daily"
-                            android:layout_width="match_parent"
-                            android:layout_height="4dp"
-                            android:layout_marginTop="9dp" />
+                        <Space android:layout_width="8dp" android:layout_height="0dp" />
+
+                        <LinearLayout
+                            android:id="@+id/rev_row_weekly"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:background="@drawable/rev_bg_split_tile"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="@drawable/rev_ripple_tile"
+                            android:minHeight="56dp"
+                            android:orientation="vertical"
+                            android:padding="12dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <View
+                                    android:id="@+id/dotWeekly"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:background="@drawable/shape_dot"
+                                    android:importantForAccessibility="no" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:fontFamily="@font/cairo_medium"
+                                    android:gravity="start"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@string/subscription_weekly"
+                                    android:textColor="@color/home_mute"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:id="@+id/tvRevenueWeekly"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:autoSizeMaxTextSize="15sp"
+                                    android:autoSizeMinTextSize="10sp"
+                                    android:autoSizeStepGranularity="1sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFamily="@font/cairo_bold"
+                                    android:gravity="start"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/home_ink"
+                                    tools:text="₪ 2,170" />
+
+                                <TextView
+                                    android:id="@+id/rev_tv_pct_weekly"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="6dp"
+                                    android:fontFamily="@font/cairo_medium"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/home_mute"
+                                    android:textSize="11sp"
+                                    tools:text="72%" />
+                            </LinearLayout>
+                        </LinearLayout>
                     </LinearLayout>
 
-                    <!-- أسبوعي -->
                     <LinearLayout
-                        android:id="@+id/rev_row_weekly"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:background="@drawable/rev_bg_row"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="@drawable/ripple_home_row"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="10dp">
+                        android:layout_marginTop="8dp"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal">
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:id="@+id/rev_row_monthly"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                            android:layout_weight="1"
+                            android:background="@drawable/rev_bg_split_tile"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="@drawable/rev_ripple_tile"
+                            android:minHeight="56dp"
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <View
-                                android:id="@+id/dotWeekly"
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:background="@drawable/shape_dot"
-                                android:importantForAccessibility="no" />
-
-                            <TextView
-                                android:layout_width="0dp"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:text="@string/subscription_weekly"
-                                android:textColor="@color/home_ink"
-                                android:textSize="13sp" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/tvRevenueWeekly"
-                                android:maxLines="1"
-                                android:layout_width="wrap_content"
+                                <View
+                                    android:id="@+id/dotMonthly"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:background="@drawable/shape_dot"
+                                    android:importantForAccessibility="no" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:fontFamily="@font/cairo_medium"
+                                    android:gravity="start"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@string/subscription_monthly"
+                                    android:textColor="@color/home_mute"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_bold"
-                                android:includeFontPadding="false"
-                                android:textColor="@color/home_ink"
-                                android:textSize="13sp"
-                                tools:text="₪ 140" />
+                                android:layout_marginTop="6dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/rev_tv_pct_weekly"
-                                style="@style/rev_SectionChip"
-                                android:layout_marginStart="8dp"
-                                android:minWidth="46dp"
-                                android:gravity="center"
-                                android:paddingVertical="3dp"
-                                android:textColor="@color/home_mute"
-                                android:textSize="10.5sp"
-                                tools:text="18%" />
+                                <TextView
+                                    android:id="@+id/tvRevenueMonthly"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:autoSizeMaxTextSize="15sp"
+                                    android:autoSizeMinTextSize="10sp"
+                                    android:autoSizeStepGranularity="1sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFamily="@font/cairo_bold"
+                                    android:gravity="start"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/home_ink"
+                                    tools:text="₪ 2,170" />
+
+                                <TextView
+                                    android:id="@+id/rev_tv_pct_monthly"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="6dp"
+                                    android:fontFamily="@font/cairo_medium"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/home_mute"
+                                    android:textSize="11sp"
+                                    tools:text="72%" />
+                            </LinearLayout>
                         </LinearLayout>
 
-                        <com.gympro.manager.ui.widgets.RevenueShareBarView
-                            android:id="@+id/rev_bar_weekly"
-                            android:layout_width="match_parent"
-                            android:layout_height="4dp"
-                            android:layout_marginTop="9dp" />
-                    </LinearLayout>
-
-                    <!-- شهري -->
-                    <LinearLayout
-                        android:id="@+id/rev_row_monthly"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:background="@drawable/rev_bg_row"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="@drawable/ripple_home_row"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="10dp">
+                        <Space android:layout_width="8dp" android:layout_height="0dp" />
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:id="@+id/rev_row_custom"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
+                            android:layout_weight="1"
+                            android:background="@drawable/rev_bg_split_tile"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:foreground="@drawable/rev_ripple_tile"
+                            android:minHeight="56dp"
+                            android:orientation="vertical"
+                            android:padding="12dp">
 
-                            <View
-                                android:id="@+id/dotMonthly"
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:background="@drawable/shape_dot"
-                                android:importantForAccessibility="no" />
-
-                            <TextView
-                                android:layout_width="0dp"
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:text="@string/subscription_monthly"
-                                android:textColor="@color/home_ink"
-                                android:textSize="13sp" />
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/tvRevenueMonthly"
-                                android:maxLines="1"
-                                android:layout_width="wrap_content"
+                                <View
+                                    android:id="@+id/dotCustom"
+                                    android:layout_width="10dp"
+                                    android:layout_height="10dp"
+                                    android:background="@drawable/shape_dot"
+                                    android:importantForAccessibility="no" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:fontFamily="@font/cairo_medium"
+                                    android:gravity="start"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:text="@string/subscription_custom"
+                                    android:textColor="@color/home_mute"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_bold"
-                                android:includeFontPadding="false"
-                                android:textColor="@color/home_ink"
-                                android:textSize="13sp"
-                                tools:text="₪ 2170" />
+                                android:layout_marginTop="6dp"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
 
-                            <TextView
-                                android:id="@+id/rev_tv_pct_monthly"
-                                style="@style/rev_SectionChip"
-                                android:layout_marginStart="8dp"
-                                android:minWidth="46dp"
-                                android:gravity="center"
-                                android:paddingVertical="3dp"
-                                android:textColor="@color/home_mute"
-                                android:textSize="10.5sp"
-                                tools:text="72%" />
+                                <TextView
+                                    android:id="@+id/tvRevenueCustom"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:autoSizeMaxTextSize="15sp"
+                                    android:autoSizeMinTextSize="10sp"
+                                    android:autoSizeStepGranularity="1sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFamily="@font/cairo_bold"
+                                    android:gravity="start"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/home_ink"
+                                    tools:text="₪ 2,170" />
+
+                                <TextView
+                                    android:id="@+id/rev_tv_pct_custom"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="6dp"
+                                    android:fontFamily="@font/cairo_medium"
+                                    android:importantForAccessibility="no"
+                                    android:includeFontPadding="false"
+                                    android:maxLines="1"
+                                    android:textColor="@color/home_mute"
+                                    android:textSize="11sp"
+                                    tools:text="72%" />
+                            </LinearLayout>
                         </LinearLayout>
-
-                        <com.gympro.manager.ui.widgets.RevenueShareBarView
-                            android:id="@+id/rev_bar_monthly"
-                            android:layout_width="match_parent"
-                            android:layout_height="4dp"
-                            android:layout_marginTop="9dp" />
-                    </LinearLayout>
-
-                    <!-- مخصص -->
-                    <LinearLayout
-                        android:id="@+id/rev_row_custom"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:background="@drawable/rev_bg_row"
-                        android:clickable="true"
-                        android:focusable="true"
-                        android:foreground="@drawable/ripple_home_row"
-                        android:orientation="vertical"
-                        android:paddingHorizontal="10dp"
-                        android:paddingVertical="10dp">
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal">
-
-                            <View
-                                android:id="@+id/dotCustom"
-                                android:layout_width="10dp"
-                                android:layout_height="10dp"
-                                android:background="@drawable/shape_dot"
-                                android:importantForAccessibility="no" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="10dp"
-                                android:layout_weight="1"
-                                android:fontFamily="@font/cairo_medium"
-                                android:includeFontPadding="false"
-                                android:text="@string/subscription_custom"
-                                android:textColor="@color/home_ink"
-                                android:textSize="13sp" />
-
-                            <TextView
-                                android:id="@+id/tvRevenueCustom"
-                                android:maxLines="1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/cairo_bold"
-                                android:includeFontPadding="false"
-                                android:textColor="@color/home_ink"
-                                android:textSize="13sp"
-                                tools:text="₪ 50" />
-
-                            <TextView
-                                android:id="@+id/rev_tv_pct_custom"
-                                style="@style/rev_SectionChip"
-                                android:layout_marginStart="8dp"
-                                android:minWidth="46dp"
-                                android:gravity="center"
-                                android:paddingVertical="3dp"
-                                android:textColor="@color/home_mute"
-                                android:textSize="10.5sp"
-                                tools:text="2%" />
-                        </LinearLayout>
-
-                        <com.gympro.manager.ui.widgets.RevenueShareBarView
-                            android:id="@+id/rev_bar_custom"
-                            android:layout_width="match_parent"
-                            android:layout_height="4dp"
-                            android:layout_marginTop="9dp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -1023,8 +1035,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -1044,14 +1056,14 @@
                     android:focusable="true"
                     android:foreground="@drawable/ripple_home_row"
                     android:gravity="center_vertical"
-                    android:minHeight="72dp"
+                    android:minHeight="64dp"
                     android:orientation="horizontal"
                     android:paddingHorizontal="14dp"
-                    android:paddingVertical="12dp">
+                    android:paddingVertical="10dp">
 
                     <ImageView
-                        android:layout_width="42dp"
-                        android:layout_height="42dp"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
                         android:background="@drawable/rev_bg_tile_lav"
                         android:importantForAccessibility="no"
                         android:padding="10dp"
@@ -1157,53 +1169,6 @@
 
                 </LinearLayout>
 
-                <!-- ============ زر مشاركة التقرير: نمط bg_home_cta (تدرّج + ظل بنفسجي). المنطق كما هو:
-                     btnShareReport / frameShareGlow / progressShareReport يتحكّم بها setShareReportBusy ============ -->
-                <FrameLayout
-                    android:id="@+id/rev_share_group"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="28dp"
-                    android:clipChildren="false"
-                    android:clipToPadding="false">
-
-                    <FrameLayout
-                        android:id="@+id/frameShareGlow"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:clipChildren="false"
-                        android:clipToPadding="false">
-
-                        <TextView
-                            android:id="@+id/btnShareReport"
-                            android:layout_width="match_parent"
-                            android:layout_height="48dp"
-                            android:background="@drawable/bg_home_btn_secondary"
-                            android:clickable="true"
-                            android:drawablePadding="8dp"
-                            android:drawableTint="@color/home_ink"
-                            android:drawableStart="@drawable/ic_pd_share"
-                            android:focusable="true"
-                            android:fontFamily="@font/cairo_medium"
-                            android:gravity="center"
-                            android:includeFontPadding="false"
-                            android:maxLines="1"
-                            android:paddingHorizontal="20dp"
-                            android:text="@string/revenue_share_report"
-                            android:textColor="@color/home_ink"
-                            android:textSize="14sp"
-                            tools:targetApi="p" />
-                    </FrameLayout>
-
-                    <ProgressBar
-                        android:id="@+id/progressShareReport"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_gravity="center"
-                        android:indeterminateTint="@color/white"
-                        android:visibility="gone" />
-                </FrameLayout>
-
             </LinearLayout>
         </com.gympro.manager.ui.widgets.MaxWidthFrameLayout>
     </ScrollView>
@@ -1275,53 +1240,28 @@
                     <!-- Hero -->
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="188dp"
-                        android:layout_marginTop="14dp"
+                        android:layout_height="244dp"
+                        android:layout_marginTop="12dp"
                         android:background="@drawable/bg_home_skeleton_hero" />
-
-                    <!-- المؤشرات الثلاثة -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="14dp"
-                        android:orientation="horizontal">
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="124dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_home_skeleton" />
-                    <Space android:layout_width="10dp" android:layout_height="0dp" />
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="124dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_home_skeleton" />
-                    <Space android:layout_width="10dp" android:layout_height="0dp" />
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="124dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_home_skeleton" />
-                    </LinearLayout>
 
                     <!-- الاتجاه -->
                 <View
                     android:layout_width="150dp"
                     android:layout_height="20dp"
-                    android:layout_marginTop="28dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_home_skeleton" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="238dp"
+                        android:layout_height="182dp"
                         android:background="@drawable/bg_home_skeleton" />
 
-                    <!-- التوزيع: حلقة + 4 صفوف -->
+                    <!-- التوزيع: حلقة + بطاقتان × صفّين -->
                 <View
                     android:layout_width="130dp"
                     android:layout_height="20dp"
-                    android:layout_marginTop="28dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_home_skeleton" />
 
@@ -1333,36 +1273,37 @@
                         android:padding="12dp">
 
                         <View
-                            android:layout_width="208dp"
-                            android:layout_height="208dp"
+                            android:layout_width="176dp"
+                            android:layout_height="176dp"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginVertical="10dp"
                             android:background="@drawable/rev_bg_skel_circle" />
 
-                        <View android:layout_width="match_parent" android:layout_height="46dp" android:background="@drawable/bg_home_skeleton" />
-                        <View android:layout_width="match_parent" android:layout_height="46dp" android:layout_marginTop="6dp" android:background="@drawable/bg_home_skeleton" />
-                        <View android:layout_width="match_parent" android:layout_height="46dp" android:layout_marginTop="6dp" android:background="@drawable/bg_home_skeleton" />
-                        <View android:layout_width="match_parent" android:layout_height="46dp" android:layout_marginTop="6dp" android:background="@drawable/bg_home_skeleton" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                            <View android:layout_width="0dp" android:layout_height="58dp" android:layout_weight="1" android:background="@drawable/bg_home_skeleton" />
+                            <Space android:layout_width="8dp" android:layout_height="0dp" />
+                            <View android:layout_width="0dp" android:layout_height="58dp" android:layout_weight="1" android:background="@drawable/bg_home_skeleton" />
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
+                            <View android:layout_width="0dp" android:layout_height="58dp" android:layout_weight="1" android:background="@drawable/bg_home_skeleton" />
+                            <Space android:layout_width="8dp" android:layout_height="0dp" />
+                            <View android:layout_width="0dp" android:layout_height="58dp" android:layout_weight="1" android:background="@drawable/bg_home_skeleton" />
+                        </LinearLayout>
                     </LinearLayout>
 
                     <!-- التفاصيل + زر المشاركة -->
                 <View
                     android:layout_width="96dp"
                     android:layout_height="20dp"
-                    android:layout_marginTop="28dp"
+                    android:layout_marginTop="20dp"
                     android:layout_marginBottom="12dp"
                     android:background="@drawable/bg_home_skeleton" />
 
                     <View
                         android:layout_width="match_parent"
-                        android:layout_height="72dp"
+                        android:layout_height="64dp"
                         android:background="@drawable/bg_home_skeleton" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="52dp"
-                        android:layout_marginTop="28dp"
-                        android:background="@drawable/bg_home_skeleton" />
                 </LinearLayout>
             </com.gympro.manager.ui.widgets.RevenueSkeletonLayout>
         </com.gympro.manager.ui.widgets.MaxWidthFrameLayout>

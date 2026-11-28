@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة الإيرادات — اختيار الفترة: نصوص جديدة بالبادئة rev_ فقط -->
+<resources>
+    <string name="rev_range_sheet_title">اختر الفترة</string>
+    <string name="rev_range_sheet_sub">اعرض إيراد فترة سابقة بضغطة واحدة، أو حدّد التواريخ بنفسك</string>
+    <string name="rev_range_last_month">الشهر الماضي</string>
+    <string name="rev_range_30d">آخر 30 يوماً</string>
+    <string name="rev_range_90d">آخر 90 يوماً</string>
+    <string name="rev_range_last_year">السنة الماضية</string>
+    <string name="rev_range_pick">تحديد تواريخ بنفسي</string>
+    <string name="rev_range_pick_sub">اختر تاريخ البداية وتاريخ النهاية من التقويم</string>
+    <string name="rev_range_picker_title">اختر تاريخ البداية والنهاية</string>
+    <string name="rev_range_apply">عرض الإيراد</string>
+    <string name="rev_range_cancel">إلغاء</string>
+</resources>

@@ -80,21 +80,17 @@
     </style>
 
     <!-- Bottom navigation bar: قائمة عائمة زجاجية (2026 Glassmorphism) — راجع
-         bg_bottom_nav_glass.xml للخلفية. labelVisibilityMode="selected" يُبقي
-         التسمية النصية على العنصر النشط فقط (أيقونة مجرَّدة للباقي)، مطابقةً
-         لطلب "أيقونات ونصوص أبسط" بدل تسميات دائمة على الأربعة معاً. حشوة
-         أصغر (8dp بدل 10dp) لتناسب حجم الحبّة العائمة المدمج الجديد. -->
+         bg_bottom_nav_glass.xml للخلفية. labelVisibilityMode="unlabeled"
+         يجعل الشريط أيقونات فقط بلا كلمات. حشوة 8dp لتناسب حجم الحبّة العائمة. -->
     <style name="Widget.GymManager.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="itemActiveIndicatorStyle">@style/Widget.GymManager.BottomNavigationView.ActiveIndicator</item>
         <item name="itemPaddingTop">8dp</item>
         <item name="itemPaddingBottom">8dp</item>
-        <!-- أيقونة + اسم قصير تحت كل تبويب (إرشادات آبل وMaterial توصي بالتسميات)، والعنصر النشط كبسولة
-             بحدّ متدرّج تحيط بالأيقونة واسمها (bg_home_nav_item) -->
-        <item name="labelVisibilityMode">labeled</item>
+        <!-- أيقونات فقط بلا كلمات تحتها (unlabeled)، والعنصر النشط دائرة بحدّ متدرّج تحيط بالأيقونة
+             (bg_home_nav_item). الأسماء تبقى في عناوين القائمة لقارئ الشاشة والضغطة المطوّلة. -->
+        <item name="labelVisibilityMode">unlabeled</item>
         <item name="itemBackground">@drawable/bg_home_nav_item</item>
-        <item name="itemIconSize">22dp</item>
-        <item name="itemTextAppearanceActive">@style/TextAppearance.GymManager.NavLabel</item>
-        <item name="itemTextAppearanceInactive">@style/TextAppearance.GymManager.NavLabel</item>
+        <item name="itemIconSize">24dp</item>
         <item name="android:minHeight">0dp</item>
     </style>
 

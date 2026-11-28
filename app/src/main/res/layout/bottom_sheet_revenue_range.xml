@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- ورقة اختيار فترة الإيراد: اختصارات جاهزة (الشهر الماضي، آخر 30/90 يوماً، السنة الماضية) ثم خيار التقويم الحرّ.
+     نفس هوية الأوراق الأخرى: bg_home_sheet + مقبض + عنوان + صفوف زجاجية. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_home_sheet"
+    android:orientation="vertical"
+    android:paddingHorizontal="20dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="24dp">
+
+    <View
+        android:layout_width="40dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/bg_home_grabber"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/cairo_bold"
+        android:gravity="start"
+        android:includeFontPadding="false"
+        android:text="@string/rev_range_sheet_title"
+        android:textColor="@color/home_ink"
+        android:textSize="20sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="16dp"
+        android:fontFamily="@font/cairo_regular"
+        android:gravity="start"
+        android:includeFontPadding="false"
+        android:text="@string/rev_range_sheet_sub"
+        android:textColor="@color/home_mute"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:id="@+id/rev_sheet_row_last_month"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/rev_bg_split_tile"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/rev_ripple_tile"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rev_bg_tile_lav"
+            android:importantForAccessibility="no"
+            android:padding="10dp"
+            android:src="@drawable/ic_calendar"
+            app:tint="@color/home_lav" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="@string/rev_range_last_month"
+                android:textColor="@color/home_ink"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/rev_sheet_sub_last_month"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                tools:text="1 – 31 أكتوبر"
+                android:textColor="@color/home_mute"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_chevron_end"
+            app:tint="@color/home_mute" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/rev_sheet_row_30d"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rev_bg_split_tile"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/rev_ripple_tile"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rev_bg_tile_lav"
+            android:importantForAccessibility="no"
+            android:padding="10dp"
+            android:src="@drawable/ic_calendar"
+            app:tint="@color/home_lav" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="@string/rev_range_30d"
+                android:textColor="@color/home_ink"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/rev_sheet_sub_30d"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                tools:text="1 – 31 أكتوبر"
+                android:textColor="@color/home_mute"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_chevron_end"
+            app:tint="@color/home_mute" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/rev_sheet_row_90d"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rev_bg_split_tile"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/rev_ripple_tile"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rev_bg_tile_lav"
+            android:importantForAccessibility="no"
+            android:padding="10dp"
+            android:src="@drawable/ic_calendar"
+            app:tint="@color/home_lav" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="@string/rev_range_90d"
+                android:textColor="@color/home_ink"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/rev_sheet_sub_90d"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                tools:text="1 – 31 أكتوبر"
+                android:textColor="@color/home_mute"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_chevron_end"
+            app:tint="@color/home_mute" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/rev_sheet_row_last_year"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rev_bg_split_tile"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/rev_ripple_tile"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rev_bg_tile_lav"
+            android:importantForAccessibility="no"
+            android:padding="10dp"
+            android:src="@drawable/ic_calendar"
+            app:tint="@color/home_lav" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="@string/rev_range_last_year"
+                android:textColor="@color/home_ink"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/rev_sheet_sub_last_year"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                tools:text="1 – 31 أكتوبر"
+                android:textColor="@color/home_mute"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_chevron_end"
+            app:tint="@color/home_mute" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginVertical="14dp"
+        android:background="@color/home_glass_stroke"
+        android:importantForAccessibility="no" />
+
+    <LinearLayout
+        android:id="@+id/rev_sheet_row_pick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rev_bg_split_tile"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="@drawable/rev_ripple_tile"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="14dp"
+        android:paddingVertical="10dp">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/rev_bg_tile_lav"
+            android:importantForAccessibility="no"
+            android:padding="10dp"
+            android:src="@drawable/ic_calendar_range"
+            app:tint="@color/home_lav" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="12dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/cairo_bold"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="@string/rev_range_pick"
+                android:textColor="@color/home_ink"
+                android:textSize="14sp" />
+
+            <TextView
+                
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:fontFamily="@font/cairo_regular"
+                android:gravity="start"
+                android:includeFontPadding="false"
+                android:text="@string/rev_range_pick_sub"
+                android:textColor="@color/home_mute"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_chevron_end"
+            app:tint="@color/home_mute" />
+    </LinearLayout>
+</LinearLayout>

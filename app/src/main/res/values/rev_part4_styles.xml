@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- منتقي نطاق التاريخ بهوية التطبيق: سطح داكن، قرمزي للأطراف المختارة، تعبئة شفافة للنطاق، وخط Cairo -->
+<resources>
+    <style name="ThemeOverlay.GymManager.DatePicker" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="colorSurface">@color/rev_picker_surface</item>
+        <item name="colorOnSurface">@color/home_ink</item>
+        <item name="colorOnSurfaceVariant">@color/home_mute</item>
+        <item name="colorPrimary">@color/home_crim</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondaryContainer">@color/rev_range_fill</item>
+        <item name="colorOnSecondaryContainer">@color/home_ink</item>
+        <item name="colorOutline">@color/home_glass_stroke</item>
+        <item name="android:fontFamily">@font/cairo_medium</item>
+    </style>
+</resources>

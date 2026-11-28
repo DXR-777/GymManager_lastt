@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- بطاقة نوع الاشتراك: زجاج خفيف بحدّ رفيع، وأوضح عند إبراز شريحتها في الحلقة -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_selected="true">
+        <shape android:shape="rectangle">
+            <solid android:color="@color/rev_row_sel_fill" />
+            <stroke android:width="1dp" android:color="@color/rev_row_sel_stroke" />
+            <corners android:radius="18dp" />
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/rev_tile_fill" />
+            <stroke android:width="1dp" android:color="@color/rev_tile_stroke" />
+            <corners android:radius="18dp" />
+        </shape>
+    </item>
+</selector>

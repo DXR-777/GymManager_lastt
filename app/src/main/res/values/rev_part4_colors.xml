@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- شاشة الإيرادات — الجزء 4 (بطاقات التوزيع 2×2): ألوان جديدة بالبادئة rev_ فقط (داكنة دائماً مثل home_*). -->
+<resources>
+    <color name="rev_tile_fill">#0FFFFFFF</color>
+    <color name="rev_tile_stroke">#1AFFFFFF</color>
+    <!-- منتقي التواريخ: سطح الورقة الداكنة + تعبئة النطاق المختار (قرمزي شفاف) -->
+    <color name="rev_picker_surface">#FF15163A</color>
+    <color name="rev_range_fill">#40D63A56</color>
+</resources>
