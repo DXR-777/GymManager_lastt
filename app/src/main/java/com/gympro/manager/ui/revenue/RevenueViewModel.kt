@@ -36,7 +36,10 @@ data class RevenueUiState(
     val prevMonth: Double = 0.0,
     val prevYear: Double = 0.0,
     /** (الجزء 2 — إضافة فقط) false حتى وصول أول حساب حقيقي، فلا تُرسم الرسوم بقيم صفرية مؤقتة. */
-    val loaded: Boolean = false
+    val loaded: Boolean = false,
+    /** عدد الأعضاء الذين عليهم دَين وإجماليه (نفس شرط WHERE في الاستعلامين، فلا يتعارض العدد مع المبلغ). */
+    val unpaidCount: Int = 0,
+    val unpaidTotal: Double = 0.0
 )
 
 class RevenueViewModel(private val repository: GymRepository) : ViewModel() {
@@ -70,9 +73,11 @@ class RevenueViewModel(private val repository: GymRepository) : ViewModel() {
             combine(
                 repository.observeActiveMembers(""),
                 repository.observeSettings(),
-                dayChangeTicker()
-            ) { _, settings, _ -> settings }
-                .collect { settings ->
+                dayChangeTicker(),
+                repository.observeUnpaidCount(),
+                repository.observeUnpaidTotal()
+            ) { _, settings, _, unpaidCount, unpaidTotal -> Triple(settings, unpaidCount, unpaidTotal) }
+                .collect { (settings, unpaidCount, unpaidTotal) ->
                     val monthStart = DateUtils.startOfMonth()
                     val monthEnd = DateUtils.endOfDay(DateUtils.now())
                     _uiState.value = RevenueUiState(
@@ -89,7 +94,9 @@ class RevenueViewModel(private val repository: GymRepository) : ViewModel() {
                         prevWeek = prevWeekRevenue(),
                         prevMonth = prevMonthRevenue(),
                         prevYear = prevYearRevenue(),
-                        loaded = true
+                        loaded = true,
+                        unpaidCount = unpaidCount,
+                        unpaidTotal = unpaidTotal
                     )
                 }
         }
@@ -131,6 +138,10 @@ class RevenueViewModel(private val repository: GymRepository) : ViewModel() {
      * يجب إعادة حسابها تلقائياً عند كل تغيير في البيانات كباقي الفترات الثابتة.
      */
     suspend fun revenueForRange(start: Long, end: Long): Double = repository.revenueForRange(start, end)
+
+    /** توزيع الإيراد حسب نوع الاشتراك لنطاق حرّ — يغذّي حلقة التوزيع بحسب الفترة المختارة في مفتاح الفترة. */
+    suspend fun byTypeForRange(start: Long, end: Long): Map<SubscriptionType, Double> =
+        repository.revenueByType(start, end)
 
     class Factory(private val repository: GymRepository) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")

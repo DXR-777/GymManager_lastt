@@ -177,8 +177,12 @@
     <color name="home_count_coral_bg">#33FFB8B8</color>
     <color name="home_pill_amber_bg">#26FFD27A</color>
     <color name="home_pill_coral_bg">#26FFB8B8</color>
-    <color name="home_nav_fill">#99161734</color>
-    <color name="home_nav_stroke">#24FFFFFF</color>
+    <color name="home_nav_fill">#F2141530</color>
+    <color name="home_nav_stroke">#2EFFFFFF</color>
+    <color name="home_delta_chip_fill">#B3120A2C</color>
+    <color name="home_delta_chip_stroke">#40FFFFFF</color>
+    <color name="home_btn_secondary_fill">#14FFFFFF</color>
+    <color name="home_btn_secondary_stroke">#38FFFFFF</color>
     <color name="home_nav_idle">#9097C2</color>
     <color name="home_nav_active_fill">#E6221E50</color>
     <color name="home_orb1">#80E0426B</color>

@@ -123,11 +123,12 @@ class MainActivity : AppCompatActivity() {
             showTab(item.itemId)
             updateFabVisibility(item.itemId)
             updateHomeChrome(item.itemId)
+            popNavItem(item.itemId)
             true
         }
-        // يضبط حالة الزر العائم الصحيحة فور فتح التطبيق (وليس فقط بعد ضغط تبويب يدوياً)
         updateFabVisibility(binding.bottomNav.selectedItemId)
         updateHomeChrome(binding.bottomNav.selectedItemId)
+        setupKeyboardAwareDock()
 
         binding.fabAddMember.setOnClickListener {
             it.isEnabled = false
@@ -161,6 +162,16 @@ class MainActivity : AppCompatActivity() {
      * مع clipToPadding=false، فلا يبقى آخر عنصر مخفياً تحت القائمة.
      */
     private var navInsetPx = 0
+    private var navBasePx = 0
+
+    /** حشوة المحتوى السفلية = ارتفاع الشريط + هامشه (ثابتة في كل التبويبات). */
+    private fun recomputeNavInset() {
+        val inset = navBasePx
+        if (inset != navInsetPx) {
+            navInsetPx = inset
+            applyNavInset(binding.fragmentContainer)
+        }
+    }
 
     /**
      * Edge-to-edge: الشريط العلوي يُزاح تحت شريط الحالة، والبار السفلي العائم يرتفع بمقدار
@@ -193,11 +204,8 @@ class MainActivity : AppCompatActivity() {
     private fun setupBottomNavInset() {
         binding.dock.addOnLayoutChangeListener { v, _, top, _, bottom, _, _, _, _ ->
             val margin = (v.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
-            val inset = (bottom - top) + margin
-            if (inset != navInsetPx) {
-                navInsetPx = inset
-                applyNavInset(binding.fragmentContainer)
-            }
+            navBasePx = (bottom - top) + margin
+            recomputeNavInset()
         }
         supportFragmentManager.registerFragmentLifecycleCallbacks(
             object : FragmentManager.FragmentLifecycleCallbacks() {
@@ -234,15 +242,106 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * الزر العائم يظهر في تبويبي الرئيسية والأعضاء معاً، لا في الأعضاء فقط — الشاشة
-     * الرئيسية هي أول ما يراه المستخدم عند فتح التطبيق يومياً، فحرمانها من وصول سريع
-     * لإضافة عضو يجبره على التنقّل لتبويب الأعضاء أولاً لأبسط عملية يقوم بها يومياً.
-     * يبقى مخفياً في الإيرادات والإعدادات حيث لا معنى له.
+     * الشريط السفلي ثابت الحجم والموضع في كل التبويبات. زر الإضافة بجانب الحبّة كما كان، لكن مكانه
+     * محجوز دائماً: يُخفى بـ INVISIBLE (لا GONE كما كان سابقاً، وهو ما كان يُمدّد الحبّة ويُقلّصها
+     * ويُرى كـ"تكبير/تصغير"). فالزر يتلاشى فقط ولا يتحرك شيء في التخطيط.
      */
+    private var dockHiddenForKeyboard = false
+    private var fabWantedForTab = true
+    private var fabShown: Boolean? = null
+
+    /** الرئيسية والأعضاء فقط تعرض زر الإضافة. */
     private fun updateFabVisibility(selectedItemId: Int) {
-        val showFab = selectedItemId == R.id.nav_dashboard || selectedItemId == R.id.nav_members
-        binding.fabAddMember.visibility =
-            if (showFab) android.view.View.VISIBLE else android.view.View.GONE
+        fabWantedForTab = selectedItemId == R.id.nav_dashboard || selectedItemId == R.id.nav_members
+        recomputeNavInset()
+        refreshFab()
+    }
+
+    /** يُظهر/يُخفي الزر بتكبير وتلاشي ناعمين؛ مخفيّ أيضاً أثناء ظهور لوحة المفاتيح. */
+    private fun refreshFab() {
+        val show = fabWantedForTab && !dockHiddenForKeyboard
+        if (show == fabShown) return
+        val first = fabShown == null
+        fabShown = show
+        val fab = binding.fabAddMember
+        fab.animate().cancel()
+        val animate = !first && fab.isLaidOut && android.animation.ValueAnimator.areAnimatorsEnabled()
+        if (show) {
+            fab.visibility = View.VISIBLE
+            if (!animate) { fab.alpha = 1f; fab.scaleX = 1f; fab.scaleY = 1f; return }
+            fab.alpha = 0f; fab.scaleX = 0.6f; fab.scaleY = 0.6f
+            fab.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(260)
+                .setInterpolator(android.view.animation.OvershootInterpolator(1.6f)).start()
+        } else {
+            if (!animate) { fab.visibility = View.INVISIBLE; return }
+            fab.animate().alpha(0f).scaleX(0.6f).scaleY(0.6f).setDuration(160)
+                .setInterpolator(android.view.animation.AccelerateInterpolator())
+                .withEndAction { if (fabShown == false) fab.visibility = View.INVISIBLE }.start()
+        }
+    }
+
+    /**
+     * لوحة المفاتيح (adjustResize) تُصغّر النافذة فيرتفع الشريط فوقها ويضغط المحتوى. كما تفعل
+     * التطبيقات الكبرى (إنستغرام، واتساب، تيليغرام): نُخفي الشريط بانزلاق ناعم للأسفل أثناء الكتابة،
+     * ونُعيده مكانه عند إغلاقها. INVISIBLE (لا GONE) كي يبقى قياس الشريط ثابتاً فلا تقفز حشوات المحتوى.
+     */
+    private fun setupKeyboardAwareDock() {
+        binding.root.viewTreeObserver.addOnGlobalLayoutListener {
+            val imeVisible = ViewCompat.getRootWindowInsets(binding.root)
+                ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+            setDockHiddenForKeyboard(imeVisible)
+        }
+    }
+
+    private fun setDockHiddenForKeyboard(hidden: Boolean) {
+        if (hidden == dockHiddenForKeyboard) return
+        dockHiddenForKeyboard = hidden
+        refreshFab()
+        val dock = binding.dock
+        dock.animate().cancel()
+        val d = resources.displayMetrics.density
+        val slide = (dock.height + 24 * d)
+        val animate = android.animation.ValueAnimator.areAnimatorsEnabled() && dock.isLaidOut
+        if (hidden) {
+            // يعطّل اللمس فوراً ويُخفيه بصرياً بعد انتهاء الحركة
+            dock.isEnabled = false
+            if (!animate) {
+                dock.alpha = 0f
+                dock.visibility = View.INVISIBLE
+                return
+            }
+            dock.animate().translationY(slide).alpha(0f)
+                .setDuration(180)
+                .setInterpolator(android.view.animation.AccelerateInterpolator())
+                .withEndAction { if (dockHiddenForKeyboard) dock.visibility = View.INVISIBLE }
+                .start()
+        } else {
+            dock.isEnabled = true
+            dock.visibility = View.VISIBLE
+            if (!animate) {
+                dock.translationY = 0f
+                dock.alpha = 1f
+                return
+            }
+            dock.translationY = slide
+            dock.animate().translationY(0f).alpha(1f)
+                .setDuration(260)
+                .setInterpolator(android.view.animation.DecelerateInterpolator(1.6f))
+                .start()
+        }
+    }
+
+    /** نبضة خفيفة (تكبير ثم استقرار) لأيقونة التبويب المختار تعطي إحساس استجابة احترافياً. */
+    private fun popNavItem(itemId: Int) {
+        if (!android.animation.ValueAnimator.areAnimatorsEnabled()) return
+        val v = binding.bottomNav.findViewById<View>(itemId) ?: return
+        v.animate().cancel()
+        v.scaleX = 0.82f
+        v.scaleY = 0.82f
+        v.animate().scaleX(1f).scaleY(1f)
+            .setDuration(280)
+            .setInterpolator(android.view.animation.OvershootInterpolator(2.2f))
+            .start()
     }
 
     /**
@@ -252,15 +351,19 @@ class MainActivity : AppCompatActivity() {
      * الوضع النهاري). عند مغادرة التبويب تعود ألوان الثيم المعتادة.
      */
     private fun updateHomeChrome(selectedItemId: Int) {
-        // الرئيسية والأعضاء بتصميم 2026 الداكن: رأس خاص بكل شاشة بدل الـ AppBar.
-        val isHome = selectedItemId == R.id.nav_dashboard || selectedItemId == R.id.nav_members
-        binding.appBar.visibility = if (isHome) View.GONE else View.VISIBLE
-        binding.screenGlow.visibility = if (isHome) View.GONE else View.VISIBLE
+        // كل الشاشات تملك رأسها الخاص بها (عنوان + وصف) فلا حاجة لشريط "إدارة الجيم" العلوي الذي كان
+        // يظهر كمستطيل مختلف اللون فوق الإيرادات والإعدادات ويكرّر العنوان؛ نُخفيه نهائياً.
+        // الرئيسية والأعضاء والإيرادات بخلفية home_bg الداكنة الثابتة (كراتها الضبابية الخاصة)، أما
+        // الإعدادات فتبقى بخلفية الثيم مع التوهج الخلفي.
+        val isDarkScreen = selectedItemId == R.id.nav_dashboard ||
+            selectedItemId == R.id.nav_members || selectedItemId == R.id.nav_revenue
+        binding.appBar.visibility = View.GONE
+        binding.screenGlow.visibility = if (isDarkScreen) View.GONE else View.VISIBLE
 
-        val barColor = ContextCompat.getColor(this, if (isHome) R.color.home_bg else R.color.background)
+        val barColor = ContextCompat.getColor(this, if (isDarkScreen) R.color.home_bg else R.color.background)
         window.statusBarColor = barColor
         window.navigationBarColor = barColor
-        val lightBars = !isHome && resources.getBoolean(R.bool.is_light_theme)
+        val lightBars = !isDarkScreen && resources.getBoolean(R.bool.is_light_theme)
         WindowCompat.getInsetsController(window, binding.root).apply {
             isAppearanceLightStatusBars = lightBars
             isAppearanceLightNavigationBars = lightBars
@@ -323,7 +426,6 @@ class MainActivity : AppCompatActivity() {
             val fragment = showTab(R.id.nav_members)
             (fragment as? MembersFragment)?.applyFilter(filter)
             pendingMembersFilter = null
-            updateFabVisibility(R.id.nav_members)
         } else {
             // سيُطلق onItemSelectedListener تلقائياً ويتكفّل بعرض/إنشاء التبويب وتحديث الـ FAB.
             // إن كانت نسخة "الأعضاء" حيّة أصلاً من قبل (تبويب آخر مفتوح حالياً)، showTab()

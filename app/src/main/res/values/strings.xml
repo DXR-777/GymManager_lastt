@@ -37,7 +37,7 @@
     <string name="onboarding_welcome_subtitle">إدارة ذكية لناديك الرياضي، بكل بساطة.</string>
     <string name="onboarding_logo_content_description">شعار التطبيق</string>
     <string name="onboarding_next">التالي</string>
-    <string name="onboarding_step_indicator">الخطوة %1$d من %2$d</string>
+    <string name="onboarding_step_indicator">الخطوة %1$s من %2$s</string>
 
     <!-- شاشات الإعداد الأولي (Onboarding) — فكرة التطبيق -->
     <string name="onboarding_concept_title">مصمَّم لأصحاب الأندية مثلك</string>
@@ -97,7 +97,7 @@
         القائمة المحمَّلة أصلاً في الذاكرة (لا استعلام قاعدة بيانات إضافي) عند الطلب
         فقط. راجع MemberDetailActivity.refreshHistoryList()/HISTORY_PAGE_SIZE.
     -->
-    <string name="detail_history_load_more">عرض المزيد (%1$d)</string>
+    <string name="detail_history_load_more">عرض المزيد (%1$s)</string>
 
     <!-- شاشات الإعداد الأولي (Onboarding) — معالج إعداد النادي: العملة والأسعار (4.2) -->
     <string name="onboarding_pricing_title">العملة والأسعار</string>
@@ -180,7 +180,7 @@
     <string name="dashboard_card_content_description">%1$s: %2$s. اضغط لعرض القائمة</string>
     <string name="dashboard_expiring_section">ينتهي اشتراكهم قريباً</string>
     <string name="dashboard_unpaid_section">لم يدفعوا بعد</string>
-    <string name="dashboard_section_count_format">(%1$d)</string>
+    <string name="dashboard_section_count_format">(%1$s)</string>
     <string name="dashboard_view_all">عرض الكل</string>
     <string name="dashboard_empty_expiring_title">اشتراكاتكم في أمان</string>
     <string name="dashboard_empty_expiring_subtitle">لا يوجد اشتراك ينتهي خلال الأيام الثلاثة القادمة</string>
@@ -195,9 +195,9 @@
     <plurals name="dashboard_empty_next_expiry">
         <item quantity="one">أقرب انتهاء بعد يوم</item>
         <item quantity="two">أقرب انتهاء بعد يومين</item>
-        <item quantity="few">أقرب انتهاء بعد %d أيام</item>
-        <item quantity="many">أقرب انتهاء بعد %d يوماً</item>
-        <item quantity="other">أقرب انتهاء بعد %d يوم</item>
+        <item quantity="few">أقرب انتهاء بعد %s أيام</item>
+        <item quantity="many">أقرب انتهاء بعد %s يوماً</item>
+        <item quantity="other">أقرب انتهاء بعد %s يوم</item>
     </plurals>
     <string name="dashboard_new_unpaid_caption">ستظهر هنا مستحقات الأعضاء بزر «تسديد» سريع</string>
 
@@ -220,9 +220,9 @@
     <string name="members_sort_name">الاسم (أ-ي)</string>
     <string name="members_sort_expiry_soonest">الأقرب لانتهاء الاشتراك</string>
     <string name="members_sort_newest">الأحدث تسجيلاً</string>
-    <string name="days_remaining_format">باقي %1$d يوم</string>
+    <string name="days_remaining_format">باقي %1$s يوم</string>
     <string name="days_remaining_today">ينتهي اليوم</string>
-    <string name="days_remaining_expired">منتهي منذ %1$d يوم</string>
+    <string name="days_remaining_expired">منتهي منذ %1$s يوم</string>
     <string name="days_remaining_not_started">لم يبدأ بعد</string>
     <string name="action_settle_debt">تسديد</string>
     <string name="settle_debt_success">تم تسجيل الدفع بنجاح ✅</string>
@@ -271,7 +271,7 @@
     <string name="member_custom_days_error">يرجى إدخال عدد أيام صحيح أكبر من صفر</string>
     <!-- البند 5: حد أقصى منطقي لعدد الأيام المخصصة (1825 يوم ≈ 5 سنوات) — يمنع إدخال
          قيم غير واقعية (مثل 99999) تُنتج تاريخ انتهاء بعيد جداً بلا أي تحذير سابقاً. -->
-    <string name="member_custom_days_error_too_large">الحد الأقصى لعدد الأيام هو %1$d يوماً (نحو 5 سنوات)</string>
+    <string name="member_custom_days_error_too_large">الحد الأقصى لعدد الأيام هو %1$s يوماً (نحو 5 سنوات)</string>
     <string name="member_save_success">تم حفظ بيانات العضو بنجاح ✅</string>
     <string name="member_error_name_required">يرجى إدخال اسم العضو</string>
     <!-- نافذة تحذير التكرار: تظهر قبل الحفظ إن كان الاسم أو رقم الجوال يطابق عضواً نشطاً آخر بالفعل -->
@@ -285,7 +285,7 @@
     <string name="member_discard_changes_message">لديك بيانات لم تُحفَظ بعد. إذا رجعت الآن ستُفقد جميع البيانات المُدخَلة.</string>
     <string name="member_discard_changes_discard">تجاهل والخروج</string>
     <string name="member_discard_changes_keep_editing">متابعة التعديل</string>
-    <string name="renewal_hint_remaining_days">للعضو %1$d يوم متبقٍ من اشتراكه الحالي. سيبدأ هذا التجديد تلقائياً بعده مباشرة (بتاريخ %2$s) — يمكنك تغيير التاريخ يدوياً إن رغبت.</string>
+    <string name="renewal_hint_remaining_days">للعضو %1$s يوم متبقٍ من اشتراكه الحالي. سيبدأ هذا التجديد تلقائياً بعده مباشرة (بتاريخ %2$s) — يمكنك تغيير التاريخ يدوياً إن رغبت.</string>
 
     <!-- إعادة تصميم شاشة إضافة/تعديل عضو (2026): عناوين الأقسام -->
     <string name="member_info_section_title">معلومات العضو</string>
@@ -294,8 +294,8 @@
     <!-- بطاقة السعر/المدة المضغوطة (النموذج 4) -->
     <string name="member_days_one">يوم واحد</string>
     <string name="member_days_two">يومان</string>
-    <string name="member_days_few">%1$d أيام</string>
-    <string name="member_days_many">%1$d يوماً</string>
+    <string name="member_days_few">%1$s أيام</string>
+    <string name="member_days_many">%1$s يوماً</string>
     <string name="member_dates_toggle_cd">تواريخ الاشتراك: %1$s. اضغط لعرض أو إخفاء حقول التواريخ</string>
     <string name="member_payment_status_section_title">حالة الدفع</string>
     <string name="member_payment_method_section_title">طريقة الدفع</string>
@@ -329,9 +329,9 @@
         <item quantity="zero">لا اشتراكات غير مدفوعة</item>
         <item quantity="one">اشتراك واحد غير مدفوع</item>
         <item quantity="two">اشتراكان غير مدفوعين</item>
-        <item quantity="few">%d اشتراكات غير مدفوعة</item>
-        <item quantity="many">%d اشتراكًا غير مدفوع</item>
-        <item quantity="other">%d اشتراك غير مدفوع</item>
+        <item quantity="few">%s اشتراكات غير مدفوعة</item>
+        <item quantity="many">%s اشتراكًا غير مدفوع</item>
+        <item quantity="other">%s اشتراك غير مدفوع</item>
     </plurals>
     <string name="detail_history_title">سجل الاشتراكات السابقة</string>
     <string name="detail_history_empty">لا يوجد اشتراكات سابقة</string>
@@ -365,7 +365,7 @@
     <string name="delete_dialog_title">حذف العضو؟</string>
     <string name="delete_dialog_message">سينتقل إلى الأرشيف ويمكنك استعادته خلال 30 يوماً</string>
     <string name="delete_dialog_balance_warning">تنبيه: على هذا العضو مبلغ غير مدفوع وقدره %1$s</string>
-    <string name="delete_dialog_days_warning">تنبيه: لا يزال للعضو %1$d يوم متبقي من اشتراكه الحالي</string>
+    <string name="delete_dialog_days_warning">تنبيه: لا يزال للعضو %1$s يوم متبقي من اشتراكه الحالي</string>
     <string name="delete_dialog_confirm">نعم، حذف</string>
     <string name="delete_success">تم حذف العضو ونقله إلى الأرشيف</string>
     <!-- البند 27: زر التراجع في Snackbar الحذف — راجع MemberDetailActivity.showDeleteUndoSnackbar -->
@@ -379,7 +379,7 @@
     <string name="archive_clear_search">مسح نص البحث</string>
     <string name="archive_deleted_on">حُذف في %1$s</string>
     <!-- تُعرض بجانب archive_deleted_on طالما بقيت للعضو أيام قبل الحذف النهائي التلقائي (راجع ArchivePurgeWorker) -->
-    <string name="archive_purge_countdown">يُحذف نهائياً خلال %1$d يوم</string>
+    <string name="archive_purge_countdown">يُحذف نهائياً خلال %1$s يوم</string>
     <string name="archive_purge_countdown_today">يُحذف نهائياً اليوم</string>
     <string name="archive_restore_success">تمت استعادة العضو بنجاح</string>
     <string name="archive_permanent_delete_title">حذف نهائي؟</string>
@@ -459,7 +459,7 @@
     <string name="settings_save_success">تم حفظ الإعدادات بنجاح ✅</string>
     <string name="settings_backup_success">تم إنشاء نسخة احتياطية بنجاح 📦</string>
     <string name="settings_backup_success_with_size">تم إنشاء نسخة احتياطية بنجاح 📦 (الحجم: %1$s)</string>
-    <string name="settings_progress_detail">%1$d%% — %2$d من %3$d</string>
+    <string name="settings_progress_detail">%1$s%% — %2$s من %3$s</string>
     <string name="settings_restore_success">تم استرجاع البيانات بنجاح</string>
     <string name="settings_restore_error">تعذّرت عملية الاستعادة. تأكد من أن الملف المختار نسخة احتياطية صالحة.</string>
     <!-- البند 32: exportCsv() لم يكن يملك أي try/catch — أي فشل (تخزين ممتلئ، صلاحيات...)
@@ -486,7 +486,7 @@
     <string name="notif_channel_name">تنبيهات الاشتراكات</string>
     <string name="notif_channel_desc">تنبيهات انتهاء الاشتراك والمدفوعات المتأخرة</string>
     <string name="notif_expiry_title">⚠️ اشتراك على وشك الانتهاء</string>
-    <string name="notif_expiry_body">اشتراك %1$s ينتهي بعد %2$d يوم</string>
+    <string name="notif_expiry_body">اشتراك %1$s ينتهي بعد %2$s يوم</string>
     <string name="notif_expired_title">🔴 انتهى الاشتراك</string>
     <string name="notif_expired_body">انتهى اشتراك %1$s اليوم</string>
     <!--
@@ -501,15 +501,15 @@
     -->
     <plurals name="notif_expiry_summary_title">
         <item quantity="two">⚠️ عضوان بحاجة لمتابعة اليوم</item>
-        <item quantity="few">⚠️ %d أعضاء بحاجة لمتابعة اليوم</item>
-        <item quantity="many">⚠️ %d عضواً بحاجة لمتابعة اليوم</item>
-        <item quantity="other">⚠️ %d عضو بحاجة لمتابعة اليوم</item>
+        <item quantity="few">⚠️ %s أعضاء بحاجة لمتابعة اليوم</item>
+        <item quantity="many">⚠️ %s عضواً بحاجة لمتابعة اليوم</item>
+        <item quantity="other">⚠️ %s عضو بحاجة لمتابعة اليوم</item>
     </plurals>
     <string name="notif_expiry_summary_body">اضغط لعرض التفاصيل: تجديد أو انتهاء اشتراك</string>
     <string name="notif_unpaid_title">💰 تذكير بالدفع</string>
-    <string name="notif_unpaid_body">يوجد %1$d عضو لم يسددوا اشتراكهم بعد</string>
+    <string name="notif_unpaid_body">يوجد %1$s عضو لم يسددوا اشتراكهم بعد</string>
     <string name="notif_archive_purge_title">🗑️ حذف نهائي قريب</string>
-    <string name="notif_archive_purge_body">سيُحذف %1$s نهائياً خلال %2$d يوم ولن تتمكن من استعادته — اضغط هنا لاستعادته الآن</string>
+    <string name="notif_archive_purge_body">سيُحذف %1$s نهائياً خلال %2$s يوم ولن تتمكن من استعادته — اضغط هنا لاستعادته الآن</string>
 
     <!-- حوار شرح إذن الإشعارات (Rationale) — راجع البند 19 -->
     <string name="notification_rationale_title">تفعيل التنبيهات؟</string>
@@ -541,7 +541,7 @@
     <string name="lock_subtitle_verify">أكّد هويتك بإدخال الرمز الحالي</string>
     <string name="lock_subtitle_new">6 أرقام تحمي بيانات ناديك ومبالغه</string>
     <string name="lock_subtitle_confirm">أدخل نفس الرمز مرة أخرى للتأكيد</string>
-    <string name="lock_error_wrong">الرمز غير صحيح — المحاولات المتبقية: %1$d</string>
+    <string name="lock_error_wrong">الرمز غير صحيح — المحاولات المتبقية: %1$s</string>
     <string name="lock_error_weak">رمز سهل التخمين (أرقام متكررة أو متسلسلة)، اختر رمزاً آخر</string>
     <string name="lock_error_mismatch">الرمزان غير متطابقين، ابدأ من جديد</string>
     <string name="lock_lockout">محاولات خاطئة كثيرة — حاول بعد %1$s</string>
@@ -625,32 +625,32 @@
     <string name="home_revenue_day">إيرادات اليوم</string>
     <string name="home_revenue_week">إيرادات الأسبوع</string>
     <string name="home_revenue_month">إيرادات الشهر</string>
-    <string name="home_delta_day">%1$s %2$d%% عن أمس</string>
-    <string name="home_delta_week">%1$s %2$d%% عن الأسبوع الماضي</string>
-    <string name="home_delta_month">%1$s %2$d%% عن الشهر الماضي</string>
+    <string name="home_delta_day">%1$s %2$s%% عن أمس</string>
+    <string name="home_delta_week">%1$s %2$s%% عن الأسبوع الماضي</string>
+    <string name="home_delta_month">%1$s %2$s%% عن الشهر الماضي</string>
     <string name="home_notifications">الإشعارات</string>
     <string name="home_pay_action">تسديد</string>
     <string name="home_plan_custom">اشتراك مخصص</string>
     <string name="home_in_today">ينتهي اليوم</string>
     <string name="home_in_one_day">بعد يوم</string>
     <string name="home_in_two_days">بعد يومين</string>
-    <string name="home_in_days">بعد %1$d أيام</string>
-    <string name="home_in_days_many">بعد %1$d يوماً</string>
+    <string name="home_in_days">بعد %1$s أيام</string>
+    <string name="home_in_days_many">بعد %1$s يوماً</string>
     <string name="home_due_today">مستحق اليوم</string>
     <string name="home_due_one_day">مستحق منذ يوم</string>
     <string name="home_due_two_days">مستحق منذ يومين</string>
-    <string name="home_due_days">مستحق منذ %1$d أيام</string>
+    <string name="home_due_days">مستحق منذ %1$s أيام</string>
     <string name="home_due_one_week">مستحق منذ أسبوع</string>
     <string name="home_due_two_weeks">مستحق منذ أسبوعين</string>
-    <string name="home_due_weeks">مستحق منذ %1$d أسابيع</string>
+    <string name="home_due_weeks">مستحق منذ %1$s أسابيع</string>
     <string name="home_due_one_month">مستحق منذ شهر</string>
     <string name="home_due_two_months">مستحق منذ شهرين</string>
-    <string name="home_due_months">مستحق منذ %1$d أشهر</string>
+    <string name="home_due_months">مستحق منذ %1$s أشهر</string>
     <string name="home_due_over_year">مستحق منذ أكثر من سنة</string>
     <string name="home_due_balance">رصيد متأخر</string>
 
     <!-- شاشة الأعضاء (إعادة تصميم 2026) -->
-    <string name="members_count_active">%1$d عضواً نشطاً</string>
+    <string name="members_count_active">%1$s عضواً نشطاً</string>
     <string name="members_count_none">لا يوجد أعضاء بعد</string>
     <string name="members_first_add">إضافة أول عضو</string>
     <string name="members_tip_1">سجّل اسم العضو ورقم واتساب</string>
@@ -666,7 +666,7 @@
 
     <string name="archive_note">يمكنك استعادة أي عضو قبل انتهاء مهلة الحذف النهائي، وبعدها يُحذف مع كل سجلاته.</string>
     <string name="archive_empty_hint">الأعضاء الذين تحذفهم يظهرون هنا، ويمكنك استعادتهم في أي وقت خلال المهلة.</string>
-    <string name="archive_count_format">%1$d عضواً في السلة</string>
+    <string name="archive_count_format">%1$s عضواً في السلة</string>
     <!-- صورة العضو -->
     <string name="member_photo_contact">من جهات الاتصال</string>
     <string name="member_photo_gallery">من الصور</string>
@@ -679,9 +679,9 @@
     <string name="archive_delete_forever">حذف نهائي</string>
     <string name="archive_restore_all">استعادة الكل</string>
     <string name="archive_restore_all_title">استعادة كل الأعضاء؟</string>
-    <string name="archive_restore_all_message">سيعود %1$d عضواً إلى قائمة الأعضاء بكل بياناتهم واشتراكاتهم.</string>
+    <string name="archive_restore_all_message">سيعود %1$s عضواً إلى قائمة الأعضاء بكل بياناتهم واشتراكاتهم.</string>
     <string name="archive_restore_all_confirm">استعادة</string>
-    <string name="archive_restore_all_success">تمت استعادة %1$d عضواً</string>
+    <string name="archive_restore_all_success">تمت استعادة %1$s عضواً</string>
     <!-- حفظ صور الأعضاء في حساب Google -->
     <string name="cloud_section_title">حساب Google</string>
     <string name="cloud_account_none">لا يوجد حساب Google مرتبط</string>
@@ -728,8 +728,8 @@
     <string name="notif_banner_close">إغلاق</string>
     <string name="notif_count_one">عضو واحد</string>
     <string name="notif_count_two">عضوان</string>
-    <string name="notif_count_few">%1$d أعضاء</string>
-    <string name="notif_count_many">%1$d عضواً</string>
+    <string name="notif_count_few">%1$s أعضاء</string>
+    <string name="notif_count_many">%1$s عضواً</string>
     <string name="settings_enable_notifications_now">تفعيل الآن</string>
 
     <!-- نصوص احتياطية لتخطيط bottom_sheet_notification_permission.xml إن وُجد في المشروع (تفادي خطأ الربط) -->
@@ -765,25 +765,25 @@
         <item quantity="zero">ينتهي اليوم</item>
         <item quantity="one">باقي يوم واحد</item>
         <item quantity="two">باقي يومان</item>
-        <item quantity="few">باقي %d أيام</item>
-        <item quantity="many">باقي %d يوماً</item>
-        <item quantity="other">باقي %d يوم</item>
+        <item quantity="few">باقي %s أيام</item>
+        <item quantity="many">باقي %s يوماً</item>
+        <item quantity="other">باقي %s يوم</item>
     </plurals>
     <plurals name="detail_ends_in">
         <item quantity="zero">ينتهي اليوم</item>
         <item quantity="one">ينتهي غداً</item>
         <item quantity="two">ينتهي بعد يومين</item>
-        <item quantity="few">ينتهي بعد %d أيام</item>
-        <item quantity="many">ينتهي بعد %d يوماً</item>
-        <item quantity="other">ينتهي بعد %d يوم</item>
+        <item quantity="few">ينتهي بعد %s أيام</item>
+        <item quantity="many">ينتهي بعد %s يوماً</item>
+        <item quantity="other">ينتهي بعد %s يوم</item>
     </plurals>
     <plurals name="detail_expired_since">
         <item quantity="zero">انتهى اليوم</item>
         <item quantity="one">انتهى منذ يوم</item>
         <item quantity="two">انتهى منذ يومين</item>
-        <item quantity="few">انتهى منذ %d أيام</item>
-        <item quantity="many">انتهى منذ %d يوماً</item>
-        <item quantity="other">انتهى منذ %d يوم</item>
+        <item quantity="few">انتهى منذ %s أيام</item>
+        <item quantity="many">انتهى منذ %s يوماً</item>
+        <item quantity="other">انتهى منذ %s يوم</item>
     </plurals>
 
     <!-- ===== تفاصيل العضو: بطاقة العضوية (Membership Pass) ===== -->
@@ -875,8 +875,8 @@
     <string name="rev_vs_week">عن الأسبوع الماضي</string>
     <string name="rev_vs_month">عن الشهر الماضي</string>
     <string name="rev_vs_year">عن العام الماضي</string>
-    <string name="rev_delta_up">▲ %1$d%% %2$s</string>
-    <string name="rev_delta_down">▼ %1$d%% %2$s</string>
+    <string name="rev_delta_up">▲ %1$s%% %2$s</string>
+    <string name="rev_delta_down">▼ %1$s%% %2$s</string>
     <string name="rev_delta_flat">● دون تغيير %1$s</string>
     <string name="rev_delta_none">لا بيانات سابقة للمقارنة</string>
     <string name="rev_prev_amount">مقابل %1$s</string>

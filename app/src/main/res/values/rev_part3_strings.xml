@@ -2,6 +2,8 @@
 <!-- شاشة الإيرادات — الجزء 3: حالات الشاشة. كل الموارد الجديدة بالبادئة rev_ -->
 <resources>
     <string name="rev_skel_cd">جارٍ تحميل الإيرادات</string>
+    <string name="rev_unpaid_title">مستحقات غير محصّلة</string>
+    <string name="rev_unpaid_sub">الأعضاء المتأخرون: %1$s · عرض القائمة</string>
     <string name="rev_empty_title">لا إيرادات بعد</string>
     <string name="rev_empty_sub">لا تقلق، كل شيء جاهز. ستظهر أرقامك ومخططاتك هنا تلقائياً مع أول اشتراك أو دفعة تُسجَّل.</string>
     <string name="rev_empty_chip">تتحدّث تلقائياً</string>

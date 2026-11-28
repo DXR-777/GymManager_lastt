@@ -48,6 +48,21 @@ object CurrencyFormatter {
     }
 
     /**
+     * نفس [format] مع فواصل الآلاف (12,450 بدل 12450) — لشاشة الإيرادات حيث تظهر مبالغ كبيرة في بطاقات
+     * ضيقة، فيسهل قراءتها. لا تُستخدم في رسائل واتساب/التصدير التي تبقى على [format] دون تغيير.
+     */
+    fun formatGrouped(amount: Double, currencySymbol: String): String {
+        val raw = roundedText(amount)
+        val negative = raw.startsWith("-")
+        val body = if (negative) raw.substring(1) else raw
+        val dot = body.indexOf('.')
+        val intPart = if (dot >= 0) body.substring(0, dot) else body
+        val frac = if (dot >= 0) body.substring(dot) else ""
+        val grouped = intPart.reversed().chunked(3).joinToString(",").reversed()
+        return "$ISOLATE_START$currencySymbol ${if (negative) "-" else ""}$grouped$frac$ISOLATE_END"
+    }
+
+    /**
      * نسخة مُنسَّقة بصرياً (9.2) للمبالغ البارزة فقط (أرقام البطاقات الكبيرة): الرمز أكبر
      * قليلاً (×1.15) وبلون خافت (text_secondary) بجانب الرقم الأساسي، بدل تطابقهما الكامل
      * في البطاقات التي يكون المبلغ فيها أهم عنصر بصري. تُستخدم انتقائياً حيث تُعرض بصرياً

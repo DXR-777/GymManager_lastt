@@ -86,13 +86,21 @@
          أصغر (8dp بدل 10dp) لتناسب حجم الحبّة العائمة المدمج الجديد. -->
     <style name="Widget.GymManager.BottomNavigationView" parent="Widget.Material3.BottomNavigationView">
         <item name="itemActiveIndicatorStyle">@style/Widget.GymManager.BottomNavigationView.ActiveIndicator</item>
-        <item name="itemPaddingTop">0dp</item>
-        <item name="itemPaddingBottom">0dp</item>
-        <!-- تصميم HTML: أيقونات فقط بلا تسميات، والعنصر النشط دائرة بحدّ متدرّج (bg_home_nav_item) -->
-        <item name="labelVisibilityMode">unlabeled</item>
+        <item name="itemPaddingTop">8dp</item>
+        <item name="itemPaddingBottom">8dp</item>
+        <!-- أيقونة + اسم قصير تحت كل تبويب (إرشادات آبل وMaterial توصي بالتسميات)، والعنصر النشط كبسولة
+             بحدّ متدرّج تحيط بالأيقونة واسمها (bg_home_nav_item) -->
+        <item name="labelVisibilityMode">labeled</item>
         <item name="itemBackground">@drawable/bg_home_nav_item</item>
-        <item name="itemIconSize">24dp</item>
+        <item name="itemIconSize">22dp</item>
+        <item name="itemTextAppearanceActive">@style/TextAppearance.GymManager.NavLabel</item>
+        <item name="itemTextAppearanceInactive">@style/TextAppearance.GymManager.NavLabel</item>
         <item name="android:minHeight">0dp</item>
+    </style>
+
+    <style name="TextAppearance.GymManager.NavLabel" parent="TextAppearance.Material3.LabelSmall">
+        <item name="android:fontFamily">@font/cairo_medium</item>
+        <item name="android:textSize">10.5sp</item>
     </style>
 
     <style name="Widget.GymManager.BottomNavigationView.ActiveIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">

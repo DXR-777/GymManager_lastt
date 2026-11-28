@@ -52,14 +52,16 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!--
-        الشريط السفلي حرفياً كما في تصميم HTML (.dock): حبّة زجاجية بأربع أيقونات (64dp) + زر إضافة دائري
-        منفصل (64dp) بفجوة 12dp، عرض أقصى 430dp. الزر العائم يُخفى في الإيرادات والإعدادات فيتمدّد الشريط.
+        الشريط السفلي الثابت (dock): حبّة زجاجية بأربع أيقونات + زر إضافة دائري بجانبها (64dp لكل منهما،
+        فجوة 12dp). مكان الزر محجوز دائماً: في الإيرادات والإعدادات يتلاشى الزر (INVISIBLE لا GONE) فتبقى
+        الحبّة بنفس العرض والموضع تماماً ولا تتمدّد. عند ظهور لوحة المفاتيح يُخفي MainActivity الشريط
+        بانزلاق ناعم بدل أن يرتفع فوقها.
     -->
     <LinearLayout
         android:id="@+id/dock"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="22dp"
+        android:layout_marginBottom="16dp"
         android:clipChildren="false"
         android:clipToPadding="false"
         android:gravity="center_vertical"
@@ -77,9 +79,9 @@
             android:layout_height="64dp"
             android:layout_weight="1"
             android:background="@drawable/bg_home_nav_pill"
-            android:elevation="10dp"
-            android:paddingHorizontal="8dp"
-            app:elevation="10dp"
+            android:elevation="8dp"
+            android:paddingHorizontal="6dp"
+            app:elevation="8dp"
             app:itemIconTint="@color/nav_item_color"
             app:itemTextColor="@color/nav_item_color"
             app:menu="@menu/bottom_nav_menu" />
@@ -95,7 +97,6 @@
             android:outlineSpotShadowColor="@color/home_fab_glow"
             android:scaleType="center"
             android:src="@drawable/ic_ds_plus"
-            android:visibility="gone"
             app:tint="@color/white"
             tools:targetApi="p" />
     </LinearLayout>

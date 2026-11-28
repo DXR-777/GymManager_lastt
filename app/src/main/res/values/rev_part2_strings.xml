@@ -14,11 +14,17 @@
 
     <!-- حلقة التوزيع والأسطورة -->
     <string name="rev_donut_total">إجمالي الشهر</string>
+    <string name="rev_donut_total_day">إجمالي اليوم</string>
+    <string name="rev_donut_total_week">إجمالي الأسبوع</string>
+    <string name="rev_donut_total_year">إجمالي السنة</string>
+    <string name="rev_scope_day">اليوم</string>
+    <string name="rev_scope_week">هذا الأسبوع</string>
+    <string name="rev_scope_year">هذه السنة</string>
     <string name="rev_donut_selected">%1$s · %2$s</string>
-    <string name="rev_pct">%1$d%%</string>
+    <string name="rev_pct">%1$s%%</string>
     <string name="rev_pct_lt1" formatted="false">أقل من 1%</string>
-    <string name="rev_donut_cd">توزيع إيراد هذا الشهر حسب نوع الاشتراك: %1$s</string>
-    <string name="rev_donut_cd_empty">توزيع إيراد هذا الشهر: لا توجد إيرادات</string>
+    <string name="rev_donut_cd">توزيع الإيراد في الفترة المختارة حسب نوع الاشتراك: %1$s</string>
+    <string name="rev_donut_cd_empty">توزيع الإيراد في الفترة المختارة: لا توجد إيرادات</string>
     <string name="rev_row_cd">%1$s: %2$s، %3$s من الإجمالي</string>
 
     <!-- النطاق المخصص -->

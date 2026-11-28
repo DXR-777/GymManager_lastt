@@ -28,7 +28,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.gympro.manager.GymApplication
 import com.gympro.manager.R
 import com.gympro.manager.databinding.FragmentRevenueBinding
+import com.gympro.manager.model.MemberFilter
 import com.gympro.manager.model.SubscriptionType
+import com.gympro.manager.ui.main.MainActivity
 import com.gympro.manager.utils.BackupManager
 import com.gympro.manager.utils.CurrencyFormatter
 import com.gympro.manager.utils.DateUtils
@@ -85,6 +87,7 @@ class RevenueFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         shownAmount = 0.0
+        periodByType = null
         selectedType = null
         revealed = false
         barsShown = false
@@ -95,6 +98,10 @@ class RevenueFragment : Fragment() {
         binding.revBtnShare.setOnSingleClickListener { shareReport() }
         binding.btnShareReport.setOnSingleClickListener { shareReport() }
         binding.rowCustomRange.setOnSingleClickListener { showCustomRangePicker() }
+        binding.revUnpaidCard.setOnSingleClickListener {
+            (requireActivity() as? MainActivity)?.openMembersFiltered(MemberFilter.UNPAID)
+        }
+        binding.revUnpaidCard.attachPressScale()
         binding.btnClearCustomRange.setOnClickListener { hideCustomRangeResult() }
         setupPressFeedback()
         observeState()
@@ -137,14 +144,14 @@ class RevenueFragment : Fragment() {
         val last = days.lastIndex
         val axis = days.mapIndexed { i, d -> if (i == last) getString(R.string.rev_today) else d }
         val titles = days.mapIndexed { i, d -> if (i == last) getString(R.string.rev_today_named, d) else d }
-        val amounts = values.map { CurrencyFormatter.format(it, state.currency) }
+        val amounts = values.map { CurrencyFormatter.formatGrouped(it, state.currency) }
         val avg = if (values.isEmpty()) 0.0 else values.sum() / values.size
         binding.revBars.setData(
             values = values,
             axisLabels = axis,
             tooltipTitles = titles,
             tooltipAmounts = amounts,
-            averageText = getString(R.string.rev_avg_chip, CurrencyFormatter.format(avg, state.currency)),
+            averageText = getString(R.string.rev_avg_chip, CurrencyFormatter.formatGrouped(avg, state.currency)),
             emptyMessage = getString(R.string.rev_chart_empty),
             animate = animate
         )
@@ -155,7 +162,7 @@ class RevenueFragment : Fragment() {
             } else {
                 getString(
                     R.string.revenue_chart_content_description,
-                    values.mapIndexed { i, v -> "${days.getOrElse(i) { "" }} ${CurrencyFormatter.format(v, state.currency)}" }
+                    values.mapIndexed { i, v -> "${days.getOrElse(i) { "" }} ${CurrencyFormatter.formatGrouped(v, state.currency)}" }
                         .joinToString("، ")
                 )
             }
@@ -217,7 +224,56 @@ class RevenueFragment : Fragment() {
         lastState?.let { renderDonutCenter(it) }
     }
 
-    private fun typeAmount(state: RevenueUiState, type: SubscriptionType): Double = state.byType[type] ?: 0.0
+    /**
+     * توزيع حلقة الأنواع يتبع الفترة المختارة في مفتاح الفترة (يوم/أسبوع/شهر/سنة) فلا يتعارض مع بطاقة Hero.
+     * قبل وصول نتيجة الاستعلام (أو للشهر الافتراضي) نستعمل توزيع الشهر الجاهز في الحالة.
+     */
+    private var periodByType: Map<SubscriptionType, Double>? = null
+    private var splitJob: Job? = null
+
+    private fun splitOf(state: RevenueUiState): Map<SubscriptionType, Double> =
+        if (period == RevPeriod.MONTH) state.byType else (periodByType ?: state.byType)
+
+    private fun periodRange(): Pair<Long, Long> {
+        val now = DateUtils.now()
+        val start = when (period) {
+            RevPeriod.DAY -> DateUtils.startOfDay(now)
+            RevPeriod.WEEK -> DateUtils.startOfWeek()
+            RevPeriod.MONTH -> DateUtils.startOfMonth()
+            RevPeriod.YEAR -> DateUtils.startOfYear()
+        }
+        return start to DateUtils.endOfDay(now)
+    }
+
+    private fun splitScopeRes(): Int = when (period) {
+        RevPeriod.DAY -> R.string.rev_scope_day
+        RevPeriod.WEEK -> R.string.rev_scope_week
+        RevPeriod.MONTH -> R.string.rev_scope_month
+        RevPeriod.YEAR -> R.string.rev_scope_year
+    }
+
+    private fun donutTotalLabelRes(): Int = when (period) {
+        RevPeriod.DAY -> R.string.rev_donut_total_day
+        RevPeriod.WEEK -> R.string.rev_donut_total_week
+        RevPeriod.MONTH -> R.string.rev_donut_total
+        RevPeriod.YEAR -> R.string.rev_donut_total_year
+    }
+
+    /** يجلب توزيع الفترة المختارة ويحدّث الحلقة وشارة النطاق؛ يُلغى أي طلب سابق لم ينتهِ. */
+    private fun refreshSplit() {
+        splitJob?.cancel()
+        val requested = period
+        splitJob = viewLifecycleOwner.lifecycleScope.launch {
+            val (start, end) = periodRange()
+            val result = if (requested == RevPeriod.MONTH) null else viewModel.byTypeForRange(start, end)
+            if (_binding == null || requested != period) return@launch
+            periodByType = result
+            binding.revTvSplitScope.setText(splitScopeRes())
+            lastState?.let { if (donutShown) updateDonut(it) }
+        }
+    }
+
+    private fun typeAmount(state: RevenueUiState, type: SubscriptionType): Double = splitOf(state)[type] ?: 0.0
 
     private fun percentText(value: Double, total: Double): String {
         if (total <= 0.0 || value <= 0.0) return getString(R.string.rev_pct, 0)
@@ -227,14 +283,14 @@ class RevenueFragment : Fragment() {
 
     /** وسط الحلقة: إجمالي الشهر، أو مبلغ ونسبة النوع المُبرَز. */
     private fun renderDonutCenter(state: RevenueUiState) {
-        val total = state.byType.values.sum()
+        val total = splitOf(state).values.sum()
         val sel = typeRows.firstOrNull { it.type == selectedType }
         if (sel == null) {
-            binding.revDonut.setCenter(CurrencyFormatter.format(total, state.currency), getString(R.string.rev_donut_total))
+            binding.revDonut.setCenter(CurrencyFormatter.formatGrouped(total, state.currency), getString(donutTotalLabelRes()))
         } else {
             val v = typeAmount(state, sel.type)
             binding.revDonut.setCenter(
-                CurrencyFormatter.format(v, state.currency),
+                CurrencyFormatter.formatGrouped(v, state.currency),
                 getString(R.string.rev_donut_selected, getString(sel.nameRes), percentText(v, total))
             )
         }
@@ -242,7 +298,7 @@ class RevenueFragment : Fragment() {
 
     private fun updateDonut(state: RevenueUiState, animate: Boolean = true) {
         val ctx = requireContext()
-        val total = state.byType.values.sum()
+        val total = splitOf(state).values.sum()
         val values = DoubleArray(typeRows.size) { typeAmount(state, typeRows[it].type) }
         val colors = IntArray(typeRows.size) { ContextCompat.getColor(ctx, typeRows[it].colorRes) }
         binding.revDonut.setData(values, colors, animate)
@@ -251,10 +307,12 @@ class RevenueFragment : Fragment() {
         val parts = ArrayList<String>(typeRows.size)
         typeRows.forEachIndexed { i, row ->
             val v = values[i]
-            val amountText = CurrencyFormatter.format(v, state.currency)
+            val amountText = CurrencyFormatter.formatGrouped(v, state.currency)
             val pctText = percentText(v, total)
             row.amount().text = amountText
             row.pct().text = pctText
+            // الأنواع الصفرية تُخفَّت فيتركّز النظر على ما فيه إيراد فعلاً
+            row.row().alpha = if (v > 0.0) 1f else 0.45f
             row.bar().setShare(if (total > 0.0) (v / total).toFloat() else 0f, colors[i], animate = animate, delayMs = i * 90L)
             row.row().contentDescription = getString(R.string.rev_row_cd, getString(row.nameRes), amountText, pctText)
             parts.add("${getString(row.nameRes)} $amountText ($pctText)")
@@ -274,6 +332,8 @@ class RevenueFragment : Fragment() {
                     renderScreenState(state)
                     renderHero(state)
                     renderIndicators(state)
+                    renderUnpaid(state)
+                    refreshSplit()
                     // الرسوم تُملأ بحركتها عند ظهور قسمها (scheduleReveal)؛ بعدها تتحدّث مباشرة.
                     if (barsShown) updateBars(state)
                     if (donutShown) updateDonut(state)
@@ -343,6 +403,7 @@ class RevenueFragment : Fragment() {
                 period = p
                 markSelected()
                 lastState?.let { renderHero(it) }
+                refreshSplit()
             }
         }
     }
@@ -419,13 +480,25 @@ class RevenueFragment : Fragment() {
                     binding.revTvDelta.setTextColor(ContextCompat.getColor(ctx, R.color.home_hero_title))
                 }
             }
-            binding.revTvPrev.text = getString(R.string.rev_prev_amount, CurrencyFormatter.format(prev, state.currency))
+            binding.revTvPrev.text = getString(R.string.rev_prev_amount, CurrencyFormatter.formatGrouped(prev, state.currency))
         }
         // وصف واحد مجمّع للبطاقة بالقيم النهائية (لا يتأثر بمرحلة العدّ التصاعدي).
         binding.revHeroCard.contentDescription = getString(
-            R.string.rev_hero_cd, getString(labelRes), CurrencyFormatter.format(amount, state.currency),
+            R.string.rev_hero_cd, getString(labelRes), CurrencyFormatter.formatGrouped(amount, state.currency),
             binding.revTvDelta.text, binding.revTvPrev.text
         ).trim()
+    }
+
+    /** بطاقة المستحقات: تظهر فقط عند وجود متأخرين، وتفتح قائمة الأعضاء مفلترة على "غير المدفوعين". */
+    private fun renderUnpaid(state: RevenueUiState) {
+        val show = state.unpaidCount > 0 && state.unpaidTotal > 0.0
+        binding.revUnpaidCard.visibleIf(show)
+        if (!show) return
+        val total = CurrencyFormatter.formatGrouped(state.unpaidTotal, state.currency)
+        binding.revTvUnpaidTotal.text = total
+        binding.revTvUnpaidSub.text = getString(R.string.rev_unpaid_sub, state.unpaidCount)
+        binding.revUnpaidCard.contentDescription =
+            "${getString(R.string.rev_unpaid_title)}: $total، ${binding.revTvUnpaidSub.text}"
     }
 
     private fun formatAmount(value: Double): String {
@@ -493,7 +566,7 @@ class RevenueFragment : Fragment() {
         val mute = ContextCompat.getColor(ctx, R.color.home_mute)
 
         val daysElapsed = DateUtils.dayOfMonth(DateUtils.now()).coerceAtLeast(1)
-        binding.revTvAvgValue.text = CurrencyFormatter.format(state.month / daysElapsed, state.currency)
+        binding.revTvAvgValue.text = CurrencyFormatter.formatGrouped(state.month / daysElapsed, state.currency)
         binding.revTvAvgValue.setTextColor(if (state.month > 0.0) ContextCompat.getColor(ctx, R.color.home_mint) else mute)
 
         val last7 = state.last7Days
@@ -506,7 +579,7 @@ class RevenueFragment : Fragment() {
             binding.revTvBestValue.setTextColor(ContextCompat.getColor(ctx, R.color.home_amber))
             val labels = lastSevenDayLabels()
             val day = labels.getOrElse(last7.indexOfLast { it == best }) { "" }
-            binding.revTvBestValue.text = CurrencyFormatter.format(best, state.currency)
+            binding.revTvBestValue.text = CurrencyFormatter.formatGrouped(best, state.currency)
             binding.revTvBestLabel.text = getString(R.string.rev_ind_best_label, day)
         }
 
@@ -669,7 +742,7 @@ class RevenueFragment : Fragment() {
                 DateUtils.formatDate(start),
                 DateUtils.formatDate(end)
             )
-            binding.tvCustomRangeTotal.text = CurrencyFormatter.format(total, currency)
+            binding.tvCustomRangeTotal.text = CurrencyFormatter.formatGrouped(total, currency)
             showCustomRangeResult()
         }
     }
@@ -824,7 +897,7 @@ class RevenueFragment : Fragment() {
         val state = viewModel.uiState.value
         val bold = { text: String -> XlsxWriter.Cell(text, bold = true) }
         val plain = { text: String -> XlsxWriter.Cell(text) }
-        val amount = { value: Double -> XlsxWriter.Cell(CurrencyFormatter.format(value, state.currency), numericValue = value) }
+        val amount = { value: Double -> XlsxWriter.Cell(CurrencyFormatter.formatGrouped(value, state.currency), numericValue = value) }
 
         val rows = mutableListOf<List<XlsxWriter.Cell>>()
         rows.add(listOf(bold("${reportGymLabel(state)} — ${getString(R.string.revenue_report_sheet_title)}")))
